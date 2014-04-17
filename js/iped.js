@@ -1,4 +1,11 @@
 
+/***********************
+  Initialize JQuery UI
+ ***********************/
+
+$("button").button();
+
+
 
 
 /********************
@@ -13,10 +20,12 @@
  	Functions
  *******************/
 
-/*$(document).ready(function(){
-	database = new ODatabase('http://localhost:2480/IPED');
-    databaseInfo = database.open('root', 'sitcomlab');
-});*/
+$(document).ready(function(){
+	console.log("action; " + i);
+	for (var i = 1; i < 10; i++){
+    	$("#buttons").append('<a href="#" class="ui-btn">Test' + i + '</a>');
+    }
+});
 
 $("#middle").click(function(){
 	console.log('Button clicked: middle');
@@ -55,7 +64,7 @@ function getVideoLocation(url){
 			'url': hosturl,
 			'dataType': 'json',
 			'beforeSend': function() {console.log("Request wird gesendet...");},
-			'success': function (data) {console.log("Request erfolgreich, URL wurde übermittelt..."); location = data;},
+			'success': function (data) {console.log("Request erfolgreich, URL wurde Ã¼bermittelt..."); location = data;},
 			'error': function(jqXHR, textStatus, errorThrown) {alert('Error ' + errorThrown);}
 		});
 	console.log(JSON.stringify(location));
@@ -70,6 +79,3 @@ function test(){
     queryResult = orientServer.query('select * from Video');
     console.log(queryResult);
 }
-
-
-

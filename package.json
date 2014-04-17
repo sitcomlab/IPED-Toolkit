@@ -1,0 +1,10 @@
+{
+  "name": "node-webserver",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "author": "dnns",
+  "dependencies": {
+    "express": "^4.0.0"
+  }
+}
