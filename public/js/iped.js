@@ -1,81 +1,109 @@
-
 /***********************
-  Initialize JQuery UI
+ Initialize JQuery UI
  ***********************/
 
 $("button").button();
 
-
-
-
 /********************
- 	Global Variables
+ 1. Global Variables
  *******************/
 
-
-
-
+var currentId;
 
 /********************
- 	Functions
+ 2. Event Handler
  *******************/
 
-$(document).ready(function(){
-	console.log("action; " + i);
-	for (var i = 1; i < 10; i++){
-    	$("#buttons").append('<a href="#" class="ui-btn">Test' + i + '</a>');
-    }
+$(document).ready(function() {
+	loadButtons(1);
+	setCurrentId(1);
 });
 
-$("#middle").click(function(){
-	console.log('Button clicked: middle');
-	var target = 'middle';
-	//loadVideo(target);
-	test();
-});
+/********************
+ 3. Functions
+ *******************/
 
-$("#left").click(function(){
-	console.log('Button clicked: left');
-	var target = 'left';
-	loadVideo(target);	
-});
+//Loads the buttons for the current video
 
-$("#right").click(function(){
-	console.log('Button clicked: right');
-	var target = 'left';
-	loadVideo(target);	
-});
+function loadButtons(videoId) {
+	var id = videoId;
+	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes/' + id + '/relations';
 
-function loadVideo(route_url){
-	var new_location = getVideoLocation(route_url);
 	
-	$("#video").replaceWith('<video id="video" controls="true">' + 
-							'<source id ="video_source" src="' + new_location + '" type="video/mp4">' + 
-							'</video>');
-							
+//Ajax request for loading the video information
+	var json = (function() {
+		var json = null;
+		$.ajax({
+			'async' : false,
+			'url' : url,
+			'dataType' : 'json',
+			'beforeSend' : function(request) {
+				console.log("Request prepared");
+			},
+			'success' : function(data) {
+				json = data;
+				console.log(data);
+			},
+			'error' : function(jqXHR, textStatus, errorThrown) {
+				alert('' + errorThrown);
+			}
+		});
+		return json;
+	})();
+
+	//Set the json variable to the array which contains the data
+	json = json.nodes;
+	console.log(json);
+	
+	//Empty the "buttons"-div
+	$("#buttons").empty();
+	
+	//Fill the "buttons"-div with the new buttons
+	for (var i = 0; i < json.length; i++) {
+		$("#buttons").append('<a href="#" class="ui-btn" onclick="setCurrentId(' + json[i].id + '); loadVideo(' + json[i].id + ');">Go to video ' + json[i].id + '</a>');
 	}
 
-function getVideoLocation(url){
-	var hosturl = 'http://giv-sitcomlab.uni-muenster.de/index.php/' + url; 
-	var location;
-	
-	$.ajax({
-			'async': false,
-			'url': hosturl,
-			'dataType': 'json',
-			'beforeSend': function() {console.log("Request wird gesendet...");},
-			'success': function (data) {console.log("Request erfolgreich, URL wurde Ã¼bermittelt..."); location = data;},
-			'error': function(jqXHR, textStatus, errorThrown) {alert('Error ' + errorThrown);}
-		});
-	console.log(JSON.stringify(location));
-	//console.log(JSON.stringify(location.results[0].data));	
-	console.log("Ajax-Befehl abgeschlossen");	
-	return location;	
 }
 
-function test(){
-	var orientServer = new ODatabase('http://giv-sitcomlab.uni-muenster.de:2424/IPED-TEST');
-    databaseInfo = orientServer.open();
-    queryResult = orientServer.query('select * from Video');
-    console.log(queryResult);
+//Update the id of the current video
+function setCurrentId(new_id) {
+	currentId = new_id;
+	console.log("currentId changed to " + currentId);
 }
+
+//Load a new video
+function loadVideo(id) {
+
+	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes/' + id;
+
+	//Ajax request for loading the required video data
+	var video = (function() {
+		var video = null;
+		$.ajax({
+			'async' : false,
+			'url' : url,
+			'dataType' : 'json',
+			'beforeSend' : function(request) {
+				console.log("Request prepared");
+			},
+			'success' : function(data) {
+				video = data;
+				console.log(data);
+			},
+			'error' : function(jqXHR, textStatus, errorThrown) {
+				alert('' + errorThrown);
+			}
+		});
+		return video;
+	})();
+
+	//Set the video variable to the right position in the node-array
+	video = video.node[0];
+	console.log(video.url);
+	$("#video").replaceWith('<video id="video" controls="true">' + '<source id ="video_source" src="' + video.url + '" type="video/mp4">' + '</video>');
+	
+	//Load the buttons of the new video
+	loadButtons(id);
+
+}
+

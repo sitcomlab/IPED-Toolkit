@@ -51,7 +51,7 @@ app.get('/api/nodes', function(req, res){
         
         var jsonString = JSON.stringify(result.data);
         
-        res.send('{"nodes:"' + jsonString + '}');
+        res.send('{"nodes":' + jsonString + '}');
     });
 });
 
@@ -68,7 +68,7 @@ app.get('/api/nodes/:id', function(req, res){
         
         var jsonString = JSON.stringify(result.data);
         
-        res.send('{"node:"' + jsonString + '}');
+        res.send('{"node":' + jsonString + '}');
     });
 });
 
@@ -85,7 +85,7 @@ app.get('/api/nodes/:id/relations', function(req, res){
         
         var jsonString = JSON.stringify(result.data);
         
-        res.send('{"nodes:"' + jsonString + '}');
+        res.send('{"nodes":' + jsonString + '}');
     });
 });
 
