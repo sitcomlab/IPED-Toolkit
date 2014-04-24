@@ -15,6 +15,7 @@ var currentId;
  *******************/
 
 $(document).ready(function() {
+	loadVideo(1);
 	loadButtons(1);
 	setCurrentId(1);
 });
@@ -24,13 +25,12 @@ $(document).ready(function() {
  *******************/
 
 //Loads the buttons for the current video
-
 function loadButtons(videoId) {
 	var id = videoId;
 	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes/' + id + '/relations';
 
 	
-//Ajax request for loading the video information
+	//Ajax request for loading the video information
 	var json = (function() {
 		var json = null;
 		$.ajax({
@@ -73,9 +73,12 @@ function setCurrentId(new_id) {
 
 //Load a new video
 function loadVideo(id) {
-
+	
+	//Empty video source
+	$("#video").empty();
+	
 	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes/' + id;
-
+	
 	//Ajax request for loading the required video data
 	var video = (function() {
 		var video = null;
@@ -100,10 +103,26 @@ function loadVideo(id) {
 	//Set the video variable to the right position in the node-array
 	video = video.node[0];
 	console.log(video.url);
-	$("#video").replaceWith('<video id="video" controls="true">' + '<source id ="video_source" src="' + video.url + '" type="video/mp4">' + '</video>');
+	
+	//Fill video tag with source
+	$("#video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4">');
 	
 	//Load the buttons of the new video
 	loadButtons(id);
-
+	
+	//Empty video description----------------------------------------------------------------------
+	
+	//$("#title").empty();
+	//$("#description").empty();
+	
+	//Fill video tag with source
+	$("#video-info h4 #title").text(video.id);
+	console.log('gps: ' + video.gps);
+	$("#video-info p #description").html('<table>'+
+			'<tr><td><b>GPS-Coordinates: </b></td><td>' + video.gps + '</td></tr>' +
+			'<tr><td><b>Video-URL: </b></td><td>' + video.url + '</td></tr>' + 
+			'</table>');
+	
 }
+
 
