@@ -60,7 +60,7 @@ function loadButtons(videoId) {
 	
 	//Fill the "buttons"-div with the new buttons
 	for (var i = 0; i < json.length; i++) {
-		$("#buttons").append('<a href="#" class="ui-btn" onclick="setCurrentId(' + json[i].id + '); loadVideo(' + json[i].id + ');">Go to video ' + json[i].id + '</a>');
+		$("#buttons").append('<a href="#" class="ui-btn" onclick="setCurrentId(' + json[i].id + '); loadVideo(' + json[i].id + ');">Navigate to ' + json[i].name + '</a>');
 	}
 
 }
@@ -115,14 +115,39 @@ function loadVideo(id) {
 	//$("#title").empty();
 	//$("#description").empty();
 	
-	//Fill video tag with source
-	$("#video-info h4 #title").text(video.id);
+	//Fill video description with source
+	$("#video-info h4 #title").text(video.name);
 	console.log('gps: ' + video.gps);
-	$("#video-info p #description").html('<table>'+
+	$("#video-info p #description").html(
+		    
+		    '<b>Description: </b><br><br>' + video.description + '<br><br><hr><br>' +
+		    '<table>'+ 
+			'<tr><td><b>Video-ID: </b></td><td>' + video.id + '</td></tr>' +
 			'<tr><td><b>GPS-Coordinates: </b></td><td>' + video.gps + '</td></tr>' +
 			'<tr><td><b>Video-URL: </b></td><td>' + video.url + '</td></tr>' + 
+			'<tr><td><b>Tags: </b></td><td>' + video.tags + '</td></tr>' + 
+			
 			'</table>');
 	
+}
+
+//Open websocket connection
+
+function openWebSocket(){
+	var connection = new WebSocket('ws:giv-sitcomlab.uni-muenster.de:8080', 'soap');
+	
+	connection.onopen = function(){
+		connection.send('Ping');
+		console.log('WebSocket connection online');
+	};
+	
+	connection.onerror = function(error){
+		console.log('Connection to WebSocket failed');
+	};
+	
+	connection.onmessage = function(e){
+		console.log('SERVER: ' + e.data);
+	};
 }
 
 
