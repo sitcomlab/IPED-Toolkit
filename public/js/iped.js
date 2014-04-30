@@ -105,7 +105,7 @@ function loadVideo(id) {
 	console.log(video.url);
 	
 	//Fill video tag with source
-	$("#video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4">');
+	$("#video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4" />');
 	
 	//Load the buttons of the new video
 	loadButtons(id);
@@ -122,7 +122,7 @@ function loadVideo(id) {
 		    
 		    '<b>Description: </b><br><br>' + video.description + '<br><br><hr><br>' +
 		    '<table>'+ 
-			'<tr><td><b>Video-ID: </b></td><td>' + video.id + '</td></tr>' +
+			'<tr><td><b>Video-ID: </b></td><td>' + video._id + '</td></tr>' +
 			'<tr><td><b>GPS-Coordinates: </b></td><td>' + video.gps + '</td></tr>' +
 			'<tr><td><b>Video-URL: </b></td><td>' + video.url + '</td></tr>' + 
 			'<tr><td><b>Tags: </b></td><td>' + video.tags + '</td></tr>' + 
