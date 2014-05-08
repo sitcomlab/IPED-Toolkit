@@ -99,19 +99,13 @@ app.get('/api/nodes/:id/relations', function(req, res){
     });
 });
 
-<<<<<<< HEAD
+
 // 2.4 Get all displays related to one node
 app.get('/api/nodes/:id/displays', function(req, res){
 
     // Database Query
     db.cypherQuery('match (Video {id:' + req.params.id + '})<-[:belongs_to]-(display) return display', function(err, result){
-=======
-// 2.4 GET a list with all nodes and with their current relationships
-app.get('/api/relations', function(req, res){
 
-    // Database Query
-    db.cypherQuery("MATCH (i:Video)-->(n:Video) WHERE i.id=" + req.params.id + "RETURN n", function(err, result){
->>>>>>> FETCH_HEAD
         if(err) throw err;
 
         console.log(result.data); // delivers an array of query results
@@ -119,17 +113,12 @@ app.get('/api/relations', function(req, res){
         
         var jsonString = JSON.stringify(result.data);
         
-<<<<<<< HEAD
         res.send('{"displays":' + jsonString + '}');
-=======
-        res.send('{"nodes":' + jsonString + '}');
->>>>>>> FETCH_HEAD
+
     });
 });
 
 
-<<<<<<< HEAD
-=======
 // 2.5 CREATE a new node
 app.post('/api/new/node', function(req, res){
 
@@ -225,7 +214,7 @@ app.post('/api/new/node/:id/relations', function(req, res){
 });
 
 // 2.9 EDIT relations for one node
->>>>>>> FETCH_HEAD
+
 
 // 2.10 DELETE relations for one node
 
