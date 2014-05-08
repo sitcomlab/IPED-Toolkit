@@ -89,6 +89,23 @@ app.get('/api/nodes/:id/relations', function(req, res){
     });
 });
 
+// 2.4 Get all displays related to one node
+app.get('/api/nodes/:id/displays', function(req, res){
+
+    // Database Query
+    db.cypherQuery('match (Video {id:' + req.params.id + '})<-[:belongs_to]-(display) return display', function(err, result){
+        if(err) throw err;
+
+        console.log(result.data); // delivers an array of query results
+        console.log(result.columns); // delivers an array of names of objects getting returned
+        
+        var jsonString = JSON.stringify(result.data);
+        
+        res.send('{"displays":' + jsonString + '}');
+    });
+});
+
+
 
 
 /****************************

@@ -9,6 +9,10 @@ $("button").button();
  *******************/
 
 var currentId;
+var video_height;
+var video_width;
+var video_outer_height;
+var video_outer_width;
 
 /********************
  2. Event Handler
@@ -18,7 +22,29 @@ $(document).ready(function() {
 	loadVideo(1);
 	loadButtons(1);
 	setCurrentId(1);
+	
 });
+
+displays.addEventListener('click', function(evt) {
+        var mousePos = getMousePos(displays, evt);
+        var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
+        console.log(message);
+      }, false);       
+
+var video = document.getElementById("video");
+
+video.addEventListener("loadedmetadata", function () {
+    //Return video size
+	getVideoSize();
+	
+	//Draw Displays
+	loadDisplays(currentId);
+}, false);      
+
+$(window).resize(function(){
+	loadDisplays(currentId);
+});
+
 
 /********************
  3. Functions
@@ -110,6 +136,8 @@ function loadVideo(id) {
 	//Load the buttons of the new video
 	loadButtons(id);
 	
+	
+	
 	//Empty video description----------------------------------------------------------------------
 	
 	//$("#title").empty();
@@ -128,7 +156,8 @@ function loadVideo(id) {
 			'<tr><td><b>Tags: </b></td><td>' + video.tags + '</td></tr>' + 
 			
 			'</table>');
-	
+			
+	//loadDisplays(id);
 }
 
 //Open websocket connection
@@ -150,4 +179,82 @@ function openWebSocket(){
 	};
 }
 
+function loadDisplays(id){
+	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes/' + id + '/displays';
+	var disp_source;
+	var video = document.getElementById('video');
+	var footage,
+		disp_posx,
+		disp_posy,
+		disp_width,
+		disp_height;
+	
+	var displays_canvas = document.getElementById('displays');
+ 		displays_canvas.width  = video_width;
+        displays_canvas.height = video_height; 
+        displays_canvas.style.height = $("#video").outerHeight() + "px";
+        displays_canvas.style.width = $("#video").outerWidth() + "px";
+        
+	var displays = (function() {
+		var displays = null;
+		$.ajax({
+			'async' : false,
+			'url' : url,
+			'dataType' : 'json',
+			'beforeSend' : function(request) {
+				console.log("Request prepared");
+			},
+			'success' : function(data) {
+				displays = data.displays[0];
+				console.log(data);
+			},
+			'error' : function(jqXHR, textStatus, errorThrown) {
+				alert('' + errorThrown);
+			}
+		});
+		return displays;
+	})();
+	
+	disp_source = displays.url;
+	footage = displays.geometry_footage,
+	disp_posx = footage[0],
+	disp_posy = footage[1],
+	disp_width_factor = footage[2],
+	disp_height_factor = footage[3];
+ 	
+    if(displays_canvas.getContext){
+    	
+      var context = displays_canvas.getContext('2d');
+      var color = "white";
+ 
+      context.fillStyle=color;
+      //context.fillRect(1065, 78, 420/2.8, 150/2.8);
+      img = new Image();
+      img.onload = function(){
+    	context.clearRect(0, 0, context.width, context.height);
+    	context.drawImage(img, disp_posx, disp_posy, img.width/disp_width_factor, img.height/disp_height_factor);
+       };
+      img.src = disp_source;
+    }
+    
+    
+    
+}
 
+function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+          x: evt.clientX - rect.left,
+          y: evt.clientY - rect.top
+        };
+     }   
+     
+function getVideoSize(){
+	var video = document.getElementById("video");
+	video_outer_height = $("#video").outerHeight();
+	video_outer_width = $("#video").outerWidth();
+	video_height = video.videoHeight;
+	video_width = video.videoWidth;
+
+}     
+       

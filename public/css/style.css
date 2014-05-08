@@ -1,3 +1,24 @@
 #video {
 	width: 100%;
+	z-index: 1;
+}
+
+a {
+	padding-bottom: 2px;
+}
+
+#canvas-div {
+	position: absolute;
+	top: 0px;
+	float: left;
+	height: auto;
+	width: 100%;
+	z-index: 2;
+	overflow: hidden;
+}
+
+#displays {
+	z-index: 3;
+  	/*height: 477px;
+	width: 100%;*/
 }

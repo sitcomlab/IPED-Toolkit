@@ -10,8 +10,10 @@
     
   </head>
   <body>
-     <video id="video" controls="true" autoplay="autoplay" loop="loop"></video>
-     
+     <video id="video" autoplay="autoplay" loop="loop"></video>
+     <div id="canvas-div">
+     	<canvas id="displays"></canvas>
+     </div>
      <br>
      <br>
 	 <div id="video-info" data-role="collapsible">
@@ -22,9 +24,9 @@
   	 <br>
   	 <div id="buttons"></div>
   	 
-  	 <div data-role="footer">
-    	<a href="#" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-grid">Login</a>
-    	<span class="ui-title"></span>
+  	 <div data-role="footer" data-position="fixed" data-theme="b" class="ui-bar">
+    <a href="#" class="ui-btn-left ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-grid">Login</a>
+    <span class="ui-title">IPED v1.1</span>
 	</div>
     
       <!-- JQuery -->
