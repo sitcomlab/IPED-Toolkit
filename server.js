@@ -37,7 +37,7 @@ var express = require('express');
 var app = express();
 
 // Loading package "body-parser" for making POST and PUT requests
-var bodyParser = required('body-parser');
+var bodyParser = require('body-parser');
 app.use(bodyParser());
 
 // Public-folder to upload media, like videos
