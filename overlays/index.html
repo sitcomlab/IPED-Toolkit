@@ -1,0 +1,212 @@
+<html>
+	<head>
+		<title>iPED Toolkit 3D Overlays Example</title>
+		<style>
+			* {
+				margin: 0px;
+				padding: 0px;
+			}
+			
+			body {
+				background-color: #ffeeee;
+			}
+			
+			canvas {
+				width: 100%;
+				height: 100%;
+			}
+			
+			#info {
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="info">
+			"W" translate | "E" rotate | "R" scale | "+" increase size | "-" decrease size
+			<br />
+			Press "Q" twice to toggle world/local space || Press "I" to toggle edit mode
+		</div>
+		
+		<video id="video" autoplay loop style="display:none">
+			<source src="sintel.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+			<source src="sintel.ogv" type='video/ogg; codecs="theora, vorbis"'>
+		</video>
+		
+		<script src="three.min.js"></script>
+		<script src="CSS3DRenderer.js"></script>
+		<script src="Detector.js"></script>
+		<script src="TransformControls.js"></script>
+		<script>
+			var camera, gridhelper;
+			var controls = new Array();
+			var scene, cssScene, renderer, cssRenderer;
+			var video, videoTexture;
+			var showUI = true;
+
+			init();
+			animate();
+
+			function init() {
+				cssRenderer = new THREE.CSS3DRenderer({antialias: true, alpha: true});
+				cssRenderer.setSize(window.innerWidth, window.innerHeight);
+				cssRenderer.domElement.style.position = 'absolute';
+				document.body.appendChild(cssRenderer.domElement);
+				
+				if (Detector.webgl) {
+					renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+				} else {
+					renderer = new THREE.CanvasRenderer(); 
+				}
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.domElement.style.position = 'absolute';
+				document.body.appendChild(renderer.domElement);
+				
+				cssScene = new THREE.Scene();
+				scene = new THREE.Scene();
+				gridhelper = new THREE.GridHelper(500, 100);
+				scene.add(gridhelper);
+				
+				camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 3000);
+				camera.position.set(0, 101, 300);
+				camera.lookAt(new THREE.Vector3(0, 101, 0));
+
+				var light = new THREE.AmbientLight(0xffffff);
+				light.position.set(1, 1, 1);
+				scene.add(light);
+
+				/* ########## 3D Objects ########## */
+				// HTML Texture
+				var element = document.createElement('iframe');
+				element.src = 'http://www.n-tv.de';
+				element.style.width = '800px';
+				element.style.height = '600px';
+				element.style.border = '0px';
+
+				var htmlObject = new THREE.CSS3DObject(element);
+				htmlObject.position.x = -100;
+				htmlObject.position.y = 100;
+				htmlObject.position.z = 0;
+				htmlObject.scale.x = 0.25;
+				htmlObject.scale.y = 0.25;
+				cssScene.add(htmlObject);
+				
+				controls[0] = new THREE.TransformControls(camera, renderer.domElement);
+				controls[0].addEventListener('change', render);
+				controls[0].attach(htmlObject);
+				scene.add(controls[0]);
+				
+				
+				// Video Texture
+				video = document.getElementById('video');
+				videoTexture = new THREE.Texture(video);
+				var material   = new THREE.MeshLambertMaterial({
+				  map : videoTexture
+				});
+
+				/*
+				// Static Texture
+				var texture = THREE.ImageUtils.loadTexture('crate.gif', new THREE.UVMapping(), render);
+				texture.anisotropy = renderer.getMaxAnisotropy();
+				var material = new THREE.MeshLambertMaterial({map: texture});
+				*/
+
+				var geometry = new THREE.BoxGeometry(160, 100, 1);
+				var mesh = new THREE.Mesh(geometry, material);
+				mesh.position = new THREE.Vector3(100, 100, 0);
+				scene.add(mesh);
+				
+				controls[1] = new THREE.TransformControls(camera, renderer.domElement);
+				controls[1].addEventListener('change', render);
+				controls[1].attach(mesh);
+				scene.add(controls[1]);
+				/* ########## 3D Objects ########## */
+
+
+				window.addEventListener('resize', onWindowResize, false);
+				window.addEventListener('keydown', function (event) {
+		            console.log(event.which);
+		            switch (event.keyCode) {
+		              case 81: // Q
+										controls.forEach(function(control){
+											control.setSpace(control.space == "local" ? "world" : "local");
+										});
+		                break;
+		              case 87: // W
+										controls.forEach(function(control){
+											control.setMode("translate");
+										});
+		                break;
+		              case 69: // E
+										controls.forEach(function(control){
+											control.setMode("rotate");
+										});
+		                break;
+		              case 82: // R
+										controls.forEach(function(control){
+											control.setMode("scale");
+										});
+		                break;
+									case 187:
+									case 107: // +,=,num+
+										controls.forEach(function(control){
+											control.setSize(control.size + 0.1);
+										});
+										break;
+									case 189:
+									case 10: // -,_,num-
+										controls.forEach(function(control){
+											control.setSize(Math.max(control.size - 0.1, 0.1 ));
+										});
+										break;
+									case 73: //I
+										if(showUI == true) {
+											controls.forEach(function(control){
+												scene.remove(control);
+											});
+											scene.remove(gridhelper);
+											document.getElementById('info').style.visibility = 'hidden';
+											showUI = false;
+										} else {
+											controls.forEach(function(control){
+												scene.add(control);
+											});
+											scene.add(gridhelper);
+											document.getElementById('info').style.visibility = 'visible';
+											showUI = true;
+										}
+										render();
+										break;
+		            }            
+					});
+			}
+
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				cssRenderer.setSize(window.innerWidth, window.innerHeight);
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				render();
+			}
+			
+			function animate() {
+				requestAnimationFrame(animate);
+				render();
+			}
+
+			function render() {
+				if( video.readyState === video.HAVE_ENOUGH_DATA ){
+				  videoTexture.needsUpdate = true;
+				}
+				
+				controls.forEach(function(control){
+					control.update();
+				});
+				cssRenderer.render(cssScene, camera);
+				renderer.render(scene, camera);
+			}
+			
+		</script>
+	</body>
+</html>
