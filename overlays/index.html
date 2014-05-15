@@ -19,9 +19,19 @@
 			#info {
 				float: right;
 			}
+			
+			video#bgvideo {
+				position: fixed; left: -100%; top: 0;
+				min-width: 300%;
+				width: auto; height: auto; z-index: -100;
+			}
 		</style>
 	</head>
 	<body>
+		<video autoplay loop id="bgvideo">
+			<source src="task_01.mp4" type="video/mp4">
+		</video>
+		
 		<div id="info">
 			"W" translate | "E" rotate | "R" scale | "+" increase size | "-" decrease size
 			<br />
@@ -166,6 +176,7 @@
 											});
 											scene.remove(gridhelper);
 											document.getElementById('info').style.visibility = 'hidden';
+											cssRenderer.domElement.style.zIndex = '9999';
 											showUI = false;
 										} else {
 											controls.forEach(function(control){
@@ -173,6 +184,7 @@
 											});
 											scene.add(gridhelper);
 											document.getElementById('info').style.visibility = 'visible';
+											cssRenderer.domElement.style.zIndex = '0';
 											showUI = true;
 										}
 										render();
