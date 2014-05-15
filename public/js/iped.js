@@ -3,9 +3,11 @@
 /********************
  1. Global Variables
  *******************/
+
+
 // Choose suitable one
 var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de"; // Production environment
-var SERVER_URL = "http://localhost"; // Developer environment
+// var SERVER_URL = "http://localhost"; // Developer environment
 
 var currentId;
 var video_height;
@@ -34,9 +36,11 @@ socket.on('command', function(data) {
  2. Event Handler
  *******************/
 $(document).ready(function() {
-	loadVideo(1);
-	setCurrentId(1);
+	 
+		loadVideo(1);
+		setCurrentId(1);
 });
+
 
 var video = $('#iPED-Video')[0];
 video.addEventListener("loadedmetadata", function() {
@@ -119,8 +123,9 @@ function loadDisplays(id) {
 	})();
 
 	if (displays == null || displays == "undefined") {
-		console.log("No Displays available")
+		console.log("No Displays available");
 	} else {
+		console.log("Display(s) available");
 		// Morin: TODO
 	}
 }
