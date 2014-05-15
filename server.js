@@ -1,7 +1,5 @@
 /********************************************************************************************
  Node.js Webserver
- Morins Testzeile
-
  ********************************************************************************************
  Table of content
 
@@ -20,23 +18,28 @@
 
  *********************************************************************************************/
 
+var os = require('os');
+var neo4j = require('node-neo4j');
+var express = require('express');
+var util = require('util');
+var socketio = require('socket.io');
+var bodyParser = require('body-parser');
+
+
 /****************************
  1. Server-Settings
  ****************************/
 
 // Connection to the Neo4j-Database
-var neo4j = require('node-neo4j');
-db = new neo4j('http://localhost:7474');
+db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 
 // Loading package "Express" for creating a webserver
-var express = require('express');
 var app = express();
 var server = app.listen(8080);
-console.log("App listens on http://localhost:8080");
+console.log("App listens on " + os.hostname() + ":" + server.address().port );
 
 // Socket.io packages
-var io = require('socket.io').listen(server);
-
+var io = socketio.listen(server);
 io.sockets.on('connection', function(socket) {
 	io.sockets.emit('news', {
 		Info : 'New Connection'
@@ -52,7 +55,6 @@ io.sockets.on('connection', function(socket) {
 });
 
 // Loading package "body-parser" for making POST and PUT requests
-var bodyParser = require('body-parser');
 app.use(bodyParser());
 
 // Public-folder to upload media, like videos
@@ -60,6 +62,7 @@ app.set("view options", {
 	layout : false
 });
 app.use(express.static(__dirname + '/public'));
+
 
 /****************************
  2. API
@@ -190,9 +193,7 @@ app.put('/api/nodes/:id', function(req, res) {
 });
 
 // 2.7 DELETE a node
-app.
-delete ('/api/nodes/:id',
-function(req, res) {
+app.delete('/api/nodes/:id', function(req, res) {
 
 	// Database Query
 	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
