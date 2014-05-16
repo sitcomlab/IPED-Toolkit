@@ -36,6 +36,9 @@ socket.on('command', function(data) {
 $(document).ready(function() {
 	loadVideo(1);
 	setCurrentId(1);
+	
+	// Load Overlay Plugin
+	new Overlay($('#iPED-Overlay'));
 });
 
 var video = $('#iPED-Video')[0];
@@ -44,11 +47,11 @@ video.addEventListener("loadedmetadata", function() {
 	getVideoSize();
 
 	//Draw Displays
-	loadDisplays(currentId);
+	//loadDisplays(currentId);
 }, false);
 
 $(window).resize(function() {
-	loadDisplays(currentId);
+	//loadDisplays(currentId);
 });
 
 //Update the id of the current video
@@ -93,36 +96,8 @@ function loadVideo(id) {
 	//Fill video tag with source
 	$("#iPED-Video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4" />');
 
-	loadDisplays(id);
-}
-
-function loadDisplays(id) {
-	var url = SERVER_URL+':8080/api/nodes/' + id + '/displays';
-	var displays = (function() {
-		var displays = null;
-		$.ajax({
-			'async' : false,
-			'url' : url,
-			'dataType' : 'json',
-			'beforeSend' : function(request) {
-				console.log("Request prepared");
-			},
-			'success' : function(data) {
-				displays = data.displays[0];
-				console.log(data);
-			},
-			'error' : function(jqXHR, textStatus, errorThrown) {
-				alert('' + errorThrown);
-			}
-		});
-		return displays;
-	})();
-
-	if (displays == null || displays == "undefined") {
-		console.log("No Displays available")
-	} else {
-		// Morin: TODO
-	}
+	// Required for JQuery AOP's method "after"
+	return id;
 }
 
 function getMousePos(canvas, evt) {
