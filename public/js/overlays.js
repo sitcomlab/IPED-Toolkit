@@ -91,9 +91,10 @@ Overlay.prototype.initHooks = function(){
 		})();
 
 		if (displays == null || displays == "undefined") {
-			console.log("No Displays available")
+			console.log("No Displays available");
 		} else {
 			// Morin: TODO
+			console.log("Displays available");
 		}
 	});
 };
