@@ -36,11 +36,11 @@ socket.on('command', function(data) {
  2. Event Handler
  *******************/
 $(document).ready(function() {
-		loadVideo(1);
-		setCurrentId(1);
-		
-		// Load Overlay Plugin
-		new Overlay($('#iPED-Overlay'));
+	// Load Overlay Plugin
+	new Overlay($('#iPED-Overlay'));
+	
+	loadVideo(1);
+	setCurrentId(1);		
 });
 
 
