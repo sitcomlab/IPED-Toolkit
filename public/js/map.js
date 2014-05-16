@@ -2,7 +2,9 @@ var map = L.map('map').setView([51.962266, 7.621651], 17);
 
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
 	maxZoom : 18,
-	attribution : 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' + 'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	attribution : 	'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' + 
+					'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' + 
+					'Imagery © <a href="http://mapbox.com">Mapbox</a>',
 	id : 'examples.map-i86knfo3'
 }).addTo(map);
 
@@ -48,7 +50,10 @@ function drawNodes() {
 				"<tr><td><b>Video-ID</b>:</td><td>" + video.nodes[i].id + "</td></tr>" +
 				"<tr><td><b>Coordinates</b>:</td><td>" + video.nodes[i].gps[0] +", "+ video.nodes[i].gps[1] + "</td></tr>" +
 				"<tr><td><b>Description</b>:</td><td>" + video.nodes[i].description + "</td></tr>" + 
-				"</table>"
+				"</table>" + 
+				"<span style=\"width:100%; text-align:center;\">" + 
+				"<a href=\"index.html?currentId=" + video.nodes[i].id + "\">Go to this video</a>" +
+				"</span>"
 				
 			).openPopup();
 	}
