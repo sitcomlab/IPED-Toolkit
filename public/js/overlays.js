@@ -95,16 +95,21 @@ Overlay.prototype.initHooks = function(){
 		} else {
 			// Morin: TODO
 			console.log("Displays available");
+			
 		}
 	});
 };
 
 
 Overlay.prototype.init = function(){
+	this.jqueryElement.css('position', 'absolute');
+	this.jqueryElement.css('top', '0px');
+	
 	this.cssRenderer = new THREE.CSS3DRenderer({antialias: true, alpha: true});
 	this.cssRenderer.setSize(window.innerWidth, window.innerHeight);
 	this.cssRenderer.domElement.style.position = 'absolute';
-	document.body.appendChild(this.cssRenderer.domElement);
+	//document.body.appendChild(this.cssRenderer.domElement);
+	this.jqueryElement.append(this.cssRenderer.domElement);
 	
 	if (Detector.webgl) {
 		this.renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
@@ -113,7 +118,8 @@ Overlay.prototype.init = function(){
 	}
 	this.renderer.setSize(window.innerWidth, window.innerHeight);
 	this.renderer.domElement.style.position = 'absolute';
-	document.body.appendChild(this.renderer.domElement);
+	//document.body.appendChild(this.renderer.domElement);
+	this.jqueryElement.append(this.renderer.domElement);
 	
 	this.cssScene = new THREE.Scene();
 	this.scene = new THREE.Scene();
@@ -149,8 +155,12 @@ Overlay.prototype.init = function(){
 	this.controls[0].attach(htmlObject);
 	this.scene.add(this.controls[0]);
 	
-	
+	/*
 	// Video Texture
+	this.jqueryElement.append('\
+		<video id="iPED-Overlay-Video-Texture" autoplay="autoplay" loop="loop" style="display: none;"> \
+			<source src="http://localhost:8080/assets/sintel.mp4" type="video/mp4"> \
+		</video>');
 	this.video = $('#iPED-Overlay-Video-Texture')[0];
 	if (this.video) {
 		this.videoTexture = new THREE.Texture(this.video);
@@ -176,6 +186,7 @@ Overlay.prototype.init = function(){
 	this.controls[1].addEventListener('change', this.render);
 	this.controls[1].attach(mesh);
 	this.scene.add(this.controls[1]);
+	*/
 	// ########## 3D Objects ##########
 
 

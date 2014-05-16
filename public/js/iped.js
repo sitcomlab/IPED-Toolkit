@@ -45,6 +45,7 @@ console.log("activated SocketIO!");
  2. Event Handler
  *******************/
 $(document).ready(function() {
+<<<<<<< HEAD
 	// executes when complete page is fully loaded, including all frames, objects and images
 	
 	// Load Overlay Plugin
@@ -82,6 +83,13 @@ $(document).ready(function() {
 		});
 
 		
+=======
+	// Load Overlay Plugin
+	new Overlay($('#iPED-Overlay'));
+	
+	loadVideo(1);
+	setCurrentId(1);		
+>>>>>>> FETCH_HEAD
 });
 
 
