@@ -3,9 +3,11 @@
 /********************
  1. Global Variables
  *******************/
+
+
 // Choose suitable one
 var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de"; // Production environment
-var SERVER_URL = "http://localhost"; // Developer environment
+// var SERVER_URL = "http://localhost"; // Developer environment
 
 var currentId;
 var video_height;
@@ -34,12 +36,19 @@ socket.on('command', function(data) {
  2. Event Handler
  *******************/
 $(document).ready(function() {
+<<<<<<< HEAD
 	loadVideo(1);
 	setCurrentId(1);
 	
 	// Load Overlay Plugin
 	new Overlay($('#iPED-Overlay'));
+=======
+	 
+		loadVideo(1);
+		setCurrentId(1);
+>>>>>>> 339374a980a7bb073ddffbb0d6ad74ed4c38b978
 });
+
 
 var video = $('#iPED-Video')[0];
 video.addEventListener("loadedmetadata", function() {
@@ -96,8 +105,42 @@ function loadVideo(id) {
 	//Fill video tag with source
 	$("#iPED-Video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4" />');
 
+<<<<<<< HEAD
 	// Required for JQuery AOP's method "after"
 	return id;
+=======
+	loadDisplays(id);
+}
+
+function loadDisplays(id) {
+	var url = SERVER_URL+':8080/api/nodes/' + id + '/displays';
+	var displays = (function() {
+		var displays = null;
+		$.ajax({
+			'async' : false,
+			'url' : url,
+			'dataType' : 'json',
+			'beforeSend' : function(request) {
+				console.log("Request prepared");
+			},
+			'success' : function(data) {
+				displays = data.displays[0];
+				console.log(data);
+			},
+			'error' : function(jqXHR, textStatus, errorThrown) {
+				alert('' + errorThrown);
+			}
+		});
+		return displays;
+	})();
+
+	if (displays == null || displays == "undefined") {
+		console.log("No Displays available");
+	} else {
+		console.log("Display(s) available");
+		// Morin: TODO
+	}
+>>>>>>> 339374a980a7bb073ddffbb0d6ad74ed4c38b978
 }
 
 function getMousePos(canvas, evt) {
