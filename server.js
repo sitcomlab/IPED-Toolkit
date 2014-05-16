@@ -25,7 +25,6 @@ var util = require('util');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 
-
 /****************************
  1. Server-Settings
  ****************************/
@@ -36,7 +35,7 @@ db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 // Loading package "Express" for creating a webserver
 var app = express();
 var server = app.listen(8080);
-console.log("App listens on " + os.hostname() + ":" + server.address().port );
+console.log("App listens on " + os.hostname() + ":" + server.address().port);
 
 // Socket.io packages
 var io = socketio.listen(server);
@@ -63,7 +62,6 @@ app.set("view options", {
 });
 app.use(express.static(__dirname + '/public'));
 
-
 /****************************
  2. API
  ****************************/
@@ -73,8 +71,14 @@ app.get('/api/nodes', function(req, res) {
 
 	// Database Query
 	db.cypherQuery("match (i:Video) return i", function(err, result) {
-		if (err)
-			throw err;
+		if (err) {
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+		}
 
 		console.log(result.data);
 		// delivers an array of query results
@@ -83,7 +87,11 @@ app.get('/api/nodes', function(req, res) {
 
 		var jsonString = JSON.stringify(result.data);
 
-		res.send('{"nodes":' + jsonString + '}');
+		res.writeHead(200, {
+			'Content-Type' : 'application/json'
+		});
+		res.end('{"nodes":' + jsonString + '}');
+		return;
 	});
 });
 
@@ -92,8 +100,16 @@ app.get('/api/nodes/:id', function(req, res) {
 
 	// Database Query
 	db.cypherQuery("match (i:Video) where i.id=" + req.params.id + " return i ", function(err, result) {
-		if (err)
+		if (err) {
+
 			throw err;
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+		}
 
 		console.log(result.data);
 		// delivers an array of query results
@@ -102,7 +118,11 @@ app.get('/api/nodes/:id', function(req, res) {
 
 		var jsonString = JSON.stringify(result.data);
 
-		res.send('{"node":' + jsonString + '}');
+		res.writeHead(200, {
+			'Content-Type' : 'application/json'
+		});
+		res.end('{"node":' + jsonString + '}');
+		return;
 	});
 });
 
@@ -111,8 +131,14 @@ app.get('/api/nodes/:id/relations', function(req, res) {
 
 	// Database Query
 	db.cypherQuery("MATCH (i:Video)-->(n:Video) WHERE i.id=" + req.params.id + "RETURN n", function(err, result) {
-		if (err)
-			throw err;
+		if (err) {
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+		}
 
 		console.log(result.data);
 		// delivers an array of query results
@@ -121,7 +147,12 @@ app.get('/api/nodes/:id/relations', function(req, res) {
 
 		var jsonString = JSON.stringify(result.data);
 
-		res.send('{"nodes":' + jsonString + '}');
+		res.writeHead(200, {
+			'Content-Type' : 'application/json'
+		});
+		res.end('{"nodes":' + jsonString + '}');
+		return;
+
 	});
 });
 
@@ -131,8 +162,15 @@ app.get('/api/nodes/:id/displays', function(req, res) {
 	// Database Query
 	db.cypherQuery('match (Video {id:' + req.params.id + '})<-[:belongs_to]-(display) return display', function(err, result) {
 
-		if (err)
-			throw err;
+		if (err) {
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+
+		}
 
 		console.log(result.data);
 		// delivers an array of query results
@@ -141,7 +179,11 @@ app.get('/api/nodes/:id/displays', function(req, res) {
 
 		var jsonString = JSON.stringify(result.data);
 
-		res.send('{"displays":' + jsonString + '}');
+		res.writeHead(200, {
+			'Content-Type' : 'application/json'
+		});
+		res.end('{"displays":' + jsonString + '}');
+		return;
 
 	});
 });
@@ -150,11 +192,15 @@ app.get('/api/nodes/:id/displays', function(req, res) {
 app.post('/api/new/node', function(req, res) {
 
 	// Database Query
-	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
+	db.cypherQuery("create (v:Video {id: " + req.body.newvideo.id + ", name:" + req.body.newvideo.name + "description:\"" + req.body.newvideo.description + ", gps: \"[" + req.body.newvideo.gps + "]\", url: \"media/video/" + req.body.newvideo.dataname + "\"," + "tags:\"[" + req.body.newvideo.dataname + "\"]\"})", function(err, result) {
 		if (err) {
-			throw err;
-			res.statusCode = 500;
-			return res.send('Error 500: Node not added!');
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+
 		} else {
 			console.log(result.data);
 			// delivers an array of query results
@@ -163,8 +209,11 @@ app.post('/api/new/node', function(req, res) {
 
 			var jsonString = JSON.stringify(result.data);
 
-			res.statusCode = 200;
-			return res.send('Node added!');
+			res.writeHead(200, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end('Node added!');
+			return;
 		}
 	});
 });
@@ -175,9 +224,13 @@ app.put('/api/nodes/:id', function(req, res) {
 	// Database Query
 	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
 		if (err) {
-			throw err;
-			res.statusCode = 500;
-			return res.send('Error 500: Node not edited!');
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+
 		} else {
 			console.log(result.data);
 			// delivers an array of query results
@@ -186,21 +239,29 @@ app.put('/api/nodes/:id', function(req, res) {
 
 			var jsonString = JSON.stringify(result.data);
 
-			res.statusCode = 200;
-			return res.send('Node edited!');
+			res.writeHead(200, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end('Node edited!');
+			return;
 		}
 	});
 });
 
 // 2.7 DELETE a node
-app.delete('/api/nodes/:id', function(req, res) {
+app.delete ('/api/nodes/:id',
+function(req, res) {
 
 	// Database Query
 	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
 		if (err) {
-			throw err;
-			res.statusCode = 500;
-			return res.send('Error 500: Node not deleted!');
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+
 		} else {
 			console.log(result.data);
 			// delivers an array of query results
@@ -209,8 +270,11 @@ app.delete('/api/nodes/:id', function(req, res) {
 
 			var jsonString = JSON.stringify(result.data);
 
-			res.statusCode = 200;
-			return res.send('Node deleted!');
+			res.writeHead(200, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end('Node deleted!');
+			return;
 		}
 	});
 });
@@ -223,9 +287,13 @@ app.post('/api/new/node/:id/relations', function(req, res) {
 		// Database Query
 		db.cypherQuery("match (v:Video) where v.id=" + req.params.id + " match (q:Video) where q.id = " + req.body.newrelations.ids[i] + " create (v)-[:related]->(q) create (q)-[:related]->(v))", function(err, result) {
 			if (err) {
-				throw err;
-				res.statusCode = 500;
-				return res.send('Error 500: Relationship(s) not added!');
+
+				res.writeHead(500, {
+					'Content-Type' : 'text/plain'
+				});
+				res.end("Error:" + err);
+				return;
+
 			} else {
 				console.log(result.data);
 				// delivers an array of query results
@@ -234,8 +302,11 @@ app.post('/api/new/node/:id/relations', function(req, res) {
 
 				var jsonString = JSON.stringify(result.data);
 
-				res.statusCode = 200;
-				return res.send('Relationship(s) added!');
+				res.writeHead(200, {
+					'Content-Type' : 'text/plain'
+				});
+				res.end('Relationship(s) added!');
+				return;
 			}
 		});
 	}
