@@ -160,7 +160,7 @@ app.get('/api/nodes/:id/relations', function(req, res) {
 app.get('/api/nodes/:id/displays', function(req, res) {
 
 	// Database Query
-	db.cypherQuery('match (Video {id:' + req.params.id + '})<-[:belongs_to]-(display) return display', function(err, result) {
+	db.cypherQuery('match (Video {id:' + req.params.id + '})<-[:located_at]-(display) return display', function(err, result) {
 
 		if (err) {
 

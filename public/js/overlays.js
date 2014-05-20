@@ -32,27 +32,6 @@ THREE.CSS3DObject=function(e){THREE.Object3D.call(this),this.element=e,this.elem
 
 
 // ########## iPED Code #########
-function Overlay(jqueryElement){
-	this.jqueryElement = jqueryElement;
-	this.camera = '';
-	this.gridhelper = '';
-	this.scene = '';
-	this.cssScene = '';
-	this.renderer = '';
-	this.cssRenderer = '';
-	this.video = '';
-	this.videoTexture = '';
-	this.showUI = true;
-	this.controls = new Array();
-	
-	this.animateDelegate = window.animate.bind(this);
-	this.onKeyDownDelegate = window.onKeyDown.bind(this);
-	
-	this.initHooks();
-	this.init();
-	this.animateDelegate();
-}
-
 Overlay.prototype.jqueryElement = '';
 Overlay.prototype.camera = '';
 Overlay.prototype.gridhelper = '';
@@ -66,49 +45,44 @@ Overlay.prototype.showUI = '';
 Overlay.prototype.controls = '';
 Overlay.prototype.animateDelegate = '';
 Overlay.prototype.onKeyDownDelegate = '';
+Overlay.prototype.createOverlaysDelegate = '';
+Overlay.prototype.onWindowResizeDelegate = '';
 
-Overlay.prototype.initHooks = function(){
-	$.aop.after({target: window, method: 'loadVideo'}, function(id){
-		var url = SERVER_URL+':8080/api/nodes/' + id + '/displays';
-		var displays = (function() {
-			var displays = null;
-			$.ajax({
-				'async' : false,
-				'url' : url,
-				'dataType' : 'json',
-				'beforeSend' : function(request) {
-					console.log("Request prepared");
-				},
-				'success' : function(data) {
-					displays = data.displays[0];
-					console.log(data);
-				},
-				'error' : function(jqXHR, textStatus, errorThrown) {
-					alert('' + errorThrown);
-				}
-			});
-			return displays;
-		})();
+function Overlay(jqueryElement) {
+	this.jqueryElement = jqueryElement;
+	this.camera = '';
+	this.gridhelper = '';
+	this.scene = '';
+	this.cssScene = '';
+	this.renderer = '';
+	this.cssRenderer = '';
+	this.videos = new Array();
+	this.videoTextures = new Array();
+	this.showUI = true;
+	this.controls = new Array();
+	
+	this.animateDelegate = window.animate.bind(this);
+	this.onKeyDownDelegate = window.onKeyDown.bind(this);
+	this.createOverlaysDelegate = this.createOverlays.bind(this);
+	this.onWindowResizeDelegate = this.onWindowResize.bind(this);
+	
+	this.initHooks();
+	this.init();
+	this.animateDelegate();
+}
 
-		if (displays == null || displays == "undefined") {
-			console.log("No Displays available");
-		} else {
-			// Morin: TODO
-			console.log("Displays available");
-			
-		}
-	});
+Overlay.prototype.initHooks = function() {
+	$.aop.after({target: window, method: 'loadVideo'}, this.createOverlaysDelegate);
 };
 
 
-Overlay.prototype.init = function(){
+Overlay.prototype.init = function() {
 	this.jqueryElement.css('position', 'absolute');
 	this.jqueryElement.css('top', '0px');
 	
 	this.cssRenderer = new THREE.CSS3DRenderer({antialias: true, alpha: true});
 	this.cssRenderer.setSize(window.innerWidth, window.innerHeight);
 	this.cssRenderer.domElement.style.position = 'absolute';
-	//document.body.appendChild(this.cssRenderer.domElement);
 	this.jqueryElement.append(this.cssRenderer.domElement);
 	
 	if (Detector.webgl) {
@@ -118,7 +92,6 @@ Overlay.prototype.init = function(){
 	}
 	this.renderer.setSize(window.innerWidth, window.innerHeight);
 	this.renderer.domElement.style.position = 'absolute';
-	//document.body.appendChild(this.renderer.domElement);
 	this.jqueryElement.append(this.renderer.domElement);
 	
 	this.cssScene = new THREE.Scene();
@@ -134,111 +107,165 @@ Overlay.prototype.init = function(){
 	light.position.set(1, 1, 1);
 	this.scene.add(light);
 
-	// ########## 3D Objects ##########
-	// HTML Texture
-	var element = document.createElement('iframe');
-	element.src = 'http://www.ifgi.de';
-	element.style.width = '800px';
-	element.style.height = '600px';
-	element.style.border = '0px';
-
-	var htmlObject = new THREE.CSS3DObject(element);
-	htmlObject.position.x = -100;
-	htmlObject.position.y = 100;
-	htmlObject.position.z = 0;
-	htmlObject.scale.x = 0.25;
-	htmlObject.scale.y = 0.25;
-	this.cssScene.add(htmlObject);
-	
-	this.controls[0] = new THREE.TransformControls(this.camera, this.renderer.domElement);
-	this.controls[0].addEventListener('change', this.render);
-	this.controls[0].attach(htmlObject);
-	this.scene.add(this.controls[0]);
-	
-	/*
-	// Video Texture
-	this.jqueryElement.append('\
-		<video id="iPED-Overlay-Video-Texture" autoplay="autoplay" loop="loop" style="display: none;"> \
-			<source src="http://localhost:8080/assets/sintel.mp4" type="video/mp4"> \
-		</video>');
-	this.video = $('#iPED-Overlay-Video-Texture')[0];
-	if (this.video) {
-		this.videoTexture = new THREE.Texture(this.video);
-		var material = new THREE.MeshLambertMaterial({
-	 	 map : this.videoTexture
-		});
-		this.video.play(); // Make sure the video plays
-	}
-
-	
-	// Static Texture
-	//var texture = THREE.ImageUtils.loadTexture('crate.gif', new THREE.UVMapping(), render);
-	//texture.anisotropy = this.renderer.getMaxAnisotropy();
-	//var material = new THREE.MeshLambertMaterial({map: texture});
-
-
-	var geometry = new THREE.BoxGeometry(160, 100, 1);
-	var mesh = new THREE.Mesh(geometry, material);
-	mesh.position = new THREE.Vector3(100, 100, 0);
-	this.scene.add(mesh);
-	
-	this.controls[1] = new THREE.TransformControls(this.camera, this.renderer.domElement);
-	this.controls[1].addEventListener('change', this.render);
-	this.controls[1].attach(mesh);
-	this.scene.add(this.controls[1]);
-	*/
-	// ########## 3D Objects ##########
-
-
-	window.addEventListener('resize', this.onWindowResize, false);
+	window.addEventListener('resize', this.onWindowResizeDelegate);
 	window.addEventListener('keydown', this.onKeyDownDelegate);
+};
+
+Overlay.prototype.createOverlays = function(id) {
+	var url = SERVER_URL+':8080/api/nodes/' + id + '/displays';
+	var displays = (function() {
+		var displays = null;
+		$.ajax({
+			'async' : false,
+			'url' : url,
+			'dataType' : 'json',
+			'beforeSend' : function(request) {
+				console.log("Request prepared");
+			},
+			'success' : function(data) {
+				displays = data.displays;
+				console.log(data);
+			},
+			'error' : function(jqXHR, textStatus, errorThrown) {
+				alert('' + errorThrown);
+			}
+		});
+		return displays;
+	})();
+
+	if (displays == null || displays == "undefined") {
+		console.log("There are no overlays at this location.");
+	} else {
+		console.log("There are " + displays.length + " displays at this location.");
+		displays.forEach(function(display) {
+			var object;
+			
+			switch(display.type) {
+				case 'html':
+					var element = document.createElement('iframe');
+					element.src = display.url;
+					element.style.width = display.w;
+					element.style.height = display.h;
+					element.style.border = '0px';
+
+					object = new THREE.CSS3DObject(element);
+					this.cssScene.add(object);
+					break;
+
+					
+				case 'video':
+					var n = this.videos.push(document.createElement('video')) - 1;
+					this.jqueryElement[0].appendChild(this.videos[n]);
+					
+					var mp4Source = document.createElement('source');
+					mp4Source.src = display.url + '.mp4';
+					mp4Source.type = 'video/mp4';
+					this.videos[n].appendChild(mp4Source);
+
+					var ogvSource = document.createElement('source');
+					ogvSource.src = display.url + '.ogv';
+					ogvSource.type = 'video/ogv';
+					this.videos[n].appendChild(ogvSource);
+					
+					this.videos[n].autoplay = 'autoplay';
+					this.videos[n].loop = 'loop';
+					this.videos[n].style.display = 'none';
+
+					if (this.videos[n]) {
+						var m = this.videoTextures.push(new THREE.Texture(this.videos[n])) - 1;
+						var material = new THREE.MeshLambertMaterial({
+					 	 map : this.videoTextures[m]
+						});
+						this.videos[n].play(); // Make sure the video plays
+					}
+					
+					var geometry = new THREE.BoxGeometry(display.w, display.h, display.d);
+					object = new THREE.Mesh(geometry, material);
+					this.scene.add(object);
+					break;
+	
+					
+				case 'image':
+					var texture = THREE.ImageUtils.loadTexture(display.url, new THREE.UVMapping(), render);
+					texture.anisotropy = this.renderer.getMaxAnisotropy();
+					var material = new THREE.MeshLambertMaterial({map: texture});
+
+					var geometry = new THREE.BoxGeometry(display.w, display.h, display.d);
+					object = new THREE.Mesh(geometry, material);
+					this.scene.add(object);
+					break;
+		
+					
+				default:
+					var material = new THREE.MeshBasicMaterial({color: 0xff0000, side: THREE.DoubleSide});
+					var geometry = new THREE.BoxGeometry(display.w, display.h, display.d);
+					object = new THREE.Mesh(geometry, material);
+					this.scene.add(object);
+					break;
+			}
+			
+			object.position.x = display.x;
+			object.position.y = display.y;
+			object.position.z = display.z;
+			object.rotation.x = display.rx;
+			object.rotation.y = display.ry;
+			object.rotation.z = display.rz;
+			object.scale.x = 0.25; //FIXME: This is a magic number without meaning
+			object.scale.y = 0.25; //FIXME: This is a magic number without meaning
+			
+			var n = this.controls.push(new THREE.TransformControls(this.camera, this.renderer.domElement)) - 1;
+			this.controls[n].addEventListener('change', this.render);
+			this.controls[n].attach(object);
+			this.scene.add(this.controls[n]);
+		}, this);
+	}
 };
 
 function onKeyDown(event) {
   //console.log(event.which);
   switch (event.keyCode) {
     case 81: // Q
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setSpace(control.space == "local" ? "world" : "local");
 			}, this);
       break;
     case 87: // W
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setMode("translate");
 			}, this);
       break;
     case 69: // E
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setMode("rotate");
 			}, this);
       break;
     case 82: // R
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setMode("scale");
 			}, this);
       break;
 		case 187:
 		case 107: // +,=,num+
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setSize(control.size + 0.1);
 			}, this);
 			break;
 		case 189:
 		case 10: // -,_,num-
-			this.controls.forEach(function(control){
+			this.controls.forEach(function(control) {
 				control.setSize(Math.max(control.size - 0.1, 0.1 ));
 			}, this);
 			break;
 		case 73: //I
-			if(this.showUI == true) {
-				this.controls.forEach(function(control){
+			if (this.showUI == true) {
+				this.controls.forEach(function(control) {
 					this.scene.remove(control);
 				}, this);
 				this.scene.remove(this.gridhelper);
 				this.cssRenderer.domElement.style.zIndex = '9999';
 				this.showUI = false;
 			} else {
-				this.controls.forEach(function(control){
+				this.controls.forEach(function(control) {
 					this.scene.add(control);
 				}, this);
 				this.scene.add(this.gridhelper);
@@ -250,7 +277,7 @@ function onKeyDown(event) {
   }
 }
 
-Overlay.prototype.onWindowResize = function(){
+Overlay.prototype.onWindowResize = function() {
 	if (this.camera) {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
 		this.camera.updateProjectionMatrix();
@@ -262,7 +289,10 @@ Overlay.prototype.onWindowResize = function(){
 	if (this.renderer) {
 		this.renderer.setSize(window.innerWidth, window.innerHeight);	
 	}
-	this.render();
+	
+	if (this.render) {
+		this.render();
+	}
 };
 
 function animate(){
@@ -270,13 +300,19 @@ function animate(){
 	this.render();
 }
 
-Overlay.prototype.render = function(){
-	if(this.video && this.video.readyState === video.HAVE_ENOUGH_DATA){
-	  this.videoTexture.needsUpdate = true;
+Overlay.prototype.render = function() {
+	if (this.videos) {
+		var i = 0;
+		this.videos.forEach(function(video) {
+			if (video && video.readyState === video.HAVE_ENOUGH_DATA){
+			  this.videoTextures[i].needsUpdate = true;
+			}
+			i++;
+		}, this);
 	}
 	
 	if (this.controls) {
-		this.controls.forEach(function(control){
+		this.controls.forEach(function(control) {
 			control.update();
 		});
 	}
