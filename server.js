@@ -17,6 +17,7 @@
  2.10 DELETE relations for one node
 
  *********************************************************************************************/
+'use strict';
 
 var os = require('os');
 var fs = require('fs');
@@ -26,9 +27,10 @@ var util = require('util');
 var neo4j = require('node-neo4j');
 var express = require('express');
 var stylus = require('stylus');
-//var socketio = require('socket.io');
+var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
+var browserify = require('browserify-middleware');
 
 
 /****************************
@@ -36,7 +38,7 @@ var nib = require('nib');
  ****************************/
 
 // Connection to the Neo4j-Database
-db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
+var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
@@ -60,23 +62,11 @@ httpServer.listen(8080, function(err) {
     return console.log('Encountered error starting server: ', err);
   }
 });
+console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
-var browserify = require('browserify-middleware');
-// convert stylus stylesheets
-app.use(stylus.middleware({
-  src: __dirname + '/webRTC',
-  compile: function(str, sourcePath) {
-    return stylus(str)
-      .set('filename', sourcePath)
-      .set('compress', false)
-      .use(nib());
-  }
-}));
-console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
-/*
 // Socket.io packages
 var io = socketio.listen(httpServer);
 io.sockets.on('connection', function(socket) {
@@ -92,7 +82,6 @@ io.sockets.on('connection', function(socket) {
 		console.log(data);
 	});
 });
-*/
 
 // Loading package "body-parser" for making POST and PUT requests
 app.use(bodyParser());
@@ -109,6 +98,17 @@ app.use(express.static(__dirname + '/public'));
 /****************************
  2.0 webRTC
  ****************************/
+// convert stylus stylesheets
+app.use('/webRTC', stylus.middleware({
+  src: __dirname + '/webRTC',
+  compile: function(str, sourcePath) {
+    return stylus(str)
+      .set('filename', sourcePath)
+      .set('compress', false)
+      .use(nib());
+  }
+}));
+
 app.get('/webRTC', function(req, res) {
   res.redirect(req.uri.pathname + '/room/main/');
 });
