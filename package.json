@@ -1,14 +1,28 @@
 {
-  "name": "node-webserver",
+  "name": "iPED-Toolkit-Server",
   "version": "0.0.1",
-  "description": "",
+  "description": "This server orchestrates all services required to run the iPED Toolkit",
   "main": "server.js",
-  "author": "dnns",
+  "author": "Münster University, Institute for Geoinformatics, Sitcom Lab",
   "dependencies": {
     "express": "^4.0.0",
 		"neo4j": "1.1.x",
 		"node-neo4j": "2.0.x",
 		"socket.io": "0.9.x",
-		"body-parser": "1.2.x"
+		"body-parser": "1.2.x",
+    "stylus": "^0.43.1",
+    "nib": "~1.0.1",
+    "browserify-middleware": "^2",
+    "rtc-switchboard": "~0.10.1",
+    "rtc-quickconnect": "^1.0.0",
+    "crel": "~1.1.0",
+    "rtc-media": "^1.6.0",
+    "cog": "~0.5.1",
+    "fdom": "^0.8.0",
+    "rtc-captureconfig": "~0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TobiTobsen92/IPED-Development.git"
   }
 }

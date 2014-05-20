@@ -19,11 +19,17 @@
  *********************************************************************************************/
 
 var os = require('os');
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
+
 var neo4j = require('node-neo4j');
 var express = require('express');
-var util = require('util');
-var socketio = require('socket.io');
+var stylus = require('stylus');
+//var socketio = require('socket.io');
 var bodyParser = require('body-parser');
+var nib = require('nib');
+
 
 /****************************
  1. Server-Settings
@@ -33,12 +39,46 @@ var bodyParser = require('body-parser');
 db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 
 // Loading package "Express" for creating a webserver
-var app = express();
-var server = app.listen(8080);
-console.log("App listens on " + os.hostname() + ":" + server.address().port);
+// Morin: webRTC's screen sharing requires a SSL connection
+// Morin: The default password for the server.key file is: morin
+var options = {
+  key: fs.readFileSync('server.key'),
+  cert: fs.readFileSync('server.crt')
+};
 
+var app = express();
+console.log('Morin says: "The PEM passphrase is: morin"');
+var httpsServer = require('https').Server(options, app);
+httpsServer.listen(8443, function(err) {
+  if (err) {
+    return console.log('Encountered error starting server: ', err);
+  }
+});
+var httpServer = require('http').Server(app);
+httpServer.listen(8080, function(err) {
+  if (err) {
+    return console.log('Encountered error starting server: ', err);
+  }
+});
+
+// create the webRTC switchboard
+var switchboard = require('rtc-switchboard')(httpsServer);
+var browserify = require('browserify-middleware');
+// convert stylus stylesheets
+app.use(stylus.middleware({
+  src: __dirname + '/webRTC',
+  compile: function(str, sourcePath) {
+    return stylus(str)
+      .set('filename', sourcePath)
+      .set('compress', false)
+      .use(nib());
+  }
+}));
+console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
+
+/*
 // Socket.io packages
-var io = socketio.listen(server);
+var io = socketio.listen(httpServer);
 io.sockets.on('connection', function(socket) {
 	io.sockets.emit('news', {
 		Info : 'New Connection'
@@ -52,6 +92,7 @@ io.sockets.on('connection', function(socket) {
 		console.log(data);
 	});
 });
+*/
 
 // Loading package "body-parser" for making POST and PUT requests
 app.use(bodyParser());
@@ -60,7 +101,29 @@ app.use(bodyParser());
 app.set("view options", {
 	layout : false
 });
+
+// Serve static content
 app.use(express.static(__dirname + '/public'));
+
+
+/****************************
+ 2.0 webRTC
+ ****************************/
+app.get('/webRTC', function(req, res) {
+  res.redirect(req.uri.pathname + '/room/main/');
+});
+
+// serve the rest statically
+app.use('/webRTC', browserify('./webRTC', {debug: false}));
+app.use('/webRTC', express.static(__dirname + '/webRTC'));
+
+// we need to expose the primus library
+app.get('/webRTC/rtc.io/primus.js', switchboard.library());
+app.get('/webRTC/room/:roomname', function(req, res, next) {
+  res.writeHead(200);
+  fs.createReadStream(path.resolve(__dirname, 'webRTC', 'index.html')).pipe(res);
+});
+
 
 /****************************
  2. API
@@ -249,8 +312,7 @@ app.put('/api/nodes/:id', function(req, res) {
 });
 
 // 2.7 DELETE a node
-app.delete ('/api/nodes/:id',
-function(req, res) {
+app.delete ('/api/nodes/:id', function(req, res) {
 
 	// Database Query
 	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
