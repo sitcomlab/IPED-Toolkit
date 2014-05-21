@@ -7,13 +7,14 @@ $("button").button();
 /********************
  1. Global Variables
  *******************/
+var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de";
 var PORT = ":8080/";
 var currentId;
 var video_height;
 var video_width;
 var video_outer_height;
 var video_outer_width;
-var socket = io.connect('http://giv-sitcomlab.uni-muenster.de' + PORT);
+var socket = io.connect(SERVER_URL + PORT);
 socket.on('news', function(data) {
 	console.log(data);
 	socket.emit('message', {
@@ -41,7 +42,7 @@ var video = document.getElementById("video");
 //Loads the buttons for the current video
 function loadButtons(videoId) {
 	var id = videoId;
-	var url = 'http://giv-sitcomlab.uni-muenster.de' + PORT + 'api/nodes/' + id + '/relations';
+	var url = SERVER_URL + PORT + 'api/locations/' + id + '/relations';
 
 	//Ajax request for loading the video information
 	var json = (function() {
@@ -101,7 +102,7 @@ function loadVideoCommand(id) {
 
 //Load Video Description
 function loadDescription(id) {
-	var url = 'http://giv-sitcomlab.uni-muenster.de' + PORT + 'api/nodes/' + id;
+	var url = SERVER_URL + PORT + 'api/locations/' + id;
 
 	//Ajax request for loading the required video data
 	var video = (function() {

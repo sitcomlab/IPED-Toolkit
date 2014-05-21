@@ -1,3 +1,4 @@
+var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de";
 var PORT = ':8080/';
 var map = L.map('map').setView([51.962266, 7.621651], 17);
 
@@ -10,13 +11,13 @@ L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 $(document).ready(function(){
-	drawNodes();
+	drawMarkers();
 });
 
 
-function drawNodes() {
+function drawMarkers() {
 	
-	var url = 'http://giv-sitcomlab.uni-muenster.de' + PORT + 'api/nodes';
+	var url = SERVER_URL + PORT + 'api/locations';
 
 	//Ajax request for loading the required video data
 	var video = (function() {
@@ -43,17 +44,17 @@ function drawNodes() {
 	
 	
 	// set markers
-	for (var i = 0; i < video.nodes.length; i++) {
+	for (var i = 0; i < video.locations.length; i++) {
 		
-		L.marker([video.nodes[i].gps[0], video.nodes[i].gps[1]]).addTo(map).bindPopup(
+		L.marker([video.locations[i].lat, video.locations[i].lon]).addTo(map).bindPopup(
 				"<table class=popup>" +
-				"<tr><td><b>Name</b>:</td><td>" + video.nodes[i].name + "</td></tr>" +
-				"<tr><td><b>Video-ID</b>:</td><td>" + video.nodes[i].id + "</td></tr>" +
-				"<tr><td><b>Coordinates</b>:</td><td>" + video.nodes[i].gps[0] +", "+ video.nodes[i].gps[1] + "</td></tr>" +
-				"<tr><td><b>Description</b>:</td><td>" + video.nodes[i].description + "</td></tr>" + 
+				"<tr><td><b>Name</b>:</td><td>" + video.locations[i].name + "</td></tr>" +
+				"<tr><td><b>Video-ID</b>:</td><td>" + video.locations[i].id + "</td></tr>" +
+				"<tr><td><b>Coordinates</b>:</td><td>" + video.locations[i].lat +", "+ video.locations[i].lon + "</td></tr>" +
+				"<tr><td><b>Description</b>:</td><td>" + video.locations[i].description + "</td></tr>" + 
 				"</table>" + 
 				"<span style=\"width:100%; text-align:center;\">" + 
-				"<a href=\"index.html?currentId=" + video.nodes[i].id + "\">Go to this video</a>" +
+				"<a href=\"index.html?currentId=" + video.locations[i].id + "\">Go to this video</a>" +
 				"</span>"
 				
 			).openPopup();
