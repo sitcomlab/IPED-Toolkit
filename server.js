@@ -93,6 +93,7 @@ io.sockets.on('connection', function(socket) {
 /****************************
  2.0 webRTC
  ****************************/
+
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
 
@@ -126,8 +127,7 @@ app.get('/js/webRTC.js', function(req, res, next) {
 
 // Serve static content
 app.use(express.static(__dirname + '/public'));
-console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
-
+//console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
 /****************************
  2. API
@@ -192,7 +192,7 @@ app.get('/api/locations/:id', function(req, res) {
 		res.writeHead(200, {
 			'Content-Type' : 'application/json'
 		});
-		res.end('{"node":' + jsonString + '}');
+		res.end('{"location":' + jsonString + '}');
 		return;
 	});
 });
@@ -221,7 +221,7 @@ app.get('/api/locations/:id/relations', function(req, res) {
 		res.writeHead(200, {
 			'Content-Type' : 'application/json'
 		});
-		res.end('{"nodes":' + jsonString + '}');
+		res.end('{"locations":' + jsonString + '}');
 		return;
 
 	});
@@ -286,7 +286,7 @@ app.get('/api/nodes/:id/displays', function(req, res) {
 		res.writeHead(200, {
 			'Content-Type' : 'application/json'
 		});
-		res.end('{"displays":' + jsonString + '}');
+		res.end('{"overlays":' + jsonString + '}');
 		return;
 
 	});
@@ -316,7 +316,7 @@ app.post('/api/new/location', function(req, res) {
 			res.writeHead(200, {
 				'Content-Type' : 'text/plain'
 			});
-			res.end('Node added!');
+			res.end('Location added!');
 			return;
 		}
 	});
