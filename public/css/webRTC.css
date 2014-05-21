@@ -7,3 +7,9 @@ body {
 .local {
   display: none;
 }
+.remote {
+  max-width: 100%;
+}
+.remote video {
+  max-width: 100%;
+}
