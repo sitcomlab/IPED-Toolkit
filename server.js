@@ -40,6 +40,7 @@ var browserify = require('browserify-middleware');
 // Connection to the Neo4j-Database
 var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 
+
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
 // Morin: The default password for the server.key file is: morin
@@ -62,10 +63,21 @@ httpServer.listen(8080, function(err) {
     return console.log('Encountered error starting server: ', err);
   }
 });
+
+// Loading package "body-parser" for making POST and PUT requests
+app.use(bodyParser());
+
+// Public-folder to upload media, like videos
+app.set("view options", {
+	layout : false
+});
+
+// serve the rest statically
+app.use(browserify('./public', {debug: false}));
+// Serve static content
+app.use(express.static(__dirname + '/public'));
 console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
-// create the webRTC switchboard
-var switchboard = require('rtc-switchboard')(httpsServer);
 
 // Socket.io packages
 var io = socketio.listen(httpServer);
@@ -83,24 +95,16 @@ io.sockets.on('connection', function(socket) {
 	});
 });
 
-// Loading package "body-parser" for making POST and PUT requests
-app.use(bodyParser());
-
-// Public-folder to upload media, like videos
-app.set("view options", {
-	layout : false
-});
-
-// Serve static content
-app.use(express.static(__dirname + '/public'));
-
 
 /****************************
  2.0 webRTC
  ****************************/
+// create the webRTC switchboard
+var switchboard = require('rtc-switchboard')(httpsServer);
+
 // convert stylus stylesheets
-app.use('/webRTC', stylus.middleware({
-  src: __dirname + '/webRTC',
+app.use(stylus.middleware({
+  src: __dirname + '/public',
   compile: function(str, sourcePath) {
     return stylus(str)
       .set('filename', sourcePath)
@@ -109,19 +113,11 @@ app.use('/webRTC', stylus.middleware({
   }
 }));
 
-app.get('/webRTC', function(req, res) {
-  res.redirect(req.uri.pathname + '/room/main/');
-});
-
-// serve the rest statically
-app.use('/webRTC', browserify('./webRTC', {debug: false}));
-app.use('/webRTC', express.static(__dirname + '/webRTC'));
-
 // we need to expose the primus library
-app.get('/webRTC/rtc.io/primus.js', switchboard.library());
-app.get('/webRTC/room/:roomname', function(req, res, next) {
+app.get('/rtc.io/primus.js', switchboard.library());
+app.get('/room/:roomname', function(req, res, next) {
   res.writeHead(200);
-  fs.createReadStream(path.resolve(__dirname, 'webRTC', 'index.html')).pipe(res);
+  fs.createReadStream(path.resolve(__dirname, 'public', 'webRTC.html')).pipe(res);
 });
 
 
