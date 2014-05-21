@@ -1,3 +1,4 @@
+var PORT = ':8080/';
 var map = L.map('map').setView([51.962266, 7.621651], 17);
 
 L.tileLayer('https://{s}.tiles.mapbox.com/v3/{id}/{z}/{x}/{y}.png', {
@@ -15,7 +16,7 @@ $(document).ready(function(){
 
 function drawNodes() {
 	
-	var url = 'http://giv-sitcomlab.uni-muenster.de:8080/api/nodes';
+	var url = 'http://giv-sitcomlab.uni-muenster.de' + PORT + 'api/nodes';
 
 	//Ajax request for loading the required video data
 	var video = (function() {

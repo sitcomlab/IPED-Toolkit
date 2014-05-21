@@ -9,7 +9,7 @@
 //var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de";
 // Production environment
 var SERVER_URL = "http://localhost"; // Developer environment
-
+var PORT = ":8080/";
 var currentId;
 var video_height;
 var video_width;
@@ -21,7 +21,7 @@ var video_outer_width;
 // activateWebSockets
 function activateSocketIO() {
 
-	var socket = io.connect(SERVER_URL+':8080/');
+	var socket = io.connect(SERVER_URL + PORT);
 socket.on('news', function(data) {
 	console.log(data);
 	socket.emit('message', {
@@ -131,7 +131,7 @@ function loadVideo(id) {
 	//Empty video source
 	$("#iPED-Video").empty();
 
-	var url = SERVER_URL+':8080/api/nodes/' + id;
+	var url = SERVER_URL + PORT + 'api/locations/' + id + '/videos/';
 
 	//Ajax request for loading the required video data
 	var video = (function() {
@@ -155,7 +155,7 @@ function loadVideo(id) {
 	})();
 
 	//Set the video variable to the right position in the node-array
-	video = video.node[0];
+	video = video.videos[0];
 	console.log(video.url);
 
 	//Fill video tag with source
