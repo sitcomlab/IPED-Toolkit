@@ -30,7 +30,7 @@ var stylus = require('stylus');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
-var browserify = require('browserify-middleware');
+var browserify = require('browserify');
 
 
 /****************************
@@ -71,12 +71,6 @@ app.use(bodyParser());
 app.set("view options", {
 	layout : false
 });
-
-// serve the rest statically
-app.use(browserify('./public', {debug: false}));
-// Serve static content
-app.use(express.static(__dirname + '/public'));
-console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
 
 // Socket.io packages
@@ -119,6 +113,20 @@ app.get('/room/:roomname', function(req, res, next) {
   res.writeHead(200);
   fs.createReadStream(path.resolve(__dirname, 'public', 'webRTC.html')).pipe(res);
 });
+
+// serve the rest statically
+//app.use(browserify('./public', {debug: false}));
+app.get('/js/webRTC.js', function(req, res, next) {
+	res.writeHead(200);
+	var b = browserify();
+	b.add('./public/js/webRTC.js');
+	b.bundle().pipe(res);
+});
+
+
+// Serve static content
+app.use(express.static(__dirname + '/public'));
+console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
 
 /****************************
