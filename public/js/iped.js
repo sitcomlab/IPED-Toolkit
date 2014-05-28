@@ -127,7 +127,7 @@ function setCurrentId(new_id) {
 
 //Load a new video
 function loadVideo(id) {
-	console.log("viedo loading initiated");
+	console.log("video loading initiated");
 	//Empty video source
 	$("#iPED-Video").empty();
 
