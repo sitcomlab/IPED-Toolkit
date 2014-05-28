@@ -66,7 +66,7 @@ function loadButtons(videoId) {
 	})();
 
 	//Set the json variable to the array which contains the data
-	json = json.nodes;
+	json = json.locations;
 	//currentVideo = json;
 	console.log(json);
 
@@ -126,7 +126,7 @@ function loadDescription(id) {
 	})();
 
 	//Set the video variable to the right position in the node-array
-	video = video.node[0];
+	video = video.location[0];
 	console.log(video.url);
 
 	//Empty video description----------------------------------------------------------------------
