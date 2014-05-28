@@ -124,13 +124,14 @@ Overlay.prototype.createOverlays = function(id) {
 				console.log("Request prepared");
 			},
 			'success' : function(data) {
-				displays = data.displays;
+				displays = data.overlays;
 				console.log(data);
 			},
 			'error' : function(jqXHR, textStatus, errorThrown) {
 				alert('' + errorThrown);
 			}
 		});
+		console.log("displays: " + displays);
 		return displays;
 	})();
 
