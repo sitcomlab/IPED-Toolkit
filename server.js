@@ -46,7 +46,8 @@ var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
 // Morin: The default password for the server.key file is: morin
 var options = {
   key: fs.readFileSync('server.key'),
-  cert: fs.readFileSync('server.crt')
+  cert: fs.readFileSync('server.crt'),
+  passphrase: 'morin'
 };
 
 var app = express();
