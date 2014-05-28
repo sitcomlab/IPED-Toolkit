@@ -198,7 +198,7 @@ app.get('/api/locations/:id', function(req, res) {
 	});
 });
 
-// 2.3 GET all nodes next to this location
+// 2.3 GET all locations next to this location
 app.get('/api/locations/:id/relations', function(req, res) {
 
 	// Database Query
@@ -262,7 +262,7 @@ app.get('/api/locations/:id/videos', function(req, res) {
 
 
 // 2.5 GET all displays related to one location
-app.get('/api/nodes/:id/displays', function(req, res) {
+app.get('/api/locations/:id/displays', function(req, res) {
 
 	// Database Query
 	db.cypherQuery('match (Location {id:' + req.params.id + '})<-[:located_at]-(display) return display', function(err, result) {

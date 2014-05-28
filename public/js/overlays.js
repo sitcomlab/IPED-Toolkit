@@ -113,7 +113,7 @@ Overlay.prototype.init = function() {
 };
 
 Overlay.prototype.createOverlays = function(id) {
-	var url = SERVER_URL+ PORT + 'api/locations/' + id + '/overlays';
+	var url = SERVER_URL+ PORT + 'api/locations/' + id + '/displays';
 	var displays = (function() {
 		var displays = null;
 		$.ajax({
@@ -124,13 +124,14 @@ Overlay.prototype.createOverlays = function(id) {
 				console.log("Request prepared");
 			},
 			'success' : function(data) {
-				displays = data.displays;
+				displays = data.overlays;
 				console.log(data);
 			},
 			'error' : function(jqXHR, textStatus, errorThrown) {
 				alert('' + errorThrown);
 			}
 		});
+		console.log("displays: " + displays);
 		return displays;
 	})();
 

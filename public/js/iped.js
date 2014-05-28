@@ -6,9 +6,9 @@
 
 
 // Choose suitable one
-//var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de";
+var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de";
 // Production environment
-var SERVER_URL = "http://localhost"; // Developer environment
+//var SERVER_URL = "http://localhost"; // Developer environment
 var PORT = ":8080/";
 var currentId;
 var video_height;
@@ -127,7 +127,7 @@ function setCurrentId(new_id) {
 
 //Load a new video
 function loadVideo(id) {
-
+	console.log("video loading initiated");
 	//Empty video source
 	$("#iPED-Video").empty();
 
@@ -160,6 +160,7 @@ function loadVideo(id) {
 
 	//Fill video tag with source
 	$("#iPED-Video").append('<source id ="video_source" src="' + video.url + '.mp4" type="video/mp4" />');
+	console.log("video tag filled with source " + video.url);
 	
 	// Required for JQuery AOP's method "after"
 	return id;
