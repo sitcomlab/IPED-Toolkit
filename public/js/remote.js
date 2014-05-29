@@ -130,7 +130,8 @@ function loadDescription(id) {
 	console.log(video.url);
 
 	//Empty video description----------------------------------------------------------------------
-
+	
+	
 	//$("#title").empty();
 	//$("#description").empty();
 
