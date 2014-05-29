@@ -133,7 +133,7 @@ function loadDescription(id) {
 
 	//$("#title").empty();
 	//$("#description").empty();
-	
+
 	//Fill video description with source
 	$("#video-info h4 #title").text(video.name);
 	console.log('gps: ' + video.gps);
