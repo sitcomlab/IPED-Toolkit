@@ -131,6 +131,7 @@ function loadDescription(id) {
 
 	//Empty video description----------------------------------------------------------------------
 
+
 	//$("#title").empty();
 	//$("#description").empty();
 
