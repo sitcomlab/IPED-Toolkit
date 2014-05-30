@@ -51,7 +51,6 @@ var options = {
 };
 
 var app = express();
-console.log('Morin says: "The PEM passphrase is: morin"');
 var httpsServer = require('https').Server(options, app);
 httpsServer.listen(8443, function(err) {
   if (err) {

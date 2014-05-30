@@ -146,8 +146,8 @@ Overlay.prototype.createOverlays = function(id) {
 				case 'html':
 					var element = document.createElement('iframe');
 					element.src = display.url;
-					element.style.width = display.w;
-					element.style.height = display.h;
+					element.style.width = display.w + 'px';
+					element.style.height = display.h + 'px';
 					element.style.border = '0px';
 
 					object = new THREE.CSS3DObject(element);
