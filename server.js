@@ -1,22 +1,57 @@
 /********************************************************************************************
  Node.js Webserver
- ********************************************************************************************
+*********************************************************************************************
  Table of content
 
- 1. Server-Settings
- 2. API
- 2.1 GET all locations
- 2.2 GET general information about one location
- 2.3 GET all nodes next to this location
- 2.4 GET a list with all locations and with their current relationships
- 2.5 CREATE a new location
- 2.6 EDIT a location
- 2.7 DELETE a location
- 2.8 SET one or more relationships for one location
- 2.9 EDIT relations for one location
- 2.10 DELETE relations for one location
+1. Server-Settings
+2. webRTC
+3. API
+	3.1 Locations:
+		3.1.1 GET all locations
+		3.1.2 GET all information about one location
+		3.1.3 POST a new location [x]
+		3.1.4 PUT/EDIT a location [*]
+		3.1.5 DELETE a location [*]
+		3.1.6 Relationships between locations:
+		       3.1.6.1 GET all locations next to this location
+		       3.1.6.2 GET a list with all locations and with their current relationships [*]
+		       3.1.6.3 POST/ADD one or more relationships for one location [*]
+		       3.1.6.4 PUT/EDIT a relationship for one location [*]
+		       3.1.6.5 DELETE a relationship between two locations [*]			
+	3.2 Videos:
+		3.2.1 GET all videos for one location
+		3.2.2 GET all information about one video [*]
+		3.2.3 POST a new video [*]
+		3.2.4 PUT/EDIT a video [*]
+		3.2.5 DELETE a video [*]
+		3.2.6 Relationship between a video and a location:
+		       2.6.1 POST/ADD a relationship for one video [*]
+		       2.6.2 PUT/EDIT a relationship for one video [*]
+		       2.6.3 DELETE a relationship between a video and a location [*]
+	3.3 Overlays:
+		3.3.1. GET all overlays for one location
+		3.3.2. GET all information about one overlay [*]
+		3.3.3. POST a new overlay [*]
+		3.3.4. PUT/EDIT an overlay [*]
+		3.3.5. DELETE an overlay [*]
+	4. Scenarios:
+		4.4.1 GET a list of all scenarios [*]
+		4.4.2 GET meta-data about one scenario [*]
+		4.4.3 GET all information/full graph of one scenario [*]
+		4.4.4 Relationship between a video and a location
+		       4.4.1 POST/ADD a scenario [*]
+		       4.4.2 PUT/EDIT a scenario [*]
+		       4.4.3 DELETE a scenario [*]
+		       4.4.4 POST/SET a starting location for one scenario [*]
+		       4.4.5 EDIT/PUT the starting location for one scenario [*]
 
- *********************************************************************************************/
+
+[*] = not yet implemented 
+[x] = at the moment in progress 
+
+**********************************************************************************************/
+
+
 'use strict';
 
 var os = require('os');
@@ -33,9 +68,9 @@ var nib = require('nib');
 var browserify = require('browserify');
 
 
-/****************************
+/********************************************************
  1. Server-Settings
- ****************************/
+*********************************************************/
 
 // Connection to the Neo4j-Database
 var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
@@ -90,9 +125,9 @@ io.sockets.on('connection', function(socket) {
 });
 
 
-/****************************
- 2.0 webRTC
- ****************************/
+/********************************************************
+ 2. webRTC
+*********************************************************/
 
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
@@ -129,11 +164,18 @@ app.get('/js/webRTC.js', function(req, res, next) {
 app.use(express.static(__dirname + '/public'));
 //console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
-/****************************
- 2. API
- ****************************/
 
-// 2.1 GET all locations
+
+/********************************************************
+ 3. API
+*********************************************************/
+
+
+/****************************
+ 3.1 Locations
+****************************/
+
+// 3.1.1 GET all locations
 app.get('/api/locations', function(req, res) {
 
 	// Database Query
@@ -162,7 +204,7 @@ app.get('/api/locations', function(req, res) {
 	});
 });
 
-// 2.2 GET general information about one location
+// 3.1.2 GET general information about one location
 app.get('/api/locations/:id', function(req, res) {
 	
 	// Query
@@ -197,7 +239,64 @@ app.get('/api/locations/:id', function(req, res) {
 	});
 });
 
-// 2.3 GET all locations next to this location
+// 3.1.3 POST a new location 
+app.post('/api/new/location', function(req, res) {
+	
+	if (req.body.newlocation.tags.length>0) {
+		var tags_str = "";
+		for(var i = 0; i < req.body.newlocation.tags.length; i++) {
+			if (i==req.body.newlocation.tags.length-1) {
+				tags_str = tags_str + "\"" + req.body.newlocation.tags[i] + "\"";
+			} else {
+				tags_str = tags_str + "\"" + req.body.newlocation.tags[i] + "\",";
+			}
+		}
+	} else {
+		var tags_str = " ";
+	}
+	console.log("tags for CYPHER-QUERY prepared:" + tags_str);
+	
+	// Check the next possible PRIMARY KEY in the database
+	var nodeID;
+	var queryCheckPK = "MATCH ...."
+	db.cypherQuery(queryCheckPK, function(err, result) {
+		if (err) {
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+		} else {
+			nodeID = ;
+		}
+		
+	
+	// Database Query
+	var query = "CREATE (l:Location {id: "+ nodeID +", name:\"" + req.body.newlocation.name + "\", description:\"" + req.body.newlocation.description + "\", lat: " + req.body.newlocation.lat + ", lon: " + req.body.newlocation.lon + ", tags:[" + tags_str + "]})";
+	console.log("CYPHER-QUERY prepared:" + query);
+	
+	db.cypherQuery(query, function(err, result) {
+		
+		if (err) {
+
+			res.writeHead(500, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end("Error:" + err);
+			return;
+
+		} else {
+
+			res.writeHead(200, {
+				'Content-Type' : 'text/plain'
+			});
+			res.end('Location added!');
+			return;
+		}
+	});
+});
+
+// 3.1.6.1 GET all locations next to this location
 app.get('/api/locations/:id/relations', function(req, res) {
 
 	// Database Query
@@ -227,7 +326,13 @@ app.get('/api/locations/:id/relations', function(req, res) {
 	});
 });
 
-// 2.4 GET all videos related to a location
+
+
+/****************************
+ 3.2 Videos
+****************************/
+
+//3.2.1 GET all videos for one location
 app.get('/api/locations/:id/videos', function(req, res) {
 	
 	var query = "MATCH (l:Location)-->(v:Video) WHERE l.id=" + req.params.id + "RETURN v";
@@ -260,8 +365,12 @@ app.get('/api/locations/:id/videos', function(req, res) {
 });
 
 
-// 2.5 GET all displays related to one location
-app.get('/api/locations/:id/displays', function(req, res) {
+/****************************
+ 3.3 Overlays
+****************************/
+
+// 3.3.1. GET all overlays for one location
+app.get('/api/locations/:id/overlays', function(req, res) {
 
 	// Database Query
 	db.cypherQuery('match (Location {id:' + req.params.id + '})<-[:located_at]-(display) return display', function(err, result) {
@@ -292,130 +401,5 @@ app.get('/api/locations/:id/displays', function(req, res) {
 	});
 });
 
-// 2.6 CREATE a new location
-app.post('/api/new/location', function(req, res) {
 
-	// Database Query
-	db.cypherQuery("create (v:Location {id: " + req.body.newvideo.id + ", name:" + req.body.newvideo.name + "description:\"" + req.body.newvideo.description + ", gps: \"[" + req.body.newvideo.gps + "]\", url: \"media/video/" + req.body.newvideo.dataname + "\"," + "tags:\"[" + req.body.newvideo.dataname + "\"]\"})", function(err, result) {
-		if (err) {
-
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
-
-			var jsonString = JSON.stringify(result.data);
-
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location added!');
-			return;
-		}
-	});
-});
-
-// 2.7 EDIT a location
-app.put('/api/locations/:id', function(req, res) {
-
-	// Database Query
-	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
-		if (err) {
-
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
-
-			var jsonString = JSON.stringify(result.data);
-
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location edited!');
-			return;
-		}
-	});
-});
-
-// 2.8 DELETE a location
-app.delete ('/api/location/:id', function(req, res) {
-
-	// Database Query
-	db.cypherQuery("create (v:Location {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
-		if (err) {
-
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
-
-			var jsonString = JSON.stringify(result.data);
-
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location deleted!');
-			return;
-		}
-	});
-});
-
-// 2.9 SET one or more relationships for one location
-app.post('/api/new/locations/:id/relations', function(req, res) {
-
-	// create a relation in both directions for each video
-	for ( i = 0; i < req.body.newralations.ids[i].length; i++) {
-		// Database Query
-		db.cypherQuery("match (v:Location) where v.id=" + req.params.id + " match (q:Location) where q.id = " + req.body.newrelations.ids[i] + " create (v)-[:related]->(q) create (q)-[:related]->(v))", function(err, result) {
-			if (err) {
-
-				res.writeHead(500, {
-					'Content-Type' : 'text/plain'
-				});
-				res.end("Error:" + err);
-				return;
-
-			} else {
-				console.log(result.data);
-				// delivers an array of query results
-				console.log(result.columns);
-				// delivers an array of names of objects getting returned
-
-				var jsonString = JSON.stringify(result.data);
-
-				res.writeHead(200, {
-					'Content-Type' : 'text/plain'
-				});
-				res.end('Relationship(s) added!');
-				return;
-			}
-		});
-	}
-});
-
-// 2.10 EDIT relations for one location
-
-// 2.11 DELETE relations for one location
 
