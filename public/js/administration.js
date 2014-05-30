@@ -1,12 +1,19 @@
-// Initialize JQuery UI elements
-/*$( "#button" ).button();
-$(function() {
-    $( "#menu" ).menu();
-  });
-  
-$("#menu").panel();
-*/
+/*	++++++++++++++++++++++
+ *	GLOBAL VARIABLES 
+ * 	++++++++++++++++++++++
+ */
 
+/*	++++++++++++++++++++++
+ *	EVENT LISTENERS 
+ * 	++++++++++++++++++++++
+ */
+
+/*	++++++++++++++++++++++
+ *	FUNCTIONS
+ * 	++++++++++++++++++++++
+ */
+
+// Initialize map
 $(document).ready(function(){
 	//Initialize map
 	var map = L.map('map').setView([51.962655, 7.625763], 15);
@@ -16,3 +23,15 @@ $(document).ready(function(){
 	}).addTo(map);
 });
 
+//Backbone models
+var VideoCollection = Backbone.Model.extend({
+		urlRoot: '/api/locations',
+});
+
+var videos = new VideoCollection();
+
+videos.fetch({
+	success: function(videos){
+		console.log(videos);
+	}
+});
