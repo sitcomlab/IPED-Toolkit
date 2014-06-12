@@ -1,3 +1,7 @@
+body, .ui-page, .ui-page-theme-a, .ui-page-active {
+    background-color: #000000 !important;
+}
+
 #iPED-Video {
 	width: 100%;
 	z-index: 1;
