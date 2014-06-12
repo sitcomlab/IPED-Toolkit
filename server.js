@@ -1,22 +1,62 @@
 /********************************************************************************************
  Node.js Webserver
- ********************************************************************************************
+*********************************************************************************************
  Table of content
 
- 1. Server-Settings
- 2. API
- 2.1 GET all locations
- 2.2 GET general information about one location
- 2.3 GET all nodes next to this location
- 2.4 GET a list with all locations and with their current relationships
- 2.5 CREATE a new location
- 2.6 EDIT a location
- 2.7 DELETE a location
- 2.8 SET one or more relationships for one location
- 2.9 EDIT relations for one location
- 2.10 DELETE relations for one location
+1. Server-Settings
+2. webRTC
+3. API
+	3.1 Locations:
+		3.1.1 GET all locations
+		3.1.2 GET all information about one location
+		3.1.3 POST a new location [*]
+		3.1.4 PUT/EDIT a location [*]
+		3.1.5 DELETE a location [*]
+		3.1.6 Relationships between locations:
+		       3.1.6.1 GET all locations next to this location
+		       3.1.6.2 GET a list with all locations and with their current relationships [*]
+		       3.1.6.3 POST/ADD one or more relationships for one location [*]
+		       3.1.6.4 PUT/EDIT a relationship for one location [*]
+		       3.1.6.5 DELETE a relationship between two locations [*]			
+	3.2 Videos:
+		3.2.1 GET all videos for one location
+		3.2.2 GET all information about one video [*]
+		3.2.3 POST a new video [*]
+		3.2.4 PUT/EDIT a video [*]
+		3.2.5 DELETE a video [*]
+		3.2.6 Relationship between a video and a location:
+		       2.6.1 POST/ADD a relationship for one video [*]
+		       2.6.2 PUT/EDIT a relationship for one video [*]
+		       2.6.3 DELETE a relationship between a video and a location [*]
+	3.3 Overlays:
+		3.3.1. GET all overlays for one location
+		3.3.2. GET all information about one overlay [*]
+		3.3.3. POST a new overlay [*]
+		3.3.4. PUT/EDIT an overlay [*]
+		3.3.5. DELETE an overlay [*]
+	3.4. Scenarios:
+		3.4.1 GET a list of all scenarios [x]
+		3.4.2 GET meta-data about one scenario [*]
+		3.4.3 GET all information/full graph of one scenario [x]
+		3.4.4 Relationship between a video and a location
+		       3.4.4.1 POST/ADD a scenario [*]
+		       3.4.4.2 PUT/EDIT a scenario [*]
+		       3.4.4.3 DELETE a scenario [*]
+		       3.4.4.4 POST/SET a starting location for one scenario [*]
+		       3.4.4.5 EDIT/PUT the starting location for one scenario [*]
+    3.5 Users:
+        3.5.1 GET useraccount [*]
+        3.5.1 POST/ADD useraccount [*]
+        3.5.2 PUT/EDIT useraccount [*]
+        3.5.3 DELETE useraccount [*]
+       
 
- *********************************************************************************************/
+[*] = not yet implemented 
+[x] = at the moment in progress 
+
+**********************************************************************************************/
+
+
 'use strict';
 
 var os = require('os');
@@ -33,9 +73,9 @@ var nib = require('nib');
 var browserify = require('browserify');
 
 
-/****************************
+/********************************************************
  1. Server-Settings
- ****************************/
+*********************************************************/
 
 // Connection to the Neo4j-Database
 var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
@@ -90,9 +130,9 @@ io.sockets.on('connection', function(socket) {
 });
 
 
-/****************************
- 2.0 webRTC
- ****************************/
+/********************************************************
+ 2. webRTC
+*********************************************************/
 
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
@@ -129,15 +169,27 @@ app.get('/js/webRTC.js', function(req, res, next) {
 app.use(express.static(__dirname + '/public'));
 //console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
+
+
+/********************************************************
+ 3. API
+*********************************************************/
+
+
 /****************************
- 2. API
- ****************************/
+ 3.1 Locations
+****************************/
 
-// 2.1 GET all locations
+// 3.1.1 GET all locations
 app.get('/api/locations', function(req, res) {
-
+    
+    // Query
+    var query ="MATCH (l:Location) RETURN l";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery("match (l:Location) return l", function(err, result) {
+	db.cypherQuery(query, function(err, result) {
+	
 		if (err) {
 
 			res.writeHead(500, {
@@ -146,27 +198,29 @@ app.get('/api/locations', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"locations":' + jsonString + '}');
-		return;
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+    
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"locations":' + jsonString + '}');
+            return;    
+        }
+		
 	});
 });
 
-// 2.2 GET general information about one location
+// 3.1.2 GET all information about one location
 app.get('/api/locations/:id', function(req, res) {
 	
 	// Query
-	var query ="match (l:Location) where l.id=" + req.params.id + " return l ";
+	var query ="MATCH (l:Location) WHERE l.id=" + req.params.id + " RETURN l ";
 	console.log(query);
 	
 	// Database Query
@@ -181,27 +235,33 @@ app.get('/api/locations/:id', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"location":' + jsonString + '}');
-		return;
+        else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"location":' + jsonString + '}');
+    		return;
+    	}
 	});
 });
 
-// 2.3 GET all locations next to this location
-app.get('/api/locations/:id/relations', function(req, res) {
 
+// 3.1.6.1 GET all locations next to this location
+app.get('/api/locations/:id/relations', function(req, res) {
+    
+    // Query
+    var query ="MATCH (i:Location)-->(n:Location) WHERE i.id=" + req.params.id + " RETURN n";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery("MATCH (i:Location)-->(n:Location) WHERE i.id=" + req.params.id + "RETURN n", function(err, result) {
+	db.cypherQuery(query, function(err, result) {
 		if (err) {
 
 			res.writeHead(500, {
@@ -210,27 +270,33 @@ app.get('/api/locations/:id/relations', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"locations":' + jsonString + '}');
-		return;
-
+        else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"locations":' + jsonString + '}');
+    		return;
+        }
 	});
 });
 
-// 2.4 GET all videos related to a location
+
+
+/****************************
+ 3.2 Videos
+****************************/
+
+//3.2.1 GET all videos for one location
 app.get('/api/locations/:id/videos', function(req, res) {
 	
-	var query = "MATCH (l:Location)-->(v:Video) WHERE l.id=" + req.params.id + "RETURN v";
+	var query = "MATCH (l:Location)-->(v:Video) WHERE l.id=" + req.params.id + " RETURN v";
 	console.log(query);
 	
 	// Database Query
@@ -243,28 +309,37 @@ app.get('/api/locations/:id/videos', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-		
-		console.log(result.data);
-		//delivers an array of query results
-		console.log(result.columns);
-		//delivers an array of names of objects getting returned
-		
-		var jsonString = JSON.stringify(result.data);
-		
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"videos":' + jsonString + '}');
-		return;
+		else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    		
+    		var jsonString = JSON.stringify(result.data);
+    		
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"videos":' + jsonString + '}');
+    		return;
+    	}
 	});
 });
 
 
-// 2.5 GET all displays related to one location
-app.get('/api/locations/:id/displays', function(req, res) {
+/****************************
+ 3.3 Overlays
+****************************/
 
+// 3.3.1. GET all overlays for one location
+app.get('/api/locations/:id/overlays', function(req, res) {
+    
+    // Query
+    var query ="MATCH (Location {id:" + req.params.id + "})<-[:located_at]-(Overlay) RETURN Overlay";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery('match (Location {id:' + req.params.id + '})<-[:located_at]-(display) return display', function(err, result) {
+	db.cypherQuery(query, function(err, result) {
 
 		if (err) {
 
@@ -275,147 +350,99 @@ app.get('/api/locations/:id/displays', function(req, res) {
 			return;
 
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"overlays":' + jsonString + '}');
-		return;
-
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"overlays":' + jsonString + '}');
+    		return;
+        }
 	});
 });
 
-// 2.6 CREATE a new location
-app.post('/api/new/location', function(req, res) {
 
-	// Database Query
-	db.cypherQuery("create (v:Location {id: " + req.body.newvideo.id + ", name:" + req.body.newvideo.name + "description:\"" + req.body.newvideo.description + ", gps: \"[" + req.body.newvideo.gps + "]\", url: \"media/video/" + req.body.newvideo.dataname + "\"," + "tags:\"[" + req.body.newvideo.dataname + "\"]\"})", function(err, result) {
-		if (err) {
+/****************************
+ 3.4 Scenarios
+****************************/
 
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
+// 3.4.1 GET a list of all scenarios [x]
+app.get('/api/scenarios', function(req, res) {
+    
+    // Query
+    var query ="MATCH (s:Scenario) RETURN s";
+    console.log(query);
+    
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
 
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
+        if (err) {
 
-			var jsonString = JSON.stringify(result.data);
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end("Error:" + err);
+            return;
+        }
+        
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+            console.log(jsonString);
 
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location added!');
-			return;
-		}
-	});
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"scenarios":' + jsonString + '}');
+            return;
+        }
+    });
 });
 
-// 2.7 EDIT a location
-app.put('/api/locations/:id', function(req, res) {
 
-	// Database Query
-	db.cypherQuery("create (v:Video {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
-		if (err) {
+// 3.4.4 GET all information/full graph of one scenario [x]
+app.get('/api/scenarios/:id', function(req, res) {
 
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
+    // Query
+    var query ="MATCH (s:Scenario) WHERE s.id=" + req.params.id + " RETURN s";
+    console.log(query);
+    
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
+ 
+        if (err) {
 
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end("Error:" + err);
+            return;
 
-			var jsonString = JSON.stringify(result.data);
+        }
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+            console.log(jsonString);
 
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location edited!');
-			return;
-		}
-	});
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"scenario":' + jsonString + '}');
+            return;
+        }
+    });
 });
-
-// 2.8 DELETE a location
-app.delete ('/api/location/:id', function(req, res) {
-
-	// Database Query
-	db.cypherQuery("create (v:Location {gps: \"" + req.body.newvideo.gps + "\", url: \"media/video/\"" + req.body.newvideo.dataname + "\"})", function(err, result) {
-		if (err) {
-
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-
-		} else {
-			console.log(result.data);
-			// delivers an array of query results
-			console.log(result.columns);
-			// delivers an array of names of objects getting returned
-
-			var jsonString = JSON.stringify(result.data);
-
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location deleted!');
-			return;
-		}
-	});
-});
-
-// 2.9 SET one or more relationships for one location
-app.post('/api/new/locations/:id/relations', function(req, res) {
-
-	// create a relation in both directions for each video
-	for ( i = 0; i < req.body.newralations.ids[i].length; i++) {
-		// Database Query
-		db.cypherQuery("match (v:Location) where v.id=" + req.params.id + " match (q:Location) where q.id = " + req.body.newrelations.ids[i] + " create (v)-[:related]->(q) create (q)-[:related]->(v))", function(err, result) {
-			if (err) {
-
-				res.writeHead(500, {
-					'Content-Type' : 'text/plain'
-				});
-				res.end("Error:" + err);
-				return;
-
-			} else {
-				console.log(result.data);
-				// delivers an array of query results
-				console.log(result.columns);
-				// delivers an array of names of objects getting returned
-
-				var jsonString = JSON.stringify(result.data);
-
-				res.writeHead(200, {
-					'Content-Type' : 'text/plain'
-				});
-				res.end('Relationship(s) added!');
-				return;
-			}
-		});
-	}
-});
-
-// 2.10 EDIT relations for one location
-
-// 2.11 DELETE relations for one location
-
