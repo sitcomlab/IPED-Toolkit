@@ -9,7 +9,7 @@
 	3.1 Locations:
 		3.1.1 GET all locations
 		3.1.2 GET all information about one location
-		3.1.3 POST a new location [x]
+		3.1.3 POST a new location [*]
 		3.1.4 PUT/EDIT a location [*]
 		3.1.5 DELETE a location [*]
 		3.1.6 Relationships between locations:
@@ -34,17 +34,22 @@
 		3.3.3. POST a new overlay [*]
 		3.3.4. PUT/EDIT an overlay [*]
 		3.3.5. DELETE an overlay [*]
-	4. Scenarios:
-		4.4.1 GET a list of all scenarios [*]
-		4.4.2 GET meta-data about one scenario [*]
-		4.4.3 GET all information/full graph of one scenario [*]
-		4.4.4 Relationship between a video and a location
-		       4.4.1 POST/ADD a scenario [*]
-		       4.4.2 PUT/EDIT a scenario [*]
-		       4.4.3 DELETE a scenario [*]
-		       4.4.4 POST/SET a starting location for one scenario [*]
-		       4.4.5 EDIT/PUT the starting location for one scenario [*]
-
+	3.4. Scenarios:
+		3.4.1 GET a list of all scenarios [x]
+		3.4.2 GET meta-data about one scenario [*]
+		3.4.3 GET all information/full graph of one scenario [x]
+		3.4.4 Relationship between a video and a location
+		       3.4.4.1 POST/ADD a scenario [*]
+		       3.4.4.2 PUT/EDIT a scenario [*]
+		       3.4.4.3 DELETE a scenario [*]
+		       3.4.4.4 POST/SET a starting location for one scenario [*]
+		       3.4.4.5 EDIT/PUT the starting location for one scenario [*]
+    3.5 Users:
+        3.5.1 GET useraccount [*]
+        3.5.1 POST/ADD useraccount [*]
+        3.5.2 PUT/EDIT useraccount [*]
+        3.5.3 DELETE useraccount [*]
+       
 
 [*] = not yet implemented 
 [x] = at the moment in progress 
@@ -71,9 +76,28 @@ var browserify = require('browserify');
 /********************************************************
  1. Server-Settings
 *********************************************************/
+var HTTP_PORT = 8080;
+var HTTPS_PORT = 8443;
+var NEO4J_PORT = 7474;
+
+// Pass console parameters (e.g., server port passed by Jenkins)
+process.argv.forEach(function (val, index, array) {
+	if (val.indexOf('http=') != -1) {
+		HTTP_PORT = val.split('=')[1];
+	}
+	if (val.indexOf('https=') != -1) {
+		HTTPS_PORT = val.split('=')[1];
+	}
+	if (val.indexOf('neo4j=') != -1) {
+		NEO4J_PORT = val.split('=')[1];
+	}
+});
+console.log('HTTP_PORT='+HTTP_PORT);
+console.log('HTTPS_PORT='+HTTPS_PORT);
+console.log('NEO4J_PORT='+NEO4J_PORT);
 
 // Connection to the Neo4j-Database
-var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
+var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:'+NEO4J_PORT);
 
 
 // Loading package "Express" for creating a webserver
@@ -87,13 +111,13 @@ var options = {
 
 var app = express();
 var httpsServer = require('https').Server(options, app);
-httpsServer.listen(8443, function(err) {
+httpsServer.listen(HTTPS_PORT, function(err) {
   if (err) {
     return console.log('Encountered error starting server: ', err);
   }
 });
 var httpServer = require('http').Server(app);
-httpServer.listen(8080, function(err) {
+httpServer.listen(HTTP_PORT, function(err) {
   if (err) {
     return console.log('Encountered error starting server: ', err);
   }
@@ -177,9 +201,14 @@ app.use(express.static(__dirname + '/public'));
 
 // 3.1.1 GET all locations
 app.get('/api/locations', function(req, res) {
-
+    
+    // Query
+    var query ="MATCH (l:Location) RETURN l";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery("match (l:Location) return l", function(err, result) {
+	db.cypherQuery(query, function(err, result) {
+	
 		if (err) {
 
 			res.writeHead(500, {
@@ -188,27 +217,29 @@ app.get('/api/locations', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"locations":' + jsonString + '}');
-		return;
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+    
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"locations":' + jsonString + '}');
+            return;    
+        }
+		
 	});
 });
 
-// 3.1.2 GET general information about one location
+// 3.1.2 GET all information about one location
 app.get('/api/locations/:id', function(req, res) {
 	
 	// Query
-	var query ="match (l:Location) where l.id=" + req.params.id + " return l ";
+	var query ="MATCH (l:Location) WHERE l.id=" + req.params.id + " RETURN l ";
 	console.log(query);
 	
 	// Database Query
@@ -223,84 +254,33 @@ app.get('/api/locations/:id', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"location":' + jsonString + '}');
-		return;
+        else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"location":' + jsonString + '}');
+    		return;
+    	}
 	});
 });
 
-// 3.1.3 POST a new location 
-app.post('/api/new/location', function(req, res) {
-	
-	if (req.body.newlocation.tags.length>0) {
-		var tags_str = "";
-		for(var i = 0; i < req.body.newlocation.tags.length; i++) {
-			if (i==req.body.newlocation.tags.length-1) {
-				tags_str = tags_str + "\"" + req.body.newlocation.tags[i] + "\"";
-			} else {
-				tags_str = tags_str + "\"" + req.body.newlocation.tags[i] + "\",";
-			}
-		}
-	} else {
-		var tags_str = " ";
-	}
-	console.log("tags for CYPHER-QUERY prepared:" + tags_str);
-	
-	// Check the next possible PRIMARY KEY in the database
-	var nodeID;
-	var queryCheckPK = "MATCH ...."
-	db.cypherQuery(queryCheckPK, function(err, result) {
-		if (err) {
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-		} else {
-			nodeID = ;
-		}
-		
-	
-	// Database Query
-	var query = "CREATE (l:Location {id: "+ nodeID +", name:\"" + req.body.newlocation.name + "\", description:\"" + req.body.newlocation.description + "\", lat: " + req.body.newlocation.lat + ", lon: " + req.body.newlocation.lon + ", tags:[" + tags_str + "]})";
-	console.log("CYPHER-QUERY prepared:" + query);
-	
-	db.cypherQuery(query, function(err, result) {
-		
-		if (err) {
-
-			res.writeHead(500, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end("Error:" + err);
-			return;
-
-		} else {
-
-			res.writeHead(200, {
-				'Content-Type' : 'text/plain'
-			});
-			res.end('Location added!');
-			return;
-		}
-	});
-});
 
 // 3.1.6.1 GET all locations next to this location
 app.get('/api/locations/:id/relations', function(req, res) {
-
+    
+    // Query
+    var query ="MATCH (i:Location)-->(n:Location) WHERE i.id=" + req.params.id + " RETURN n";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery("MATCH (i:Location)-->(n:Location) WHERE i.id=" + req.params.id + "RETURN n", function(err, result) {
+	db.cypherQuery(query, function(err, result) {
 		if (err) {
 
 			res.writeHead(500, {
@@ -309,20 +289,20 @@ app.get('/api/locations/:id/relations', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"locations":' + jsonString + '}');
-		return;
-
+        else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"locations":' + jsonString + '}');
+    		return;
+        }
 	});
 });
 
@@ -335,7 +315,7 @@ app.get('/api/locations/:id/relations', function(req, res) {
 //3.2.1 GET all videos for one location
 app.get('/api/locations/:id/videos', function(req, res) {
 	
-	var query = "MATCH (l:Location)-->(v:Video) WHERE l.id=" + req.params.id + "RETURN v";
+	var query = "MATCH (l:Location)-->(v:Video) WHERE l.id=" + req.params.id + " RETURN v";
 	console.log(query);
 	
 	// Database Query
@@ -348,19 +328,20 @@ app.get('/api/locations/:id/videos', function(req, res) {
 			res.end("Error:" + err);
 			return;
 		}
-		
-		console.log(result.data);
-		//delivers an array of query results
-		console.log(result.columns);
-		//delivers an array of names of objects getting returned
-		
-		var jsonString = JSON.stringify(result.data);
-		
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"videos":' + jsonString + '}');
-		return;
+		else {
+    		//console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    		
+    		var jsonString = JSON.stringify(result.data);
+    		
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"videos":' + jsonString + '}');
+    		return;
+    	}
 	});
 });
 
@@ -371,9 +352,13 @@ app.get('/api/locations/:id/videos', function(req, res) {
 
 // 3.3.1. GET all overlays for one location
 app.get('/api/locations/:id/overlays', function(req, res) {
-
+    
+    // Query
+    var query ="MATCH (Location {id:" + req.params.id + "})<-[:located_at]-(Overlay) RETURN Overlay";
+    console.log(query);
+    
 	// Database Query
-	db.cypherQuery('match (Location {id:' + req.params.id + '})<-[:located_at]-(display) return display', function(err, result) {
+	db.cypherQuery(query, function(err, result) {
 
 		if (err) {
 
@@ -384,22 +369,99 @@ app.get('/api/locations/:id/overlays', function(req, res) {
 			return;
 
 		}
-
-		console.log(result.data);
-		// delivers an array of query results
-		console.log(result.columns);
-		// delivers an array of names of objects getting returned
-
-		var jsonString = JSON.stringify(result.data);
-
-		res.writeHead(200, {
-			'Content-Type' : 'application/json'
-		});
-		res.end('{"overlays":' + jsonString + '}');
-		return;
-
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+    		var jsonString = JSON.stringify(result.data);
+    
+    		res.writeHead(200, {
+    			'Content-Type' : 'application/json'
+    		});
+    		res.end('{"overlays":' + jsonString + '}');
+    		return;
+        }
 	});
 });
 
 
+/****************************
+ 3.4 Scenarios
+****************************/
 
+// 3.4.1 GET a list of all scenarios [x]
+app.get('/api/scenarios', function(req, res) {
+    
+    // Query
+    var query ="MATCH (s:Scenario) RETURN s";
+    console.log(query);
+    
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
+
+        if (err) {
+
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end("Error:" + err);
+            return;
+        }
+        
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+            console.log(jsonString);
+
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"scenarios":' + jsonString + '}');
+            return;
+        }
+    });
+});
+
+
+// 3.4.4 GET all information/full graph of one scenario [x]
+app.get('/api/scenarios/:id', function(req, res) {
+
+    // Query
+    var query ="MATCH (s:Scenario) WHERE s.id=" + req.params.id + " RETURN s";
+    console.log(query);
+    
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
+ 
+        if (err) {
+
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end("Error:" + err);
+            return;
+
+        }
+        else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+    
+            var jsonString = JSON.stringify(result.data);
+            console.log(jsonString);
+
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end('{"scenario":' + jsonString + '}');
+            return;
+        }
+    });
+});
