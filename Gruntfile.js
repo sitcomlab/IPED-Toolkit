@@ -29,6 +29,9 @@ module.exports = function(grunt) {
 		  },
 		  develop: {
 		    files: targethtmlFiles
+		  },
+		  developOnServer: {
+		    files: targethtmlFiles
 		  }
 		}
   });
@@ -39,5 +42,6 @@ module.exports = function(grunt) {
   // Default task(s).
   grunt.registerTask('master', ['targethtml:master']);
 	grunt.registerTask('develop', ['targethtml:develop']);
+	grunt.registerTask('developOnServer', ['targethtml:developOnServer']);
 
 };
