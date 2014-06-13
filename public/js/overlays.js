@@ -114,7 +114,7 @@ Overlay.prototype.init = function() {
 };
 
 Overlay.prototype.createOverlays = function(id) {
-	var url = SERVER_URL+ PORT + 'api/locations/' + id + '/displays';
+	var url = SERVER_URL+ PORT + 'api/locations/' + id + '/overlays';
 	var displays = (function() {
 		var displays = null;
 		$.ajax({

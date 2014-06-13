@@ -6,8 +6,8 @@
 
 
 // Choose suitable one
-var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de"; // Production environment
-//var SERVER_URL = "http://localhost"; // Developer environment
+//var SERVER_URL = "http://giv-sitcomlab.uni-muenster.de"; // Production environment
+var SERVER_URL = "http://localhost"; // Developer environment
 var PORT = ":8080/";
 var currentId;
 var video_height;
