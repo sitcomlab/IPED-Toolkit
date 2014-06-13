@@ -1,4 +1,4 @@
-Immersive Public Display Evaluation and Design (IPED) Toolkit
+IPED-Toolkit
 =============================================================
 
 * Link to the Project (**MASTER-Branch, STABLE**) [http://giv-sitcomlab.uni-muenster.de:8080/](http://giv-sitcomlab.uni-muenster.de:8080/)
