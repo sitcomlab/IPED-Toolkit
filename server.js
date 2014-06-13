@@ -76,9 +76,28 @@ var browserify = require('browserify');
 /********************************************************
  1. Server-Settings
 *********************************************************/
+var HTTP_PORT = 8080;
+var HTTPS_PORT = 8443;
+var NEO4J_PORT = 7474;
+
+// Pass console parameters (e.g., server port passed by Jenkins)
+process.argv.forEach(function (val, index, array) {
+	if (val.indexOf('http=') != -1) {
+		HTTP_PORT = val.split('=')[1];
+	}
+	if (val.indexOf('https=') != -1) {
+		HTTPS_PORT = val.split('=')[1];
+	}
+	if (val.indexOf('neo4j=') != -1) {
+		NEO4J_PORT = val.split('=')[1];
+	}
+});
+console.log('HTTP_PORT='+HTTP_PORT);
+console.log('HTTPS_PORT='+HTTPS_PORT);
+console.log('NEO4J_PORT='+NEO4J_PORT);
 
 // Connection to the Neo4j-Database
-var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7474');
+var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:'+NEO4J_PORT);
 
 
 // Loading package "Express" for creating a webserver
@@ -92,13 +111,13 @@ var options = {
 
 var app = express();
 var httpsServer = require('https').Server(options, app);
-httpsServer.listen(8443, function(err) {
+httpsServer.listen(HTTPS_PORT, function(err) {
   if (err) {
     return console.log('Encountered error starting server: ', err);
   }
 });
 var httpServer = require('http').Server(app);
-httpServer.listen(8080, function(err) {
+httpServer.listen(HTTP_PORT, function(err) {
   if (err) {
     return console.log('Encountered error starting server: ', err);
   }
