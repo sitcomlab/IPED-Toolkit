@@ -127,6 +127,6 @@ videos.fetch({
 }
 
 function openDialog(){
-	window.open("/#/new/location","_self");
+	window.open("backend/#/new/location","_self");
 }
 
