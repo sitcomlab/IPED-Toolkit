@@ -9,8 +9,23 @@ var map;
  * 	++++++++++++++++++++++
  */
 
+
 /*	++++++++++++++++++++++
- *	FUNCTIONS
+ *	JQUERY UI
+ * 	++++++++++++++++++++++
+ */
+
+$("#add-new-location-dialog").dialog({
+	autoOpen: false,
+	show: {
+		effect: "clip",
+		duration: 800
+	}
+});
+
+
+/*	++++++++++++++++++++++
+ *	BACKBONE
  * 	++++++++++++++++++++++
  */
 
@@ -31,7 +46,7 @@ $(document).ready(function(){
     	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     	maxZoom: 18
 	}).addTo(map);
-	//drawMarkers();
+	drawMarkers();
 });
 
 //Backbone models
@@ -40,10 +55,10 @@ var VideoCollection = Backbone.Model.extend({
 });
 
 //Backbone views
-var MarkerView = Backbone.View.extend({
+var AddLocationView = Backbone.View.extend({
 	render: function(){
-		console.log("View is alive");
-		drawMarkers();
+		console.log("AddLocationView created");
+		
 	}
 });
 
@@ -51,13 +66,17 @@ var MarkerView = Backbone.View.extend({
 var ROUTER = Backbone.Router.extend({
 	routes: {
 		'' : 'home',
-		'new/location' : addLocation
+		'new/location' : 'addLocation'
 	}
 });
 
 //Initialize backbone entities
-var marker_view = new MarkerView({
-	el: $("#map")
+var addLocation_view = new AddLocationView({
+	el: $("#add-new-location-dialog"),
+	render: function(){
+		console.log("addLocation View rendered");
+		$("#add-new-location-dialog").dialog("open");
+	}
 });
 var router = new ROUTER();
 
@@ -66,16 +85,20 @@ var router = new ROUTER();
 //Router events
 router.on('route:home', function(){
 	console.log("Route: home");
-	marker_view.render();
+	addLocation_view.render();
 });
 
 router.on('route:addLocation', function(){
 	console.log("Route: addLocation");
-	
-	//marker_view.render();
+	addLocation_view.render();
 });
 
 Backbone.history.start();
+
+/*	++++++++++++++++++++++
+ *	FUNCTIONS
+ * 	++++++++++++++++++++++
+ */
 
 function drawMarkers() {
 
@@ -103,5 +126,5 @@ videos.fetch({
 	}
 });	
 
-
 }
+

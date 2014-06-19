@@ -51,47 +51,49 @@
 						</ul>
 					</div>
 					<div id="scenario">
-					<p>
-						Scenario
-					</p>
-					<hr />
-					<form>
-						<input type="button" value="Add New Scenario" data-mini="true">
-						<input type="button" value="Copy Current Scenario" data-mini="true">
-						<input type="button" value="Edit Current Scenario" data-mini="true">
-						<input type="button" value="Delete Current Scenario" data-mini="true">
-						<div class="ui-field-contain">
-							<select name="select-native-2" id="select-native-2" data-mini="true">
-								<option value="1">Load Scenario</option>
-								<option value="2">The 2nd Option</option>
-								<option value="3">The 3rd Option</option>
-								<option value="4">The 4th Option</option>
-							</select>
-						</div>
-					</form>
+						<p>
+							Scenario
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Scenario" data-mini="true">
+							<input type="button" value="Copy Current Scenario" data-mini="true">
+							<input type="button" value="Edit Current Scenario" data-mini="true">
+							<input type="button" value="Delete Current Scenario" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Scenario</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
 					</div>
 					<div id="study">
-					<p>
-						Study
-					</p>
-					<hr />
-					<form>
-						<input type="button" value="Add New Study" data-mini="true">
-						<input type="button" value="Copy Current Study" data-mini="true">
-						<input type="button" value="Edit Current Study" data-mini="true">
-						<input type="button" value="Delete Current Study" data-mini="true">
-						<div class="ui-field-contain">
-							<select name="select-native-2" id="select-native-2" data-mini="true">
-								<option value="1">Load Study</option>
-								<option value="2">The 2nd Option</option>
-								<option value="3">The 3rd Option</option>
-								<option value="4">The 4th Option</option>
-							</select>
-						</div>
-					</form>
+						<p>
+							Study
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Study" data-mini="true">
+							<input type="button" value="Copy Current Study" data-mini="true">
+							<input type="button" value="Edit Current Study" data-mini="true">
+							<input type="button" value="Delete Current Study" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Study</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
 					</div>
 					<div id="account">
-						<p>Account</p>
+						<p>
+							Account
+						</p>
 						<hr />
 						<input type="button" value="Edit My Account" data-mini="true">
 						<input type="button" value="Change iPED Setting" data-mini="true">
@@ -101,6 +103,22 @@
 			</div>
 			<div data-role="content">
 				<div id="map"></div>
+				<div id="add-new-location-dialog" title="Add New Location">
+					<p class="validateTips">
+						All form fields are required.
+					</p>
+
+					<form>
+						<fieldset>
+							<label for="name">Name</label>
+							<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+							<label for="email">Email</label>
+							<input type="text" name="email" id="email" value="" class="text ui-widget-content ui-corner-all">
+							<label for="password">Password</label>
+							<input type="password" name="password" id="password" value="" class="text ui-widget-content ui-corner-all">
+						</fieldset>
+					</form>
+				</div>
 			</div>
 		</div>
 		<!-- Menu Panel -->
