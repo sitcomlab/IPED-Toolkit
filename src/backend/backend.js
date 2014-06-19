@@ -52,20 +52,16 @@ var VideoCollection = Backbone.Model.extend({
 
 //Backbone views
 var AddLocationView = Backbone.View.extend({
+	el: '#add-new-location-dialog',
 	render: function(){
-		console.log("AddLocationView created");
-		
+		console.log("AddLocationView rendered");
+		//$("#add-new-location-dialog").dialog("open");
+		$.mobile.changePage("#add-new-location-dialog", {role: "dialog"});
 	}
 });
 
 
-var addLocation_view = new AddLocationView({
-	el: $("#add-new-location-dialog"),
-	render: function(){
-		console.log("addLocation View rendered");
-		$("#add-new-location-dialog").dialog("open");
-	}
-});
+var addLocation_view = new AddLocationView();
 
 
 //Backbone routers
@@ -127,6 +123,7 @@ videos.fetch({
 }
 
 function openDialog(){
-	window.open("backend/#/new/location","_self");
+	window.open("#/new/location","_self");
+	//$.mobile.changePage("#add-new-location-dialog", {role: "dialog"});
 }
 
