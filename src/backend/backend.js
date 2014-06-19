@@ -11,7 +11,7 @@ var map;
 
 
 /*	++++++++++++++++++++++
- *	JQUERY UI
+ *	Initializers
  * 	++++++++++++++++++++++
  */
 
@@ -24,8 +24,64 @@ $("#add-new-location-dialog").dialog({
 });
 
 
+
 /*	++++++++++++++++++++++
  *	BACKBONE
+ * 	++++++++++++++++++++++
+ */
+
+//Backbone models
+var VideoCollection = Backbone.Model.extend({
+		urlRoot: '/api/locations',
+});
+
+
+//Backbone views
+var AddLocationView = Backbone.View.extend({
+	render: function(){
+		console.log("AddLocationView created");
+		
+	}
+});
+
+
+var addLocation_view = new AddLocationView({
+	el: $("#add-new-location-dialog"),
+	render: function(){
+		console.log("addLocation View rendered");
+		$("#add-new-location-dialog").dialog("open");
+	}
+});
+
+
+//Backbone routers
+var ROUTER = Backbone.Router.extend({
+	routes: {
+		'' : 'home',
+		'new/location' : 'addLocation'
+	}
+});
+
+
+var router = new ROUTER();
+
+
+
+//Router events
+router.on('route:home', function(){
+	console.log("Route: home");
+	addLocation_view.render();
+});
+
+router.on('route:addLocation', function(){
+	console.log("Route: addLocation");
+	addLocation_view.render();
+});
+
+Backbone.history.start();
+
+/*	++++++++++++++++++++++
+ *	Initializers
  * 	++++++++++++++++++++++
  */
 
@@ -48,52 +104,6 @@ $(document).ready(function(){
 	}).addTo(map);
 	drawMarkers();
 });
-
-//Backbone models
-var VideoCollection = Backbone.Model.extend({
-		urlRoot: '/api/locations',
-});
-
-//Backbone views
-var AddLocationView = Backbone.View.extend({
-	render: function(){
-		console.log("AddLocationView created");
-		
-	}
-});
-
-//Backbone routers
-var ROUTER = Backbone.Router.extend({
-	routes: {
-		'' : 'home',
-		'new/location' : 'addLocation'
-	}
-});
-
-//Initialize backbone entities
-var addLocation_view = new AddLocationView({
-	el: $("#add-new-location-dialog"),
-	render: function(){
-		console.log("addLocation View rendered");
-		$("#add-new-location-dialog").dialog("open");
-	}
-});
-var router = new ROUTER();
-
-
-
-//Router events
-router.on('route:home', function(){
-	console.log("Route: home");
-	addLocation_view.render();
-});
-
-router.on('route:addLocation', function(){
-	console.log("Route: addLocation");
-	addLocation_view.render();
-});
-
-Backbone.history.start();
 
 /*	++++++++++++++++++++++
  *	FUNCTIONS
