@@ -123,7 +123,7 @@ videos.fetch({
 }
 
 function openDialog(){
-	window.open("#/new/location","_self");
-	//$.mobile.changePage("#add-new-location-dialog", {role: "dialog"});
+	//window.open("#/new/location","_self");
+	$.mobile.changePage("#add-new-location-dialog", {role: "dialog"});
 }
 
