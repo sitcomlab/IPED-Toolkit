@@ -18,10 +18,10 @@ var map;
 $(document).ready(function(){
 	var options = {
 		contextmenu: true,
-		contextmenuWidth: 140,
+		contextmenuWidth: 180,
 		contextmenuItems: [{
 			text: 'Add New Location Here',
-			callback: console.log("add new location")
+			callback: window.open("#/new/location","_self")
 		}]
 	};
 	
@@ -50,7 +50,8 @@ var MarkerView = Backbone.View.extend({
 //Backbone routers
 var ROUTER = Backbone.Router.extend({
 	routes: {
-		'' : 'home'
+		'' : 'home',
+		'new/location' : addLocation
 	}
 });
 
@@ -66,6 +67,12 @@ var router = new ROUTER();
 router.on('route:home', function(){
 	console.log("Route: home");
 	marker_view.render();
+});
+
+router.on('route:addLocation', function(){
+	console.log("Route: addLocation");
+	
+	//marker_view.render();
 });
 
 Backbone.history.start();
