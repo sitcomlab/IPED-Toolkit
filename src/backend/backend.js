@@ -23,7 +23,25 @@ $("#add-new-location-dialog").dialog({
 	}
 });
 
-
+// Initialize map
+$(document).ready(function(){
+	var options = {
+		contextmenu: true,
+		contextmenuWidth: 180,
+		contextmenuItems: [{
+			text: 'Add New Location Here',
+			callback: openDialog
+		}]
+	};
+	
+	//Initialize map
+	map = L.map('map', options).setView([51.962655, 7.625763], 15);
+	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+    	maxZoom: 18
+	}).addTo(map);
+	drawMarkers();
+});
 
 /*	++++++++++++++++++++++
  *	BACKBONE
@@ -70,7 +88,6 @@ var router = new ROUTER();
 //Router events
 router.on('route:home', function(){
 	console.log("Route: home");
-	addLocation_view.render();
 });
 
 router.on('route:addLocation', function(){
@@ -79,31 +96,6 @@ router.on('route:addLocation', function(){
 });
 
 Backbone.history.start();
-
-/*	++++++++++++++++++++++
- *	Initializers
- * 	++++++++++++++++++++++
- */
-
-// Initialize map
-$(document).ready(function(){
-	var options = {
-		contextmenu: true,
-		contextmenuWidth: 180,
-		contextmenuItems: [{
-			text: 'Add New Location Here',
-			callback: openDialog
-		}]
-	};
-	
-	//Initialize map
-	map = L.map('map', options).setView([51.962655, 7.625763], 15);
-	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-    	maxZoom: 18
-	}).addTo(map);
-	drawMarkers();
-});
 
 /*	++++++++++++++++++++++
  *	FUNCTIONS
@@ -139,6 +131,6 @@ videos.fetch({
 }
 
 function openDialog(){
-	window.open("#/new/location","_self");
+	window.open("/#/new/location","_self");
 }
 
