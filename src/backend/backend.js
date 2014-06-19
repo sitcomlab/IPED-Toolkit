@@ -36,7 +36,7 @@ $(document).ready(function(){
 		contextmenuWidth: 180,
 		contextmenuItems: [{
 			text: 'Add New Location Here',
-			callback: window.open("#/new/location","_self")
+			callback: openDialog
 		}]
 	};
 	
@@ -126,5 +126,9 @@ videos.fetch({
 	}
 });	
 
+}
+
+openDialog(){
+	window.open("#/new/location","_self");
 }
 
