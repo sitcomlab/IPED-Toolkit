@@ -16,8 +16,17 @@ var map;
 
 // Initialize map
 $(document).ready(function(){
+	var options = {
+		contextmenu: true,
+		contextmenuWidth: 140,
+		contextmenuItems: [{
+			text: 'Add New Location Here',
+			callback: console.log("add new location")
+		}]
+	};
+	
 	//Initialize map
-	map = L.map('map').setView([51.962655, 7.625763], 15);
+	map = L.map('map', options).setView([51.962655, 7.625763], 15);
 	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     	attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
     	maxZoom: 18
