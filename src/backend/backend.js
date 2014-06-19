@@ -17,10 +17,6 @@ var map;
 
 $("#add-new-location-dialog").dialog({
 	autoOpen: false,
-	show: {
-		effect: "clip",
-		duration: 800
-	}
 });
 
 // Initialize map
