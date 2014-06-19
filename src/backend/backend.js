@@ -128,7 +128,7 @@ videos.fetch({
 
 }
 
-openDialog(){
+function openDialog(){
 	window.open("#/new/location","_self");
 }
 
