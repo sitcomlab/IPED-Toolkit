@@ -41,8 +41,10 @@ $(document).ready(function(){
 	drawMarkers();
 	
 	map.on('contextmenu', function(e) {
-	$("#coordinates").html(e.latlng);
-    console.log("Coordinates saved: " + e.latlng); // e is an event object (MouseEvent in this case)
+	var coords = e.latlng;
+	$("#coordinates").text(coords);
+    console.log("Coordinates saved: " + coords); // e is an event object (MouseEvent in this case)
+    console.log("Latitude: " + coords.lat + ", Longitude: " + coords.lon);
 	});
 });
 
