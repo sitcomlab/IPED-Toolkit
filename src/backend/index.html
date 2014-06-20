@@ -35,7 +35,74 @@
 				<h1 class="ui-title" role="heading" text-align="center">iPED Toolkit Administration</h1>
 				<a id="menu-button" href="#menu" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-bars">Menu</a>
 			</div>
+			<!-- Menu Panel -->
 			<div id="menu" class="ui-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="b" data-position-fixed="true">
+				<div data-role="tabs">
+					<div data-role="navbar">
+						<ul>
+							<li>
+								<a href="#scenario" data-ajax="false">Scenario</a>
+							</li>
+							<li>
+								<a href="#study" data-ajax="false">Study</a>
+							</li>
+							<li>
+								<a href="#account" data-ajax="false">Account</a>
+							</li>
+						</ul>
+					</div>
+					<div id="scenario">
+						<p>
+							Scenario
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Scenario" data-mini="true">
+							<input type="button" value="Copy Current Scenario" data-mini="true">
+							<input type="button" value="Edit Current Scenario" data-mini="true">
+							<input type="button" value="Delete Current Scenario" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Scenario</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div id="study">
+						<p>
+							Study
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Study" data-mini="true">
+							<input type="button" value="Copy Current Study" data-mini="true">
+							<input type="button" value="Edit Current Study" data-mini="true">
+							<input type="button" value="Delete Current Study" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Study</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<div id="account">
+						<p>
+							Account
+						</p>
+						<hr />
+						<input type="button" value="Edit My Account" data-mini="true">
+						<input type="button" value="Change iPED Setting" data-mini="true">
+						<input type="button" value="Logout" data-mini="true">
+					</div>
+				</div>
+			</div>
+			<div id="add-location-panel" class="ui-panel" data-role="panel" data-position="left" data-display="overlay" data-theme="b" data-position-fixed="true">
 				<div data-role="tabs">
 					<div data-role="navbar">
 						<ul>
@@ -112,7 +179,7 @@
 			</div>
 		</div>
 		
-		<!-- Menu Panel -->
+		
 
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
