@@ -4,11 +4,17 @@
  */
 var glob = [];
 var map; 
+var mousecoords = [];
 /*	++++++++++++++++++++++
  *	EVENT LISTENERS 
  * 	++++++++++++++++++++++
  */
 
+map.on('contextmenu', function(e) {
+	mousecoords = e.latlng;
+	$("#coordinates").html(e.latlng);
+    console.log("Coordinates saved: " + e.latlng); // e is an event object (MouseEvent in this case)
+});
 
 /*	++++++++++++++++++++++
  *	Initializers
