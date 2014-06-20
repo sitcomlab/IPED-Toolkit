@@ -40,7 +40,7 @@ $(document).ready(function(){
 	}).addTo(map);
 	drawMarkers();
 	
-	map.on('click', function(e) {
+	map.on('contextmenu', function(e) {
 	$("#coordinates").html(e.latlng);
     console.log("Coordinates saved: " + e.latlng); // e is an event object (MouseEvent in this case)
 	});
