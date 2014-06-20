@@ -124,7 +124,9 @@ videos.fetch({
 
 function openDialog(){
 	console.log("entered callback (openDialog)");
-	window.open("#new/location","_self");
+	// Dialog loaded via Ajax
+	$.mobile.changePage( "addLocationDialog.html", { role: "dialog" } );
+	//window.open("#new/location","_self");
 	//$("#add-new-location-dialog").dialog("open");
 }
 
