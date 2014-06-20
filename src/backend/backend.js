@@ -42,10 +42,12 @@ $(document).ready(function(){
 	
 	map.on('contextmenu', function(e) {
 	var coords = e.latlng;
-	$("#coordinates").text(coords);
+	$("#coordinates").text(coords.lat + ", " + coords.lng);
     console.log("Coordinates saved: " + coords); // e is an event object (MouseEvent in this case)
-    console.log("Latitude: " + coords.lat + ", Longitude: " + coords.lon);
+    console.log("Latitude: " + coords.lat + ", Longitude: " + coords.lng);
 	});
+	
+	console.log("Test of map.on.coords: " + map.on.coords);
 });
 
 
