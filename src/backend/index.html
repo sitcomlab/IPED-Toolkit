@@ -107,79 +107,78 @@
 					<div data-role="navbar">
 						<ul>
 							<li>
-								<a href="#scenario" data-ajax="false">Scenario</a>
+								<a href="#scenario" data-ajax="false">General Data</a>
 							</li>
 							<li>
-								<a href="#study" data-ajax="false">Study</a>
+								<a href="#study" data-ajax="false">Video Footage</a>
 							</li>
 							<li>
-								<a href="#account" data-ajax="false">Account</a>
+								<a href="#account" data-ajax="false">Overlays</a>
 							</li>
 						</ul>
 					</div>
 					<div id="scenario">
 						<p>
-							Scenario
+							General Data
 						</p>
 						<hr />
 						<form>
-							<input type="button" value="Add New Scenario" data-mini="true">
-							<input type="button" value="Copy Current Scenario" data-mini="true">
-							<input type="button" value="Edit Current Scenario" data-mini="true">
-							<input type="button" value="Delete Current Scenario" data-mini="true">
-							<div class="ui-field-contain">
-								<select name="select-native-2" id="select-native-2" data-mini="true">
-									<option value="1">Load Scenario</option>
-									<option value="2">The 2nd Option</option>
-									<option value="3">The 3rd Option</option>
-									<option value="4">The 4th Option</option>
-								</select>
-							</div>
+							<fieldset>
+								<label for="name">Name</label>
+								<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+								<label for="description">Description</label>
+								<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all">
+								<label for="tags">Tags</label>
+								<input type="text" name="tags" id="tags" value="" class="text ui-widget-content ui-corner-all">
+							</fieldset>
 						</form>
 					</div>
 					<div id="study">
 						<p>
-							Study
+							Video Footage
 						</p>
 						<hr />
 						<form>
-							<input type="button" value="Add New Study" data-mini="true">
-							<input type="button" value="Copy Current Study" data-mini="true">
-							<input type="button" value="Edit Current Study" data-mini="true">
-							<input type="button" value="Delete Current Study" data-mini="true">
+							<input type="button" value="Add New Footage" data-mini="true">
 							<div class="ui-field-contain">
 								<select name="select-native-2" id="select-native-2" data-mini="true">
-									<option value="1">Load Study</option>
-									<option value="2">The 2nd Option</option>
-									<option value="3">The 3rd Option</option>
-									<option value="4">The 4th Option</option>
+									<option value="1">Select Video Footage From Library</option>
+									<option value="2">Footage 1</option>
+									<option value="3">Footage 2</option>
+									<option value="4">Footage 3</option>
 								</select>
 							</div>
 						</form>
 					</div>
 					<div id="account">
 						<p>
-							Account
+							Overlays
 						</p>
 						<hr />
-						<input type="button" value="Edit My Account" data-mini="true">
-						<input type="button" value="Change iPED Setting" data-mini="true">
-						<input type="button" value="Logout" data-mini="true">
+						<form>
+							<input type="button" value="Add New Overlay" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Select Overlay From Library</option>
+									<option value="2">Overlay 1</option>
+									<option value="3">Overlay 2</option>
+									<option value="4">Overlay 3</option>
+								</select>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
 			<div data-role="content">
 				<div id="map"></div>
-				
+
 			</div>
 			<div id="add-new-location-dialog" title="Add New Location">
-					<p>
-						All form fields are required.
-					</p>	
+				<p>
+					All form fields are required.
+				</p>
 			</div>
 		</div>
-		
-		
 
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
