@@ -11,6 +11,9 @@ width:18em;
 margin-top: 44px
 }
 
+.text {
+	border: solid 1px #000000
+}
 .ui-content{
 	position: absolute;
     top: 40px;
