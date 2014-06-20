@@ -55,7 +55,7 @@ var AddLocationView = Backbone.View.extend({
 	el: '#add-new-location-dialog',
 	render: function(){
 		console.log("AddLocationView rendered");
-		$("#add-new-location-dialog").dialog("open");
+		$.mobile.changePage( "addLocationDialog.html", { role: "dialog" } );
 		//$.mobile.changePage("#add-new-location-dialog", {role: "dialog"});
 	}
 });
@@ -125,8 +125,8 @@ videos.fetch({
 function openDialog(){
 	console.log("entered callback (openDialog)");
 	// Dialog loaded via Ajax
-	$.mobile.changePage( "addLocationDialog.html", { role: "dialog" } );
-	//window.open("#new/location","_self");
+	
+	window.open("#new/location","_self");
 	//$("#add-new-location-dialog").dialog("open");
 }
 
