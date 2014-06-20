@@ -5,16 +5,6 @@
 var glob = [];
 var map; 
 var mousecoords = [];
-/*	++++++++++++++++++++++
- *	EVENT LISTENERS 
- * 	++++++++++++++++++++++
- */
-
-map.on('contextmenu', function(e) {
-	mousecoords = e.latlng;
-	$("#coordinates").html(e.latlng);
-    console.log("Coordinates saved: " + e.latlng); // e is an event object (MouseEvent in this case)
-});
 
 /*	++++++++++++++++++++++
  *	Initializers
@@ -43,6 +33,17 @@ $(document).ready(function(){
     	maxZoom: 18
 	}).addTo(map);
 	drawMarkers();
+});
+
+/*	++++++++++++++++++++++
+ *	EVENT LISTENERS 
+ * 	++++++++++++++++++++++
+ */
+
+map.on('contextmenu', function(e) {
+	mousecoords = e.latlng;
+	$("#coordinates").html(e.latlng);
+    console.log("Coordinates saved: " + e.latlng); // e is an event object (MouseEvent in this case)
 });
 
 /*	++++++++++++++++++++++
