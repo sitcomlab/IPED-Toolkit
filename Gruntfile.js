@@ -18,6 +18,7 @@ module.exports = function(grunt) {
 		// Backend
 		'public/backend/index.html': 'src/backend/index.html',
 		'public/backend/map.html': 'src/backend/map.html',
+		'public/backend/addLocationDialog.html' : 'src/backend/addLocationDialog.html',
 		'public/js/backend.js': 'src/backend/backend.js',
 		'public/js/leaflet.contextmenu.js': 'src/backend/leaflet.contextmenu.js'
 	};
