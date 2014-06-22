@@ -1,0 +1,775 @@
+FORMAT: 1A
+HOST: http://giv-sitcomlab.uni-muenster.de:8080
+
+# IPED-Toolkit-API
+
+
+<!-- BEGIN OF THE INTRO -->
+## Hosts
+* HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
+* HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
+* HOST-LOCAL ( MASTER ): [http://localhost:8080](http://localhost:8080)
+* HOST-LOCAL ( DEVELOP ): [http://localhost:8081](http://localhost:8081)
+
+## Allowed HTTPs requests:
+* **GET** - Get a resource or list of resources
+* **POST** - To create or update resource
+* **PUT** - To create or update resource
+* **DELETE** - To delete resource
+
+## Description of usual Server Responses
+* **200** `OK` - the request was successful (some API calls may return 201 instead).
+* **201** `Created` - the request was successful and a resource was created.
+* **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
+* **400** `Bad Request` - the request could not be understood or was missing required parameters.
+* **401** `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
+* **403** `Forbidden` - access denied.
+* **404** `Not Found` - resource was not found.
+* **405** `Method Not Allowed` - requested method is not supported for resource.
+* **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
+* **505** `Internal Server Error` - the request is unavailable
+
+## API-Status options:
+* **implemented** \[+]: Implementation on official Server is finished and works
+* **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
+* **in progress** \[+]: Design is finished and the functions will be implemented on official Server at the moment
+* **not yet implemented** :  Design is finished, but not yet implemented on official Server, but is planned
+* **in design** :  The Starting point, designing the function in this tool
+
+\[+] Please write your name, after the following status, so it is possible to see, how works on which part,
+e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
+
+## API-Example of the blueprint code:
+* for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
+* for API-Syntax check out the **Blueprint-Documenation**: [http://apiblueprint.org](http://apiblueprint.org)
+
+```
+### List all Locations [GET]
+
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200 (application/json)
+
+(...)
+```
+* For more examples check out: [http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)
+
+
+## API-Comments:
+It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding funtion click the 
+"Add comment"-Button on the right side of the box.
+
+<!-- END OF THE INTRO -->
+
+* * *
+
+<!-- BEGIN OF THE API -->
+
+# Group Locations
+
+## Locations Collection [/api/locations]
+### List all Locations [GET]
+(Status: **implemented**, Developer: Nicho)
++ Response 200 (application/json)
+        
+        {
+            "locations": 
+                [
+                    {   "id": 5, 
+                        "_id":0, 
+                        "name":"Juridicum", 
+                        "tags":[
+                            "Juridicum", 
+                            "Krummer Timpen", 
+                            "ULB", 
+                            "Münster"
+                        ], 
+                        "lon": "7.619681",
+                        "lat": "51.962367", 
+                        "description":""
+                    }, {
+                        "id":6, 
+                        "_id":1, 
+                        "name":"Jesuitengang", 
+                        "tags":[
+                            "Juridicum", 
+                            "Jesuitengang", 
+                            "ULB", 
+                            "Münster", 
+                            "Petrikirche"
+                        ],
+                        "lon":"7.621709",
+                        "lat":"51.961971",
+                        "description":" Behind the ULB"
+                    }
+                ]
+        }
+
+### Create a Location [POST]
+(Status: **not yet implemented**)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Frauenstraße"*)
+- `tags[]` **String[ ]** (e.g. *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
+- `lon` **Double** (e.g. *7.6189278*)
+- `lat` **Double** (e.g. *51.9634288*)
+- `description` **String** (e.g. *"Gegenüber der Trattoria"*)
+- `relatedLocations` **Int[ ]** (e.g. *[ ]*, can be empty)
+
+Optional attributes:
+
+- `relatedLocations` **Int[ ]** (e.g. *[1, 3]*)
+
+
++ Request (application/json)
+
+    + Body
+    
+                { 
+                    "name": "Frauenstraße", 
+                    "tags": [
+                        "Münster",
+                        "Frauenstraße",
+                        "Trattoria",
+                        "Kulturcafé",
+                        "Fürstin-von-Gallitzin-Wohnheim"
+                    ],
+                    "lon": 7.6189278,
+                    "lat": 51.9634288,
+                    "description": "Gegenüber der Trattoria",
+                    "relatedLocations": []
+                }
+
++ Response 201 (application/json)
+
+        {
+            "location": [
+                    {
+                        "id":2,
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": []
+                    }
+                ]
+        }
+
+## Location [/api/locations/{id}]
+A single Location object with all its details
+
++ Parameters
+    + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+### Retrieve a Location [GET]
+(Status: **in design**)
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            {
+                "location": [
+                    {
+                        "id":2,
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [
+                            1, 
+                            3
+                        ]
+                    }
+                ]
+            }
+
+### Remove a Location [DELETE]
+(Status: **not yet implemented**)
++ Response 204
+
+## Relations for Locations [/api/locations/{id}/relations]
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+### Get all Locations next to the current location [GET]
+(Status: **not yet implemented**)
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+    
+            {
+                "locations":[
+                    {
+                        "id":4,
+                        "_id":6,
+                        "name":"Krummer Timpen",
+                        "tags":[
+                            "Münster",
+                            "Krummer Timpen",
+                            "ULB",
+                            "Juridicum"
+                        ],
+                        "lon":"7.6201791",
+                        "lat":"51.9627494",
+                        "description":"Gegenüber der ULB"
+                        
+                    },
+                    {
+                        "id":2,
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria"
+                    }
+                ]
+            }
+                    
+## Videos of current Location [/api/locations/{id}/videos]
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+### Get all Videos of the current location [GET]
+(Status: **not yet implemented**)
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+            
+            {
+                "videos": [
+                    {
+                        "id":2,
+                        "_id":35 , 
+                        "description":"Frauenstraße bei Tag",
+                        "name":"Frauenstraße",
+                        "date":"No date available",
+                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
+                    }
+                ]
+            }
+
+
+## Overlays of current Location [/api/locations/{id}/overlays]
++ Parameters
+    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+### Get all Overlays for the current location [GET]
+(Status: **not yet implemented**)
++ Response 200 (application/json)    
+    
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+            
+            {
+                "overlays": [
+                    {   
+                        "id":3,
+                        "_id":23,
+                        "tags":[
+                            "video",
+                            "test"
+                        ],
+                        "d":0,
+                        "type":"html",
+                        "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                        "h":600,
+                        "w":800,
+                        "rz":0,
+                        "description":"Video Overlay Test",
+                        "name":"Video Overlay",
+                        "z":0,
+                        "rx":0,
+                        "y":0,
+                        "ry":0,
+                        "x":100
+                    }
+                ]
+            } 
+
+
+
+
+# Group Videos
+
+## Video Collection [/api/videos]
+
+### List all Videos [GET]
+(Status: **not yet implemented**)
++ Response 200 (application/json)
+
+        {
+            "videos": [
+                {
+                    "id":2,
+                    "_id":35 , 
+                    "description":"Frauenstraße bei Tag",
+                    "name":"Frauenstraße",
+                    "date":"No date available",
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
+                }, {
+                    "id":3,
+                    "_id":36,
+                    "description":"Frauenstraße bei Tag",
+                    "name":"Frauenstraße2",
+                    "date":"No date available",
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                }
+            ]
+        }
+
+### Create a Video [POST]
+(Status: **in design**)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Frauenstraße2"*)
+- `description` **String** (e.g. *"Frauenstraße bei Tag"*)
+- `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
+- `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+
++ Request (application/json)
+
+    + body
+    
+                { 
+                    "description": "Frauenstraße bei Tag",
+                    "name": "Frauenstraße2",
+                    "date": "No date available",
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                }
+
++ Response 201 (application/json)
+
+        {  "id":3,
+            "_id":36,
+            "description":"Frauenstraße bei Tag",
+            "name":"Frauenstraße2",
+            "date":"No date available",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+        }
+
+## Video [/api/videos/{id}]
+A single Video object with all details
+
++ Parameters
+    + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+
+### Retrieve a video [GET]
+(Status: **in design**)
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            {
+                "video":[
+                    {
+                    "id":2,
+                    "_id":35,
+                    "description":"Frauenstraße bei Tag",
+                    "name":"Frauenstraße",
+                    "date":"No date available",
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    }
+                ]
+            }
+
+### Remove a video [DELETE]
+(Status: **not yet implemented**)
++ Response 204
+
+# Group Overlays
+
+## Overlays Collection [/api/overlays]
+### List all Overlays [GET]
+(Status: **in design**)
++ Response 200 (application/json)
+        
+        {
+            "overlays": [
+                {   
+                    "id":3,
+                    "_id":23,
+                    "tags":[
+                        "video",
+                        "test"
+                    ],
+                    "d":0,
+                    "type":"html",
+                    "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                    "h":600,
+                    "w":800,
+                    "rz":0,
+                    "description":"Video Overlay Test",
+                    "name":"Video Overlay",
+                    "z":0,
+                    "rx":0,
+                    "y":0,
+                    "ry":0,
+                    "x":100
+                }
+            ]
+        }        
+
+### Create a Overlay [POST]
+(Status: **in design**)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Video Overlay"*)
+- `description` **String** (e.g. *"Video Overlay Test"*)
+- `tags` **String[ ]** (e.g. *["video", "test"]*)
+- `type` **String** (options: *"html"*, *"image"*, *"video"*)
+- `url` **String** (e.g. *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
+- `w` **Double** (default: *0*, e.g. *800*)
+- `h` **Double** (default: *0*, e.g. *600*)
+- `x` **Double** (default: *0*, e.g. *100*)
+- `y` **Double** (default: *0*)
+- `d` **Double** (default: *0*)
+- `rx` **Double** (default: *0*)
+- `ry` **Double** (default: *0*)
+- `rz` **Double** (default: *0*)
+
+
++ Request (application/json)
+
+    + body 
+    
+            {   
+                "tags":[
+                    "video",
+                    "test"
+                ],
+                "d":0,
+                "type":"html",
+                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                "h":600,
+                "w":800,
+                "rz":0,
+                "description":"Video Overlay Test",
+                "name":"Video Overlay",
+                "z":0,
+                "rx":0,
+                "y":0,
+                "ry":0,
+                "x":100
+            }
+
++ Response 201 (application/json)
+
+        {   
+            "id":3,
+            "_id":23,
+            "tags":[
+                "video",
+                "test"
+            ],
+            "d":0,
+            "type":"html",
+            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+            "h":600,
+            "w":800,
+            "rz":0,
+            "description":"Video Overlay Test",
+            "name":"Video Overlay",
+            "z":0,
+            "rx":0,
+            "y":0,
+            "ry":0,
+            "x":100
+        }
+
+
+## Location [/api/overlays/{id}]
+A single Overlay object with all its details
+
++ Parameters
+    + id (required, number, `3`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+### Retrieve a Overlay [GET]
+(Status: **not yet implemented**)
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            {
+                "overlay": [
+                    {
+                        "id":3,
+                        "_id":23,
+                        "tags":[
+                            "video",
+                            "test"
+                        ],
+                        "d":0,
+                        "type":"html",
+                        "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                        "h":600,
+                        "w":800,
+                        "rz":0,
+                        "description":"Video Overlay Test",
+                        "name":"Video Overlay",
+                        "z":0,
+                        "rx":0,
+                        "y":0,
+                        "ry":0,
+                        "x":100
+                    }
+                ]
+            }
+
+### Remove a Overlay [DELETE]
+(Status: **not yet implemented**)
++ Response 204
+
+
+
+# Group Scenarios
+
+## Scenario Collection [/api/scenarios]
+
+### List all Scenarios [GET]
+(Status: **in progress**, Developer: Nicho)
+
++ Response 200 (application/json)
+
+        {
+            "scenarios": [
+                {
+                    "id":1,
+                    "_id":9,
+                    "added":1401379792309,
+                    "creator": "nicho90",
+                    "name": "Scenario 1"
+                }, {
+                    "id":2,
+                    "_id":2,
+                    "added":1401378034808,
+                    "creator": "mostkamp", 
+                    "name": "Scenario 2",
+                    }
+                }
+            ]
+        }
+        
+### Create a Scenario [POST]
+(Status: **in design**)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Scenario 3"*)
+- `tags[]` **String[ ]** (e.g. *["Münster"]*)
+- `description` **String** (e.g. *""*)
+- `containedLocations` **Int[ ]** (e.g. *[ ]*, have to contained a minimum of 2 Locations)
+
++ Request (application/json)
+
+    + body
+        
+            {
+                "name":"Scenario 3"
+                "tags": [
+                    "Münster"
+                ],
+                "description": "",
+                "containedLocations": [
+                    1,
+                    3
+                ]
+            }
+
++ Response 201 (application/json)
+
+        {  
+                    "id":3,
+                    "_id":10,
+                    "added":1401379792309,
+                    "creator": "nicho90",
+                    "name":"Scenario 3"
+                    "tags": [
+                        "Münster"
+                    ],
+                    "description": "",
+                    "containedLocations": [
+                        1,
+                        3
+                    ]
+        }
+        
+        
+## Scenario [/api/scenarios/{id}]
+A single, complete Scenario object with all details (meta-data), locations, videos and overlays
+
++ Parameters
+    + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
+
+
+### Retrieve a scenario [GET]
+(Status: **in design**)
+
++ Response 200 (application/json)
+
+    + Header
+
+            X-My-Header: The Value
+
+    + Body
+
+            {
+                "scenario":[
+                    "id":3,
+                    "_id":10,
+                    "added":1401379792309,
+                    "creator": "nicho90",
+                    "name":"Scenario 3",
+                    "startAtLocation": 1,
+                    "locations": [
+                            {
+                                "id":1,
+                                "_id":3,
+                                "name":"Schlossplatz",
+                                "tags": [
+                                    "Münster",
+                                    "Schlossplatz",
+                                    "Stadtmitte"
+                                ],
+                                "lon":"7.6178207",
+                                "lat":"51.9634296",
+                                "description":"Der im Westen der Stadt Münster gelegene Platz gilt als zweitgrößter innerstädtischer Platz Europas. Er entstand an Stelle der von Fürstbischof Christoph Bernhard von Galen 1661 angelegten Zitadelle, die im Jahr 1765 niedergelegt wurde. Nach dem Bau des Residenzschlosses wurde ein Teil des Platzes mit gärtnerischen Anlagen ausgestattet. Das übrige Areal diente zeitweise als Exerzierplatz. Auf der Freifläche finden bis heute regelmäßig Großveranstaltungen wie etwa der Send statt.\nDer Hindenburgplatz, der mehr als 150 Jahre Neuplatz hieß, hat für Münster hohe Bedeutung. Sowohl die Benennung des Platzes als auch seine Gestaltung werden seit Jahren intensiv diskutiert. 2008 ging ein weiterer Antrag zur Umbenennung des Hindenburgplatzes in die Beratung der politischen Gremien.\n",
+                                "videos": [ 
+                                    {
+                                        "id":1,
+                                        "_id":34,
+                                        "description":"Schlossplatz bei Tag",
+                                        "name":"Schlossplatz",
+                                        "date":"No date available",
+                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_01"
+                                    }
+                                ],
+                                "overlays": [
+                                    {   
+                                        "id":3,
+                                        "_id":23,
+                                        "tags":[
+                                            "video",
+                                            "test"
+                                        ],
+                                        "d":0,
+                                        "type":"html",
+                                        "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                                        "h":600,
+                                        "w":800,
+                                        "rz":0,
+                                        "description":"Video Overlay Test",
+                                        "name":"Video Overlay",
+                                        "z":0,
+                                        "rx":0,
+                                        "y":0,
+                                        "ry":0,
+                                        "x":100
+                                    }    
+                                ]
+                            }, {
+                                "id":4,
+                                "_id":6,
+                                "name":"Krummer Timpen",
+                                "tags": [
+                                    "Münster",
+                                    "Krummer Timpen",
+                                    "ULB",
+                                    "Juridicum"
+                                ],
+                                "lon":"7.6201791",
+                                "lat":"51.9627494",
+                                "description":"Gegenüber der ULB",
+                                "videos": [
+                                    {
+                                        "id":4,
+                                        "_id":37,
+                                        "description":"Krummer Timpen bei Tag",
+                                        "name":"Krummer Timpen",
+                                        "date":"No date available",
+                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_04"
+                                    }
+                                 ],
+                                "overlays": [
+                                    
+                                ]
+                            }, {
+                                "id":2,
+                                "_id":4,
+                                "name":"Frauenstraße",
+                                "tags":[
+                                    "Münster",
+                                    "Frauenstraße",
+                                    "Trattoria",
+                                    "Kulturcafé",
+                                    "Fürstin-von-Gallitzin-Wohnheim"
+                                ],
+                                "lon":"7.6189278",
+                                "lat":"51.9634288",
+                                "description":"Gegenüber der Trattoria",
+                                "videos": [
+                                    "id":2,
+                                        "_id":35,
+                                        "description":"Frauenstraße bei Tag",
+                                        "name":"Frauenstraße",
+                                        "date":"No date available",
+                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
+                                ],
+                                "overlays": [
+                                
+                                ]
+                            }    
+                    ]
+            }
+        
+        
+        
