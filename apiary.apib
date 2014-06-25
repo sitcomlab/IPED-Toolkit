@@ -114,11 +114,14 @@ Required attributes:
 - `lat` **Double** (e.g. *51.9634288*)
 - `description` **String** (e.g. *"Gegenüber der Trattoria"*)
 - `relatedLocations` **Int[ ]** (e.g. *[ ]*, can be empty)
+- `videos` **Int[ ]** (e.g. *[ ]*, can be empty)
+- `overlays` **Int[ ]** (e.g. *[ ]*, can be empty)
 
 Optional attributes:
 
 - `relatedLocations` **Int[ ]** (e.g. *[1, 3]*)
-
+- `videos` **Int[ ]** (e.g. *[1, 3]*)
+- `overlays` **Int[ ]** (e.g. *[1, 3]*)
 
 + Request (application/json)
 
@@ -136,7 +139,9 @@ Optional attributes:
                     "lon": 7.6189278,
                     "lat": 51.9634288,
                     "description": "Gegenüber der Trattoria",
-                    "relatedLocations": []
+                    "relatedLocations": [],
+                    "videos": [],
+                    "overlays": []
                 }
 
 + Response 201 (application/json)
@@ -156,7 +161,10 @@ Optional attributes:
                         "lon":"7.6189278",
                         "lat":"51.9634288",
                         "description":"Gegenüber der Trattoria",
-                        "relatedLocations": []
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
                     }
                 ]
         }
@@ -195,6 +203,13 @@ A single Location object with all its details
                         "relatedLocations": [
                             1, 
                             3
+                        ],
+                        "videos": [
+                            5
+                        ]
+                        "overlays": [
+                            7,
+                            8
                         ]
                     }
                 ]
@@ -250,75 +265,6 @@ A single Location object with all its details
                     }
                 ]
             }
-                    
-## Videos of current Location [/api/locations/{id}/videos]
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
-
-### Get all Videos of the current location [GET]
-(Status: **not yet implemented**)
-+ Response 200 (application/json)
-
-    + Header
-
-            X-My-Header: The Value
-
-    + Body
-            
-            {
-                "videos": [
-                    {
-                        "_id":35 , 
-                        "description":"Frauenstraße bei Tag",
-                        "name":"Frauenstraße",
-                        "date":"No date available",
-                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
-                    }
-                ]
-            }
-
-
-## Overlays of current Location [/api/locations/{id}/overlays]
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
-
-### Get all Overlays for the current location [GET]
-(Status: **not yet implemented**)
-+ Response 200 (application/json)    
-    
-    + Header
-
-            X-My-Header: The Value
-
-    + Body
-            
-            {
-                "overlays": [
-                    {   
-                        "_id":23,
-                        "tags":[
-                            "video",
-                            "test"
-                        ],
-                        "d":0,
-                        "type":"html",
-                        "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                        "h":600,
-                        "w":800,
-                        "rz":0,
-                        "description":"Video Overlay Test",
-                        "name":"Video Overlay",
-                        "z":0,
-                        "rx":0,
-                        "y":0,
-                        "ry":0,
-                        "x":100
-                    }
-                ]
-            } 
-
-
-
 
 # Group Videos
 
