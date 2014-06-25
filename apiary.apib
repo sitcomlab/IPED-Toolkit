@@ -75,8 +75,7 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
         {
             "locations": 
                 [
-                    {   "id": 5, 
-                        "_id":0, 
+                    {  "_id":0, 
                         "name":"Juridicum", 
                         "tags":[
                             "Juridicum", 
@@ -88,7 +87,6 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
                         "lat": "51.962367", 
                         "description":""
                     }, {
-                        "id":6, 
                         "_id":1, 
                         "name":"Jesuitengang", 
                         "tags":[
@@ -146,7 +144,6 @@ Optional attributes:
         {
             "location": [
                     {
-                        "id":2,
                         "_id":4,
                         "name":"Frauenstraße",
                         "tags":[
@@ -183,7 +180,6 @@ A single Location object with all its details
             {
                 "location": [
                     {
-                        "id":2,
                         "_id":4,
                         "name":"Frauenstraße",
                         "tags":[
@@ -225,7 +221,6 @@ A single Location object with all its details
             {
                 "locations":[
                     {
-                        "id":4,
                         "_id":6,
                         "name":"Krummer Timpen",
                         "tags":[
@@ -240,7 +235,6 @@ A single Location object with all its details
                         
                     },
                     {
-                        "id":2,
                         "_id":4,
                         "name":"Frauenstraße",
                         "tags":[
@@ -274,7 +268,6 @@ A single Location object with all its details
             {
                 "videos": [
                     {
-                        "id":2,
                         "_id":35 , 
                         "description":"Frauenstraße bei Tag",
                         "name":"Frauenstraße",
@@ -302,7 +295,6 @@ A single Location object with all its details
             {
                 "overlays": [
                     {   
-                        "id":3,
                         "_id":23,
                         "tags":[
                             "video",
@@ -339,14 +331,12 @@ A single Location object with all its details
         {
             "videos": [
                 {
-                    "id":2,
                     "_id":35 , 
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
                     "date":"No date available",
                     "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
                 }, {
-                    "id":3,
                     "_id":36,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße2",
@@ -379,7 +369,7 @@ Required attributes:
 
 + Response 201 (application/json)
 
-        {  "id":3,
+        {  
             "_id":36,
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
@@ -407,7 +397,6 @@ A single Video object with all details
             {
                 "video":[
                     {
-                    "id":2,
                     "_id":35,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
@@ -431,7 +420,6 @@ A single Video object with all details
         {
             "overlays": [
                 {   
-                    "id":3,
                     "_id":23,
                     "tags":[
                         "video",
@@ -501,7 +489,6 @@ Required attributes:
 + Response 201 (application/json)
 
         {   
-            "id":3,
             "_id":23,
             "tags":[
                 "video",
@@ -542,7 +529,6 @@ A single Overlay object with all its details
             {
                 "overlay": [
                     {
-                        "id":3,
                         "_id":23,
                         "tags":[
                             "video",
@@ -583,13 +569,11 @@ A single Overlay object with all its details
         {
             "scenarios": [
                 {
-                    "id":1,
                     "_id":9,
                     "added":1401379792309,
                     "creator": "nicho90",
                     "name": "Scenario 1"
                 }, {
-                    "id":2,
                     "_id":2,
                     "added":1401378034808,
                     "creator": "mostkamp", 
@@ -628,7 +612,6 @@ Required attributes:
 + Response 201 (application/json)
 
         {  
-                    "id":3,
                     "_id":10,
                     "added":1401379792309,
                     "creator": "nicho90",
@@ -664,7 +647,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
 
             {
                 "scenario":[
-                    "id":3,
                     "_id":10,
                     "added":1401379792309,
                     "creator": "nicho90",
@@ -672,7 +654,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                     "startAtLocation": 1,
                     "locations": [
                             {
-                                "id":1,
                                 "_id":3,
                                 "name":"Schlossplatz",
                                 "tags": [
@@ -685,7 +666,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                                 "description":"Der im Westen der Stadt Münster gelegene Platz gilt als zweitgrößter innerstädtischer Platz Europas. Er entstand an Stelle der von Fürstbischof Christoph Bernhard von Galen 1661 angelegten Zitadelle, die im Jahr 1765 niedergelegt wurde. Nach dem Bau des Residenzschlosses wurde ein Teil des Platzes mit gärtnerischen Anlagen ausgestattet. Das übrige Areal diente zeitweise als Exerzierplatz. Auf der Freifläche finden bis heute regelmäßig Großveranstaltungen wie etwa der Send statt.\nDer Hindenburgplatz, der mehr als 150 Jahre Neuplatz hieß, hat für Münster hohe Bedeutung. Sowohl die Benennung des Platzes als auch seine Gestaltung werden seit Jahren intensiv diskutiert. 2008 ging ein weiterer Antrag zur Umbenennung des Hindenburgplatzes in die Beratung der politischen Gremien.\n",
                                 "videos": [ 
                                     {
-                                        "id":1,
                                         "_id":34,
                                         "description":"Schlossplatz bei Tag",
                                         "name":"Schlossplatz",
@@ -695,7 +675,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                                 ],
                                 "overlays": [
                                     {   
-                                        "id":3,
                                         "_id":23,
                                         "tags":[
                                             "video",
@@ -717,7 +696,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                                     }    
                                 ]
                             }, {
-                                "id":4,
                                 "_id":6,
                                 "name":"Krummer Timpen",
                                 "tags": [
@@ -731,7 +709,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                                 "description":"Gegenüber der ULB",
                                 "videos": [
                                     {
-                                        "id":4,
                                         "_id":37,
                                         "description":"Krummer Timpen bei Tag",
                                         "name":"Krummer Timpen",
@@ -743,7 +720,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                                     
                                 ]
                             }, {
-                                "id":2,
                                 "_id":4,
                                 "name":"Frauenstraße",
                                 "tags":[
