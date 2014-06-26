@@ -17,8 +17,16 @@ var map;
  * 	++++++++++++++++++++++
  */
 
-$("#add-new-location-dialog").dialog({
+$("#add-location-dialog").dialog({
 	autoOpen: false,
+	show: {
+        effect: "blind",
+        duration: 1000
+      },
+      hide: {
+        effect: "explode",
+        duration: 1000
+      }
 });
 
 // Initialize map
@@ -137,9 +145,9 @@ videos.fetch({
 
 function openDialog(){
 	console.log("entered callback (openDialog)");
-	$("#add-location-panel").panel("open");
+	//$("#add-location-panel").panel("open");
 	// Dialog loaded via Ajax
 	//window.open("#new/location","_self");
-	//$("#add-new-location-dialog").dialog("open");
+	$("#add-location-dialog").dialog("open");
 }
 

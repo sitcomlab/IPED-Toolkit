@@ -11,6 +11,10 @@ width:18em;
 margin-top: 44px
 }
 
+.ui-dialog {
+	background: #ffffff !important;
+}
+
 .text {
 	border: solid 1px #000000
 }
