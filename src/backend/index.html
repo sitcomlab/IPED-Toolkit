@@ -19,23 +19,29 @@
 
 		<!-- Leaflet -->
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
 		<!-- JQuery UI -->
 		<link rel="stylesheet" href="../css/admin_theme/jquery-ui-1.10.4.custom.min.css">
-		<!-- JQuery Mobile -->
-		<link rel="stylesheet" href="../css/jquery mobile/jquery.mobile-1.4.2.min.css">
 		<!-- Leaflet Context Menu Plugin -->
 		<link rel="stylesheet" href="../css/leaflet.contextmenu.css">
 		<!-- Individual css files -->
 		<link rel="stylesheet" href="../css/backend.css">
+		
 	</head>
 
 	<body>
-		<div data-role="page">
-			<div id="header" data-role="header" data-position="fixed" data-theme="b">
+			<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      			<div class="container">
+      				<h1 id="header-title">IPED-Toolkit Administration</h1>
+     			 </div>
+    			</div>
+			<!--div id="header" data-role="header" data-position="fixed" data-theme="b">
 				<h1 class="ui-title" role="heading" text-align="center">iPED Toolkit Administration</h1>
 				<a id="menu-button" href="#menu" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-bars">Menu</a>
-			</div>
-			<!-- Menu Panel -->
+			</div-->
+			<!-- Menu Panel ->
 			<div id="menu" class="ui-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="b" data-position-fixed="true">
 				<div data-role="tabs">
 					<div data-role="navbar">
@@ -101,22 +107,8 @@
 						<input type="button" value="Logout" data-mini="true">
 					</div>
 				</div>
-			</div>
-			<div id="add-location-dialog" <!--class="ui-panel" data-role="panel" data-position="left" data-display="overlay" data-theme="b" data-position-fixed="true"-->>
-				<div data-role="tabs">
-					<!--div data-role="navbar">
-						<ul>
-							<li>
-								<a href="#scenario" data-ajax="false">General Data</a>
-							</li>
-							<li>
-								<a href="#study" data-ajax="false">Video Footage</a>
-							</li>
-							<li>
-								<a href="#account" data-ajax="false">Overlays</a>
-							</li>
-						</ul>
-					</div-->
+			</div-->
+			<div id="add-location-dialog">
 					<div id="add-location-general">
 						<h2>Add New Location</h2>
 						<div id="coordinates"></div>
@@ -172,19 +164,19 @@
 							</div>
 						</form>
 					</div>
-				</div>
 			</div>
 			<div data-role="content">
 				<div id="map"></div>
 
 			</div>
-		</div>
+		
 
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
-		
-		<!-- JQuery Mobile-->
-		<script src="../libs/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
+		<!-- JQuery Mobile->
+		<script src="../libs/jquery.mobile-1.4.2.min.js" type="text/javascript"></script-->
+		<!-- Bootstrap -->
+		<script src="../libs/bootstrap.min.js" type="text/javascript"></script>	
 		<!-- JQuery UI -->
 		<script src="../libs/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 		<!-- Leaflet -->

@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 		'public/backend/map.html': 'src/backend/map.html',
 		'public/backend/addLocationDialog.html' : 'src/backend/addLocationDialog.html',
 		'public/js/backend.js': 'src/backend/backend.js',
-		'public/js/leaflet.contextmenu.js': 'src/backend/leaflet.contextmenu.js'
+		'public/js/leaflet.contextmenu.js': 'src/backend/leaflet.contextmenu.js',
 	};
 	
   // Project configuration.

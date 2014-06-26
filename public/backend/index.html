@@ -19,20 +19,29 @@
 
 		<!-- Leaflet -->
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
-		<!-- JQuery UI
-		<link rel="stylesheet" href="../css/admin_theme/jquery-ui-1.10.4.custom.min.css">-->
-		<!-- JQuery Mobile -->
-		<link rel="stylesheet" href="../css/jquery mobile/jquery.mobile-1.4.2.min.css">
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="../css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<!-- JQuery UI -->
+		<link rel="stylesheet" href="../css/admin_theme/jquery-ui-1.10.4.custom.min.css">
+		<!-- Leaflet Context Menu Plugin -->
+		<link rel="stylesheet" href="../css/leaflet.contextmenu.css">
 		<!-- Individual css files -->
-		<link rel="stylesheet" href="../css/administration.css">
+		<link rel="stylesheet" href="../css/backend.css">
+		
 	</head>
 
 	<body>
-		<div data-role="page">
-			<div id="header" data-role="header" data-position="fixed" data-theme="b">
+			<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      			<div class="container">
+      				<h1 id="header-title">IPED-Toolkit Administration</h1>
+     			 </div>
+    			</div>
+			<!--div id="header" data-role="header" data-position="fixed" data-theme="b">
 				<h1 class="ui-title" role="heading" text-align="center">iPED Toolkit Administration</h1>
 				<a id="menu-button" href="#menu" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-bars">Menu</a>
-			</div>
+			</div-->
+			<!-- Menu Panel ->
 			<div id="menu" class="ui-panel" data-role="panel" data-position="right" data-display="overlay" data-theme="b" data-position-fixed="true">
 				<div data-role="tabs">
 					<div data-role="navbar">
@@ -49,68 +58,131 @@
 						</ul>
 					</div>
 					<div id="scenario">
-					<p>
-						Scenario
-					</p>
-					<hr />
-					<form>
-						<input type="button" value="Add New Scenario" data-mini="true">
-						<input type="button" value="Copy Current Scenario" data-mini="true">
-						<input type="button" value="Edit Current Scenario" data-mini="true">
-						<input type="button" value="Delete Current Scenario" data-mini="true">
-						<div class="ui-field-contain">
-							<select name="select-native-2" id="select-native-2" data-mini="true">
-								<option value="1">Load Scenario</option>
-								<option value="2">The 2nd Option</option>
-								<option value="3">The 3rd Option</option>
-								<option value="4">The 4th Option</option>
-							</select>
-						</div>
-					</form>
+						<p>
+							Scenario
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Scenario" data-mini="true">
+							<input type="button" value="Copy Current Scenario" data-mini="true">
+							<input type="button" value="Edit Current Scenario" data-mini="true">
+							<input type="button" value="Delete Current Scenario" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Scenario</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
 					</div>
 					<div id="study">
-					<p>
-						Study
-					</p>
-					<hr />
-					<form>
-						<input type="button" value="Add New Study" data-mini="true">
-						<input type="button" value="Copy Current Study" data-mini="true">
-						<input type="button" value="Edit Current Study" data-mini="true">
-						<input type="button" value="Delete Current Study" data-mini="true">
-						<div class="ui-field-contain">
-							<select name="select-native-2" id="select-native-2" data-mini="true">
-								<option value="1">Load Study</option>
-								<option value="2">The 2nd Option</option>
-								<option value="3">The 3rd Option</option>
-								<option value="4">The 4th Option</option>
-							</select>
-						</div>
-					</form>
+						<p>
+							Study
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Study" data-mini="true">
+							<input type="button" value="Copy Current Study" data-mini="true">
+							<input type="button" value="Edit Current Study" data-mini="true">
+							<input type="button" value="Delete Current Study" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Load Study</option>
+									<option value="2">The 2nd Option</option>
+									<option value="3">The 3rd Option</option>
+									<option value="4">The 4th Option</option>
+								</select>
+							</div>
+						</form>
 					</div>
 					<div id="account">
-						<p>Account</p>
+						<p>
+							Account
+						</p>
 						<hr />
 						<input type="button" value="Edit My Account" data-mini="true">
 						<input type="button" value="Change iPED Setting" data-mini="true">
 						<input type="button" value="Logout" data-mini="true">
 					</div>
 				</div>
+			</div-->
+			<div id="add-location-dialog">
+					<div id="add-location-general">
+						<h2>Add New Location</h2>
+						<div id="coordinates"></div>
+						<br>
+						<p>
+							<strong>General Data</strong>
+						</p>
+						<hr />
+						<form>
+							<fieldset>
+								<label for="name">Name</label>
+								<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+								<label for="description">Description</label>
+								<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all">
+								<label for="tags">Tags</label>
+								<input type="text" name="tags" id="tags" value="" class="text ui-widget-content ui-corner-all">
+							</fieldset>
+						</form>
+					</div>
+					<br>
+					<div id="add-location-footage">
+						<p>
+							<strong>Video Footage</strong>
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Footage" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Select Video Footage From Library</option>
+									<option value="2">Footage 1</option>
+									<option value="3">Footage 2</option>
+									<option value="4">Footage 3</option>
+								</select>
+							</div>
+						</form>
+					</div>
+					<br>
+					<div id="add-video-overlays">
+						<p>
+							<strong>Overlays</strong>
+						</p>
+						<hr />
+						<form>
+							<input type="button" value="Add New Overlay" data-mini="true">
+							<div class="ui-field-contain">
+								<select name="select-native-2" id="select-native-2" data-mini="true">
+									<option value="1">Select Overlay From Library</option>
+									<option value="2">Overlay 1</option>
+									<option value="3">Overlay 2</option>
+									<option value="4">Overlay 3</option>
+								</select>
+							</div>
+						</form>
+					</div>
 			</div>
 			<div data-role="content">
 				<div id="map"></div>
+
 			</div>
-		</div>
-		<!-- Menu Panel -->
+		
 
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
-		<!-- JQuery Mobile-->
-		<script src="../libs/jquery.mobile-1.4.2.min.js" type="text/javascript"></script>
-		<!-- JQuery UI
-		<script src="../libs/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>-->
+		<!-- JQuery Mobile->
+		<script src="../libs/jquery.mobile-1.4.2.min.js" type="text/javascript"></script-->
+		<!-- Bootstrap -->
+		<script src="../libs/bootstrap.min.js" type="text/javascript"></script>	
+		<!-- JQuery UI -->
+		<script src="../libs/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 		<!-- Leaflet -->
 		<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+		<!-- Leaflet Conetxt Menu Plugin -->
+		<script src="../js/leaflet.contextmenu.js"></script>
 		<!-- Backbone.js and Underscore.js-->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>

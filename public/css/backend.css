@@ -1,14 +1,27 @@
-/*#header {
-	position: relative;
+#header {
+	position: fixed;
 	height: 50px;
 	width: 100%;
-	border: solid 2px #000000;
-	background: black,
-}*/
+	border: solid 0px #000000;
+	background-color:#000000; 
+	font-weight:bold; 
+	font-family:Arial; 
+	font-size:120%;
+	
+}
+
+#header-title {
+	overflow: hidden;
+	font-size: 20px;
+	font-family: tahoma;
+	color: white;
+	text-align: center;
+	vertical-align: center
+}
 
 .ui-panel {
-width:18em;
-margin-top: 44px
+	width:18em;
+	margin-top: 44px
 }
 
 .ui-dialog {
@@ -32,5 +45,6 @@ margin-top: 44px
 	height: 100%; 
 	width: 100%;
 	padding-right: 20px;
+	margin-top: 50px;
 	overflow: hidden
 }
