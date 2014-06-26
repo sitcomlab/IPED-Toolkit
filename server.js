@@ -56,12 +56,7 @@ var browserify = require('browserify');
 
 var HTTP_PORT = 8080;
 var HTTPS_PORT = 8443;
-
-// Master Database Port
-//var NEO4J_PORT = 7474;
-
-// Develop Database Port
-var NEO4J_PORT = 7575;
+var NEO4J_PORT = 7474;
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function (val, index, array) {
@@ -75,12 +70,10 @@ process.argv.forEach(function (val, index, array) {
         NEO4J_PORT = val.split('=')[1];
     }
 });
-console.log('HTTP_PORT = ' + HTTP_PORT);
-console.log('HTTPS_PORT = ' + HTTPS_PORT);
-console.log('NEO4J_PORT = ' + NEO4J_PORT);
 
 // Connection to the Neo4j-Database
 var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:' + NEO4J_PORT);
+console.log('Neo4J-Database-Server started at PORT: ' + NEO4J_PORT);
 
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
@@ -97,21 +90,21 @@ var app = express();
 app.use(bodyParser());
 
 var httpsServer = require('https').Server(options, app);
-httpsServer.listen(8443, function(err) {
+httpsServer.listen(HTTPS_PORT, function(err) {
     if (err) {
         return console.log('Encountered error starting server: ', err);
     }
     else {
-        console.log('HTTPS-Server started, listen to PORT 8443');
+        console.log('HTTPS-Server started, listen to PORT: ' + HTTPS_PORT);
     }
 });
 var httpServer = require('http').Server(app);
-httpServer.listen(8080, function(err) {
+httpServer.listen(HTTP_PORT, function(err) {
     if (err) {
         return console.log('Encountered error starting server: ', err);
     }
     else {
-        console.log('HTTP-Server started, listen to PORT 8080');
+        console.log('HTTP-Server started, listen to PORT: ' + HTTP_PORT);
     }
 });
 
@@ -224,6 +217,7 @@ app.get('/api/locations', function(req, res) {
 
 // 3.1.2 Create a Location (Developer: Nicho)
 app.post('/api/locations', function(req, res) {
+    console.log(util.inspect(req));
     console.log(req.body);
     console.log(req.body.name);
     console.log(JSON.stringify(req.body[0]));
