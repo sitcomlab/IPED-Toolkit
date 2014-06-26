@@ -59,19 +59,18 @@ var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:7575');
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
 // Morin: The default password for the server.key file is: morin 
-/*
 var options = {
     key : fs.readFileSync('server.key'),
     cert : fs.readFileSync('server.crt'),
     passphrase : 'morin'
-};*/
+};
 
 var app = express();
 
 // Loading package "body-parser" for making POST and PUT requests
 app.use(bodyParser());
 
-/*var httpsServer = require('https').Server(options, app);
+var httpsServer = require('https').Server(options, app);
 httpsServer.listen(8443, function(err) {
     if (err) {
         return console.log('Encountered error starting server: ', err);
@@ -79,7 +78,7 @@ httpsServer.listen(8443, function(err) {
     else {
         console.log('HTTPS-Server started, listen to PORT 8443');
     }
-});*/
+});
 var httpServer = require('http').Server(app);
 httpServer.listen(8080, function(err) {
     if (err) {
@@ -97,7 +96,6 @@ app.set("view options", {
 });
 
 // Socket.io packages 
-/*
 var io = socketio.listen(httpServer);
 io.sockets.on('connection', function(socket) {
     io.sockets.emit('news', {
@@ -119,7 +117,7 @@ io.sockets.on('connection', function(socket) {
 /*********************************************************
    2. webRTC
 **********************************************************/
-/*
+
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
 
@@ -150,7 +148,6 @@ app.get('/js/webRTC.js', function(req, res, next) {
 // Serve static content
 app.use(express.static(__dirname + '/public'));
 //console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
-*/
 
 
 
