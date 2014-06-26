@@ -29,6 +29,15 @@ $("#add-location-dialog").dialog({
       }
 });
 
+$(".button").button();
+$("submit").button();
+
+$( "#spinner" ).change(function() {
+      $( "#spinner" ).spinner( "option", "culture", $( this ).val() );
+    });
+    
+$("#spinner").spinner();    
+
 // Initialize map
 $(document).ready(function(){
 	var options = {

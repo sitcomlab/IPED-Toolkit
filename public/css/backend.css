@@ -16,7 +16,7 @@
 	font-family: tahoma;
 	color: white;
 	text-align: center;
-	vertical-align: center
+	vertical-align: middle
 }
 
 .ui-panel {
@@ -38,6 +38,10 @@
     bottom: 0;
     left: 0;
     padding: 0 !important;
+}
+
+.input {
+	width: 100%
 }
 
 #map {
