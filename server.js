@@ -1,4 +1,4 @@
-/********************************************************************************************
+/*********************************************************************************************
  Node.js Webserver
  *********************************************************************************************
  Table of content
@@ -26,13 +26,13 @@
  [*] = not yet implemented
  [x] = in progress
  [!] = not yet defined and designed
- 
- If there is a problem, you can contact the developer. 
+
+ If there is a problem, you can contact the developer.
  So please write your name to your implemented function, e.g. "(Developer: Nicho)"
 
- **********************************************************************************************/
+ *********************************************************************************************/
 
-'use strict'; 
+'use strict';
 
 var os = require('os');
 var fs = require('fs');
@@ -47,19 +47,16 @@ var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
 
-
-
-
 /*********************************************************
-   1. Server-Settings
-**********************************************************/
+ 1. Server-Settings
+ *********************************************************/
 
 var HTTP_PORT = 8080;
 var HTTPS_PORT = 8443;
 var NEO4J_PORT = 7474;
 
 // Pass console parameters (e.g., server port passed by Jenkins)
-process.argv.forEach(function (val, index, array) {
+process.argv.forEach(function(val, index, array) {
     if (val.indexOf('http=') != -1) {
         HTTP_PORT = val.split('=')[1];
     }
@@ -77,7 +74,7 @@ console.log('Neo4J-Database-Server started at PORT: ' + NEO4J_PORT);
 
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
-// Morin: The default password for the server.key file is: morin 
+// Morin: The default password for the server.key file is: morin
 var options = {
     key : fs.readFileSync('server.key'),
     cert : fs.readFileSync('server.crt'),
@@ -93,8 +90,7 @@ var httpsServer = require('https').Server(options, app);
 httpsServer.listen(HTTPS_PORT, function(err) {
     if (err) {
         return console.log('Encountered error starting server: ', err);
-    }
-    else {
+    } else {
         console.log('HTTPS-Server started, listen to PORT: ' + HTTPS_PORT);
     }
 });
@@ -102,19 +98,17 @@ var httpServer = require('http').Server(app);
 httpServer.listen(HTTP_PORT, function(err) {
     if (err) {
         return console.log('Encountered error starting server: ', err);
-    }
-    else {
+    } else {
         console.log('HTTP-Server started, listen to PORT: ' + HTTP_PORT);
     }
 });
-
 
 // Public-folder to upload media, like videos
 app.set("view options", {
     layout : false
 });
 
-// Socket.io packages 
+// Socket.io packages
 var io = socketio.listen(httpServer);
 io.sockets.on('connection', function(socket) {
     io.sockets.emit('news', {
@@ -130,12 +124,9 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-
-
-
 /*********************************************************
-   2. webRTC
-**********************************************************/
+ 2. webRTC
+ *********************************************************/
 
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
@@ -168,17 +159,13 @@ app.get('/js/webRTC.js', function(req, res, next) {
 app.use(express.static(__dirname + '/public'));
 //console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
-
-
-
 /*********************************************************
-   3. API
-**********************************************************/
-
+ 3. API
+ *********************************************************/
 
 /****************************
-   3.1 Locations
-*****************************/
+ 3.1 Locations
+ ****************************/
 
 // 3.1.1 List all Locations (Developer: Nicho)
 app.get('/api/locations', function(req, res) {
@@ -217,28 +204,90 @@ app.get('/api/locations', function(req, res) {
 
 // 3.1.2 Create a Location (Developer: Nicho)
 app.post('/api/locations', function(req, res) {
-    console.log(util.inspect(req));
-    console.log(req.body);
-    console.log(req.body.name);
-    console.log(JSON.stringify(req.body[0]));
-    console.log('req.body.name: ' + req.body['name']);
-    console.log('req.param.name: ' + req.param.name);
-    db.insertNode({
-        name : req.body.name,
-        description : req.body.description,
-        //tags : req.body.tags,
-        lon : req.body.lon,
-        lat : req.body.lat,    
-    }, function(err, node) {
-        if (err)
-            throw err;
 
-        // Output node properties.
-        console.log(node.data);
+    if (JSON.stringify(req.body) == '{}') {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end("Error: no data submitted!");
+        return;
+    } else {
 
-        // Output node id.
-        console.log(node.id);
-    });
+        // 1st Query
+        var query_1 = "CREATE (l:Location {name: \"" + body.name + "\", description: \"" + body.description + "\",tags: " + JSON.stringify(body.tags) + ", lat: " + body.lat + ", lon: " + body.lon + "} ) RETURN l";
+        console.log(query_1);
+
+        // 1st Database Query
+        db.cypherQuery(query_1, function(err, result) {
+
+            if (err) {
+
+                res.writeHead(500, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end("Error:" + err);
+                return;
+            } else {
+                //console.log(result.data);
+                // delivers an array of query results
+                //console.log(result.columns);
+                // delivers an array of names of objects getting returned
+
+                var location = result.data;
+                var newNodeID = '{"newID":' + JSON.stringify(location) + '}';
+                var nodeID = JSON.parse(newNodeID);
+                console.log("created Node-ID: " + nodeID.newID[0]._id);
+                console.log("Array.length(): " + body.relatedLocations.length);
+                console.log("Array i=0: " + body.relatedLocations[0]);
+                console.log("Array i=1: " + body.relatedLocations[1]);
+
+                location[0].relatedLocations = JSON.parse('[]');
+
+                // 2nd Query/Queries
+                for (var i = 0; i < body.relatedLocations.length; i++) {
+
+                    var query_2 = "START n=node(" + nodeID.newID[0]._id + "), m=node(" + body.relatedLocations[i] + ") CREATE (n)-[:relatedTo]->(m) RETURN id(m)";
+                    console.log(query_2);
+
+                    // 2nd Database Query/Queries
+                    db.cypherQuery(query_2, function(err, result) {
+
+                        if (err) {
+
+                            res.writeHead(500, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end("Error:" + err);
+                            return;
+                        } else {
+                            //console.log(result.data);
+                            // delivers an array of query results
+                            //console.log(result.columns);
+                            // delivers an array of names of objects getting returned
+
+                            var relation = result.data;
+                            var newRelationID = '{"newRelation":' + JSON.stringify(relation) + '}';
+                            var relationID = JSON.parse(newRelationID);
+
+                            console.log("connected Node-ID: " + relationID.newRelation[0]);
+
+                            // Adding the attribute "relatedLocations" to JSON-Objekt
+                            //location[0].relatedLocations.push(body.relatedLocations[i]);
+                            //console.log("new relatedLocation: " + location[0].relatedLocations);
+                        }
+                    });
+                }
+            }
+            var finalResult = '{"location":' + JSON.stringify(location) + '}';
+            console.log(finalResult);
+
+            res.writeHead(201, {
+                'Content-Type' : 'application/json'
+            });
+            res.end(finalResult);
+            return;
+        });
+    }
 });
 
 // 3.1.3 GET all information about one location (Developer: Nicho)
@@ -264,7 +313,7 @@ app.get('/api/locations/:id', function(req, res) {
             // delivers an array of query results
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
-            
+
             // Results
             var location = result.data;
 
@@ -284,12 +333,12 @@ app.get('/api/locations/:id', function(req, res) {
                     res.end("Error:" + err);
                     return;
                 } else {
-                    
+
                     // Results
                     var relations = result.data;
 
                     // Adding the attribute "relatedLocations" to JSON-Objekt
-                    location[0].relatedTo = relations;
+                    location[0].relatedLocations = relations;
 
                     // 3rd Query
                     var query_3 = "START l=node(" + req.params.id + ") MATCH l<-[:wasRecordedAt]-v RETURN id(v) AS wasRecordedAt";
@@ -311,7 +360,7 @@ app.get('/api/locations/:id', function(req, res) {
                             // delivers an array of query results
                             //console.log(result.columns);
                             // delivers an array of names of objects getting returned
-                            
+
                             // Results
                             var videos = result.data;
 
@@ -338,13 +387,13 @@ app.get('/api/locations/:id', function(req, res) {
                                     // delivers an array of query results
                                     //console.log(result.columns);
                                     // delivers an array of names of objects getting returned
-                                    
+
                                     // Results
                                     var overlays = result.data;
 
                                     // Adding the attribute "videos" to JSON-Objekt
                                     location[0].overlays = overlays;
-                                    
+
                                     // Return final Result
                                     var finalResult = '{"location":' + JSON.stringify(location) + '}';
                                     console.log(finalResult);
@@ -366,10 +415,9 @@ app.get('/api/locations/:id', function(req, res) {
 
 // 3.1.4 Remove a Location
 
-
 /****************************
-   3.2 Videos
-****************************/
+ 3.2 Videos
+ ****************************/
 
 // 3.2.1 List all Videos
 
@@ -379,10 +427,9 @@ app.get('/api/locations/:id', function(req, res) {
 
 // 3.2.4 Remove a Video
 
-
 /****************************
-   3.3 Overlays
-****************************/
+ 3.3 Overlays
+ ****************************/
 
 // 3.3.1 List all Overlays
 
@@ -392,10 +439,9 @@ app.get('/api/locations/:id', function(req, res) {
 
 // 3.3.4 Remove an Overlay
 
-
 /****************************
-   3.4 Scenarios
-****************************/
+ 3.4 Scenarios
+ ****************************/
 
 // 3.4.1 GET a list of all scenarios (Developer: Nicho)
 app.get('/api/scenarios', function(req, res) {
@@ -431,8 +477,6 @@ app.get('/api/scenarios', function(req, res) {
         }
     });
 });
-
-
 
 // get Scenrio (Developer: Nicho)
 app.get('/api/scenarios/:id', function(req, res) {
