@@ -234,58 +234,16 @@ app.post('/api/locations', function(req, res) {
                 // delivers an array of names of objects getting returned
 
                 var location = result.data;
-                var newNodeID = '{"newID":' + JSON.stringify(location) + '}';
-                var nodeID = JSON.parse(newNodeID);
-                console.log("created Node-ID: " + nodeID.newID[0]._id);
-                console.log("Array.length(): " + body.relatedLocations.length);
-                console.log("Array i=0: " + body.relatedLocations[0]);
-                console.log("Array i=1: " + body.relatedLocations[1]);
-
-                location[0].relatedLocations = JSON.parse('[]');
-
-                // 2nd Query/Queries
-                for (var i = 0; i < body.relatedLocations.length; i++) {
-
-                    var query_2 = "START n=node(" + nodeID.newID[0]._id + "), m=node(" + body.relatedLocations[i] + ") CREATE (n)-[:relatedTo]->(m) RETURN id(m)";
-                    console.log(query_2);
-
-                    // 2nd Database Query/Queries
-                    db.cypherQuery(query_2, function(err, result) {
-
-                        if (err) {
-
-                            res.writeHead(500, {
-                                'Content-Type' : 'text/plain'
-                            });
-                            res.end("Error:" + err);
-                            return;
-                        } else {
-                            //console.log(result.data);
-                            // delivers an array of query results
-                            //console.log(result.columns);
-                            // delivers an array of names of objects getting returned
-
-                            var relation = result.data;
-                            var newRelationID = '{"newRelation":' + JSON.stringify(relation) + '}';
-                            var relationID = JSON.parse(newRelationID);
-
-                            console.log("connected Node-ID: " + relationID.newRelation[0]);
-
-                            // Adding the attribute "relatedLocations" to JSON-Objekt
-                            //location[0].relatedLocations.push(body.relatedLocations[i]);
-                            //console.log("new relatedLocation: " + location[0].relatedLocations);
-                        }
-                    });
-                }
+                
+                var finalResult = '{"location":' + JSON.stringify(location) + '}';
+                console.log(finalResult);
+    
+                res.writeHead(201, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(finalResult);
+                return;
             }
-            var finalResult = '{"location":' + JSON.stringify(location) + '}';
-            console.log(finalResult);
-
-            res.writeHead(201, {
-                'Content-Type' : 'application/json'
-            });
-            res.end(finalResult);
-            return;
         });
     }
 });
