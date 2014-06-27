@@ -10,12 +10,16 @@ var map;
  * 	++++++++++++++++++++++
  */
 
+$("#submit-location").click(function(){
+	submitLocation();
+})
 
 
 /*	++++++++++++++++++++++
  *	Initializers
  * 	++++++++++++++++++++++
  */
+
 
 $("#add-location-dialog").dialog({
 	autoOpen: false,
@@ -79,6 +83,20 @@ var VideoCollection = Backbone.Model.extend({
 		urlRoot: '/api/locations',
 });
 
+var LocationModel = Backbone.Model.extend({
+	dataType: "json",
+	urlRoot: '../api/locations',
+	defaults: {
+		name: '',
+		tags: [],
+		lon: '' ,
+		lat: '',
+		description: '',
+		relatedLocations: [],
+		videos: [],
+		overlays: []
+	}
+});
 
 //Backbone views
 var AddLocationView = Backbone.View.extend({
@@ -159,3 +177,30 @@ function openDialog(){
 	//$("#add-location-dialog").dialog("open");
 }
 
+function submitLocation(){
+	
+	var locname = $("#name").val(),
+		locdescription = $("#description").val();
+	var loctags = [],	
+		loctags = "[" + $("#tags").val() + "]";
+		
+		console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
+		
+	var newLocation = new LocationModel;	
+	var locationDetails = {
+		name: locname,
+		description: locdescription,
+		tags: loctags
+	};	
+	
+	newLocation.save(locationDetails, {
+		headers: {"contentType": "application/json", "dataType": "json"},
+		success: function(newLocation){
+			console.log("New Location was submitted:");
+			console.log(newLocation.toJSON());
+		}
+	});
+	
+		
+	
+}
