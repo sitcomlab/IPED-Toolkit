@@ -6,23 +6,23 @@
  1. Server-Settings
  2. webRTC
  3. API
-    3.1 Locations:
-        3.1.1 List all Locations
-        3.1.2 Create a Location [+]
-        3.1.3 Retrieve a Location
-        3.1.4 Remove a Location [+]
-    3.2 Videos:
-        3.2.1 List all Videos [*]
-        3.2.2 Create a Video [*]
-        3.2.3 Retrieve a Video [*]
-        3.2.4 Remove a Video [*]
-    3.3 Overlays
-        3.3.1 List all Overlays [*]
-        3.3.2 Create an Overlay [*]
-        3.3.3 Retrieve an Overlay [*]
-        3.3.4 Remove an Overlay [*]
-    3.4 Scenarios [!]
-    
+     3.1 Locations:
+         3.1.1 List all Locations
+         3.1.2 Create a Location [+]
+         3.1.3 Retrieve a Location
+         3.1.4 Remove a Location [+]
+     3.2 Videos:
+         3.2.1 List all Videos [*]
+         3.2.2 Create a Video [*]
+         3.2.3 Retrieve a Video [*]
+         3.2.4 Remove a Video [*]
+     3.3 Overlays
+         3.3.1 List all Overlays [*]
+         3.3.2 Create an Overlay [*]
+         3.3.3 Retrieve an Overlay [*]
+         3.3.4 Remove an Overlay [*]
+         3.4 Scenarios [!]
+
  [*] = not yet implemented
  [x] = in progress
  [!] = not yet defined and designed
@@ -46,6 +46,8 @@ var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
+
+var async = require('async');
 
 /*********************************************************
  1. Server-Settings
@@ -204,45 +206,189 @@ app.get('/api/locations', function(req, res) {
 
 // 3.1.2 Create a Location (Developer: Nicho)
 app.post('/api/locations', function(req, res) {
-	var body = req.body;
+
+    var newNodeID;
+    var newLocation;
+
     if (JSON.stringify(req.body) == '{}') {
         res.writeHead(400, {
             'Content-Type' : 'text/plain'
         });
-        res.end("Error: no data submitted!");
+        res.end("Error: No data submitted!");
         return;
     } else {
-		
-        // 1st Query
-        var query_1 = "CREATE (l:Location {name: \"" + body.name + "\", description: \"" + body.description + "\", tags: " + JSON.stringify(body.tags) + ", lat: " + body.lat + ", lon: " + body.lon + "} ) RETURN l";
-        console.log(query_1);
 
-        // 1st Database Query
-        db.cypherQuery(query_1, function(err, result) {
-
+        // 1st Database Query: CREATE new Location
+        db.insertNode({
+            name : req.body.name,
+            description : req.body.description,
+            tags : req.body.tags,
+            lat : req.body.lat,
+            lon : req.body.lon
+        }, ['Location'], function(err, node) {
             if (err) {
-
-                res.writeHead(500, {
+                res.writeHead(400, {
                     'Content-Type' : 'text/plain'
                 });
-                res.end("Error:" + err);
+                res.end("Error: data couldn't saved in the database");
                 return;
             } else {
-                //console.log(result.data);
-                // delivers an array of query results
-                //console.log(result.columns);
-                // delivers an array of names of objects getting returned
 
-                var location = result.data;
-                
-                var finalResult = '{"location":' + JSON.stringify(location) + '}';
-                console.log(finalResult);
-    
-                res.writeHead(201, {
-                    'Content-Type' : 'application/json'
+                // Output node properties
+                console.log("newNodeProperties: " + JSON.stringify(node));
+                newLocation = node;
+
+                // Output node id
+                console.log("newNodeID: " + node._id);
+                newNodeID = node._id;
+
+                // Asynchron functions to set the relationships for the new Location
+                async.parallel({
+                    relatedLocations : function(callback1) {
+
+                        var locationIDs = new Array();
+
+                        async.forEach(req.body.relatedLocations, function(locationID_temp, callback) {
+                            
+                            // 2nd Database Query: SET relationships between Locations and the new Location  
+                            db.insertRelationship(locationID_temp, newNodeID, 'locatetTo', {}, function(err, relationship) {
+                                if (err) {
+                                    console.log("Error: Could not find the related Location with the ID" + locationID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+
+                                } else {
+
+                                    // Output relationship properties
+                                    //console.log(relationship.data);
+
+                                    // Output relationship id
+                                    //console.log(relationship._id);
+
+                                    // Output relationship start_node_id
+                                    //console.log(relationship._start_node_id);
+
+                                    // Output relationship end_node_id
+                                    //console.log(relationship._end_node_id);
+
+                                    console.log("set for new Location " + newNodeID + " a new relationship to Location " + locationID_temp);
+                                    locationIDs.push(locationID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+                                }
+                            });
+
+                        }, function(err) {
+                            console.log("LocationsArray: " + JSON.stringify(locationIDs));
+                            callback1(null, locationIDs);
+                        });
+
+                    },
+                    videos : function(callback2) {
+
+                        var videoIDs = new Array();
+
+                        async.forEach(req.body.videos, function(videoID_temp, callback) {
+                            
+                            // 3rd Database Query: SET relationships between Videos and the new Location 
+                            db.insertRelationship(videoID_temp, newNodeID, 'wasRecordedAt', {}, function(err, relationship) {
+                                if (err) {
+                                    console.log("Error: Could not find the related Video with the ID" + videoID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+
+                                } else {
+
+                                    // Output relationship properties
+                                    //console.log(relationship.data);
+
+                                    // Output relationship id
+                                    //console.log(relationship._id);
+
+                                    // Output relationship start_node_id
+                                    //console.log(relationship._start_node_id);
+
+                                    // Output relationship end_node_id
+                                    //console.log(relationship._end_node_id);
+
+                                    console.log("set for new Location " + newNodeID + " a new relationship to Video " + videoID_temp);
+                                    videoIDs.push(videoID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+                                }
+                            });
+
+                        }, function(err) {
+                            console.log("VideoArray: " + JSON.stringify(videoIDs));
+                            callback2(null, videoIDs);
+                        });
+
+                    },
+                    overlays : function(callback3) {
+
+                        var overlayIDs = new Array();
+
+                        async.forEach(req.body.overlays, function(overlayID_temp, callback) {
+                            
+                            // 4th Database Query: SET relationships between Overlays and the new Location 
+                            db.insertRelationship(overlayID_temp, newNodeID, 'locatedAt', {}, function(err, relationship) {
+                                if (err) {
+                                    console.log("Error: Could not find the related Overlay with the ID" + overlayID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+
+                                } else {
+
+                                    // Output relationship properties
+                                    //console.log(relationship.data);
+
+                                    // Output relationship id
+                                    //console.log(relationship._id);
+
+                                    // Output relationship start_node_id
+                                    //console.log(relationship._start_node_id);
+
+                                    // Output relationship end_node_id
+                                    //console.log(relationship._end_node_id);
+
+                                    console.log("set for new Location " + newNodeID + " a new relationship to Overlay " + overlayID_temp);
+                                    overlayIDs.push(overlayID_temp);
+
+                                    // tell async that the iterator has completed
+                                    callback();
+                                }
+                            });
+
+                        }, function(err) {
+                            console.log("OverlayArray: " + JSON.stringify(overlayIDs));
+                            callback3(null, overlayIDs);
+                        });
+
+                    },
+                }, function(err, results) {
+                    //console.log("Results_temp:" + JSON.stringify(results));
+
+                    // Prepare final Result
+                    newLocation.relatedLocations = results.relatedLocations;
+                    newLocation.videos = results.videos;
+                    newLocation.overlays = results.overlays;
+                    var finalResult = '{"location": [' + JSON.stringify(newLocation) + '] }';
+                    
+                    console.log(finalResult);
+                    
+                    // Send final Result
+                    res.writeHead(201, {
+                        'Content-Type' : 'application/json'
+                    });
+                    res.end(finalResult);
+                    return;
                 });
-                res.end(finalResult);
-                return;
+
             }
         });
     }
