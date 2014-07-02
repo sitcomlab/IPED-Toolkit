@@ -4,6 +4,7 @@
  */
 var glob = [];
 var map; 
+var coords;
 
 /*	++++++++++++++++++++++
  *	EVENT LISTENERS 
@@ -62,7 +63,7 @@ $(document).ready(function(){
 	drawMarkers();
 	
 	map.on('contextmenu', function(e) {
-	var coords = e.latlng;
+	coords = e.latlng;
 	$("#coordinates").text(coords.lat + ", " + coords.lng);
     console.log("Coordinates saved: " + coords); // e is an event object (MouseEvent in this case)
     console.log("Latitude: " + coords.lat + ", Longitude: " + coords.lng);
@@ -127,6 +128,7 @@ var router = new ROUTER();
 //Router events
 router.on('route:home', function(){
 	console.log("Route: home");
+	drawMarkers();
 });
 
 router.on('route:addLocation', function(){
@@ -183,23 +185,34 @@ function submitLocation(){
 		locdescription = $("#description").val();
 	var loctags = [],	
 		loctags = "[" + $("#tags").val() + "]";
-		
+	var latitude = coords.lat,
+		longitude = coords.lng;
+			
 		console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
 		
 	var newLocation = new LocationModel;	
 	var locationDetails = {
 		name: locname,
 		description: locdescription,
-		tags: loctags
+		tags: loctags,
+		lat: latitude,
+		lon: longitude
 	};	
 	
+	console.log("Object to be transmitted: ");
+	console.log(locationDetails);
 	newLocation.save(locationDetails, {
 		headers: {"contentType": "application/json", "dataType": "json"},
 		success: function(newLocation){
 			console.log("New Location was submitted:");
 			console.log(newLocation.toJSON());
+			router.navigate('', {trigger: true});
+			$("#add-location-dialog").dialog("close");
+			
 		}
 	});
+	
+	
 	
 		
 	

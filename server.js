@@ -204,7 +204,7 @@ app.get('/api/locations', function(req, res) {
 
 // 3.1.2 Create a Location (Developer: Nicho)
 app.post('/api/locations', function(req, res) {
-
+	var body = req.body;
     if (JSON.stringify(req.body) == '{}') {
         res.writeHead(400, {
             'Content-Type' : 'text/plain'
@@ -212,9 +212,9 @@ app.post('/api/locations', function(req, res) {
         res.end("Error: no data submitted!");
         return;
     } else {
-
+		
         // 1st Query
-        var query_1 = "CREATE (l:Location {name: \"" + body.name + "\", description: \"" + body.description + "\",tags: " + JSON.stringify(body.tags) + ", lat: " + body.lat + ", lon: " + body.lon + "} ) RETURN l";
+        var query_1 = "CREATE (l:Location {name: \"" + body.name + "\", description: \"" + body.description + "\", tags: " + JSON.stringify(body.tags) + ", lat: " + body.lat + ", lon: " + body.lon + "} ) RETURN l";
         console.log(query_1);
 
         // 1st Database Query
