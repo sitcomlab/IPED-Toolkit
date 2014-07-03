@@ -61,7 +61,6 @@ $(document).ready(function(){
     	maxZoom: 18
 	}).addTo(map);
 	drawMarkers();
-	
 	map.on('contextmenu', function(e) {
 	coords = e.latlng;
 	$("#coordinates").text(coords.lat + ", " + coords.lng);
@@ -69,9 +68,7 @@ $(document).ready(function(){
     console.log("Latitude: " + coords.lat + ", Longitude: " + coords.lng);
 	});
 	
-	console.log("Test of map.on.coords: " + map.on.coords);
 });
-
 
 
 /*	++++++++++++++++++++++
