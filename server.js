@@ -209,6 +209,10 @@ app.post('/api/locations', function(req, res) {
 
     var newNodeID;
     var newLocation;
+    
+    var status_relatedLocation = true;
+    var status_videos = true;
+    var status_overlays = true; 
 
     if (JSON.stringify(req.body) == '{}') {
         res.writeHead(400, {
@@ -227,7 +231,7 @@ app.post('/api/locations', function(req, res) {
             lon : req.body.lon
         }, ['Location'], function(err, node) {
             if (err) {
-                res.writeHead(400, {
+                res.writeHead(500, {
                     'Content-Type' : 'text/plain'
                 });
                 res.end("Error: data couldn't saved in the database");
@@ -251,37 +255,27 @@ app.post('/api/locations', function(req, res) {
                         async.forEach(req.body.relatedLocations, function(locationID_temp, callback) {
                             
                             // 2nd Database Query: SET relationships between Locations and the new Location  
-                            db.insertRelationship(locationID_temp, newNodeID, 'locatetTo', {}, function(err, relationship) {
-                                if (err) {
-                                    console.log("Error: Could not find the related Location with the ID" + locationID_temp);
-
+                            db.cypherQuery("START n=node(" + newNodeID + "), m=node(" + locationID_temp + ") CREATE (n)-[:relatedTo]->(m) CREATE (m)-[:relatedTo]->(n)", function(err, result){
+                                if(err) {
+                                    console.log("Error: Could not find the related Location with the ID " + locationID_temp);
+                                    status_relatedLocation = false;
+                                    
                                     // tell async that the iterator has completed
                                     callback();
-
                                 } else {
-
-                                    // Output relationship properties
-                                    //console.log(relationship.data);
-
-                                    // Output relationship id
-                                    //console.log(relationship._id);
-
-                                    // Output relationship start_node_id
-                                    //console.log(relationship._start_node_id);
-
-                                    // Output relationship end_node_id
-                                    //console.log(relationship._end_node_id);
-
+                                    //console.log(result.data); 
+                                    //console.log(result.columns);
+                                    
                                     console.log("set for new Location " + newNodeID + " a new relationship to Location " + locationID_temp);
                                     locationIDs.push(locationID_temp);
-
+                                    
                                     // tell async that the iterator has completed
                                     callback();
                                 }
                             });
 
                         }, function(err) {
-                            console.log("LocationsArray: " + JSON.stringify(locationIDs));
+                            console.log("+++ finished relatedLocations: " + JSON.stringify(locationIDs) +" +++");
                             callback1(null, locationIDs);
                         });
 
@@ -293,37 +287,27 @@ app.post('/api/locations', function(req, res) {
                         async.forEach(req.body.videos, function(videoID_temp, callback) {
                             
                             // 3rd Database Query: SET relationships between Videos and the new Location 
-                            db.insertRelationship(videoID_temp, newNodeID, 'wasRecordedAt', {}, function(err, relationship) {
-                                if (err) {
-                                    console.log("Error: Could not find the related Video with the ID" + videoID_temp);
-
+                            db.cypherQuery("START n=node(" + newNodeID + "), m=node(" + videoID_temp + ") CREATE (m)-[:wasRecordedAt]->(n)", function(err, result){
+                                if(err) {
+                                    console.log("Error: Could not find the related Video with the ID " + videoID_temp);
+                                    status_videos = false;
+                                    
                                     // tell async that the iterator has completed
                                     callback();
-
                                 } else {
-
-                                    // Output relationship properties
-                                    //console.log(relationship.data);
-
-                                    // Output relationship id
-                                    //console.log(relationship._id);
-
-                                    // Output relationship start_node_id
-                                    //console.log(relationship._start_node_id);
-
-                                    // Output relationship end_node_id
-                                    //console.log(relationship._end_node_id);
-
+                                    //console.log(result.data); 
+                                    //console.log(result.columns);
+                                    
                                     console.log("set for new Location " + newNodeID + " a new relationship to Video " + videoID_temp);
                                     videoIDs.push(videoID_temp);
-
+                                    
                                     // tell async that the iterator has completed
                                     callback();
                                 }
                             });
 
                         }, function(err) {
-                            console.log("VideoArray: " + JSON.stringify(videoIDs));
+                            console.log("+++ finished Videos: " + JSON.stringify(videoIDs) + " +++");
                             callback2(null, videoIDs);
                         });
 
@@ -335,37 +319,27 @@ app.post('/api/locations', function(req, res) {
                         async.forEach(req.body.overlays, function(overlayID_temp, callback) {
                             
                             // 4th Database Query: SET relationships between Overlays and the new Location 
-                            db.insertRelationship(overlayID_temp, newNodeID, 'locatedAt', {}, function(err, relationship) {
-                                if (err) {
-                                    console.log("Error: Could not find the related Overlay with the ID" + overlayID_temp);
-
+                            db.cypherQuery("START n=node(" + newNodeID + "), m=node(" + overlayID_temp + ") CREATE (m)-[:locatedAt]->(n)", function(err, result){
+                                if(err) {
+                                    console.log("Error: Could not find the related Overlay with the ID " + overlayID_temp);
+                                    status_overlays = false;
+                                    
                                     // tell async that the iterator has completed
                                     callback();
-
                                 } else {
-
-                                    // Output relationship properties
-                                    //console.log(relationship.data);
-
-                                    // Output relationship id
-                                    //console.log(relationship._id);
-
-                                    // Output relationship start_node_id
-                                    //console.log(relationship._start_node_id);
-
-                                    // Output relationship end_node_id
-                                    //console.log(relationship._end_node_id);
-
+                                    //console.log(result.data); 
+                                    //console.log(result.columns);
+                                    
                                     console.log("set for new Location " + newNodeID + " a new relationship to Overlay " + overlayID_temp);
                                     overlayIDs.push(overlayID_temp);
-
+                                    
                                     // tell async that the iterator has completed
                                     callback();
                                 }
                             });
 
                         }, function(err) {
-                            console.log("OverlayArray: " + JSON.stringify(overlayIDs));
+                            console.log("+++ finished Overlays: " + JSON.stringify(overlayIDs) + " +++");
                             callback3(null, overlayIDs);
                         });
 
@@ -379,10 +353,66 @@ app.post('/api/locations', function(req, res) {
                     newLocation.overlays = results.overlays;
                     var finalResult = '{"location": [' + JSON.stringify(newLocation) + '] }';
                     
+                    console.log("check if error occors (false=error):");
+                    console.log(" - in relatedLocation? " + status_relatedLocation);
+                    console.log(" - in videos? " + status_videos);
+                    console.log(" - in overlays? " + status_overlays);
+                    
+                    console.log("++++++++++++++++++++++++");
+                    console.log("+++++ final Result +++++");
+                    console.log("++++++++++++++++++++++++");
                     console.log(finalResult);
                     
+                    // Check status before sending the answer
+                    var httpStatus = null;
+                    
+                    
+                    // true true true // could create everything
+                    if(status_relatedLocation && status_videos && status_overlays) {
+                        httpStatus = 201;
+                    }
+                    
+                    // false true true // could create Location but error occors in relatedLocations
+                    else if(!status_relatedLocation && status_videos && status_overlays) {
+                        httpStatus = 211;
+                    }
+                    
+                    // true false true // could create Location but error occors in Videos
+                    else if(status_relatedLocation && !status_videos && status_overlays) {
+                        httpStatus = 212;
+                    }
+                    
+                    // true true false // could create Location but error occors in Overlays
+                    else if(status_relatedLocation && status_videos && !status_overlays) {
+                        httpStatus = 213;
+                    }
+                    
+                    // false false true // could create Location but error occors in relatedLocations, Videos
+                    else if(!status_relatedLocation && !status_videos && status_overlays) {
+                        httpStatus = 214;
+                    }
+                    
+                    // false true false // could create Location but error occors in relatedLocations, Overlays
+                    else if(!status_relatedLocation && status_videos && !status_overlays) {
+                        httpStatus = 215;
+                    }
+                    
+                    // true false false // could create Location but error occors in Videos, Overlays
+                    else if(status_relatedLocation && !status_videos && !status_overlays) {
+                        httpStatus = 216;
+                    }
+                    
+                    // false false false // could create Location but error occors in relatedLocations, Videos, Overlays
+                    else if(!status_relatedLocation && !status_videos && !status_overlays) {
+                        httpStatus = 217;
+                    }
+                    
+                    else {
+                        httpStatus = 505;
+                    }
+                    
                     // Send final Result
-                    res.writeHead(201, {
+                    res.writeHead(httpStatus, {
                         'Content-Type' : 'application/json'
                     });
                     res.end(finalResult);
