@@ -190,7 +190,7 @@ function submitLocation(){
 			
 		console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
 		
-	var newLocation = new LocationModel;	
+	var newLocation = new LocationModel();	
 	var locationDetails = {
 		name: locname,
 		description: locdescription,
