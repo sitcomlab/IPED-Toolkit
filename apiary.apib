@@ -17,10 +17,17 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **PUT** - To create or update resource
 * **DELETE** - To delete resource
 
-## Description of usual Server Responses
+## Description of Server Responses:
 * **200** `OK` - the request was successful (some API calls may return 201 instead).
 * **201** `Created` - the request was successful and a resource was created.
 * **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
+* **211** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **212** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **213** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **214** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **215** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **216** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+* **217** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
 * **400** `Bad Request` - the request could not be understood or was missing required parameters.
 * **401** `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
 * **403** `Forbidden` - access denied.
@@ -104,7 +111,7 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
         }
 
 ### Create a Location [POST]
-(Status: **not yet implemented**)
+(Status: **implemented**, Developer: Nicho)
 
 Required attributes:
 
@@ -122,6 +129,18 @@ Optional attributes:
 - `relatedLocations` **Int[ ]** (e.g. *[1, 3]*)
 - `videos` **Int[ ]** (e.g. *[1, 3]*)
 - `overlays` **Int[ ]** (e.g. *[1, 3]*)
+
+HTTP-Status:
+
+- `201` Created succesfully a Location with all relatedLocations, Videos and Overlays
+- `211` Created succesfully a Location, but couldn't set all relatedLocations (please check if all IDs of the relatedLocations exist)
+- `212` Created succesfully a Location, but couldn't set all Videos (please check if all IDs of the Videos exist)
+- `213` Created succesfully a Location, but couldn't set all Overlays (please check if all IDs of the Overlays exist)
+- `214` Created succesfully a Location, but couldn't set all relatedLocations and Videos (please check if all IDs of the relatedLocations and Videos exist)
+- `215` Created succesfully a Location, but couldn't set all relatedLocations and Overlays (please check if all IDs of the relatedLocations and Overlays exist)
+- `216` Created succesfully a Location, but couldn't set all Videos and Overlays (please check if all IDs of the Videos and Overlays exist)
+- `217` Created succesfully a Location, but couldn't set all relatedLocations, Videos and Overlays (please check if all IDs of the relatedLocations, Videos and Overlays exist)
+
 
 + Request (application/json)
 
@@ -168,6 +187,27 @@ Optional attributes:
                     }
                 ]
         }
+        
++ Response 211 (application/json)
+
++ Response 212 (application/json)
+
++ Response 213 (application/json)
+
++ Response 214 (application/json)
+
++ Response 215 (application/json)
+
++ Response 216 (application/json)
+
++ Response 217 (application/json)
+
++ Response 400 (text/plain)
+        
+        Error: No data submitted!
+
++ Response 500 (application/json)
+
 
 ## Location [/api/locations/{id}]
 A single Location object with all its details
