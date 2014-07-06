@@ -5,19 +5,19 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
 
 <!-- BEGIN OF THE INTRO -->
-## Hosts
+### Hosts
 * HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
 * HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
 * HOST-LOCAL ( MASTER ): [http://localhost:8080](http://localhost:8080)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8081](http://localhost:8081)
 
-## Allowed HTTPs requests:
+### Allowed HTTPs requests:
 * **GET** - Get a resource or list of resources
 * **POST** - To create or update resource
 * **PUT** - To create or update resource
 * **DELETE** - To delete resource
 
-## Description of Server Responses:
+### Description of Server Responses:
 * **200** `OK` - the request was successful (some API calls may return 201 instead).
 * **201** `Created` - the request was successful and a resource was created.
 * **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
@@ -33,10 +33,10 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **403** `Forbidden` - access denied.
 * **404** `Not Found` - resource was not found.
 * **405** `Method Not Allowed` - requested method is not supported for resource.
+* **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
-* **505** `Internal Server Error` - the request is unavailable
 
-## API-Status options:
+### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
 * **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
 * **in progress** \[+]: Design is finished and the functions will be implemented on official Server at the moment
@@ -46,7 +46,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 \[+] Please write your name, after the following status, so it is possible to see, how works on which part,
 e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
 
-## API-Example of the blueprint code:
+### API-Example of the blueprint code:
 * for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
 * for API-Syntax check out the **Blueprint-Documenation**: [http://apiblueprint.org](http://apiblueprint.org)
 
@@ -62,7 +62,7 @@ e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a f
 * For more examples check out: [http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)
 
 
-## API-Comments:
+### API-Comments:
 It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding funtion click the 
 "Add comment"-Button on the right side of the box.
 
@@ -192,18 +192,179 @@ HTTP-Status:
         }
         
 + Response 211 (application/json)
-
+        
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
+        
 + Response 212 (application/json)
+        
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
 
 + Response 213 (application/json)
 
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
+
 + Response 214 (application/json)
+
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
 
 + Response 215 (application/json)
 
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
+
 + Response 216 (application/json)
 
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
+
 + Response 217 (application/json)
+
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
 
 + Response 400 (text/plain)
         
@@ -211,6 +372,8 @@ HTTP-Status:
 
 + Response 500 (text/plain)
 
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 ## Location [/api/locations/{id}]
 A single Location object with all its details
@@ -259,7 +422,57 @@ A single Location object with all its details
             }
             
 + Response 500 (text/plain)
-            
+
+### Edit a Location [PUT]
+(Status: **not yet implemented**)
+
++ Request (application/json)
+
+    + Body
+    
+                { 
+                    "name": "Frauenstraße", 
+                    "tags": [
+                        "Münster",
+                        "Frauenstraße",
+                        "Trattoria",
+                        "Kulturcafé",
+                        "Fürstin-von-Gallitzin-Wohnheim"
+                    ],
+                    "lon": 7.6189278,
+                    "lat": 51.9634288,
+                    "description": "Gegenüber der Trattoria",
+                    "relatedLocations": [],
+                    "videos": [],
+                    "overlays": []
+                }
+
++ Response 201 (application/json)
+
+        {
+            "location": [
+                    {
+                        "_id":4,
+                        "name":"Frauenstraße",
+                        "tags":[
+                            "Münster",
+                            "Frauenstraße",
+                            "Trattoria",
+                            "Kulturcafé",
+                            "Fürstin-von-Gallitzin-Wohnheim"
+                        ],
+                        "lon":"7.6189278",
+                        "lat":"51.9634288",
+                        "description":"Gegenüber der Trattoria",
+                        "relatedLocations": [],
+                        "videos": [],
+                        "overlays": []
+                        
+                    }
+                ]
+        }
+        
++ Response 500 (text/plain)        
 
 ### Remove a Location [DELETE]
 (Status: **implemented**, Developer: Nicho)
