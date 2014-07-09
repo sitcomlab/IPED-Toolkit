@@ -189,6 +189,7 @@ function openDialog(){
 	// Dialog loaded via Ajax
 	//window.open("#new/location","_self");
 	//$("#add-location-dialog").dialog("open");
+	addLocation_view.render();
 }
 
 function submitLocation(){
