@@ -24,6 +24,7 @@ $("#submit-location").click(function(){
 
 $("#add-location-dialog").dialog({
 	autoOpen: false,
+	height: 400,
 	show: {
         effect: "fade",
         duration: 500
@@ -81,6 +82,10 @@ var VideoCollection = Backbone.Model.extend({
 		urlRoot: '/api/locations',
 });
 
+var Videos = Backbone.Collection.extend({
+	urlRoot: '../api/videos'
+}); 
+
 var LocationModel = Backbone.Model.extend({
 	dataType: "json",
 	urlRoot: '../api/locations',
@@ -98,8 +103,17 @@ var LocationModel = Backbone.Model.extend({
 
 //Backbone views
 var AddLocationView = Backbone.View.extend({
-	el: '#add-new-location-dialog',
+	el: '#add-new-location-dialog-content',
 	render: function(){
+		var that = this;
+		var videos = new Videos();
+		footages.fetch({
+			success: function(footages){
+				var template =  _.template($("#add-new-location-template").html(), {videos: videos.videos});
+				this.$el.html(template);
+			}
+		});
+		
 		console.log("AddLocationView rendered");
 		$("#add-location-dialog").dialog("open");
 	}
@@ -169,10 +183,10 @@ videos.fetch({
 }
 
 function openDialog(){
-	console.log("entered callback (openDialog)");
+	//console.log("entered callback (openDialog)");
 	//$("#add-location-panel").panel("open");
 	// Dialog loaded via Ajax
-	window.open("#new/location","_self");
+	//window.open("#new/location","_self");
 	//$("#add-location-dialog").dialog("open");
 }
 

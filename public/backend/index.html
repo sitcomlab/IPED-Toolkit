@@ -109,7 +109,8 @@
 		</div>
 		</div-->
 		<div id="add-location-dialog" title="Add New Location">
-			<div id="add-location-general">
+			<div id="add-location-dialog-content"></div>
+			<!--<div id="add-location-general">
 				<div id="coordinates"></div>
 				
 					<h3>General Data</h3>				
@@ -170,12 +171,81 @@
 			<div>
 				<hr>
 				<input type="button" value="Submit" id="submit-location" class="button">
-			</div>
+			</div>-->
 		</div>
 		<div data-role="content">
 			<div id="map"></div>
 
 		</div>
+		<!-- Underscore Templates------------------------------------------------------------------------------------------------------->
+		
+		<script type="text/template" id="add-new-location-template">
+			<div id="add-location-general">
+				<div id="coordinates"></div>
+				
+					<h3>General Data</h3>				
+			
+				<hr />
+				<form>
+					<fieldset>
+						<label for="name">Name</label>
+						<br>
+						<input type="text" name="name" id="name" class="text ui-widget-content ui-corner-all">
+						<br>
+						<label for="description">Description</label>
+						<br>
+						<input type="text" name="description" id="description" value="" class="text ui-widget-content ui-corner-all">
+						<br>
+						<label for="tags">Tags</label>
+						<br>
+						<input type="text" name="tags" id="tags" value="" class="text ui-widget-content ui-corner-all">
+					</fieldset>
+				</form>
+			</div>
+			<br>
+			<div id="add-location-footage">
+		
+					<h3>Video Footage</h3>
+
+				<hr />
+				<form>
+						<select name="select-native-2" id="select-native-2" data-mini="true">
+							<option value="1">Select Video Footage From Library:</option>
+							<% _.each(videos, function(video) { %>
+								<option>video.get("name")</option>
+							<% }); %>
+							
+							<option value="3">Footage 2</option>
+							<option value="4">Footage 3</option>
+						</select>
+						<br>
+						<br>
+						<input type="button" value="Add New Footage" class="button">
+				</form>
+			</div>
+			<br>
+			<div id="add-video-overlays">
+				
+					<h3>Overlays</h3>
+				
+				<hr />
+				<form>
+					<select name="select-native-2" id="select-native-2" data-mini="true" id="spinner">
+							<option value="1">Select Overlay From Library</option>
+							<option value="2">Overlay 1</option>
+							<option value="3">Overlay 2</option>
+							<option value="4">Overlay 3</option>
+					</select>
+					<br>
+					<br>
+					<input type="button" value="Add New Overlay" class="button">
+				</form>
+			</div>
+			<div>
+				<hr>
+				<input type="button" value="Submit" id="submit-location" class="button">
+			</div>
+		</script>
 
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
