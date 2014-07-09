@@ -78,7 +78,7 @@ $(document).ready(function(){
  */
 
 //Backbone models
-var VideoCollection = Backbone.Model.extend({
+var Locations = Backbone.Model.extend({
 		urlRoot: '/api/locations',
 });
 
@@ -103,11 +103,12 @@ var LocationModel = Backbone.Model.extend({
 
 //Backbone views
 var AddLocationView = Backbone.View.extend({
-	el: '#add-new-location-dialog-content',
+	el: '#add-location-dialog',
 	render: function(){
+		console.log("AddLocationView: rendering function entered");
 		var that = this;
 		var videos = new Videos();
-		footages.fetch({
+		videos.fetch({
 			success: function(footages){
 				var template =  _.template($("#add-new-location-template").html(), {videos: videos.videos});
 				this.$el.html(template);
@@ -156,10 +157,10 @@ Backbone.history.start();
 
 function drawMarkers() {
 
-var videos = new VideoCollection();
+var locationcollection = new Locations();
 var locations;
 
-videos.fetch({
+locationcollection.fetch({
 	success: function(videos){
 		locations = videos.get("locations");
 		$.each(locations, function(index, value){
