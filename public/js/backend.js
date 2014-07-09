@@ -79,11 +79,17 @@ $(document).ready(function(){
 
 //Backbone models
 var Locations = Backbone.Model.extend({
-		urlRoot: '/api/locations',
+	urlRoot: '/api/locations'
 });
 
-var Videos = Backbone.Collection.extend({
-	urlRoot: '../api/videos'
+var VideoCollection = Backbone.Model.extend({
+	urlRoot: '/api/videos',
+	url: '/api/videos'
+}); 
+
+var OverlayCollection = Backbone.Model.extend({
+	urlRoot: '/api/overlays',
+	url: '/api/overlays'
 }); 
 
 var LocationModel = Backbone.Model.extend({
@@ -104,17 +110,51 @@ var LocationModel = Backbone.Model.extend({
 //Backbone views
 var AddLocationView = Backbone.View.extend({
 	el: '#add-location-dialog',
+	initialize: function(){
+		console.log("AddLocationView created");
+	},
 	render: function(){
-		console.log("AddLocationView: rendering function entered");
 		var that = this;
-		var videos = new Videos();
+		var videos; 
+		videos= new VideoCollection();
+		//var overlays;
+		//overlays = new OverlayCollection();
+		//var template;
 		videos.fetch({
+			//url: '/api/videos',
 			success: function(footages){
-				var template =  _.template($("#add-new-location-template").html(), {videos: videos.videos});
-				this.$el.html(template);
+				console.log("AddLocationView: videos.fetch() entered");
+				var videos = footages.get("videos");
+				//videos = footages.get("videos");
+				var template =  _.template($("#add-new-location-template").html(), {videos: videos});
+				//template =  _.template($("#add-new-location-template").html(), {videos: videos});
+				that.$el.html(template);
+				console.log("videos loaded:");
+				console.log(videos);
+				$.each(videos, function(index, value){
+					console.log(value.name);
+				});
 			}
 		});
-		
+		/*overlays.fetch({
+			//url: '/api/overlays',
+			success: function(displays){
+				console.log("AddLocationView: overlays.fetch() entered");
+				var overlays = displays.get("overlays");
+				//overlays = displays.get("overlays");
+				//var template =  _.template($("#add-new-location-template").html(), {overlays: overlays});
+				template =  _.template($("#add-new-location-template").html(), {overlays: overlays});
+				//that.$el.html(template);
+				console.log("overlays loaded:");
+				console.log(overlays);
+				$.each(overlays, function(index, value){
+					console.log(value.name);
+				});
+			}
+		});
+		//var template =  _.template($("#add-new-location-template").html(), {videos: videos, overlays: overlays});
+		console.log(template);
+		that.$el.html(template);*/
 		console.log("AddLocationView rendered");
 		$("#add-location-dialog").dialog("open");
 	}
@@ -189,6 +229,7 @@ function openDialog(){
 	// Dialog loaded via Ajax
 	//window.open("#new/location","_self");
 	//$("#add-location-dialog").dialog("open");
+	console.log("openDialog():  calling addLocation_view rendering function");
 	addLocation_view.render();
 }
 

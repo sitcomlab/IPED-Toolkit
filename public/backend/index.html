@@ -210,13 +210,10 @@
 				<hr />
 				<form>
 						<select name="select-native-2" id="select-native-2" data-mini="true">
-							<option value="1">Select Video Footage From Library:</option>
+							<option value="1">Select Video Footage From Library</option>
 							<% _.each(videos, function(video) { %>
-								<option>video.get("name")</option>
+								<option><%= video.name %></option>
 							<% }); %>
-							
-							<option value="3">Footage 2</option>
-							<option value="4">Footage 3</option>
 						</select>
 						<br>
 						<br>
@@ -232,6 +229,7 @@
 				<form>
 					<select name="select-native-2" id="select-native-2" data-mini="true" id="spinner">
 							<option value="1">Select Overlay From Library</option>
+							
 							<option value="2">Overlay 1</option>
 							<option value="3">Overlay 2</option>
 							<option value="4">Overlay 3</option>
