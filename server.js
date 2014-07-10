@@ -1035,7 +1035,7 @@ app.delete ('/api/locations/:id', function(req, res) {
 
     console.log("+++ [DELETE] /api/locations/" + req.params.id+ " +++++++++++++++++++++++++++++++++++++++++");
 
-    // 1st Query
+    // 1st Query - Count the relationships for the Video, before the deletion
     var query_1 = "START l=node(" + req.params.id + ") MATCH l-[r]-(c) RETURN COUNT(r)";
     //console.log(query_1);
 
@@ -1058,7 +1058,7 @@ app.delete ('/api/locations/:id', function(req, res) {
 
             var connectedRelations = result.data;
 
-            console.log("Found " + connectedRelations + " relations for Node with the ID " + req.params.id);
+            console.log("Found " + connectedRelations + " relationships for Location " + req.params.id);
 
             // Check if the Location have relationships and delete them too, if they exist
             if (connectedRelations[0] > 0) {
@@ -1084,7 +1084,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         //console.log(result.columns);
                         // delivers an array of names of objects getting returned
 
-                        console.log("Node with the ID " + req.params.id + " was deleted!");
+                        console.log("Location " + req.params.id + " was deleted!");
                         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
@@ -1119,7 +1119,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         //console.log(result.columns);
                         // delivers an array of names of objects getting returned
 
-                        console.log("Node with the ID " + req.params.id + " was deleted!");
+                        console.log("Location " + req.params.id + " was deleted!");
                         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
@@ -1195,16 +1195,39 @@ app.get('/api/videos/:id', function(req, res) {
 
     console.log("+++ [GET] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
     
-    var finalResult = '{"video": []}';
-    console.log("================================ Result ================================");
-    console.log(finalResult);
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Query
+    var query = "START v=node(" + req.params.id + ") RETURN v";
+    //console.log(query);
 
-    res.writeHead(200, {
-        'Content-Type' : 'application/json'
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
+        if (err) {
+
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            var errorMsg = "Error: Internal Server Error; Message: " + err;
+            res.end(errorMsg);
+            return;
+
+        } else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+
+            var finalResult = '{"video": '+ JSON.stringify(result.data) +'}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end(finalResult);
+            return;
+        }
     });
-    res.end(finalResult);
-    return;
 });
 
 // 3.2.4 Edit a Video
@@ -1219,9 +1242,8 @@ app.put('/api/videos/:id', function(req, res) {
 app.delete('/api/videos/:id', function(req, res) {
 
     console.log("+++ [DELETE] /api/videos/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++++");
-
+    
     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
 });
 
 /****************************
