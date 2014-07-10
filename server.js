@@ -17,9 +17,9 @@
     3.2 Videos:
          3.2.1 List all Videos
          3.2.2 Create a Video [x]
-         3.2.3 Retrieve a Video [*]
-         3.2.4 Edit a Video [*]
-         3.2.4 Remove a Video [*]
+         3.2.3 Retrieve a Video [x]
+         3.2.4 Edit a Video [x]
+         3.2.4 Remove a Video [x]
     3.3 Overlays
          3.3.1 List all Overlays
          3.3.2 Create an Overlay [*]
@@ -27,6 +27,11 @@
          3.3.4 Edit an Overlay [*]
          3.3.5 Remove an Overlay [*]
     3.4 Scenarios [!]
+         3.4.1 List all Scenarios [!]
+         3.4.2 Create a Scenario [!]
+         3.4.3 Retrieve a Scenario [!]
+         3.4.4 Edit a Scenario [!]
+         3.4.5 Remove a Scenario [!]
 
  [*] = not yet implemented
  [x] = in progress
@@ -177,9 +182,11 @@ app.use(express.static(__dirname + '/public'));
 // 3.1.1 List all Locations (Developer: Nicho)
 app.get('/api/locations', function(req, res) {
 
+    console.log("+++ [GET] /api/locations +++++++++++++++++++++++++++++++++++++++++++++++");
+
     // Query
     var query = "MATCH (l:Location) RETURN l";
-    console.log(query);
+    //console.log(query);
 
     // Database Query
     db.cypherQuery(query, function(err, result) {
@@ -199,20 +206,24 @@ app.get('/api/locations', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var jsonString = JSON.stringify(result.data);
+            var finalResult = '{"locations":' + JSON.stringify(result.data) + '}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end('{"locations":' + jsonString + '}');
+            res.end(finalResult);
             return;
         }
-
     });
 });
 
 // 3.1.2 Create a Location (Developer: Nicho)
 app.post('/api/locations', function(req, res) {
+
+    console.log("+++ [POST] /api/locations ++++++++++++++++++++++++++++++++++++++++++++++");
 
     var newNodeID;
     var newLocation;
@@ -477,13 +488,13 @@ app.post('/api/locations', function(req, res) {
                         httpStatus = 505;
                     }
 
-                    console.log("+++++++++++++++++++++++++++++ final Result +++++++++++++++++++++++++++++");
+                    console.log("================================ Result ================================");
                     console.log("Check if error occurred (false=error):");
                     console.log(" - in relatedLocation? " + status_relatedLocation);
                     console.log(" - in videos? " + status_videos);
                     console.log(" - in overlays? " + status_overlays);
                     console.log("=> Corresponding HTTP-Status-Code: " + httpStatus + " (partially created)");
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("------------------------------------------------------------------------");
                     console.log(finalResult);
                     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         
@@ -503,9 +514,11 @@ app.post('/api/locations', function(req, res) {
 // 3.1.3 Retrieve a Location with all information (Developer: Nicho)
 app.get('/api/locations/:id', function(req, res) {
 
+    console.log("+++ [GET] /api/locations/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++++");
+
     // 1st Query
     var query_1 = "START l=node(" + req.params.id + ") RETURN l";
-    console.log(query_1);
+    //console.log(query_1);
 
     // 1st Database Query
     db.cypherQuery(query_1, function(err, result) {
@@ -529,7 +542,7 @@ app.get('/api/locations/:id', function(req, res) {
 
             // 2nd Query
             var query_2 = "START l=node(" + req.params.id + ") MATCH l-[:relatedTo]->n RETURN id(n) AS relatedTo";
-            console.log(query_2);
+            //console.log(query_2);
 
             // 2nd Database Query
             db.cypherQuery(query_2, function(err, result) {
@@ -552,7 +565,7 @@ app.get('/api/locations/:id', function(req, res) {
 
                     // 3rd Query
                     var query_3 = "START l=node(" + req.params.id + ") MATCH l<-[:wasRecordedAt]-v RETURN id(v) AS wasRecordedAt";
-                    console.log(query_3);
+                    //console.log(query_3);
 
                     // 3rd Database Query
                     db.cypherQuery(query_3, function(err, result) {
@@ -579,7 +592,7 @@ app.get('/api/locations/:id', function(req, res) {
 
                             // 4th Query
                             var query_4 = "START l=node(" + req.params.id + ") MATCH l<-[:locatedAt]-o RETURN id(o) AS locatedAt";
-                            console.log(query_4);
+                            //console.log(query_4);
 
                             // 3rd Database Query
                             db.cypherQuery(query_4, function(err, result) {
@@ -601,12 +614,14 @@ app.get('/api/locations/:id', function(req, res) {
                                     // Results
                                     var overlays = result.data;
 
-                                    // Adding the attribute "videos" to JSON-Objekt
+                                    // Adding the attribute "overlays" to JSON-Objekt
                                     location[0].overlays = overlays;
 
                                     // Return final Result
                                     var finalResult = '{"location":' + JSON.stringify(location) + '}';
+                                    console.log("================================ Result ================================");
                                     console.log(finalResult);
+                                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                                     res.writeHead(200, {
                                         'Content-Type' : 'application/json'
@@ -625,6 +640,8 @@ app.get('/api/locations/:id', function(req, res) {
 
 // 3.1.4 Edit a Location (Developer: Nicho)
 app.put('/api/locations/:id', function(req, res) {
+
+    console.log("+++ [PUT] /api/locations/" + req.params.id+ " ++++++++++++++++++++++++++++++++++++++++++++");
 
     var status_relatedLocation = true;
     var status_videos = true;
@@ -935,78 +952,78 @@ app.put('/api/locations/:id', function(req, res) {
                     }
                 }, function(err, allResults) {
 
-                            //console.log("Results_temp:" + JSON.stringify(allResults));
+                        //console.log("Results_temp:" + JSON.stringify(allResults));
 
-                            // Prepare final Result
-                            updatedLocation[0].relatedLocations = allResults.relatedLocations;
-                            updatedLocation[0].videos = allResults.videos;
-                            updatedLocation[0].overlays = allResults.overlays;
-                            var finalResult = '{"location": '+ JSON.stringify(updatedLocation) + '}';
+                        // Prepare final Result
+                        updatedLocation[0].relatedLocations = allResults.relatedLocations;
+                        updatedLocation[0].videos = allResults.videos;
+                        updatedLocation[0].overlays = allResults.overlays;
+                        var finalResult = '{"location": '+ JSON.stringify(updatedLocation) + '}';
 
 
-                            // Check status before sending the answer
-                            var httpStatus = null;
+                        // Check status before sending the answer
+                        var httpStatus = null;
                             
-                            
-                            // true true true // could create everything
-                            if (status_relatedLocation && status_videos && status_overlays) {
-                                httpStatus = 201;
-                            }
-        
-                            // false true true // could create Location but error occors in relatedLocations
-                            else if (!status_relatedLocation && status_videos && status_overlays) {
-                                httpStatus = 211;
-                            }
-        
-                            // true false true // could create Location but error occors in Videos
-                            else if (status_relatedLocation && !status_videos && status_overlays) {
-                                httpStatus = 212;
-                            }
-        
-                            // true true false // could create Location but error occors in Overlays
-                            else if (status_relatedLocation && status_videos && !status_overlays) {
-                                httpStatus = 213;
-                            }
-        
-                            // false false true // could create Location but error occors in relatedLocations, Videos
-                            else if (!status_relatedLocation && !status_videos && status_overlays) {
-                                httpStatus = 214;
-                            }
-        
-                            // false true false // could create Location but error occors in relatedLocations, Overlays
-                            else if (!status_relatedLocation && status_videos && !status_overlays) {
-                                httpStatus = 215;
-                            }
-        
-                            // true false false // could create Location but error occors in Videos, Overlays
-                            else if (status_relatedLocation && !status_videos && !status_overlays) {
-                                httpStatus = 216;
-                            }
-        
-                            // false false false // could create Location but error occors in relatedLocations, Videos, Overlays
-                            else if (!status_relatedLocation && !status_videos && !status_overlays) {
-                                httpStatus = 217;
-                            } else {
-                                httpStatus = 505;
-                            }
+                        
+                        // true true true // could create everything
+                        if (status_relatedLocation && status_videos && status_overlays) {
+                            httpStatus = 201;
+                        }
 
-                            console.log("+++++++++++++++++++++++++++++ final Result +++++++++++++++++++++++++++++");
-                            console.log("Check if error occurred (false=error):");
-                            console.log(" - in relatedLocation? " + status_relatedLocation);
-                            console.log(" - in videos? " + status_videos);
-                            console.log(" - in overlays? " + status_overlays);
-                            console.log("=> Corresponding HTTP-Status-Code: " + httpStatus + " (partially created)");
-                            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                            console.log(finalResult);
-                            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                        // false true true // could create Location but error occors in relatedLocations
+                        else if (!status_relatedLocation && status_videos && status_overlays) {
+                            httpStatus = 211;
+                        }
         
-                            // Send final Result
-                            res.writeHead(httpStatus, {
-                                'Content-Type' : 'application/json'
-                            });
-                            res.end(finalResult);
-                            return;
-                        } 
+                        // true false true // could create Location but error occors in Videos
+                        else if (status_relatedLocation && !status_videos && status_overlays) {
+                            httpStatus = 212;
+                        }
+        
+                        // true true false // could create Location but error occors in Overlays
+                        else if (status_relatedLocation && status_videos && !status_overlays) {
+                            httpStatus = 213;
+                        }
+        
+                        // false false true // could create Location but error occors in relatedLocations, Videos
+                        else if (!status_relatedLocation && !status_videos && status_overlays) {
+                            httpStatus = 214;
+                        }
+        
+                        // false true false // could create Location but error occors in relatedLocations, Overlays
+                        else if (!status_relatedLocation && status_videos && !status_overlays) {
+                            httpStatus = 215;
+                        }
+        
+                        // true false false // could create Location but error occors in Videos, Overlays
+                        else if (status_relatedLocation && !status_videos && !status_overlays) {
+                            httpStatus = 216;
+                        }
+        
+                        // false false false // could create Location but error occors in relatedLocations, Videos, Overlays
+                        else if (!status_relatedLocation && !status_videos && !status_overlays) {
+                            httpStatus = 217;
+                        } else {
+                            httpStatus = 505;
+                        }
+
+                        console.log("================================ Result ================================");
+                        console.log("Check if error occurred (false=error):");
+                        console.log(" - in relatedLocation? " + status_relatedLocation);
+                        console.log(" - in videos? " + status_videos);
+                        console.log(" - in overlays? " + status_overlays);
+                        console.log("=> Corresponding HTTP-Status-Code: " + httpStatus + " (partially created)");
+                        console.log("------------------------------------------------------------------------");
+                        console.log(finalResult);
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        
+                        // Send final Result
+                        res.writeHead(httpStatus, {
+                            'Content-Type' : 'application/json'
+                        });
+                        res.end(finalResult);
+                        return;
+                    } 
                 );
             }
         });
@@ -1016,9 +1033,11 @@ app.put('/api/locations/:id', function(req, res) {
 // 3.1.5 Remove a Location (Developer: Nicho)
 app.delete ('/api/locations/:id', function(req, res) {
 
+    console.log("+++ [DELETE] /api/locations/" + req.params.id+ " +++++++++++++++++++++++++++++++++++++++++");
+
     // 1st Query
     var query_1 = "START l=node(" + req.params.id + ") MATCH l-[r]-(c) RETURN COUNT(r)";
-    console.log(query_1);
+    //console.log(query_1);
 
     // 1st Database Query
     db.cypherQuery(query_1, function(err, result) {
@@ -1046,9 +1065,9 @@ app.delete ('/api/locations/:id', function(req, res) {
 
                 // 2nd Query
                 var query_2 = "START l=node(" + req.params.id + ") MATCH l-[r]-() DELETE l, r";
-                console.log(query_2);
+                //console.log(query_2);
 
-                // 1st Database Query
+                // 2nd Database Query
                 db.cypherQuery(query_2, function(err, result) {
                     if (err) {
 
@@ -1066,6 +1085,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         // delivers an array of names of objects getting returned
 
                         console.log("Node with the ID " + req.params.id + " was deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
                             'Content-Type' : 'text/plain'
@@ -1079,9 +1099,9 @@ app.delete ('/api/locations/:id', function(req, res) {
 
                 // 3rd Query
                 var query_3 = "START l=node(" + req.params.id + ") DELETE l";
-                console.log(query_3);
+                //console.log(query_3);
 
-                // 1st Database Query
+                // 3rd Database Query
                 db.cypherQuery(query_3, function(err, result) {
                     if (err) {
 
@@ -1100,6 +1120,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         // delivers an array of names of objects getting returned
 
                         console.log("Node with the ID " + req.params.id + " was deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
                             'Content-Type' : 'text/plain'
@@ -1121,9 +1142,11 @@ app.delete ('/api/locations/:id', function(req, res) {
 // 3.2.1 List all Videos (Developer: Nicho)
 app.get('/api/videos', function(req, res) {
 
+    console.log("+++ [GET] /api/videos ++++++++++++++++++++++++++++++++++++++++++++++++++");
+
     // Query
     var query = "MATCH (v:Video) RETURN v";
-    console.log(query);
+    //console.log(query);
 
     // Database Query
     db.cypherQuery(query, function(err, result) {
@@ -1143,12 +1166,15 @@ app.get('/api/videos', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var jsonString = JSON.stringify(result.data);
+            var finalResult = '{"videos":' + JSON.stringify(result.data) + '}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end('{"videos":' + jsonString + '}');
+            res.end(finalResult);
             return;
         }
 
@@ -1156,12 +1182,47 @@ app.get('/api/videos', function(req, res) {
 });
 
 // 3.2.2 Create a Video
+app.post('/api/videos', function(req, res) {
+
+    console.log("+++ [POST] /api/videos +++++++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+});
 
 // 3.2.3 Retrieve a Video
+app.get('/api/videos/:id', function(req, res) {
+
+    console.log("+++ [GET] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
+    
+    var finalResult = '{"video": []}';
+    console.log("================================ Result ================================");
+    console.log(finalResult);
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+    res.writeHead(200, {
+        'Content-Type' : 'application/json'
+    });
+    res.end(finalResult);
+    return;
+});
 
 // 3.2.4 Edit a Video
+app.put('/api/videos/:id', function(req, res) {
+
+    console.log("+++ [PUT] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+});
 
 // 3.2.5 Remove a Video
+app.delete('/api/videos/:id', function(req, res) {
+
+    console.log("+++ [DELETE] /api/videos/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+});
 
 /****************************
  3.3 Overlays
@@ -1170,9 +1231,11 @@ app.get('/api/videos', function(req, res) {
 // 3.3.1 List all Overlays (Developer: Nicho)
 app.get('/api/overlays', function(req, res) {
 
+    console.log("+++ [GET] /api/videos ++++++++++++++++++++++++++++++++++++++++++++++++++");
+    
     // Query
     var query = "MATCH (o:Overlay) RETURN o";
-    console.log(query);
+    //console.log(query);
 
     // Database Query
     db.cypherQuery(query, function(err, result) {
@@ -1192,12 +1255,15 @@ app.get('/api/overlays', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var jsonString = JSON.stringify(result.data);
+            var finalResult = '{"overlays":' + JSON.stringify(result.data) + '}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end('{"overlays":' + jsonString + '}');
+            res.end(finalResult);
             return;
         }
 
@@ -1205,12 +1271,38 @@ app.get('/api/overlays', function(req, res) {
 });
 
 // 3.3.2 Create an Overlay
+app.post('/api/overlays', function(req, res) {
+
+    console.log("+++ [POST] /api/overlays +++++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+});
 
 // 3.3.3 Retrieve an Overlay
+app.get('/api/overlays/:id', function(req, res) {
+
+    console.log("+++ [GET] /api/overlays/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+});
 
 // 3.3.4 Edit an Overlay
+app.put('/api/overlays/:id', function(req, res) {
+
+    console.log("+++ [PUT] /api/overlays/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+});
 
 // 3.3.5 Remove an Overlay
+app.delete('/api/overlays/:id', function(req, res) {
+
+    console.log("+++ [DELETE] /api/overlays/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+});
 
 /****************************
  3.4 Scenarios
@@ -1219,9 +1311,11 @@ app.get('/api/overlays', function(req, res) {
 // 3.4.1 GET a list of all scenarios (Developer: Nicho)
 app.get('/api/scenarios', function(req, res) {
 
+    console.log("+++ [GET] /api/scenarios +++++++++++++++++++++++++++++++++++++++++++++++");
+
     // Query
     var query = "MATCH (s:Scenario) RETURN s";
-    console.log(query);
+    //console.log(query);
 
     // Database Query
     db.cypherQuery(query, function(err, result) {
@@ -1239,13 +1333,15 @@ app.get('/api/scenarios', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var jsonString = JSON.stringify(result.data);
-            console.log(jsonString);
+            var finalResult = '{"scenarios":' + JSON.stringify(result.data) + '}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end('{"scenarios":' + jsonString + '}');
+            res.end(finalResult);
             return;
         }
     });
@@ -1254,9 +1350,11 @@ app.get('/api/scenarios', function(req, res) {
 // get Scenrio (Developer: Nicho)
 app.get('/api/scenarios/:id', function(req, res) {
 
+    console.log("+++ [GET] /api/scenarios/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
+
     // Query
     var query = "MATCH (l:Location)<-[:contains]-(s:Scenario { name: \"Scenario 1\" }) RETURN {s AS scenario, l AS startLocation} AS scenario";
-    console.log(query);
+    //console.log(query);
 
     // Database Query
     db.cypherQuery(query, function(err, result) {
@@ -1275,13 +1373,15 @@ app.get('/api/scenarios/:id', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var jsonString_1 = JSON.stringify(result.data);
-            console.log(jsonString_1);
+            var finalResult = '{"scenario":' + JSON.stringify(result.data) + '}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end('{"scenario":' + jsonString_1 + '}');
+            res.end(finalResult);
             return;
         }
     });
