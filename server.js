@@ -1312,7 +1312,83 @@ app.put('/api/videos/:id', function(req, res) {
 
     console.log("+++ [PUT] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Check if all attributes were submitted
+    if (JSON.stringify(req.body) == '{}') {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: No data submitted!');
+        return;
+    } else if (req.body.name == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "name"!');
+        return;
+    } else if (req.body.description == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "description"!');
+        return;
+    } else if (req.body.tags == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "tags"!');
+        return;
+    } else if (req.body.date == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "date"!');
+        return;
+    } else if (req.body.url == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "url"!');
+        return;
+    } else {
+
+        console.log("--- Updating properties of the Location ---");
+
+        // Query - Update all properties of the Location
+        var query = "START v=node(" + req.params.id + ") " + "SET v.name='" + req.body.name + "' " + "SET v.description='" + req.body.description + "' " + "SET v.tags=" + JSON.stringify(req.body.tags) + " " + "SET v.url='" + req.body.url + "' " + "SET v.date='" + req.body.date + "' " + "RETURN v";
+        //console.log(query);
+
+        // Database Query
+        db.cypherQuery(query, function(err, result) {
+            if (err) {
+
+                res.writeHead(500, {
+                    'Content-Type' : 'text/plain'
+                });
+                var errorMsg = "Error: Internal Server Error; Message: " + err;
+                res.end(errorMsg);
+                return;
+
+            } else {
+                //console.log(result.data);
+                // delivers an array of query results
+                //console.log(result.columns);
+                // delivers an array of names of objects getting returned
+
+                console.log("--- Finished updating properties of the Location ---");
+
+                var finalResult = '{"video": '+ JSON.stringify(result.data) +'}';
+                console.log("================================ Result ================================");
+                console.log(finalResult);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                res.writeHead(201, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(finalResult);
+                return;
+            }
+        });
+    }
 });
 
 // 3.2.5 Remove a Video (Developer: Nicho)
