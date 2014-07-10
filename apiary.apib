@@ -382,7 +382,8 @@ A single Location object with all its details
     + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
 
 ### Retrieve a Location [GET]
-(Status: **in design**)
+(Status: **implemented**, Developer: Nicho)
+
 + Response 200 (application/json)
 
     + Header
@@ -424,7 +425,7 @@ A single Location object with all its details
 + Response 500 (text/plain)
 
 ### Edit a Location [PUT]
-(Status: **not yet implemented**)
+(Status: **implemented**, Developer: Nicho)
 
 + Request (application/json)
 
@@ -498,13 +499,15 @@ A single Location object with all its details
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
                     "date":"No date available",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    "tags":[]
                 }, {
                     "_id":36,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße2",
                     "date":"No date available",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
                 }
             ]
         }
@@ -512,7 +515,7 @@ A single Location object with all its details
 + Response 500 (text/plain)        
 
 ### Create a Video [POST]
-(Status: **in design**)
+(Status: **in progress**)
 
 Required attributes:
 
@@ -520,6 +523,7 @@ Required attributes:
 - `description` **String** (e.g. *"Frauenstraße bei Tag"*)
 - `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
 - `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -529,7 +533,8 @@ Required attributes:
                     "description": "Frauenstraße bei Tag",
                     "name": "Frauenstraße2",
                     "date": "No date available",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
                 }
 
 + Response 201 (application/json)
@@ -539,7 +544,8 @@ Required attributes:
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"No date available",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "tags":[]
         }
         
 + Response 500 (text/plain)
@@ -552,7 +558,7 @@ A single Video object with all details
 
 
 ### Retrieve a video [GET]
-(Status: **in design**)
+(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -570,6 +576,7 @@ A single Video object with all details
                     "name":"Frauenstraße",
                     "date":"No date available",
                     "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    "tags":[]
                     }
                 ]
             }
@@ -577,7 +584,7 @@ A single Video object with all details
 + Response 500 (text/plain)    
 
 ### Edit a Video [PUT]
-(Status: **not yet implemented**)
+(Status: **in progress**)
 
 Required attributes:
 
@@ -585,6 +592,7 @@ Required attributes:
 - `description` **String** (e.g. *"Frauenstraße bei Tag"*)
 - `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
 - `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -594,7 +602,8 @@ Required attributes:
                     "description": "Frauenstraße bei Tag",
                     "name": "Frauenstraße2",
                     "date": "No date available",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
                 }
 
 + Response 201 (application/json)
@@ -604,13 +613,14 @@ Required attributes:
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"No date available",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "tags":[]
         }
         
 + Response 500 (text/plain)
 
 ### Remove a Video [DELETE]
-(Status: **not yet implemented**)
+(Status: **implemented**, Developer: Nicho)
 + Response 204 (text/plain)
 
 + Response 500 (text/plain)
