@@ -1177,7 +1177,6 @@ app.get('/api/videos', function(req, res) {
             res.end(finalResult);
             return;
         }
-
     });
 });
 
@@ -1186,8 +1185,86 @@ app.post('/api/videos', function(req, res) {
 
     console.log("+++ [POST] /api/videos +++++++++++++++++++++++++++++++++++++++++++++++++");
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Check if all attributes were submitted
+    if (JSON.stringify(req.body) == '{}') {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: No data submitted!');
+        return;
+    } else if (req.body.name == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "name"!');
+        return;
+    } else if (req.body.description == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "description"!');
+        return;
+    } else if (req.body.tags == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "tags"!');
+        return;
+    } else if (req.body.date == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "date"!');
+        return;
+    } else if (req.body.url == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "url"!');
+        return;
+    } else {
 
+        console.log("--- Creating new Video and Inserting properties ---");
+
+        // Database Query - Create new Video
+        db.insertNode({
+            name : req.body.name,
+            description : req.body.description,
+            tags : req.body.tags,
+            date : req.body.date,
+            url : req.body.url
+        }, ['Video'], function(err, node) {
+            if (err) {
+                res.writeHead(500, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end("Error: Data couldn't saved in the database");
+                return;
+            } else {
+
+                // Output node properties
+                //console.log("newNodeProperties: " + JSON.stringify(node));
+                var newVideo = node;
+
+                // Output node id
+                var newVideoID = node._id;
+                console.log("--- Finished Creating new Video, new ID = " + newVideoID + " ---");
+                
+                // Result
+                var finalResult = '{"video": ' + JSON.stringify(newVideo) + '}';
+                console.log("================================ Result ================================");
+                console.log(finalResult);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        
+                // Send final Result
+                res.writeHead(201, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(finalResult);
+                return;
+            }    
+        });
+    }
 });
 
 // 3.2.3 Retrieve a Video (Developer: Nicho)
