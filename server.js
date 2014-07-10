@@ -332,7 +332,7 @@ app.post('/api/locations', function(req, res) {
                             // 2nd Database Query
                             db.cypherQuery(query_2, function(err, result) {
                                 if (err) {
-                                    console.log("Error: Could not find the related Location with the ID " + locationID_temp);
+                                    console.log("Error: Could not find the related Location " + locationID_temp);
                                     status_relatedLocation = false;
 
                                     // tell async that the iterator has completed
@@ -371,7 +371,7 @@ app.post('/api/locations', function(req, res) {
                             // 3rd Database Query
                             db.cypherQuery(query_3, function(err, result) {
                                 if (err) {
-                                    console.log("Error: Could not find the related Video with the ID " + videoID_temp);
+                                    console.log("Error: Could not find the related Video " + videoID_temp);
                                     status_videos = false;
 
                                     // tell async that the iterator has completed
@@ -410,7 +410,7 @@ app.post('/api/locations', function(req, res) {
                             // 4th Database Query
                             db.cypherQuery(query_4, function(err, result) {
                                 if (err) {
-                                    console.log("Error: Could not find the related Overlay with the ID " + overlayID_temp);
+                                    console.log("Error: Could not find the related Overlay " + overlayID_temp);
                                     status_overlays = false;
 
                                     // tell async that the iterator has completed
@@ -760,7 +760,7 @@ app.put('/api/locations/:id', function(req, res) {
                                     // 3rd Database Query
                                     db.cypherQuery(query_3, function(err, result) {
                                         if (err) {
-                                            console.log("Error: Could not find the related Location with the ID " + locationID_temp);
+                                            console.log("Error: Could not find the related Location " + locationID_temp);
                                             status_relatedLocation = false;
                             
                                             // tell async that the iterator has completed
@@ -769,7 +769,7 @@ app.put('/api/locations/:id', function(req, res) {
                                             //console.log(result.data);
                                             //console.log(result.columns);
                                             
-                                            console.log("Found the Location with the ID " + locationID_temp);
+                                            console.log("Found the Location " + locationID_temp);
 
 
                                             // 4th Query - Connect the submitted related Location to the current Location
@@ -833,7 +833,7 @@ app.put('/api/locations/:id', function(req, res) {
                                     // 3rd Database Query
                                     db.cypherQuery(query_3, function(err, result) {
                                         if (err) {
-                                            console.log("Error: Could not find the related Videos with the ID " + videoID_temp);
+                                            console.log("Error: Could not find the related Videos " + videoID_temp);
                                             status_videos = false;
                             
                                             // tell async that the iterator has completed
@@ -842,7 +842,7 @@ app.put('/api/locations/:id', function(req, res) {
                                             //console.log(result.data);
                                             //console.log(result.columns);
                                             
-                                            console.log("Found the Video with the ID " + videoID_temp);
+                                            console.log("Found the Video " + videoID_temp);
 
 
                                             // 4th Query - Connect the submitted Video to the current Location
@@ -905,7 +905,7 @@ app.put('/api/locations/:id', function(req, res) {
                                     // 3rd Database Query
                                     db.cypherQuery(query_3, function(err, result) {
                                         if (err) {
-                                            console.log("Error: Could not find the related Overlay with the ID " + overlayID_temp);
+                                            console.log("Error: Could not find the related Overlay " + overlayID_temp);
                                             status_overlays = false;
                             
                                             // tell async that the iterator has completed
@@ -914,7 +914,7 @@ app.put('/api/locations/:id', function(req, res) {
                                             //console.log(result.data);
                                             //console.log(result.columns);
                                             
-                                            console.log("Found the Overlay with the ID " + overlayID_temp);
+                                            console.log("Found the Overlay " + overlayID_temp);
 
 
                                             // 4th Query - Connect the submitted Overlay to the current Location
@@ -1084,7 +1084,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         //console.log(result.columns);
                         // delivers an array of names of objects getting returned
 
-                        console.log("Location " + req.params.id + " was deleted!");
+                        console.log("Location " + req.params.id + " has been deleted!");
                         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
@@ -1119,7 +1119,7 @@ app.delete ('/api/locations/:id', function(req, res) {
                         //console.log(result.columns);
                         // delivers an array of names of objects getting returned
 
-                        console.log("Location " + req.params.id + " was deleted!");
+                        console.log("Location " + req.params.id + " has been deleted!");
                         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                         res.writeHead(204, {
@@ -1190,7 +1190,7 @@ app.post('/api/videos', function(req, res) {
 
 });
 
-// 3.2.3 Retrieve a Video
+// 3.2.3 Retrieve a Video (Developer: Nicho)
 app.get('/api/videos/:id', function(req, res) {
 
     console.log("+++ [GET] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1238,12 +1238,109 @@ app.put('/api/videos/:id', function(req, res) {
     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 });
 
-// 3.2.5 Remove a Video
+// 3.2.5 Remove a Video (Developer: Nicho)
 app.delete('/api/videos/:id', function(req, res) {
 
     console.log("+++ [DELETE] /api/videos/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++++");
     
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // 1st Query - Count the relationships for the Video, before the deletion
+    var query_1 = "START v=node(" + req.params.id + ") MATCH v-[r]-(c) RETURN COUNT(v)";
+    //console.log(query_1);
+
+    // 1st Database Query
+    db.cypherQuery(query_1, function(err, result) {
+        if (err) {
+
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            var errorMsg = "Error: Internal Server Error; Message: " + err;
+            res.end(errorMsg);
+            return;
+
+        } else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+
+            var connectedRelations = result.data;
+
+            console.log("Found " + connectedRelations + " relationships for Video " + req.params.id);
+
+            // Check if the Video have relationships and delete them too, if they exist
+            if (connectedRelations[0] > 0) {
+
+                // 2nd Query
+                var query_2 = "START v=node(" + req.params.id + ") MATCH v-[r]-() DELETE v, r";
+                //console.log(query_2);
+
+                // 2nd Database Query
+                db.cypherQuery(query_2, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(500, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: Internal Server Error; Message: " + err;
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        //console.log(result.data);
+                        // delivers an array of query results
+                        //console.log(result.columns);
+                        // delivers an array of names of objects getting returned
+
+                        console.log("Video " + req.params.id + " has been deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                        res.writeHead(204, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end();
+                        return;
+                    }
+
+                });
+            } else {
+
+                // 3rd Query
+                var query_3 = "START v=node(" + req.params.id + ") DELETE v";
+                //console.log(query_3);
+
+                // 3rd Database Query
+                db.cypherQuery(query_3, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(500, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: Internal Server Error; Message: " + err;
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+
+                        //console.log(result.data);
+                        // delivers an array of query results
+                        //console.log(result.columns);
+                        // delivers an array of names of objects getting returned
+
+                        console.log("Video " + req.params.id + " has been deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                        res.writeHead(204, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end();
+                        return;
+                    }
+
+                });
+            }
+        }
+    });
 });
 
 /****************************
