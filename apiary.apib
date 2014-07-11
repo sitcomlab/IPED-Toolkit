@@ -382,7 +382,8 @@ A single Location object with all its details
     + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
 
 ### Retrieve a Location [GET]
-(Status: **in design**)
+(Status: **implemented**, Developer: Nicho)
+
 + Response 200 (application/json)
 
     + Header
@@ -424,7 +425,7 @@ A single Location object with all its details
 + Response 500 (text/plain)
 
 ### Edit a Location [PUT]
-(Status: **not yet implemented**)
+(Status: **implemented**, Developer: Nicho)
 
 + Request (application/json)
 
@@ -481,52 +482,6 @@ A single Location object with all its details
 
 + Response 500 (text/plain)
 
-## Relations for Locations [/api/locations/{id}/relations]
-+ Parameters
-    + id (required, number, `1`) ... Numeric `id` of the Location to perform action with. Has example value.
-
-### Get all Locations next to the current location [GET]
-(Status: **not yet implemented**)
-+ Response 200 (application/json)
-
-    + Header
-
-            X-My-Header: The Value
-
-    + Body
-    
-            {
-                "locations":[
-                    {
-                        "_id":6,
-                        "name":"Krummer Timpen",
-                        "tags":[
-                            "Münster",
-                            "Krummer Timpen",
-                            "ULB",
-                            "Juridicum"
-                        ],
-                        "lon":"7.6201791",
-                        "lat":"51.9627494",
-                        "description":"Gegenüber der ULB"
-                        
-                    },
-                    {
-                        "_id":4,
-                        "name":"Frauenstraße",
-                        "tags":[
-                            "Münster",
-                            "Frauenstraße",
-                            "Trattoria",
-                            "Kulturcafé",
-                            "Fürstin-von-Gallitzin-Wohnheim"
-                        ],
-                        "lon":"7.6189278",
-                        "lat":"51.9634288",
-                        "description":"Gegenüber der Trattoria"
-                    }
-                ]
-            }
 
 # Group Videos
 
@@ -544,13 +499,15 @@ A single Location object with all its details
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
                     "date":"No date available",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    "tags":[]
                 }, {
                     "_id":36,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße2",
                     "date":"No date available",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
                 }
             ]
         }
@@ -558,7 +515,7 @@ A single Location object with all its details
 + Response 500 (text/plain)        
 
 ### Create a Video [POST]
-(Status: **in design**)
+(Status: **implemented**, Developer: Nicho)
 
 Required attributes:
 
@@ -566,6 +523,7 @@ Required attributes:
 - `description` **String** (e.g. *"Frauenstraße bei Tag"*)
 - `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
 - `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -575,7 +533,8 @@ Required attributes:
                     "description": "Frauenstraße bei Tag",
                     "name": "Frauenstraße2",
                     "date": "No date available",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
                 }
 
 + Response 201 (application/json)
@@ -585,7 +544,8 @@ Required attributes:
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"No date available",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "tags":[]
         }
         
 + Response 500 (text/plain)
@@ -598,7 +558,7 @@ A single Video object with all details
 
 
 ### Retrieve a video [GET]
-(Status: **in design**)
+(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -616,14 +576,51 @@ A single Video object with all details
                     "name":"Frauenstraße",
                     "date":"No date available",
                     "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    "tags":[]
                     }
                 ]
             }
             
-+ Response 500 (text/plain)            
++ Response 500 (text/plain)    
 
-### Remove a video [DELETE]
-(Status: **not yet implemented**)
+### Edit a Video [PUT]
+(Status: **implemented**, Developer: Nicho)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Frauenstraße2"*)
+- `description` **String** (e.g. *"Frauenstraße bei Tag"*)
+- `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
+- `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
+
++ Request (application/json)
+
+    + body
+    
+                { 
+                    "description": "Frauenstraße bei Tag",
+                    "name": "Frauenstraße2",
+                    "date": "No date available",
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "tags":[]
+                }
+
++ Response 201 (application/json)
+
+        {  
+            "_id":36,
+            "description":"Frauenstraße bei Tag",
+            "name":"Frauenstraße2",
+            "date":"No date available",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "tags":[]
+        }
+        
++ Response 500 (text/plain)
+
+### Remove a Video [DELETE]
+(Status: **implemented**, Developer: Nicho)
 + Response 204 (text/plain)
 
 + Response 500 (text/plain)
@@ -663,8 +660,8 @@ A single Video object with all details
 
 + Response 500 (text/plain)
 
-### Create a Overlay [POST]
-(Status: **in design**)
+### Create an Overlay [POST]
+(Status: **implemented**, Developer: Nicho)
 
 Required attributes:
 
@@ -677,6 +674,7 @@ Required attributes:
 - `h` **Double** (default: *0*, e.g. *600*)
 - `x` **Double** (default: *0*, e.g. *100*)
 - `y` **Double** (default: *0*)
+- `z` **Double** (default: *0*)
 - `d` **Double** (default: *0*)
 - `rx` **Double** (default: *0*)
 - `ry` **Double** (default: *0*)
@@ -738,8 +736,8 @@ A single Overlay object with all its details
 + Parameters
     + id (required, number, `3`) ... Numeric `id` of the Location to perform action with. Has example value.
 
-### Retrieve a Overlay [GET]
-(Status: **not yet implemented**)
+### Retrieve an Overlay [GET]
+(Status: **implemented**, Developer: Nicho)
 + Response 200 (application/json)
 
     + Header
@@ -773,8 +771,80 @@ A single Overlay object with all its details
                 ]
             }
 
-### Remove a Overlay [DELETE]
-(Status: **not yet implemented**)
+### Edit an Overlay [PUT]
+(Status: **implemented**, Developer: Nicho)
+
+Required attributes:
+
+- `name` **String** (e.g. *"Video Overlay"*)
+- `description` **String** (e.g. *"Video Overlay Test"*)
+- `tags` **String[ ]** (e.g. *["video", "test"]*)
+- `type` **String** (options: *"html"*, *"image"*, *"video"*)
+- `url` **String** (e.g. *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
+- `w` **Double** (default: *0*, e.g. *800*)
+- `h` **Double** (default: *0*, e.g. *600*)
+- `x` **Double** (default: *0*, e.g. *100*)
+- `y` **Double** (default: *0*)
+- `z` **Double** (default: *0*)
+- `d` **Double** (default: *0*)
+- `rx` **Double** (default: *0*)
+- `ry` **Double** (default: *0*)
+- `rz` **Double** (default: *0*)
+
+
++ Request (application/json)
+
+    + body 
+    
+            {   
+                "tags":[
+                    "video",
+                    "test"
+                ],
+                "d":0,
+                "type":"html",
+                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                "h":600,
+                "w":800,
+                "rz":0,
+                "description":"Video Overlay Test",
+                "name":"Video Overlay",
+                "z":0,
+                "rx":0,
+                "y":0,
+                "ry":0,
+                "x":100
+            }
+
++ Response 201 (application/json)
+
+        {   
+            "_id":23,
+            "tags":[
+                "video",
+                "test"
+            ],
+            "d":0,
+            "type":"html",
+            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+            "h":600,
+            "w":800,
+            "rz":0,
+            "description":"Video Overlay Test",
+            "name":"Video Overlay",
+            "z":0,
+            "rx":0,
+            "y":0,
+            "ry":0,
+            "x":100
+        }
+
++ Response 500 (text/plain)
+
+
+### Remove an Overlay [DELETE]
+(Status: **implemented**, Developer: Nicho)
+
 + Response 204 (text/plain)
 
 + Response 500 (text/plain)
@@ -786,7 +856,7 @@ A single Overlay object with all its details
 ## Scenario Collection [/api/scenarios]
 
 ### List all Scenarios [GET]
-(Status: **in progress**, Developer: Nicho)
+(Status: **in design**)
 
 + Response 200 (application/json)
 
@@ -970,6 +1040,12 @@ A single, complete Scenario object with all details (meta-data), locations, vide
                             }    
                     ]
             }
+
         
+### Remove a Scenario  [DELETE]
+(Status: **in design**)
++ Response 204 (text/plain)
+
++ Response 500 (text/plain)        
         
         
