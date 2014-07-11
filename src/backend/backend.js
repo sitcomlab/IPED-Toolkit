@@ -227,7 +227,7 @@ function drawMarkers() {
 			locations = videos.get("locations");
 			$.each(locations, function(index, value) {
 				console.log(index + " : " + value.lat);
-				L.marker([value.lat, value.lon]).addTo(map).bindPopup("<table class=popup>" + "<tr><td><b>Name</b>:</td><td>" + value.name + "</td></tr>" + "<tr><td><b>Video-ID</b>:</td><td>" + value.id + "</td></tr>" + "<tr><td><b>Coordinates</b>:</td><td>" + value.lat + ", " + value.lon + "</td></tr>" + "<tr><td><b>Description</b>:</td><td>" + value.description + "</td></tr>" + "</table>" + "<span style=\"width:100%; text-align:center;\">" + "<a href=\"index.html?currentId=" + value.id + "\">Go to this video</a>" + "</span>").openPopup();
+				L.marker([value.lat, value.lon]).addTo(map).bindPopup("<table class=popup>" + "<tr><td><b>Name</b>:</td><td>" + value.name + "</td></tr>" + "<tr><td><b>Video-ID</b>:</td><td>" + value._id + "</td></tr>" + "<tr><td><b>Coordinates</b>:</td><td>" + value.lat + ", " + value.lon + "</td></tr>" + "<tr><td><b>Description</b>:</td><td>" + value.description + "</td></tr>" + "</table>" + "<span style=\"width:100%; text-align:center;\">" + "<a href=\"index.html?currentId=" + value.id + "\">Go to this video</a>" + "</span>").openPopup();
 			});
 		}
 	});
