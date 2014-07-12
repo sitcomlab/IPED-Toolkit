@@ -20,7 +20,8 @@
     "cog": "~0.5.1",
     "fdom": "^0.8.0",
     "rtc-captureconfig": "~0.4.0",
-    "async": "0.9.0"
+    "async": "0.9.0",
+    "validator": "3.16.1"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
