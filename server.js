@@ -1542,13 +1542,155 @@ app.get('/api/overlays', function(req, res) {
     });
 });
 
-// 3.3.2 Create an Overlay
+// 3.3.2 Create an Overlay (Developer: Nicho)
 app.post('/api/overlays', function(req, res) {
 
     console.log("+++ [POST] /api/overlays +++++++++++++++++++++++++++++++++++++++++++++++");
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Check if all attributes were submitted
+    if (JSON.stringify(req.body) == '{}') {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: No data submitted!');
+        return;
+    } else if (req.body.name == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "name"!');
+        return;
+    } else if (req.body.description == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "description"!');
+        return;
+    } else if (req.body.tags == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "tags"!');
+        return;
+    } else if (req.body.type == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "date"!');
+        return;
+    } else if (req.body.url == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "url"!');
+        return;
+    } else if (req.body.w == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "w"!');
+        return;
+    } else if (req.body.h == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "h"!');
+        return;
+    } else if (req.body.x == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "x"!');
+        return;
+    } else if (req.body.y == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "y"!');
+        return;
+    } else if (req.body.z == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "z"!');
+        return;
+    }else if (req.body.d == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "d"!');
+        return;
+    } else if (req.body.rx == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "rx"!');
+        return;
+    } else if (req.body.ry == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "ry"!');
+        return;
+    } else if (req.body.rz == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "rz"!');
+        return;
+    } else {
 
+        console.log("--- Creating new Overlay and Inserting properties ---");
+
+        // Database Query - Create new Overlay
+        db.insertNode({
+            name : req.body.name,
+            description : req.body.description,
+            tags : req.body.tags,
+            type : req.body.type,
+            url : req.body.url,
+            w : req.body.w,
+            h : req.body.h,
+            x : req.body.x,
+            y : req.body.y,
+            z : req.body.z,
+            d : req.body.d,
+            rx : req.body.rx,
+            ry : req.body.ry,
+            rz: req.body.rz 
+
+        }, ['Overlay'], function(err, node) {
+            if (err) {
+                res.writeHead(500, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end("Error: Data couldn't saved in the database");
+                return;
+            } else {
+
+                // Output node properties
+                //console.log("newNodeProperties: " + JSON.stringify(node));
+                var newOverlay = node;
+
+                // Output node id
+                var newOverlayID = node._id;
+                console.log("--- Finished Creating new Overlay, new ID = " + newOverlayID + " ---");
+                
+                // Result
+                var finalResult = '{"overlay": ' + JSON.stringify(newOverlay) + '}';
+                console.log("================================ Result ================================");
+                console.log(finalResult);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        
+                // Send final Result
+                res.writeHead(201, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(finalResult);
+                return;
+            }    
+        });
+    }
 });
 
 // 3.3.3 Retrieve an Overlay (Developer: Nicho)
