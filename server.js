@@ -1365,55 +1365,114 @@ app.put('/api/videos/:id', function(req, res) {
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
 
-        // Check if all attributes were submitted
-        if (JSON.stringify(req.body) == '{}') {
+        // For Database Query
+        var propertyChanges = '';
+
+        if (JSON.stringify(req.body) == '{}' || req.body == undefined) {
             res.writeHead(400, {
                 'Content-Type' : 'text/plain'
             });
             res.end('Error: No data submitted!');
             return;
-        } else if (req.body.name == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "name"!');
-            return;
-        } else if (req.body.description == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "description"!');
-            return;
-        } else if (req.body.tags == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "tags"!');
-            return;
-        } else if (req.body.date == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "date"!');
-            return;
-        } else if (req.body.url == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "url"!');
-            return;
         } else {
 
             console.log("--- Updating properties of the Video ---");
 
-            // Query - Update all properties of the Video
-            var query = 'MATCH (v:Video) WHERE ID(v)=' + req.params.id + ' '
-                + 'SET v.name="' + req.body.name + '" '
-                + 'SET v.description="' + req.body.description +'" '
-                + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' '
-                + 'SET v.url="' + req.body.url + '" '
-                + 'SET v.date="' + req.body.date + '" '
-                + 'RETURN v';
+            // Check attribute "name"
+            if(req.body.name == undefined) {
+                console.log('No changes deteced in property "name"');
+            } else if(req.body.name == "" || req.body.name == null){
+                res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: The attribute "name" can not be emtpy!');
+                return;
+            } else if(req.body.name){
+                propertyChanges = propertyChanges + 'SET v.name="' + req.body.name + '" ';
+            } else {
+                res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: Internal Server Error!');
+                return;
+            }
+
+            // Check attribute "description"
+            if(req.body.description == undefined) {  
+                console.log('No changes deteced in property "description"');
+            } else if(req.body.description){
+                propertyChanges = propertyChanges + 'SET v.description="' + req.body.description + '" ';
+            } else {
+                res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: Internal Server Error!');
+                return;
+            }
+
+            // Check attribute "tags"
+            if(req.body.tags == undefined) {  
+                console.log('No changes deteced in property "tags"');
+            } else if(req.body.tags){
+                propertyChanges = propertyChanges + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' ';
+            } else {
+                res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: Internal Server Error!');
+                return;
+            }
+
+            // Check attribute "url"
+            if(req.body.url == undefined) {  
+                console.log('No changes deteced in property "url"');
+            } else if(req.body.url == "") {
+                propertyChanges = propertyChanges + 'SET v.url=""';
+            } else if(req.body.url){
+                // Check if URL is a valid URL
+                if(validator.isURL(req.body.url)) {
+                    propertyChanges = propertyChanges + 'SET v.url="' + req.body.url + '" ';
+                } else {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The attribute "url" is not a valid URL!');
+                    return;
+                }
+            } else {
+                res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: Internal Server Error!');
+                return;
+            }
+
+            // Check attribute "date"
+            if(req.body.date == undefined) {  
+                console.log('No changes deteced in property "date"');
+            } else if(req.body.date == ""){             
+                propertyChanges = propertyChanges + 'SET v.date=""';
+            } else if(req.body.date){
+                // Check if Date is a valid date
+                if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
+                    propertyChanges = propertyChanges + 'SET v.date="' + req.body.date + '" ';
+                } else {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
+                    return;
+                }
+            } else {
+                res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+                });
+                res.end('Error: Internal Server Error!');
+                return;
+            }
+
+            // Query - Update all changed properties of the Video
+            var query = 'MATCH (v:Video) WHERE ID(v)=' + req.params.id + ' ' + propertyChanges + 'RETURN v';
             //console.log(query);
 
             // Database Query
