@@ -1551,12 +1551,44 @@ app.post('/api/overlays', function(req, res) {
 
 });
 
-// 3.3.3 Retrieve an Overlay
+// 3.3.3 Retrieve an Overlay (Developer: Nicho)
 app.get('/api/overlays/:id', function(req, res) {
 
     console.log("+++ [GET] /api/overlays/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Query
+    var query = "START o=node(" + req.params.id + ") RETURN o";
+    //console.log(query);
+
+    // Database Query
+    db.cypherQuery(query, function(err, result) {
+        if (err) {
+
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            var errorMsg = "Error: Internal Server Error; Message: " + err;
+            res.end(errorMsg);
+            return;
+
+        } else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+
+            var finalResult = '{"overlay": '+ JSON.stringify(result.data) +'}';
+            console.log("================================ Result ================================");
+            console.log(finalResult);
+            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+            res.writeHead(200, {
+                'Content-Type' : 'application/json'
+            });
+            res.end(finalResult);
+            return;
+        }
+    });
 });
 
 // 3.3.4 Edit an Overlay
