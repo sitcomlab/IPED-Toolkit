@@ -113,6 +113,9 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 
 + Response 500 (text/plain)
 
+        Error: Internal Server Error
+        Message: <Errormessage>
+
 
 ### Create a Location [POST]
 (Status: **implemented**, Developer: Nicho)
@@ -425,6 +428,9 @@ A single Location object with all its details
             
 + Response 500 (text/plain)
 
+        Error: Internal Server Error
+        Message: <Errormessage>
+
 ### Edit a Location [PUT]
 (Status: **implemented**, Developer: Nicho)
 
@@ -474,7 +480,10 @@ A single Location object with all its details
                 ]
         }
         
-+ Response 500 (text/plain)        
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>    
 
 ### Remove a Location [DELETE]
 (Status: **implemented**, Developer: Nicho)
@@ -482,6 +491,9 @@ A single Location object with all its details
 + Response 204 (text/plain)
 
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 
 # Group Videos
@@ -513,7 +525,10 @@ A single Location object with all its details
             ]
         }
         
-+ Response 500 (text/plain)        
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>     
 
 ### Create a Video [POST]
 (Status: **implemented**, Developer: Nicho)
@@ -599,7 +614,14 @@ A single Video object with all details
                 ]
             }
             
-+ Response 500 (text/plain)    
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 ### Edit a Video [PUT]
 (Status: **implemented**, Developer: Nicho)
@@ -635,13 +657,27 @@ Changeable attributes:
             "tags":[]
         }
         
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 ### Remove a Video [DELETE]
 (Status: **implemented**, Developer: Nicho)
 + Response 204 (text/plain)
 
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 # Group Overlays
 
@@ -677,6 +713,9 @@ Changeable attributes:
         }   
 
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 ### Create an Overlay [POST]
 (Status: **implemented**, Developer: Nicho)
@@ -748,6 +787,9 @@ Required attributes:
 
 + Response 500 (text/plain)
 
+        Error: Internal Server Error
+        Message: <Errormessage>
+
 ## Location [/api/overlays/{id}]
 A single Overlay object with all its details
 
@@ -756,6 +798,7 @@ A single Overlay object with all its details
 
 ### Retrieve an Overlay [GET]
 (Status: **implemented**, Developer: Nicho)
+
 + Response 200 (application/json)
 
     + Header
@@ -788,11 +831,20 @@ A single Overlay object with all its details
                     }
                 ]
             }
+            
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>            
 
 ### Edit an Overlay [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-Required attributes:
+Changeable attributes:
 
 - `name` **String** (e.g. *"Video Overlay"*)
 - `description` **String** (e.g. *"Video Overlay Test"*)
@@ -857,7 +909,14 @@ Required attributes:
             "x":100
         }
 
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 
 ### Remove an Overlay [DELETE]
@@ -865,7 +924,14 @@ Required attributes:
 
 + Response 204 (text/plain)
 
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not a number!
+            
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 
 
@@ -1064,6 +1130,9 @@ A single, complete Scenario object with all details (meta-data), locations, vide
 (Status: **in design**)
 + Response 204 (text/plain)
 
-+ Response 500 (text/plain)        
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>      
         
         
