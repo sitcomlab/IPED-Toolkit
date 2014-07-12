@@ -33,6 +33,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **403** `Forbidden` - access denied.
 * **404** `Not Found` - resource was not found.
 * **405** `Method Not Allowed` - requested method is not supported for resource.
+* **406** `Not Acceptable` - the requested resource is only capable of generating content not acceptable according to the Accept headers sent in the request.
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
@@ -519,11 +520,11 @@ A single Location object with all its details
 
 Required attributes:
 
-- `name` **String** (e.g. *"Frauenstraße2"*)
-- `description` **String** (e.g. *"Frauenstraße bei Tag"*)
-- `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
-- `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
+- `name` **String** (can not be empty; example: *"Frauenstraße"*)
+- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
+- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
+- `url` **String** (can be empty or url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -532,8 +533,8 @@ Required attributes:
                 { 
                     "description": "Frauenstraße bei Tag",
                     "name": "Frauenstraße2",
-                    "date": "No date available",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "date": "",
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
                     "tags":[]
                 }
 
@@ -543,12 +544,29 @@ Required attributes:
             "_id":36,
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
-            "date":"No date available",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "date":"",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
             "tags":[]
         }
         
++ Response 400 (text/plain)
+        
+        Error: No data submitted!
+        
+        Error: Could not found the attribute "<attribute>"!
+
+        Error: The attribute "<attribute>" can not be emtpy!');
+        
+        Error: The elements of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!
+        
+        Error: The attribute "url" is not a valid URL!
+        
+        Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""
+
 + Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 ## Video [/api/videos/{id}]
 A single Video object with all details
@@ -574,8 +592,8 @@ A single Video object with all details
                     "_id":35,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
-                    "date":"No date available",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                    "date":"",
+                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02.mp4",
                     "tags":[]
                     }
                 ]
@@ -586,13 +604,13 @@ A single Video object with all details
 ### Edit a Video [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-Required attributes:
+Changeable attributes:
 
-- `name` **String** (e.g. *"Frauenstraße2"*)
-- `description` **String** (e.g. *"Frauenstraße bei Tag"*)
-- `date` **Date/String** (e.g. *"2014-06-22"* or*"No date available"*)
-- `url` **String** (e.g. *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (e.g. *["Schlossplatz", "Event: Send", "at night"]*)
+- `name` **String** (can not be empty; example: *"Frauenstraße"*)
+- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
+- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
+- `url` **String** (can be empty or url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -601,8 +619,8 @@ Required attributes:
                 { 
                     "description": "Frauenstraße bei Tag",
                     "name": "Frauenstraße2",
-                    "date": "No date available",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                    "date": "",
+                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
                     "tags":[]
                 }
 
@@ -612,8 +630,8 @@ Required attributes:
             "_id":36,
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
-            "date":"No date available",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "date":"",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
             "tags":[]
         }
         
