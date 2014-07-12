@@ -1224,44 +1224,143 @@ app.post('/api/videos', function(req, res) {
 
     console.log("+++ [POST] /api/videos +++++++++++++++++++++++++++++++++++++++++++++++++");
 
+    console.log("--- Validating all properties for Insertion ---");
+
     // Check if all attributes were submitted
     if (JSON.stringify(req.body) == '{}') {
+
         res.writeHead(400, {
             'Content-Type' : 'text/plain'
         });
         res.end('Error: No data submitted!');
         return;
-    } else if (req.body.name == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "name"!');
-        return;
-    } else if (req.body.description == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "description"!');
-        return;
-    } else if (req.body.tags == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "tags"!');
-        return;
-    } else if (req.body.date == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "date"!');
-        return;
-    } else if (req.body.url == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "url"!');
-        return;
+
     } else {
+
+        // Check attribute "name"
+        if(req.body.name == undefined) {
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Could not found the attribute "name"!');
+            return;
+        } else if(req.body.name == "" || req.body.name == null) {
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+                res.end('Error: The attribute "name" can not be emtpy!');
+                return;
+        } else if(req.body.name){
+            console.log('Deteced valid attribute "name"!');        
+        } else {
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Internal Server Error!');
+            return;
+        }
+
+        // Check attribute "description"
+        if(req.body.description == undefined) {
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Could not found the attribute "description"!');
+            return;
+        } else if(req.body.description == "") {
+            console.log('Deteced valid, but empty attribute "description"!');
+        } else if(req.body.description){
+            console.log('Deteced valid attribute "description"!');        
+        } else {
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Internal Server Error!');
+            return;
+        }
+
+        // Check attribute "tags"
+        if(req.body.tags == undefined) {
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Could not found the attribute "tags"!');
+            return;
+        } else if(req.body.tags){
+            // Check if submitted tags are empty
+            for (var i=0; i < req.body.tags.length; i++) {
+                if(req.body.tags[i] == "") {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The elements of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!');
+                    return;
+                }
+            }
+            console.log('Deteced valid attribute "tags"!');        
+        } else {
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Internal Server Error!');
+            return;
+        }
+    
+        // Check attribute "url"
+        if(req.body.url == undefined) {  
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Could not found the attribute "url"!');
+            return;
+        } else if(req.body.url == "") {
+            console.log('Deteced valid, but empty attribute "url"!');
+        } else if(req.body.url){
+            // Check if URL is a valid URL
+            if(validator.isURL(req.body.url)) {
+                console.log('Deteced valid attribute "url"!');
+            } else {
+                res.writeHead(400, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end('Error: The attribute "url" is not a valid URL!');
+                return;
+            }
+        } else {
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Internal Server Error!');
+            return;
+        }
+
+        // Check attribute "date"
+        if(req.body.date == undefined) {  
+            res.writeHead(400, {
+                'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Could not found the attribute "date"!');
+            return;
+        } else if(req.body.date == "") {
+            console.log('Deteced valid, but empty attribute "date"!');
+        } else if(req.body.date){
+                // Check if Date is a valid date
+                if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
+                    console.log('Deteced valid attribute "date"!');        
+                } else {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
+                    return;
+                }
+        } else {
+            res.writeHead(500, {
+            'Content-Type' : 'text/plain'
+            });
+            res.end('Error: Internal Server Error!');
+            return;
+        }
 
         console.log("--- Creating new Video and Inserting properties ---");
 
