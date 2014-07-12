@@ -1733,12 +1733,157 @@ app.get('/api/overlays/:id', function(req, res) {
     });
 });
 
-// 3.3.4 Edit an Overlay
+// 3.3.4 Edit an Overlay (Developer: Nicho)
 app.put('/api/overlays/:id', function(req, res) {
 
     console.log("+++ [PUT] /api/overlays/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // Check if all attributes were submitted
+    if (JSON.stringify(req.body) == '{}') {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: No data submitted!');
+        return;
+    } else if (req.body.name == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "name"!');
+        return;
+    } else if (req.body.description == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "description"!');
+        return;
+    } else if (req.body.tags == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "tags"!');
+        return;
+    } else if (req.body.type == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "date"!');
+        return;
+    } else if (req.body.url == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "url"!');
+        return;
+    } else if (req.body.w == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "w"!');
+        return;
+    } else if (req.body.h == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "h"!');
+        return;
+    } else if (req.body.x == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "x"!');
+        return;
+    } else if (req.body.y == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "y"!');
+        return;
+    } else if (req.body.z == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "z"!');
+        return;
+    } else if (req.body.d == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "d"!');
+        return;
+    } else if (req.body.rx == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "rx"!');
+        return;
+    } else if (req.body.ry == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "ry"!');
+        return;
+    } else if (req.body.rz == undefined) {
+        res.writeHead(400, {
+            'Content-Type' : 'text/plain'
+        });
+        res.end('Error: Could not found the attribute "rz"!');
+        return;
+    } else {
+
+        console.log("--- Updating properties of the Overlay ---");
+
+        // Query - Update all properties of the Overlay
+        var query = 'START o=node(' + req.params.id + ') '
+            + 'SET o.name="' + req.body.name + '" '
+            + 'SET o.description="' + req.body.description + '" '
+            + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' '
+            + 'SET o.type="' + req.body.type + '" '
+            + 'SET o.url="' + req.body.url + '" '
+            + 'SET o.w="' + req.body.w + '" '
+            + 'SET o.h="' + req.body.h + '" '
+            + 'SET o.x="' + req.body.x + '" '
+            + 'SET o.y="' + req.body.y + '" '
+            + 'SET o.z="' + req.body.z + '" '
+            + 'SET o.d="' + req.body.d + '" ' 
+            + 'SET o.rx="' + req.body.rx + '" '
+            + 'SET o.ry="' + req.body.ry + '" '
+            + 'SET o.rz="' + req.body.rz + '" '
+            + 'RETURN o';
+        //console.log(query);
+
+        // Database Query
+        db.cypherQuery(query, function(err, result) {
+            if (err) {
+
+                res.writeHead(500, {
+                    'Content-Type' : 'text/plain'
+                });
+                var errorMsg = "Error: Internal Server Error; Message: " + err;
+                res.end(errorMsg);
+                return;
+
+            } else {
+                //console.log(result.data);
+                // delivers an array of query results
+                //console.log(result.columns);
+                // delivers an array of names of objects getting returned
+
+                console.log("--- Finished updating properties of the Overlay ---");
+
+                var finalResult = '{"overlay": '+ JSON.stringify(result.data) +'}';
+                console.log("================================ Result ================================");
+                console.log(finalResult);
+                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                res.writeHead(201, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(finalResult);
+                return;
+            }
+        });
+    }
 });
 
 // 3.3.5 Remove an Overlay
