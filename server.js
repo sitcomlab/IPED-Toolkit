@@ -721,7 +721,13 @@ app.put('/api/locations/:id', function(req, res) {
             console.log("--- Updating properties of the Location ---");
 
             // 1st Query - Update all properties of the Location
-            var query_1 = "START l=node(" + req.params.id + ") " + "SET l.name='" + req.body.name + "' " + "SET l.description='" + req.body.description + "' " + "SET l.tags=" + JSON.stringify(req.body.tags) + " " + "SET l.lat='" + req.body.lat + "' " + "SET l.lon='" + req.body.lon + "' " + "RETURN l";
+            var query_1 = 'MATCH (l:Location) WHERE ID(l)=' + req.params.id + ' '
+                + 'SET l.name="' + req.body.name + '" '
+                + 'SET l.description="' + req.body.description + '" '
+                + 'SET l.tags=' + JSON.stringify(req.body.tags) + ' '
+                + 'SET l.lat="' + req.body.lat + '" '
+                + 'SET l.lon="' + req.body.lon + '" '
+                + 'RETURN l';
             //console.log(query_1);
 
             // 1st Database Query
@@ -1401,7 +1407,7 @@ app.put('/api/videos/:id', function(req, res) {
             console.log("--- Updating properties of the Video ---");
 
             // Query - Update all properties of the Video
-            var query = 'MATCH (v:Video) WHERE ID(v)=' + req.params.id +  
+            var query = 'MATCH (v:Video) WHERE ID(v)=' + req.params.id + ' '
                 + 'SET v.name="' + req.body.name + '" '
                 + 'SET v.description="' + req.body.description +'" '
                 + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' '
@@ -1921,7 +1927,7 @@ app.put('/api/overlays/:id', function(req, res) {
             console.log("--- Updating properties of the Overlay ---");
 
             // Query - Update all properties of the Overlay
-            var query = 'MATCH (o:Overlay) WHERE ID(v)=' + req.params.id + 
+            var query = 'MATCH (o:Overlay) WHERE ID(v)=' + req.params.id + ' '
                 + 'SET o.name="' + req.body.name + '" '
                 + 'SET o.description="' + req.body.description + '" '
                 + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' '
