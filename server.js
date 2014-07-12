@@ -16,16 +16,16 @@
          3.1.5 Remove a Location
     3.2 Videos:
          3.2.1 List all Videos
-         3.2.2 Create a Video [x]
-         3.2.3 Retrieve a Video [x]
-         3.2.4 Edit a Video [x]
-         3.2.4 Remove a Video [x]
+         3.2.2 Create a Video
+         3.2.3 Retrieve a Video
+         3.2.4 Edit a Video
+         3.2.4 Remove a Video
     3.3 Overlays
-         3.3.1 List all Overlays
-         3.3.2 Create an Overlay [*]
-         3.3.3 Retrieve an Overlay [*]
-         3.3.4 Edit an Overlay [*]
-         3.3.5 Remove an Overlay [*]
+         3.3.1 List all Overlays [x]
+         3.3.2 Create an Overlay [x]
+         3.3.3 Retrieve an Overlay [x]
+         3.3.4 Edit an Overlay [x]
+         3.3.5 Remove an Overlay [x]
     3.4 Scenarios [!]
          3.4.1 List all Scenarios [!]
          3.4.2 Create a Scenario [!]
@@ -1180,7 +1180,7 @@ app.get('/api/videos', function(req, res) {
     });
 });
 
-// 3.2.2 Create a Video
+// 3.2.2 Create a Video (Developer: Nicho)
 app.post('/api/videos', function(req, res) {
 
     console.log("+++ [POST] /api/videos +++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1307,7 +1307,7 @@ app.get('/api/videos/:id', function(req, res) {
     });
 });
 
-// 3.2.4 Edit a Video
+// 3.2.4 Edit a Video (Developer: Nicho)
 app.put('/api/videos/:id', function(req, res) {
 
     console.log("+++ [PUT] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1351,10 +1351,16 @@ app.put('/api/videos/:id', function(req, res) {
         return;
     } else {
 
-        console.log("--- Updating properties of the Location ---");
+        console.log("--- Updating properties of the Video ---");
 
-        // Query - Update all properties of the Location
-        var query = "START v=node(" + req.params.id + ") " + "SET v.name='" + req.body.name + "' " + "SET v.description='" + req.body.description + "' " + "SET v.tags=" + JSON.stringify(req.body.tags) + " " + "SET v.url='" + req.body.url + "' " + "SET v.date='" + req.body.date + "' " + "RETURN v";
+        // Query - Update all properties of the Video
+        var query = "START v=node(" + req.params.id + ") " 
+            + "SET v.name='" + req.body.name + "' " 
+            + "SET v.description='" + req.body.description + "' " 
+            + "SET v.tags=" + JSON.stringify(req.body.tags) + " " 
+            + "SET v.url='" + req.body.url + "' " 
+            + "SET v.date='" + req.body.date + "' " 
+            + "RETURN v";
         //console.log(query);
 
         // Database Query
@@ -1374,7 +1380,7 @@ app.put('/api/videos/:id', function(req, res) {
                 //console.log(result.columns);
                 // delivers an array of names of objects getting returned
 
-                console.log("--- Finished updating properties of the Location ---");
+                console.log("--- Finished updating properties of the Video ---");
 
                 var finalResult = '{"video": '+ JSON.stringify(result.data) +'}';
                 console.log("================================ Result ================================");
@@ -1503,7 +1509,7 @@ app.delete('/api/videos/:id', function(req, res) {
 // 3.3.1 List all Overlays (Developer: Nicho)
 app.get('/api/overlays', function(req, res) {
 
-    console.log("+++ [GET] /api/videos ++++++++++++++++++++++++++++++++++++++++++++++++++");
+    console.log("+++ [GET] /api/overlays ++++++++++++++++++++++++++++++++++++++++++++++++");
     
     // Query
     var query = "MATCH (o:Overlay) RETURN o";
@@ -1732,6 +1738,7 @@ app.get('/api/overlays/:id', function(req, res) {
         }
     });
 });
+    
 
 // 3.3.4 Edit an Overlay (Developer: Nicho)
 app.put('/api/overlays/:id', function(req, res) {
@@ -1886,20 +1893,115 @@ app.put('/api/overlays/:id', function(req, res) {
     }
 });
 
-// 3.3.5 Remove an Overlay
+// 3.3.5 Remove an Overlay (Developer: Nicho)
 app.delete('/api/overlays/:id', function(req, res) {
 
     console.log("+++ [DELETE] /api/overlays/" + req.params.id + " +++++++++++++++++++++++++++++++++++++++++");
+    
+    // 1st Query - Count the relationships for the Overlay, before the deletion
+    var query_1 = "START o=node(" + req.params.id + ") MATCH o-[r]-(c) RETURN COUNT(o)";
+    //console.log(query_1);
 
-    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // 1st Database Query
+    db.cypherQuery(query_1, function(err, result) {
+        if (err) {
 
+            res.writeHead(500, {
+                'Content-Type' : 'text/plain'
+            });
+            var errorMsg = "Error: Internal Server Error; Message: " + err;
+            res.end(errorMsg);
+            return;
+
+        } else {
+            //console.log(result.data);
+            // delivers an array of query results
+            //console.log(result.columns);
+            // delivers an array of names of objects getting returned
+
+            var connectedRelations = result.data;
+
+            console.log("Found " + connectedRelations + " relationships for Overlay " + req.params.id);
+
+            // Check if the Overlay have relationships and delete them too, if they exist
+            if (connectedRelations[0] > 0) {
+
+                // 2nd Query
+                var query_2 = "START o=node(" + req.params.id + ") MATCH o-[r]-() DELETE o, r";
+                //console.log(query_2);
+
+                // 2nd Database Query
+                db.cypherQuery(query_2, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(500, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: Internal Server Error; Message: " + err;
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        //console.log(result.data);
+                        // delivers an array of query results
+                        //console.log(result.columns);
+                        // delivers an array of names of objects getting returned
+
+                        console.log("Overlay " + req.params.id + " has been deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                        res.writeHead(204, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end();
+                        return;
+                    }
+
+                });
+            } else {
+
+                // 3rd Query
+                var query_3 = "START o=node(" + req.params.id + ") DELETE o";
+                //console.log(query_3);
+
+                // 3rd Database Query
+                db.cypherQuery(query_3, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(500, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: Internal Server Error; Message: " + err;
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+
+                        //console.log(result.data);
+                        // delivers an array of query results
+                        //console.log(result.columns);
+                        // delivers an array of names of objects getting returned
+
+                        console.log("Overlay " + req.params.id + " has been deleted!");
+                        console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                        res.writeHead(204, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end();
+                        return;
+                    }
+                });
+            }
+        }
+    });
 });
 
 /****************************
  3.4 Scenarios
  ****************************/
 
-// 3.4.1 GET a list of all scenarios (Developer: Nicho)
+// 3.4.1 GET a list of all scenarios (Developer: Nicho) [!]
 app.get('/api/scenarios', function(req, res) {
 
     console.log("+++ [GET] /api/scenarios +++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1938,7 +2040,9 @@ app.get('/api/scenarios', function(req, res) {
     });
 });
 
-// get Scenrio (Developer: Nicho)
+// 3.4.2 Create a Scenario [!]
+
+// 3.4.3 Retrieve a Scenario (Developer: Nicho) [!]
 app.get('/api/scenarios/:id', function(req, res) {
 
     console.log("+++ [GET] /api/scenarios/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
@@ -1977,4 +2081,8 @@ app.get('/api/scenarios/:id', function(req, res) {
         }
     });
 });
+
+// 3.4.4 Edit a Scenario [!]
+
+// 3.4.5 Remove a Scenario [!]
 
