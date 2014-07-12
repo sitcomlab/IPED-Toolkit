@@ -5,19 +5,21 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
 
 <!-- BEGIN OF THE INTRO -->
-### Hosts
+#### Hosts
 * HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
 * HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
 * HOST-LOCAL ( MASTER ): [http://localhost:8080](http://localhost:8080)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8081](http://localhost:8081)
 
-### Allowed HTTPs requests:
+#### Allowed HTTPs requests:
 * **GET** - Get a resource or list of resources
 * **POST** - To create or update resource
 * **PUT** - To create or update resource
 * **DELETE** - To delete resource
 
-### Description of Server Responses:
+#### Description of Server Responses:
+
+##### 2XX (Successfull)
 * **200** `OK` - the request was successful (some API calls may return 201 instead).
 * **201** `Created` - the request was successful and a resource was created.
 * **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
@@ -28,16 +30,20 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **215** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
 * **216** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
 * **217** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
+
+##### 4XX (Errors) 
 * **400** `Bad Request` - the request could not be understood or was missing required parameters.
 * **401** `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
 * **403** `Forbidden` - access denied.
 * **404** `Not Found` - resource was not found.
 * **405** `Method Not Allowed` - requested method is not supported for resource.
 * **406** `Not Acceptable` - the requested resource is only capable of generating content not acceptable according to the Accept headers sent in the request.
+
+##### 5XX (Server Problems)
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
-### API-Status options:
+#### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
 * **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
 * **in progress** \[+]: Design is finished and the functions will be implemented on official Server at the moment
@@ -47,7 +53,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 \[+] Please write your name, after the following status, so it is possible to see, how works on which part,
 e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
 
-### API-Example of the blueprint code:
+#### API-Example of the blueprint code:
 * for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
 * for API-Syntax check out the **Blueprint-Documenation**: [http://apiblueprint.org](http://apiblueprint.org)
 
