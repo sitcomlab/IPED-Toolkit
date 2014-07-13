@@ -440,7 +440,7 @@ app.post('/api/locations', function(req, res) {
                     newLocation.relatedLocations = results.relatedLocations;
                     newLocation.videos = results.videos;
                     newLocation.overlays = results.overlays;
-                    var finalResult = '{"location": [' + JSON.stringify(newLocation) + '] }';
+                    var finalResult = JSON.stringify(newLocation);
 
 
                     // Check status before sending the answer
@@ -541,7 +541,7 @@ app.get('/api/locations/:id', function(req, res) {
                 // delivers an array of names of objects getting returned
 
                 // Results
-                var location = result.data;
+                var location = result.data[0];
 
                 // 2nd Query
                 var query_2 = "START l=node(" + req.params.id + ") MATCH l-[:relatedTo]->n RETURN id(n) AS relatedTo";
@@ -564,7 +564,7 @@ app.get('/api/locations/:id', function(req, res) {
                         var relations = result.data;
 
                         // Adding the attribute "relatedLocations" to JSON-Objekt
-                        location[0].relatedLocations = relations;
+                        location.relatedLocations = relations;
 
                         // 3rd Query
                         var query_3 = "START l=node(" + req.params.id + ") MATCH l<-[:wasRecordedAt]-v RETURN id(v) AS wasRecordedAt";
@@ -591,7 +591,7 @@ app.get('/api/locations/:id', function(req, res) {
                                 var videos = result.data;
 
                                 // Adding the attribute "videos" to JSON-Objekt
-                                location[0].videos = videos;
+                                location.videos = videos;
 
                                 // 4th Query
                                 var query_4 = "START l=node(" + req.params.id + ") MATCH l<-[:locatedAt]-o RETURN id(o) AS locatedAt";
@@ -618,10 +618,10 @@ app.get('/api/locations/:id', function(req, res) {
                                         var overlays = result.data;
 
                                         // Adding the attribute "overlays" to JSON-Objekt
-                                        location[0].overlays = overlays;
+                                        location.overlays = overlays;
 
                                         // Return final Result
-                                        var finalResult = '{"location":' + JSON.stringify(location) + '}';
+                                        var finalResult = JSON.stringify(location);
                                         console.log("================================ Result ================================");
                                         console.log(finalResult);
                                         console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -643,7 +643,7 @@ app.get('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -747,7 +747,8 @@ app.put('/api/locations/:id', function(req, res) {
                     //console.log(result.columns);
                     // delivers an array of names of objects getting returned
 
-                    var updatedLocation = result.data;
+                    var updatedLocation = result.data[0];
+
                     console.log("--- Finished updating properties of the Location ---");
 
                     // Asynchron functions to set the relationships for the new Location
@@ -975,10 +976,10 @@ app.put('/api/locations/:id', function(req, res) {
                             //console.log("Results_temp:" + JSON.stringify(allResults));
 
                             // Prepare final Result
-                            updatedLocation[0].relatedLocations = allResults.relatedLocations;
-                            updatedLocation[0].videos = allResults.videos;
-                            updatedLocation[0].overlays = allResults.overlays;
-                            var finalResult = '{"location": '+ JSON.stringify(updatedLocation) + '}';
+                            updatedLocation.relatedLocations = allResults.relatedLocations;
+                            updatedLocation.videos = allResults.videos;
+                            updatedLocation.overlays = allResults.overlays;
+                            var finalResult =  JSON.stringify(updatedLocation);
 
 
                             // Check status before sending the answer
@@ -1052,7 +1053,7 @@ app.put('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -1168,7 +1169,7 @@ app.delete ('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -1389,7 +1390,7 @@ app.post('/api/videos', function(req, res) {
                 console.log("--- Finished Creating new Video, new ID = " + newVideoID + " ---");
                 
                 // Result
-                var finalResult = '{"video": ' + JSON.stringify(newVideo) + '}';
+                var finalResult = JSON.stringify(newVideo);
                 console.log("================================ Result ================================");
                 console.log(finalResult);
                 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1434,7 +1435,7 @@ app.get('/api/videos/:id', function(req, res) {
                 //console.log(result.columns);
                 // delivers an array of names of objects getting returned
 
-                var finalResult = '{"video": '+ JSON.stringify(result.data) +'}';
+                var finalResult = JSON.stringify(result.data[0]);
                 console.log("================================ Result ================================");
                 console.log(finalResult);
                 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1450,7 +1451,7 @@ app.get('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -1593,7 +1594,7 @@ app.put('/api/videos/:id', function(req, res) {
 
                     console.log("--- Finished updating properties of the Video ---");
 
-                    var finalResult = '{"video": '+ JSON.stringify(result.data) +'}';
+                    var finalResult = JSON.stringify(result.data[0]);
                     console.log("================================ Result ================================");
                     console.log(finalResult);
                     console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1610,7 +1611,7 @@ app.put('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -1726,7 +1727,7 @@ app.delete('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -1913,7 +1914,7 @@ app.post('/api/overlays', function(req, res) {
                 console.log("--- Finished Creating new Overlay, new ID = " + newOverlayID + " ---");
                 
                 // Result
-                var finalResult = '{"overlay": ' + JSON.stringify(newOverlay) + '}';
+                var finalResult = JSON.stringify(newOverlay);
                 console.log("================================ Result ================================");
                 console.log(finalResult);
                 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1958,7 +1959,7 @@ app.get('/api/overlays/:id', function(req, res) {
                 //console.log(result.columns);
                 // delivers an array of names of objects getting returned
 
-                var finalResult = '{"overlay": '+ JSON.stringify(result.data) +'}';
+                var finalResult = JSON.stringify(result.data[0]);
                 console.log("================================ Result ================================");
                 console.log(finalResult);
                 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -1974,7 +1975,7 @@ app.get('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -2085,7 +2086,7 @@ app.put('/api/overlays/:id', function(req, res) {
             console.log("--- Updating properties of the Overlay ---");
 
             // Query - Update all properties of the Overlay
-            var query = 'MATCH (o:Overlay) WHERE ID(v)=' + req.params.id + ' '
+            var query = 'MATCH (o:Overlay) WHERE ID(o)=' + req.params.id + ' '
                 + 'SET o.name="' + req.body.name + '" '
                 + 'SET o.description="' + req.body.description + '" '
                 + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' '
@@ -2139,7 +2140,7 @@ app.put('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
@@ -2254,7 +2255,7 @@ app.delete('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request; Message: The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
         res.end(errorMsg);
         return;
     }
