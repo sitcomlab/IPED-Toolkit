@@ -17,6 +17,7 @@ var currentId;
  * 	++++++++++++++++++++++
  */
 
+$(".button").button();
 $("#add-location-dialog").dialog({
 	autoOpen : false,
 	height : 550,
@@ -43,23 +44,18 @@ $("#edit-location-dialog").dialog({
 	}
 });
 
-/*$(function() {
+
 $( "#delete-location-dialog" ).dialog({
+title: "Delete Location",
 autoOpen: false,
+draggable: false,
 resizable: false,
 height:140,
 modal: true,
-buttons: {
-"Confirm": function(id) {
-$( this ).dialog( "close" );
-},
-Cancel: function() {
-$( this ).dialog( "close" );
 }
-}
-});
-});
-*/
+);
+
+
 // Initialize map
 $(document).ready(function() {
 	var options = {
@@ -393,13 +389,16 @@ router.on('route:addLocation', function() {
 router.on('route:editLocation', function(id) {
 	console.log("Route: editLocation: " + id);
 	currentId = id;
+	$("#edit-location-dialog").dialog("close");
+	$("#edit-location-dialog").empty();
 	var editLocation_view = new EditLocationView();
 	editLocation_view.render(id);
 
 });
 
 router.on('route:deleteLocation', function(id) {
-	deleteLocation(id);
+	//deleteLocation(id);
+	showDeleteLocationDialog(id);
 });
 Backbone.history.start();
 
@@ -487,7 +486,22 @@ function submitLocation(details) {
 	});
 
 }
-
+function showDeleteLocationDialog(id){
+	$("#delete-location-dialog").dialog("open");
+	$("#cancel-deletion").click(function (){
+		$("#delete-location-dialog").dialog("close");
+		router.navigate('', {
+			trigger: true
+		});
+	});
+	$("#confirm-deletion").click(function (){
+		$("#delete-location-dialog").dialog("close");
+		deleteLocation(id);
+		router.navigate('', {
+			trigger: true
+		});
+	});
+}
 function deleteLocation(id) {
 	var location = new LocationModel({
 		id : id
