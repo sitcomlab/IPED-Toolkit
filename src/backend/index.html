@@ -139,6 +139,7 @@
 			<tr>
 			<td>
 			<input type="text" name="tags" id="tags" value="" class="text ui-widget-content ui-corner-all">
+			<div id="tag-list"></div>
 			</td>
 			<td>
 			<input type="button" value="Add" class="button" id="add-tag-btn">	
@@ -161,6 +162,7 @@
 			<option value= <%= "'" + video._id + "'" %>><%= video.name %></option>
 			<% }); %>
 			</select>
+			<div id="footage-list"></div>
 			<br>
 			<br>
 			<input type="button" value="Add New Footage" class="button" id="add-footage-btn">
@@ -181,7 +183,7 @@
 			<option value= <%= "'" + overlay._id + "'" %>><%= overlay.name %></option>
 			<% }); %>
 			</select>
-			
+			<div id="overlay-list"></div>
 			<br>
 			<br>
 			<input type="button" value="Add New Overlay" class="button" id="add-overlay-btn">
@@ -193,7 +195,9 @@
 			<input type="button" value="Save" id="submit-location" class="button">
 			</div>
 		</script>
-		
+		<div id="delete-location-dialog" title="Empty the recycle bin?">
+  			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The specified location will be deleted. Continue?</p>
+		</div>
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
 		<!-- JQuery Mobile->

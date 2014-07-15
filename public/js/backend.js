@@ -43,6 +43,23 @@ $("#edit-location-dialog").dialog({
 	}
 });
 
+/*$(function() {
+$( "#delete-location-dialog" ).dialog({
+autoOpen: false,
+resizable: false,
+height:140,
+modal: true,
+buttons: {
+"Confirm": function(id) {
+$( this ).dialog( "close" );
+},
+Cancel: function() {
+$( this ).dialog( "close" );
+}
+}
+});
+});
+*/
 // Initialize map
 $(document).ready(function() {
 	var options = {
@@ -139,19 +156,23 @@ var AddLocationView = Backbone.View.extend({
 					taglist.push($("#tags").val());
 					$("#tags").val("");
 					console.log(taglist);
+					$("#tag-list").empty();
+					$("#tag-list").text(taglist);
 				});
 				$("#add-footage-btn").click(function() {
 					console.log("Footage Button clicked");
 					console.log($("#footage-spinner").val());
 					footageselection.push($("#footage-spinner").val());
 					console.log(footageselection);
+					$("#footage-list").empty();
+					$("#footage-list").text(footageselection);
 				});
 				overlays.fetch({
 					//url: '/api/overlays',
 					success : function(displays) {
 						var footages = footageselection;
 						//var	overlayselection = overlayselection;
-						var	tags = taglist;
+						var tags = taglist;
 						console.log("AddLocationView: overlays.fetch() entered");
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
@@ -172,6 +193,8 @@ var AddLocationView = Backbone.View.extend({
 							console.log($("#overlay-spinner").val());
 							overlayselection.push($("#overlay-spinner").val());
 							console.log(overlayselection);
+							$("#overlay-list").empty();
+							$("#overlay-list").text(overlayselection);
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
@@ -235,6 +258,12 @@ var EditLocationView = Backbone.View.extend({
 				console.log("Tags: " + tags);
 				lat = location.get("lat");
 				lon = location.get("lon");
+				$("#tag-list").empty();
+				$("#tag-list").text(tags);
+				$("#footage-list").empty();
+				$("#footage-list").text(footageselection);
+				$("#overlay-list").empty();
+				$("#overlay-list").text(overlayselection);
 			}
 		});
 		var that = this;
@@ -262,12 +291,16 @@ var EditLocationView = Backbone.View.extend({
 					tags.push($("#tags").val());
 					$("#tags").val("");
 					console.log(tags);
+					$("#tag-list").empty();
+					$("#tag-list").text(tags);
 				});
 				$("#add-footage-btn").click(function() {
 					console.log("Footage Button clicked");
 					console.log($("#footage-spinner").val());
 					footageselection.push($("#footage-spinner").val());
 					console.log(footageselection);
+					$("#footage-list").empty();
+					$("#footage-list").text(footageselection);
 				});
 				overlays.fetch({
 					//url: '/api/overlays',
@@ -294,6 +327,8 @@ var EditLocationView = Backbone.View.extend({
 							console.log($("#overlay-spinner").val());
 							overlayselection.push($("#overlay-spinner").val());
 							console.log(overlayselection);
+							$("#overlay-list").empty();
+							$("#overlay-list").text(overlayselection);
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
@@ -364,17 +399,7 @@ router.on('route:editLocation', function(id) {
 });
 
 router.on('route:deleteLocation', function(id) {
-	var location = new LocationModel({
-		id : id
-	});
-	location.destroy({
-		success : function() {
-			alert("Location " + id + " successfully deleted!");
-		}
-	});
-	router.navigate('', {
-		trigger : true
-	});
+	deleteLocation(id);
 });
 Backbone.history.start();
 
@@ -421,12 +446,12 @@ function openDialog() {
 
 function submitLocation(details) {
 	/*
-	 var locname = $("#name").val(), locdescription = $("#description").val();
-	 var loctags = tags;
-	 var latitude = coords.lat, longitude = coords.lng;
-	 var locvideos = videos;
-	 var locoverlays = overlays;
-	 */
+	var locname = $("#name").val(), locdescription = $("#description").val();
+	var loctags = tags;
+	var latitude = coords.lat, longitude = coords.lng;
+	var locvideos = videos;
+	var locoverlays = overlays;
+	*/
 	//console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
 
 	var newLocation = new LocationModel();
@@ -463,3 +488,16 @@ function submitLocation(details) {
 
 }
 
+function deleteLocation(id) {
+	var location = new LocationModel({
+		id : id
+	});
+	location.destroy({
+		success : function() {
+			alert("Location " + id + " successfully deleted!");
+		}
+	});
+	router.navigate('', {
+		trigger : true
+	});
+}
