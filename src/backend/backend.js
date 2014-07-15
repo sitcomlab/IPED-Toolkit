@@ -111,7 +111,7 @@ var AddLocationView = Backbone.View.extend({
 		console.log("AddLocationView created");
 	},
 	render : function() {
-		
+
 		var that = this;
 		var videos;
 		videos = new VideoCollection();
@@ -125,7 +125,7 @@ var AddLocationView = Backbone.View.extend({
 				var videos = footages.get("videos");
 				var footageselection = [];
 				var overlayselection = [];
-				var tags = [];
+				var taglist = [];
 				//videos = footages.get("videos");
 				var template = _.template($("#add-new-location-template").html(), {
 					videos : videos
@@ -136,9 +136,9 @@ var AddLocationView = Backbone.View.extend({
 				console.log(videos);
 				$(".button").button();
 				$("#add-tag-btn").click(function() {
-					tags.push($("#tags").val());
+					taglist.push($("#tags").val());
 					$("#tags").val("");
-					console.log(tags);
+					console.log(taglist);
 				});
 				$("#add-footage-btn").click(function() {
 					console.log("Footage Button clicked");
@@ -149,7 +149,9 @@ var AddLocationView = Backbone.View.extend({
 				overlays.fetch({
 					//url: '/api/overlays',
 					success : function(displays) {
-
+						var footages = footageselection;
+						//var	overlayselection = overlayselection;
+						var	tags = taglist;
 						console.log("AddLocationView: overlays.fetch() entered");
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
@@ -173,8 +175,23 @@ var AddLocationView = Backbone.View.extend({
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
+							var locname = $("#name").val(), locdescription = $("#description").val();
+							var loctags = tags;
+							var latitude = coords.lat, longitude = coords.lng;
+							var locvideos = videos;
+							var locoverlays = overlays;
+							var locationDetails = {
+								name : locname,
+								description : locdescription,
+								tags : tags,
+								lat : latitude,
+								lon : longitude,
+								videos : footages,
+								overlays : overlayselection
+
+							};
 							console.log("Submit Button clicked");
-							submitLocation(footageselection, overlayselection, tags);
+							submitLocation(locationDetails);
 							console.log("New Location successfully Submitted!");
 						});
 						$("#coordinates").text(coords.lat + ", " + coords.lng);
@@ -203,18 +220,21 @@ var EditLocationView = Backbone.View.extend({
 		var location = new LocationModel({
 			id : id
 		});
+		var footageselection, overlayselection, tags, lat, lon;
 		location.fetch({
 			success : function(location) {
 				console.log("Fetch for id " + location.get("d") + " successful!");
 				console.log(location.toJSON());
 				$("#name").val(location.get("name"));
 				$("#description").val(location.get("description"));
-				var footageselection = location.get("videos");
+				footageselection = location.get("videos");
 				console.log("Footages: " + footageselection);
-				var overlayselection = location.get("overlays");
+				overlayselection = location.get("overlays");
 				console.log("Overlays: " + overlayselection);
-				var tags = location.get("tags");
+				tags = location.get("tags");
 				console.log("Tags: " + tags);
+				lat = location.get("lat");
+				lon = location.get("lon");
 			}
 		});
 		var that = this;
@@ -277,8 +297,23 @@ var EditLocationView = Backbone.View.extend({
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
+							var locname = $("#name").val(), locdescription = $("#description").val();
+							var loctags = tags;
+							var latitude = lat, longitude = lon;
+							var locvideos = videos;
+							var locoverlays = overlays;
+							var locationDetails = {
+								name : locname,
+								description : locdescription,
+								tags : tags,
+								lat : latitude,
+								lon : longitude,
+								videos : footages,
+								overlays : overlayselection
+
+							};
 							console.log("Submit Button clicked");
-							submitLocation(footageselection, overlayselection, tags);
+							submitLocation(locationDetails);
 							console.log("New Location successfully Submitted!");
 						});
 					}
@@ -302,7 +337,8 @@ var ROUTER = Backbone.Router.extend({
 	routes : {
 		'' : 'home',
 		'locations/new' : 'addLocation',
-		'locations/edit/:id' : 'editLocation'
+		'locations/edit/:id' : 'editLocation',
+		'locations/delete/:id' : 'deleteLocation'
 	}
 });
 
@@ -327,6 +363,19 @@ router.on('route:editLocation', function(id) {
 
 });
 
+router.on('route:deleteLocation', function(id) {
+	var location = new LocationModel({
+		id : id
+	});
+	location.destroy({
+		success : function() {
+			alert("Location " + id + " successfully deleted!");
+		}
+	});
+	router.navigate('', {
+		trigger : true
+	});
+});
 Backbone.history.start();
 
 /*	++++++++++++++++++++++
@@ -343,7 +392,10 @@ function drawMarkers() {
 		success : function(videos) {
 			locations = videos.get("locations");
 			$.each(locations, function(index, value) {
-				L.marker([value.lat, value.lon]).addTo(map).bindPopup("<table class=popup>" + "<tr><td><b>Name</b>:</td><td>" + value.name + "</td></tr>" + "<tr><td><b>Video-ID</b>:</td><td>" + value._id + "</td></tr>" + "<tr><td><b>Coordinates</b>:</td><td>" + value.lat + ", " + value.lon + "</td></tr>" + "<tr><td><b>Description</b>:</td><td>" + value.description + "</td></tr>" + "</table>" + "<span style=\"width:100%; text-align:center;\">" + "<a href=\"index.html?currentId=" + value._id + "\">Go to this video</a>" + "</span>" + "<a href=\"#locations/edit/" + value._id + "\">Edit</a>").openPopup();
+				L.marker([value.lat, value.lon], {
+					riseOnHover : true,
+					riseOffset : 25
+				}).addTo(map).bindPopup("<table class=popup>" + "<tr><td><b>Name</b>:</td><td>" + value.name + "</td></tr>" + "<tr><td><b>Video-ID</b>:</td><td>" + value._id + "</td></tr>" + "<tr><td><b>Coordinates</b>:</td><td>" + value.lat + ", " + value.lon + "</td></tr>" + "<tr><td><b>Description</b>:</td><td>" + value.description + "</td></tr>" + "</table>" + "<span style=\"width:100%; text-align:center;\">" + "<table><tr><td><a href=\"index.html?currentId=" + value._id + "\">Go to this video</a></td>" + "</span>" + "<td><a href=\"#locations/edit/" + value._id + "\">Edit</a></td>" + "<td><a href=\"#locations/delete/" + value._id + "\">Delete</a></td></tr></table>").openPopup();
 			});
 		}
 	});
@@ -367,27 +419,28 @@ function openDialog() {
 
 }
 
-function submitLocation(videos, overlays, tags) {
-	
-	var locname = $("#name").val(), locdescription = $("#description").val();
-	var loctags = tags;
-	var latitude = coords.lat, longitude = coords.lng;
-	var locvideos = videos;
-	var locoverlays = overlays;
-
-	console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
+function submitLocation(details) {
+	/*
+	 var locname = $("#name").val(), locdescription = $("#description").val();
+	 var loctags = tags;
+	 var latitude = coords.lat, longitude = coords.lng;
+	 var locvideos = videos;
+	 var locoverlays = overlays;
+	 */
+	//console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
 
 	var newLocation = new LocationModel();
-	var locationDetails = {
-		name : locname,
-		description : locdescription,
-		tags : loctags,
-		lat : latitude,
-		lon : longitude,
-		videos : locvideos,
-		overlays : locoverlays
+	var locationDetails = details;
+	/*var locationDetails = {
+	 name : locname,
+	 description : locdescription,
+	 tags : loctags,
+	 lat : latitude,
+	 lon : longitude,
+	 videos : locvideos,
+	 overlays : locoverlays
 
-	};
+	 };*/
 
 	console.log("Object to be transmitted: ");
 	console.log(locationDetails);
@@ -403,7 +456,7 @@ function submitLocation(videos, overlays, tags) {
 			router.navigate('', {
 				trigger : true
 			});
-			$("#add-location-dialog").dialog("close");
+			$(".dialog").dialog("close");
 
 		}
 	});
