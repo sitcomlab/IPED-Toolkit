@@ -508,7 +508,7 @@ function deleteLocation(id) {
 	});
 	location.destroy({
 		success : function() {
-			alert("Location " + id + " successfully deleted!");
+			alert("Location " + id + " successfully deleted! Please refresh the page to remove the marker");
 		}
 	});
 	router.navigate('', {
