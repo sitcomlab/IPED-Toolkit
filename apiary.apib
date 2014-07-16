@@ -8,8 +8,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 #### Hosts
 * HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
 * HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
-* HOST-LOCAL ( MASTER ): [http://localhost:8080](http://localhost:8080)
-* HOST-LOCAL ( DEVELOP ): [http://localhost:8081](http://localhost:8081)
+* HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
 
 #### Allowed HTTPs requests:
 * **GET** - Get a resource or list of resources
@@ -84,6 +83,7 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 ## Locations Collection [/api/locations]
 ### List all Locations [GET]
 (Status: **implemented**, Developer: Nicho)
+
 + Response 200 (application/json)
         
         {
@@ -133,9 +133,9 @@ Required attributes:
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
 - `lon` **Float/Number** (can not be empty; example: *7.6189278*)
 - `lat` **Float/Number** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Int[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Int[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Int[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
+- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
+- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
 
 
 HTTP-Status:
@@ -356,16 +356,12 @@ HTTP-Status:
 A single Location object with all its details
 
 + Parameters
-    + id (required, number, `4`) ... Numeric `id` of the Location to perform action with. Has example value.
+    + id (required, `4`) ... `id` **Interger** of a **Location**
 
 ### Retrieve a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
-
-    + Header
-
-            X-My-Header: The Value
 
     + Body
     
@@ -411,12 +407,12 @@ Changeable attributes:
 
 - `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
 - `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Double** (can not be empty; example: *7.6189278*)
-- `lat` **Double** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Int[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Int[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Int[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
+- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
+- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
+- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
+- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
+- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
 
 + Request (application/json)
 
@@ -541,7 +537,7 @@ Required attributes:
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
 - `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Schlossplatz", "Event: Send", "at night"]*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -592,17 +588,12 @@ Required attributes:
 A single Video object with all details
 
 + Parameters
-    + id (required, number, `36`) ... Numeric `id` of the Location to perform action with. Has example value.
-
+    + id (required, `36`) ... `id` **Interger** of a **Video**
 
 ### Retrieve a video [GET]
 (Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
-
-    + Header
-
-            X-My-Header: The Value
 
     + Body
 
@@ -633,7 +624,7 @@ Changeable attributes:
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
 - `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Schlossplatz", "Event: Send", "at night"]*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
 
@@ -683,6 +674,7 @@ Changeable attributes:
 
 ### Remove a Video [DELETE]
 (Status: **implemented**, Developer: Nicho)
+
 + Response 204 (text/plain)
 
 + Response 406 (text/plain)
@@ -739,7 +731,7 @@ Required attributes:
 
 - `name` **String** (can not be empty; example: *"1st Public Display"*)
 - `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty; example: *["video", "test", "Public Display"]*)
+- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
 - `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
@@ -834,10 +826,6 @@ A single Overlay object with all its details
 
 + Response 200 (application/json)
 
-    + Header
-
-            X-My-Header: The Value
-
     + Body
 
             {
@@ -877,7 +865,7 @@ Changeable attributes:
 
 - `name` **String** (can not be empty; example: *"1st Public Display"*)
 - `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty; example: *["video", "test", "Public Display"]*)
+- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
 - `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
@@ -1059,10 +1047,6 @@ A single, complete Scenario object with all details (meta-data), locations, vide
 (Status: **in design**)
 
 + Response 200 (application/json)
-
-    + Header
-
-            X-My-Header: The Value
 
     + Body
 
