@@ -496,7 +496,7 @@ Changeable attributes:
 
 # Group Videos
 
-## Video Collection [/api/videos]
+## Videos Collection [/api/videos]
 
 ### List all Videos [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -734,15 +734,15 @@ Required attributes:
 - `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Double** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Double** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Double** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Double** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Double** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Double** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Double** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Double** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
+- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
+- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
+- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
+- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
+- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
+- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
+- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
+- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
 
 
 + Request (application/json)
@@ -815,11 +815,11 @@ Required attributes:
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Location [/api/overlays/{id}]
+## Overlay [/api/overlays/{id}]
 A single Overlay object with all its details
 
 + Parameters
-    + id (required, number, `3`) ... Numeric `id` of the Location to perform action with. Has example value.
+   + id (required, `23`) ... `id` **Interger** of an **Overlay**
 
 ### Retrieve an Overlay [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -868,15 +868,15 @@ Changeable attributes:
 - `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Double** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Double** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Double** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Double** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Double** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Double** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Double** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Double** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
+- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
+- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
+- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
+- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
+- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
+- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
+- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
+- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
 
 + Request (application/json)
 
