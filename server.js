@@ -10,9 +10,9 @@
  3. API
     3.1 Locations:
          3.1.1 List all Locations
-         3.1.2 Create a Location [x]
+         3.1.2 Create a Location
          3.1.3 Retrieve a Location
-         3.1.4 Edit a Location [x]
+         3.1.4 Edit a Location
          3.1.5 Remove a Location
     3.2 Videos:
          3.2.1 List all Videos
@@ -33,7 +33,7 @@
          3.4.4 Edit a Scenario [!]
          3.4.5 Remove a Scenario [!]
  4. JSON-Schemas
-    4.1 Location-Schema [x]
+    4.1 Location-Schema
         4.1.1 For "Create a Location"
         4.1.2 For "Edit a Location"
     4.2 Video-Schema
@@ -245,64 +245,124 @@ app.post('/api/locations', function(req, res) {
     var status_videos = true;
     var status_overlays = true;
 
-    // Check if all attributes were submitted
-    if (JSON.stringify(req.body) == '{}') {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: No data submitted!');
-        return;
-    } else if (req.body.name == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "name"!');
-        return;
-    } else if (req.body.description == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "description"!');
-        return;
-    } else if (req.body.tags == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "tags"!');
-        return;
-    } else if (req.body.lat == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "lat"!');
-        return;
-    } else if (req.body.lon == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "lon"!');
-        return;
-    } else if (req.body.relatedLocations == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "relatedLocations"!');
-        return;
-    } else if (req.body.videos == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "videos"!');
-        return;
-    } else if (req.body.overlays == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "overlays"!');
-        return;
-    } else {
+    console.log("--- Validating all properties for Insertion ---");
+    
+   
+    // JSON-Schema-Constructor
+    var jayschema = new JaySchema();
 
-        console.log("--- Creating new Location and Inserting properties ---");
+    async.series({
+        jsonvalidation_1 : function(callback) {
+
+            if (JSON.stringify(req.body) == '{}') {
+
+                res.writeHead(400, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end('Error: No data submitted!');
+                return;
+            }
+            else {
+                callback(null);
+            }
+        },
+        jsonvalidation_2 : function(callback) {
+            jayschema.validate(req.body, postLocationSchema, function(errs) {
+                if (errs) {
+
+                    for (var i=0; i < errs.length; i++) {
+
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        if(errs[i].constraintName == 'required') {
+
+                            var errorMsg = errs[i].desc.split('missing: ');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            return;
+                        }
+
+                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        if(errs[i].constraintName == 'type') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            return;
+                        }
+                        
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        if(errs[i].constraintName == 'minLength') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            return;
+                        }
+
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        if(errs[i].constraintName == 'enum') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            return;
+                        }
+
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        if(errs[i].constraintName == 'uniqueItems') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            return;
+                        }
+
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        if(errs[i].constraintName == 'additionalProperties') {
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            return;
+                        }
+                        
+                        // If an unknown error occurred
+                        else {
+                            res.writeHead(500, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                            return;
+                        }
+                    }
+                }
+                else {
+                    callback(null);
+                }
+            });
+        }
+    },
+    function(err, results) {
+        
+        console.log("--- Finished validation of all properties successfully ---");
+
+        console.log("--- Creating new Location ---");
 
         // 1st Database Query - Create new Location
         db.insertNode({
@@ -518,10 +578,9 @@ app.post('/api/locations', function(req, res) {
                     res.end(finalResult);
                     return;
                 });
-
             }
         });
-    }
+    });
 });
 
 // 3.1.3 Retrieve a Location with all information (Developer: Nicho)
@@ -674,74 +733,148 @@ app.put('/api/locations/:id', function(req, res) {
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
 
-        // Check if all attributes were submitted
-        if (JSON.stringify(req.body) == '{}') {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: No data submitted!');
-            return;
-        } else if (req.body.name == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "name"!');
-            return;
-        } else if (req.body.description == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "description"!');
-            return;
-        } else if (req.body.tags == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "tags"!');
-            return;
-        } else if (req.body.lat == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "lat"!');
-            return;
-        } else if (req.body.lon == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "lon"!');
-            return;
-        } else if (req.body.relatedLocations == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "relatedLocations"!');
-            return;
-        } else if (req.body.videos == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "videos"!');
-            return;
-        } else if (req.body.overlays == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "overlays"!');
-            return;
-        } else  {
+        // JSON-Schema-Constructor
+        var jayschema = new JaySchema();
+
+        async.series({
+            jsonvalidation_1 : function(callback) {
+
+                if (JSON.stringify(req.body) == '{}') {
+
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: No data submitted!');
+                    return;
+                }
+                else {
+                    callback(null);
+                }
+            },
+            jsonvalidation_2 : function(callback) {
+                jayschema.validate(req.body, putLocationSchema, function(errs) {
+                    if (errs) {
+
+                        for (var i=0; i < errs.length; i++) {
+
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            if(errs[i].constraintName == 'required') {
+
+                                var errorMsg = errs[i].desc.split('missing: ');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                return;
+                            }
+
+                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            if(errs[i].constraintName == 'type') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                return;
+                            }
+                            
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            if(errs[i].constraintName == 'minLength') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                return;
+                            }
+
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            if(errs[i].constraintName == 'enum') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                return;
+                            }
+
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            if(errs[i].constraintName == 'uniqueItems') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                return;
+                            }
+
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            if(errs[i].constraintName == 'additionalProperties') {
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                return;
+                            }
+                            
+                            // If an unknown error occurred
+                            else {
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            }
+        },
+        function(err, results) {
+        
+            console.log("--- Finished validation of all properties successfully ---");
 
             console.log("--- Updating properties of the Location ---");
 
+            // For Database Query
+            var propertyChanges = '';
+
+            // Preparing Database Query
+            if(req.body.name) {
+                propertyChanges = propertyChanges + 'SET l.name=' + JSON.stringify(req.body.name) + ' ';
+            }
+            if(req.body.description) {
+                propertyChanges = propertyChanges + 'SET l.description=' + JSON.stringify(req.body.description) + ' ';
+            }
+            if(req.body.tags) {
+                propertyChanges = propertyChanges + 'SET l.tags=' + JSON.stringify(req.body.tags) + ' ';
+            }
+            if(req.body.lat) {
+                propertyChanges = propertyChanges + 'SET l.lat=' + req.body.lat + ' ';
+            }
+            if(req.body.lon) {
+                propertyChanges = propertyChanges + 'SET l.lon=' + req.body.lon + ' ';
+            }
+
+            console.log("--- Updating properties of the Video ---");
+
+
             // 1st Query - Update all properties of the Location
-            var query_1 = 'MATCH (l:Location) WHERE ID(l)=' + req.params.id + ' '
-                + 'SET l.name="' + req.body.name + '" '
-                + 'SET l.description="' + req.body.description + '" '
-                + 'SET l.tags=' + JSON.stringify(req.body.tags) + ' '
-                + 'SET l.lat="' + req.body.lat + '" '
-                + 'SET l.lon="' + req.body.lon + '" '
-                + 'RETURN l';
-            //console.log(query_1);
+            var query_1 = 'MATCH (l:Location) WHERE ID(l)=' + req.params.id + ' ' + propertyChanges + 'RETURN l';
+            console.log(query_1);
 
             // 1st Database Query
             db.cypherQuery(query_1, function(err, result) {
@@ -1061,7 +1194,7 @@ app.put('/api/locations/:id', function(req, res) {
                     );
                 }
             });
-        }
+        });
     } else {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
@@ -2568,6 +2701,117 @@ app.get('/api/scenarios/:id', function(req, res) {
 /****************************
  4.1 Location-Schema
  ****************************/
+
+// 4.1.1 For "Create a Location"
+var postLocationSchema = {
+    "title": "postLocationSchema",
+    "description": "A JSON-Schema to validate recieving Locations for POST-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "lat" :         {
+                                "type": "number"
+                            },
+            "lon" :         {
+                                "type": "number"
+                            },
+            "relatedLocations": { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "videos":       {
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "overlays":     {
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            }
+    },
+    "required": ["name", "description", "tags", "lat", "lon", "relatedLocations", "videos", "overlays"],
+    "additionalProperties": false
+};
+
+// 4.1.2 For "Edit a Location"
+var putLocationSchema = {
+    "title": "putLocationSchema",
+    "description": "A JSON-Schema to validate recieving Locations for PUT-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "lat" :         {
+                                "type": "number"
+                            },
+            "lon" :         {
+                                "type": "number"
+                            },
+            "relatedLocations": { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "videos":       {
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "overlays":     {
+                                "type": "array", 
+                                "items": { 
+                                    "type": "integer",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            }
+    },
+    "additionalProperties": false
+};
 
  /****************************
  4.2 Video-Schema
