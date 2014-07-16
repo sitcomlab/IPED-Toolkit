@@ -97,8 +97,8 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
                             "ULB", 
                             "Münster"
                         ], 
-                        "lon": "7.619681",
-                        "lat": "51.962367", 
+                        "lon": 7.619681,
+                        "lat": 51.962367, 
                         "description":""
                     }, {
                         "_id":1, 
@@ -110,8 +110,8 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
                             "Münster", 
                             "Petrikirche"
                         ],
-                        "lon":"7.621709",
-                        "lat":"51.961971",
+                        "lon": 7.621709,
+                        "lat": 51.961971,
                         "description":" Behind the ULB"
                     }
                 ]
@@ -131,8 +131,8 @@ Required attributes:
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Double** (can not be empty; example: *7.6189278*)
-- `lat` **Double** (can not be empty; example: *51.9634288*)
+- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
+- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
 - `relatedLocations` **Int[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
 - `videos` **Int[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
 - `overlays` **Int[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
@@ -183,8 +183,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -203,8 +203,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -213,7 +213,7 @@ HTTP-Status:
         
 + Response 212 (application/json)
         
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -223,8 +223,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -233,7 +233,7 @@ HTTP-Status:
 
 + Response 213 (application/json)
 
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -243,8 +243,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -253,7 +253,7 @@ HTTP-Status:
 
 + Response 214 (application/json)
 
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -263,8 +263,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -273,7 +273,7 @@ HTTP-Status:
 
 + Response 215 (application/json)
 
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -283,8 +283,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -293,7 +293,7 @@ HTTP-Status:
 
 + Response 216 (application/json)
 
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -303,8 +303,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -313,7 +313,7 @@ HTTP-Status:
 
 + Response 217 (application/json)
 
-        {
+         {
             "_id":4,
             "name":"Frauenstraße",
             "tags":[
@@ -323,8 +323,8 @@ HTTP-Status:
                 "Kulturcafé",
                 "Fürstin-von-Gallitzin-Wohnheim"
             ],
-            "lon":"7.6189278",
-            "lat":"51.9634288",
+            "lon": 7.6189278,
+            "lat": 51.9634288,
             "description":"Gegenüber der Trattoria",
             "relatedLocations": [],
             "videos": [],
@@ -335,7 +335,17 @@ HTTP-Status:
         
         Error: No data submitted!
 
-        
+        Error: The property "<propertyName>" was not found, but has to be defined!
+
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The value of the property "<propertyName>" has to be a float/number!
+
+        Error: The value of the property "<propertyName>" has to be an integer!
+
+        Error: The element values of the array "<propertyName>" are not unique!
 
 + Response 500 (text/plain)
 
@@ -369,8 +379,8 @@ A single Location object with all its details
                     "Kulturcafé",
                     "Fürstin-von-Gallitzin-Wohnheim"
                 ],
-                "lon":"7.6189278",
-                "lat":"51.9634288",
+                "lon":7.6189278,
+                "lat":51.9634288,
                 "description":"Gegenüber der Trattoria",
                 "relatedLocations": [
                     1, 
@@ -384,6 +394,10 @@ A single Location object with all its details
                     8
                 ]
             }
+            
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!            
             
 + Response 500 (text/plain)
 
@@ -418,8 +432,8 @@ Changeable attributes:
                     "Kulturcafé",
                     "Fürstin-von-Gallitzin-Wohnheim"
                 ],
-                "lon":"7.6189278",
-                "lat":"51.9634288",
+                "lon":7.6189278,
+                "lat":51.9634288,
                 "description":"Gegenüber der Trattoria",
                 "relatedLocations": [],
                 "videos": [
@@ -440,8 +454,8 @@ Changeable attributes:
                     "Kulturcafé",
                     "Fürstin-von-Gallitzin-Wohnheim"
                 ],
-                "lon":"7.6189278",
-                "lat":"51.9634288",
+                "lon":7.6189278,
+                "lat":51.9634288,
                 "description":"Gegenüber der Trattoria",
                 "relatedLocations": [],
                 "videos": [
@@ -453,8 +467,20 @@ Changeable attributes:
 + Response 400 (text/plain)
 
         Error: No data submitted!
-        
-        
+
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The value of the property "<propertyName>" has to be a float/number!
+
+        Error: The value of the property "<propertyName>" has to be an integer!
+
+        Error: The element values of the array "<propertyName>" are not unique!
+
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
         
 + Response 500 (text/plain)
 
@@ -487,14 +513,14 @@ Changeable attributes:
                     "_id":35 , 
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße",
-                    "date":"No date available",
+                    "date":"",
                     "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
                     "tags":[]
                 }, {
                     "_id":36,
                     "description":"Frauenstraße bei Tag",
                     "name":"Frauenstraße2",
-                    "date":"No date available",
+                    "date":"",
                     "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
                     "tags":[]
                 }
@@ -543,16 +569,19 @@ Required attributes:
 + Response 400 (text/plain)
         
         Error: No data submitted!
-        
-        Error: Could not found the attribute "<attribute>"!
 
-        Error: The attribute "<attribute>" can not be emtpy!'
+        Error: The property "<propertyName>" was not found, but has to be defined!
+
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The element values of the array "<propertyName>" are not unique!
         
-        Error: The element(s) of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!
+        Error: The value of the property "url" is not a valid URL!
         
-        Error: The attribute "url" is not a valid URL!
-        
-        Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""
+        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
+
 
 + Response 500 (text/plain)
 
@@ -588,7 +617,7 @@ A single Video object with all details
             
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
@@ -629,9 +658,23 @@ Changeable attributes:
             "tags":[]
         }
         
++ Response 400 (text/plain)
+        
+        Error: No data submitted!
+
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The element values of the array "<propertyName>" are not unique!
+
+        Error: The value of the property "url" is not a valid URL!
+        
+        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
+        
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
@@ -644,7 +687,7 @@ Changeable attributes:
 
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
@@ -760,18 +803,20 @@ Required attributes:
 + Response 400 (text/plain)
 
         Error: No data submitted!
-        
-        Error: Could not found the attribute "<attribute>"!
 
-        Error: The attribute "<attribute>" can not be emtpy!'
-        
-        Error: The element(s) of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!
-        
-        Error: The attribute "url" is not a valid URL!
-        
-        Error: The attribute "w/h/x/x/z/d/rx/ry/rz" can not be empty, like ""! Please define a valid "w/h/x/x/z/d/rx/ry/rz", if it\'s not neccessary, choose "0"!'
-        
-        Error: "Error: The attribute "w/h/x/x/z/d/rx/ry/rz" is not a number!"
+        Error: The property "<propertyName>" was not found, but has to be defined!
+
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The value of the property "<propertyName>" has to be a float/number!
+
+        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
+
+        Error: The element values of the array "<propertyName>" are not unique!
+
+        Error: The value of the property "url" is not a valid URL!
         
 + Response 500 (text/plain)
 
@@ -818,7 +863,7 @@ A single Overlay object with all its details
             
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
@@ -895,22 +940,22 @@ Changeable attributes:
 + Response 400 (text/plain)
 
         Error: No data submitted!
-        
-        Error: Could not found the attribute "<attribute>"!
 
-        Error: The attribute "<attribute>" can not be emtpy!'
-        
-        Error: The element(s) of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!
-        
-        Error: The attribute "url" is not a valid URL!
-        
-        Error: The attribute "w/h/x/x/z/d/rx/ry/rz" can not be empty, like ""! Please define a valid "w/h/x/x/z/d/rx/ry/rz", if it\'s not neccessary, choose "0"!'
-        
-        Error: "Error: The attribute "w/h/x/x/z/d/rx/ry/rz" is not a number!"        
+        Error: The property "<propertyName>" is needless and not allowed!
+
+        Error: The value of the property "<propertyName>" can not be emtpy!
+
+        Error: The value of the property "<propertyName>" has to be a float/number!
+
+        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
+
+        Error: The element values of the array "<propertyName>" are not unique!
+
+        Error: The value of the property "url" is not a valid URL!
 
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
@@ -925,13 +970,12 @@ Changeable attributes:
 
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not a number!
+        Error: No valid request! The submitted ID is not an integer!
             
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
-
 
 
 # Group Scenarios
