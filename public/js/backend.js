@@ -158,7 +158,7 @@ var AddLocationView = Backbone.View.extend({
 				$("#add-footage-btn").click(function() {
 					console.log("Footage Button clicked");
 					console.log($("#footage-spinner").val());
-					footageselection.push($("#footage-spinner").val());
+					footageselection.push(parseInt($("#footage-spinner").val(), 10));
 					console.log(footageselection);
 					$("#footage-list").empty();
 					$("#footage-list").text(footageselection);
@@ -187,7 +187,7 @@ var AddLocationView = Backbone.View.extend({
 							console.log("Overlay Button clicked");
 							//console.log($("#overlay-spinner").spinner("value"));
 							console.log($("#overlay-spinner").val());
-							overlayselection.push($("#overlay-spinner").val());
+							overlayselection.push(parseInt($("#overlay-spinner").val(), 10));
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
