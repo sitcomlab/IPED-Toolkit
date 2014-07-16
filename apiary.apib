@@ -128,20 +128,15 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 
 Required attributes:
 
-- `name` **String** (e.g. *"Frauenstraße"*)
-- `tags[]` **String[ ]** (e.g. *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Double** (e.g. *7.6189278*)
-- `lat` **Double** (e.g. *51.9634288*)
-- `description` **String** (e.g. *"Gegenüber der Trattoria"*)
-- `relatedLocations` **Int[ ]** (e.g. *[ ]*, can be empty)
-- `videos` **Int[ ]** (e.g. *[ ]*, can be empty)
-- `overlays` **Int[ ]** (e.g. *[ ]*, can be empty)
+- `name` **String** (can not be empty; example: *"Frauenstraße"*)
+- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
+- `lon` **Double** (can not be empty; example: *7.6189278*)
+- `lat` **Double** (can not be empty; example: *51.9634288*)
+- `relatedLocations` **Int[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
+- `videos` **Int[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
+- `overlays` **Int[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
 
-Optional attributes:
-
-- `relatedLocations` **Int[ ]** (e.g. *[1, 3]*)
-- `videos` **Int[ ]** (e.g. *[1, 3]*)
-- `overlays` **Int[ ]** (e.g. *[1, 3]*)
 
 HTTP-Status:
 
@@ -340,6 +335,8 @@ HTTP-Status:
         
         Error: No data submitted!
 
+        
+
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -349,7 +346,7 @@ HTTP-Status:
 A single Location object with all its details
 
 + Parameters
-    + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
+    + id (required, number, `4`) ... Numeric `id` of the Location to perform action with. Has example value.
 
 ### Retrieve a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -396,13 +393,24 @@ A single Location object with all its details
 ### Edit a Location [PUT]
 (Status: **implemented**, Developer: Nicho)
 
+Changeable attributes:
+
+- `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
+- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
+- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
+- `lon` **Double** (can not be empty; example: *7.6189278*)
+- `lat` **Double** (can not be empty; example: *51.9634288*)
+- `relatedLocations` **Int[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
+- `videos` **Int[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
+- `overlays` **Int[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+
 + Request (application/json)
 
     + Body
     
             {
                 "_id":4,
-                "name":"Frauenstraße",
+                "name":"Frauenstraße 2",
                 "tags":[
                     "Münster",
                     "Frauenstraße",
@@ -424,7 +432,7 @@ A single Location object with all its details
 
         {
                 "_id":4,
-                "name":"Frauenstraße",
+                "name":"Frauenstraße 2",
                 "tags":[
                     "Münster",
                     "Frauenstraße",
@@ -442,10 +450,16 @@ A single Location object with all its details
                 "overlays": []
         }
         
++ Response 400 (text/plain)
+
+        Error: No data submitted!
+        
+        
+        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
-        Message: <Errormessage>    
+        Message: <Errormessage>
 
 ### Remove a Location [DELETE]
 (Status: **implemented**, Developer: Nicho)
@@ -685,15 +699,15 @@ Required attributes:
 - `tags` **String[ ]** (can be empty; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Double** (can not be empty and has to be a float; expample: *"800"*; default: *"0"*)
-- `h` **Double** (can not be empty and has to be a float; expample: *"600"*; default: *"0"*)
-- `x` **Double** (can not be empty and has to be a float; expample: *"100"*; default: *"0"*)
-- `y` **Double** (can not be empty and has to be a float; expample: *"10.1"*; default: *"0"*)
-- `z` **Double** (can not be empty and has to be a float; expample: *"20.2"*; default: *"0"*)
-- `d` **Double** (can not be empty and has to be a float; expample: *"30.3"*; default: *"0"*)
-- `rx` **Double** (can not be empty and has to be a float; expample: *"40.4"*; default: *"0"*)
-- `ry` **Double** (can not be empty and has to be a float; expample: *"50.5"*; default: *"0"*)
-- `rz` **Double** (can not be empty and has to be a float; expample: *"60.6"*; default: *"0"*)
+- `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
+- `h` **Double** (can not be empty and has to be a float; expample: *600*; default: *0*)
+- `x` **Double** (can not be empty and has to be a float; expample: *100*; default: *0*)
+- `y` **Double** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
+- `z` **Double** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
+- `d` **Double** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
+- `rx` **Double** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
+- `ry` **Double** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
+- `rz` **Double** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
 
 
 + Request (application/json)
@@ -821,16 +835,15 @@ Changeable attributes:
 - `tags` **String[ ]** (can be empty; example: *["video", "test", "Public Display"]*)
 - `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
 - `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Double** (can not be empty and has to be a float; expample: *"800"*; default: *"0"*)
-- `h` **Double** (can not be empty and has to be a float; expample: *"600"*; default: *"0"*)
-- `x` **Double** (can not be empty and has to be a float; expample: *"100"*; default: *"0"*)
-- `y` **Double** (can not be empty and has to be a float; expample: *"10.1"*; default: *"0"*)
-- `z` **Double** (can not be empty and has to be a float; expample: *"20.2"*; default: *"0"*)
-- `d` **Double** (can not be empty and has to be a float; expample: *"30.3"*; default: *"0"*)
-- `rx` **Double** (can not be empty and has to be a float; expample: *"40.4"*; default: *"0"*)
-- `ry` **Double** (can not be empty and has to be a float; expample: *"50.5"*; default: *"0"*)
-- `rz` **Double** (can not be empty and has to be a float; expample: *"60.6"*; default: *"0"*)
-
+- `w` **Double** (can not be empty and has to be a float; expample: *800*; default: *0*)
+- `h` **Double** (can not be empty and has to be a float; expample: *600*; default: *0*)
+- `x` **Double** (can not be empty and has to be a float; expample: *100*; default: *0*)
+- `y` **Double** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
+- `z` **Double** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
+- `d` **Double** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
+- `rx` **Double** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
+- `ry` **Double** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
+- `rz` **Double** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
 
 + Request (application/json)
 
