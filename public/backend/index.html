@@ -178,7 +178,7 @@
 			<hr />
 			<form>
 			<select name="select-native-2" data-mini="true" id="overlay-spinner">
-			<option value="1">Select Overlay From Library</option>
+			<option value="">Select Overlay From Library</option>
 			<% _.each(overlays, function(overlay) { %>	
 			<option value= <%= "'" + overlay._id + "'" %>><%= overlay.name %></option>
 			<% }); %>
@@ -186,7 +186,8 @@
 			<div id="overlay-list"></div>
 			<br>
 			<br>
-			<input type="button" value="Add New Overlay" class="button" id="add-overlay-btn">
+			<input type="button" value="Add" class="button" id="add-overlay-btn">
+			<input type="button" value="Add New Overlay" class="button" id="add-new-overlay-btn">
 			
 			</form>
 			</div>

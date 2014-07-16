@@ -155,14 +155,20 @@ var AddLocationView = Backbone.View.extend({
 					$("#tag-list").empty();
 					$("#tag-list").text(taglist);
 				});
+				$("#footage-spinner").change("selectmenuchange", function(){
+					footageselection = [];
+					footageselection.push(parseInt($("#footage-spinner").val(), 10));
+					console.log(footageselection);
+				});
 				$("#add-footage-btn").click(function() {
-					console.log("Footage Button clicked");
+					/*console.log("Footage Button clicked");
 					console.log($("#footage-spinner").val());
 					footageselection.push(parseInt($("#footage-spinner").val(), 10));
 					console.log(footageselection);
 					$("#footage-list").empty();
-					$("#footage-list").text(footageselection);
+					$("#footage-list").text(footageselection);*/
 				});
+				
 				overlays.fetch({
 					//url: '/api/overlays',
 					success : function(displays) {
@@ -183,14 +189,24 @@ var AddLocationView = Backbone.View.extend({
 							console.log(value.name);
 						});
 						$("#add-overlay-btn").button();
+						$("#add-new-overlay-btn").button();
 						$("#add-overlay-btn").click(function() {
+							var overlayId = $("#overlay-spinner").val();
 							console.log("Overlay Button clicked");
 							//console.log($("#overlay-spinner").spinner("value"));
 							console.log($("#overlay-spinner").val());
-							overlayselection.push(parseInt($("#overlay-spinner").val(), 10));
+							overlayselection.push(parseInt(overlayId, 10));
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
+							
+						});
+						
+						$("#add-new-overlay-btn").click(function(){
+							var route = "overlays/new/" + $("#footage-spinner").val(); 
+							router.navigate(route, {
+								trigger: true
+							});
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
@@ -315,7 +331,7 @@ var EditLocationView = Backbone.View.extend({
 						$.each(overlays, function(index, value) {
 							console.log(value.name);
 						});
-						$("#add-overlay-btn").button();
+						//$("#add-overlay-btn").button();
 
 						$("#add-overlay-btn").click(function() {
 							console.log("Overlay Button clicked");
@@ -325,6 +341,9 @@ var EditLocationView = Backbone.View.extend({
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
+							router.navigate('overlays/new/123', {
+								trigger: true
+							});
 						});
 						$("#submit-location").button();
 						$("#submit-location").click(function() {
@@ -369,7 +388,8 @@ var ROUTER = Backbone.Router.extend({
 		'' : 'home',
 		'locations/new' : 'addLocation',
 		'locations/edit/:id' : 'editLocation',
-		'locations/delete/:id' : 'deleteLocation'
+		'locations/delete/:id' : 'deleteLocation',
+		'overlays/new/:id' : 'addOverlay'
 	}
 });
 
@@ -399,6 +419,10 @@ router.on('route:editLocation', function(id) {
 router.on('route:deleteLocation', function(id) {
 	//deleteLocation(id);
 	showDeleteLocationDialog(id);
+});
+
+router.on('route:addOverlay', function(id){
+	alert(id);
 });
 Backbone.history.start();
 
