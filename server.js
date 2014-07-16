@@ -16,9 +16,9 @@
          3.1.5 Remove a Location
     3.2 Videos:
          3.2.1 List all Videos
-         3.2.2 Create a Video [x]
+         3.2.2 Create a Video
          3.2.3 Retrieve a Video
-         3.2.4 Edit a Video [x]
+         3.2.4 Edit a Video
          3.2.4 Remove a Video
     3.3 Overlays
          3.3.1 List all Overlays
@@ -34,8 +34,14 @@
          3.4.5 Remove a Scenario [!]
  4. JSON-Schemas
     4.1 Location-Schema [x]
-    4.2 Video-Schema [x]
+        4.1.1 For "Create a Location"
+        4.1.2 For "Edit a Location"
+    4.2 Video-Schema
+        4.2.1 For "Create a Video"
+        4.2.1 For "Edit a Video"
     4.3 Overlay-Schema
+        4.3.1 For "Create an Overlay"
+        4.3.2 For "Edit an Overlay"
 
  [*] = not yet implemented
  [x] = in progress
@@ -1233,128 +1239,141 @@ app.post('/api/videos', function(req, res) {
     console.log("+++ [POST] /api/videos +++++++++++++++++++++++++++++++++++++++++++++++++");
 
     console.log("--- Validating all properties for Insertion ---");
-
-    // Check if all attributes were submitted
-    if (JSON.stringify(req.body) == '{}') {
-
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: No data submitted!');
-        return;
-
-    } else {
-
-        // Check attribute "name"
-        if(req.body.name == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "name"!');
-            return;
-        } else if(req.body.name == "" || req.body.name == null) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-                res.end('Error: The attribute "name" can not be emtpy!');
-                return;
-        } else if(req.body.name){
-            console.log('Deteced valid attribute "name"!');        
-        } else {
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Internal Server Error!');
-            return;
-        }
-
-        // Check attribute "description"
-        if(req.body.description == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "description"!');
-            return;
-        } else if(req.body.description == "") {
-            console.log('Deteced valid, but empty attribute "description"!');
-        } else if(req.body.description){
-            console.log('Deteced valid attribute "description"!');        
-        } else {
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Internal Server Error!');
-            return;
-        }
-
-        // Check attribute "tags"
-        if(req.body.tags == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "tags"!');
-            return;
-        } else if(req.body.tags){
-            // Check if submitted tags are empty
-            for (var i=0; i < req.body.tags.length; i++) {
-                if(req.body.tags[i] == "") {
-                    res.writeHead(400, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    res.end('Error: The element(s) of the attribute "tags" can not be empty, like ""! Please define a valid tag-element(s)!');
-                    return;
-                }
-            }
-            console.log('Deteced valid attribute "tags"!');        
-        } else {
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Internal Server Error!');
-            return;
-        }
     
-        // Check attribute "url"
-        if(req.body.url == undefined) {  
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "url"!');
-            return;
-        } else if(req.body.url == "") {
-            console.log('Deteced valid, but empty attribute "url"!');
-        } else if(req.body.url){
-            // Check if URL is a valid URL
-            if(validator.isURL(req.body.url)) {
-                console.log('Deteced valid attribute "url"!');
-            } else {
+   
+    // JSON-Schema-Constructor
+    var jayschema = new JaySchema();
+
+    async.series({
+        jsonvalidation_1 : function(callback) {
+
+            if (JSON.stringify(req.body) == '{}') {
+
                 res.writeHead(400, {
                     'Content-Type' : 'text/plain'
                 });
-                res.end('Error: The attribute "url" is not a valid URL!');
+                res.end('Error: No data submitted!');
                 return;
             }
-        } else {
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Internal Server Error!');
-            return;
-        }
+            else {
+                callback(null);
+            }
+        },
+        jsonvalidation_2 : function(callback) {
+            jayschema.validate(req.body, postVideoSchema, function(errs) {
+                if (errs) {
 
-        // Check attribute "date"
-        if(req.body.date == undefined) {  
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
+                    for (var i=0; i < errs.length; i++) {
+
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        if(errs[i].constraintName == 'required') {
+
+                            var errorMsg = errs[i].desc.split('missing: ');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            return;
+                        }
+
+                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        if(errs[i].constraintName == 'type') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            return;
+                        }
+                        
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        if(errs[i].constraintName == 'minLength') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            return;
+                        }
+
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        if(errs[i].constraintName == 'enum') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            return;
+                        }
+
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        if(errs[i].constraintName == 'uniqueItems') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            return;
+                        }
+
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        if(errs[i].constraintName == 'additionalProperties') {
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            return;
+                        }
+                        
+                        // If an unknown error occurred
+                        else {
+                            res.writeHead(500, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                            return;
+                        }
+                    }
+                }
+                else {
+                    callback(null);
+                }
             });
-            res.end('Error: Could not found the attribute "date"!');
-            return;
-        } else if(req.body.date == "") {
-            console.log('Deteced valid, but empty attribute "date"!');
-        } else if(req.body.date){
-                // Check if Date is a valid date
+        },
+        jsonvalidation_3 : function(callback) {
+            // Check if "url" is a valid URL
+            if (req.body.url && !(req.body.url == "")) {
+                if(validator.isURL(req.body.url)) { 
+                    //console.log("recieved valid URL!");
+                    callback(null);
+                } else {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The attribute "url" is not a valid URL!');
+                    return;
+                }
+            }
+            else {
+                callback(null);
+            }
+        },
+        jsonvalidation_4 : function(callback) {
+            // Check if "date" is a valid DATE
+            if (req.body.date && !(req.body.date == "")) {
                 if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
-                    console.log('Deteced valid attribute "date"!');        
+                    console.log("recieved valid DATE!");
+                    callback(null);
                 } else {
                     res.writeHead(400, {
                         'Content-Type' : 'text/plain'
@@ -1362,15 +1381,17 @@ app.post('/api/videos', function(req, res) {
                     res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
                     return;
                 }
-        } else {
-            res.writeHead(500, {
-            'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Internal Server Error!');
-            return;
+            }
+            else {
+                callback(null);
+            }
         }
+    },
+    function(err, results) {
+        
+        console.log("--- Finished validation of all properties successfully ---");
 
-        console.log("--- Creating new Video and Inserting properties ---");
+        console.log("--- Creating new Video ---");
 
         // Database Query - Create new Video
         db.insertNode({
@@ -1410,7 +1431,7 @@ app.post('/api/videos', function(req, res) {
                 return;
             }    
         });
-    }
+    });
 });
 
 // 3.2.3 Retrieve a Video (Developer: Nicho)
@@ -1469,118 +1490,187 @@ app.put('/api/videos/:id', function(req, res) {
 
     console.log("+++ [PUT] /api/videos/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++++");
 
+    console.log("--- Validating all properties for Updating ---");
+
+
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
 
-        // For Database Query
-        var propertyChanges = '';
+        // JSON-Schema-Constructor
+        var jayschema = new JaySchema();
 
-        if (JSON.stringify(req.body) == '{}' || req.body == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: No data submitted!');
-            return;
-        } else {
+        async.series({
+            jsonvalidation_1 : function(callback) {
+
+                if (JSON.stringify(req.body) == '{}') {
+
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: No data submitted!');
+                    return;
+                }
+                else {
+                    callback(null);
+                }
+            },
+            jsonvalidation_2 : function(callback) {
+                jayschema.validate(req.body, putVideoSchema, function(errs) {
+                    if (errs) {
+
+                        for (var i=0; i < errs.length; i++) {
+
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            if(errs[i].constraintName == 'required') {
+
+                                var errorMsg = errs[i].desc.split('missing: ');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                return;
+                            }
+
+                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            if(errs[i].constraintName == 'type') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                return;
+                            }
+                            
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            if(errs[i].constraintName == 'minLength') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                return;
+                            }
+
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            if(errs[i].constraintName == 'enum') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                return;
+                            }
+
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            if(errs[i].constraintName == 'uniqueItems') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                return;
+                            }
+
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            if(errs[i].constraintName == 'additionalProperties') {
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                return;
+                            }
+                            
+                            // If an unknown error occurred
+                            else {
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            },
+            jsonvalidation_3 : function(callback) {
+                // Check if "url" is a valid URL
+                if (req.body.url && !(req.body.url == "")) {
+                    if(validator.isURL(req.body.url)) { 
+                        //console.log("recieved valid URL!");
+                        callback(null);
+                    } else {
+                        res.writeHead(400, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end('Error: The attribute "url" is not a valid URL!');
+                        return;
+                    }
+                }
+                else {
+                    callback(null);
+                }
+            },
+            jsonvalidation_4 : function(callback) {
+                // Check if "date" is a valid DATE
+                if (req.body.date && !(req.body.date == "")) {
+                    if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
+                        console.log("recieved valid DATE!");
+                        callback(null);
+                    } else {
+                        res.writeHead(400, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
+                        return;
+                    }
+                }
+                else {
+                    callback(null);
+                }
+            }
+        },
+        function(err, results) {
+        
+            console.log("--- Finished validation of all properties successfully ---");
+
+            // For Database Query
+            var propertyChanges = '';
+
+            // Preparing Database Query
+            if(req.body.name) {
+                propertyChanges = propertyChanges + 'SET v.name=' + JSON.stringify(req.body.name) + ' ';
+            }
+            if(req.body.description) {
+                propertyChanges = propertyChanges + 'SET v.description=' + JSON.stringify(req.body.description) + ' ';
+            }
+            if(req.body.tags) {
+                propertyChanges = propertyChanges + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' ';
+            }
+            if(req.body.date) {
+                propertyChanges = propertyChanges + 'SET v.date="' + req.body.date + '" ';
+            }
+            if(req.body.url) {
+                propertyChanges = propertyChanges + 'SET v.url=' + JSON.stringify(req.body.url) + ' ';
+            }
 
             console.log("--- Updating properties of the Video ---");
 
-            // Check attribute "name"
-            if(req.body.name == undefined) {
-                console.log('No changes deteced in property "name"');
-            } else if(req.body.name == "" || req.body.name == null){
-                res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: The attribute "name" can not be emtpy!');
-                return;
-            } else if(req.body.name){
-                propertyChanges = propertyChanges + 'SET v.name="' + req.body.name + '" ';
-            } else {
-                res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: Internal Server Error!');
-                return;
-            }
-
-            // Check attribute "description"
-            if(req.body.description == undefined) {  
-                console.log('No changes deteced in property "description"');
-            } else if(req.body.description){
-                propertyChanges = propertyChanges + 'SET v.description="' + req.body.description + '" ';
-            } else {
-                res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: Internal Server Error!');
-                return;
-            }
-
-            // Check attribute "tags"
-            if(req.body.tags == undefined) {  
-                console.log('No changes deteced in property "tags"');
-            } else if(req.body.tags){
-                propertyChanges = propertyChanges + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' ';
-            } else {
-                res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: Internal Server Error!');
-                return;
-            }
-
-            // Check attribute "url"
-            if(req.body.url == undefined) {  
-                console.log('No changes deteced in property "url"');
-            } else if(req.body.url == "") {
-                propertyChanges = propertyChanges + 'SET v.url=""';
-            } else if(req.body.url){
-                // Check if URL is a valid URL
-                if(validator.isURL(req.body.url)) {
-                    propertyChanges = propertyChanges + 'SET v.url="' + req.body.url + '" ';
-                } else {
-                    res.writeHead(400, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    res.end('Error: The attribute "url" is not a valid URL!');
-                    return;
-                }
-            } else {
-                res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: Internal Server Error!');
-                return;
-            }
-
-            // Check attribute "date"
-            if(req.body.date == undefined) {  
-                console.log('No changes deteced in property "date"');
-            } else if(req.body.date == ""){             
-                propertyChanges = propertyChanges + 'SET v.date=""';
-            } else if(req.body.date){
-                // Check if Date is a valid date
-                if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
-                    propertyChanges = propertyChanges + 'SET v.date="' + req.body.date + '" ';
-                } else {
-                    res.writeHead(400, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
-                    return;
-                }
-            } else {
-                res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-                });
-                res.end('Error: Internal Server Error!');
-                return;
-            }
-
             // Query - Update all changed properties of the Video
             var query = 'MATCH (v:Video) WHERE ID(v)=' + req.params.id + ' ' + propertyChanges + 'RETURN v';
-            //console.log(query);
+            console.log(query);
 
             // Database Query
             db.cypherQuery(query, function(err, result) {
@@ -1613,7 +1703,7 @@ app.put('/api/videos/:id', function(req, res) {
                     return;
                 }
             });
-        }
+        });
     } else {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
@@ -2036,6 +2126,9 @@ app.get('/api/overlays/:id', function(req, res) {
 app.put('/api/overlays/:id', function(req, res) {
 
     console.log("+++ [PUT] /api/overlays/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
+
+    console.log("--- Validating all properties for Updating ---");
+
 
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
@@ -2479,6 +2572,7 @@ app.get('/api/scenarios/:id', function(req, res) {
  /****************************
  4.2 Video-Schema
  ****************************/
+
 // 4.2.1 For "Create a Video"
 var postVideoSchema = {
     "title": "postVideoSchema",
@@ -2510,6 +2604,39 @@ var postVideoSchema = {
                             }
     },
     "required": ["name", "description", "url", "tags", "date"],
+    "additionalProperties": false
+};
+
+// 4.2.2 For "Edit a Video"
+var putVideoSchema = {
+    "title": "putVideoSchema",
+    "description": "A JSON-Schema to validate recieving Videos for PUT-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "url" :         { 
+                                "type": "string", 
+                                "format": "uri",
+                                "minLength":1
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "date" :        {
+                                "type": "string"
+                            }
+    },
     "additionalProperties": false
 };
 
