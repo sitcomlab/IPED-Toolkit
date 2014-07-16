@@ -32,16 +32,6 @@
          3.4.3 Retrieve a Scenario [!]
          3.4.4 Edit a Scenario [!]
          3.4.5 Remove a Scenario [!]
- 4. JSON-Schemas
-    4.1 Location-Schema
-        4.1.1 For "Create a Location"
-        4.1.2 For "Edit a Location"
-    4.2 Video-Schema
-        4.2.1 For "Create a Video"
-        4.2.1 For "Edit a Video"
-    4.3 Overlay-Schema
-        4.3.1 For "Create an Overlay"
-        4.3.2 For "Edit an Overlay"
 
  [*] = not yet implemented
  [x] = in progress
@@ -68,9 +58,10 @@ var nib = require('nib');
 var browserify = require('browserify');
 var async = require('async');
 
-// for JSON-Schema validation of recieved data
+// for validation of received data
 var validator = require('validator');
 var JaySchema = require('jayschema');
+var schemas = require('./json-schemas.js');
 
 /*********************************************************
  1. Server-Settings
@@ -267,12 +258,12 @@ app.post('/api/locations', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, postLocationSchema, function(errs) {
+            jayschema.validate(req.body, schemas.getSchema('postLocationSchema'), function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
 
-                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                         if(errs[i].constraintName == 'required') {
 
                             var errorMsg = errs[i].desc.split('missing: ');
@@ -280,11 +271,11 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                             return;
                         }
 
-                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                         if(errs[i].constraintName == 'type') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -292,11 +283,11 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                             return;
                         }
                         
-                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                         if(errs[i].constraintName == 'minLength') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -304,11 +295,11 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                             return;
                         }
 
-                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                         if(errs[i].constraintName == 'enum') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -316,11 +307,11 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                             return;
                         }
 
-                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                         if(errs[i].constraintName == 'uniqueItems') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -328,17 +319,17 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                             return;
                         }
 
-                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                         if(errs[i].constraintName == 'additionalProperties') {
 
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                             return;
                         }
                         
@@ -715,7 +706,7 @@ app.get('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -752,12 +743,12 @@ app.put('/api/locations/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, putLocationSchema, function(errs) {
+                jayschema.validate(req.body, schemas.getSchema('putLocationSchema'), function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
 
-                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                             if(errs[i].constraintName == 'required') {
 
                                 var errorMsg = errs[i].desc.split('missing: ');
@@ -765,11 +756,11 @@ app.put('/api/locations/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                                 return;
                             }
 
-                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                             if(errs[i].constraintName == 'type') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -777,11 +768,11 @@ app.put('/api/locations/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                                 return;
                             }
                             
-                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                             if(errs[i].constraintName == 'minLength') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -789,11 +780,11 @@ app.put('/api/locations/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                                 return;
                             }
 
-                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                             if(errs[i].constraintName == 'enum') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -801,11 +792,11 @@ app.put('/api/locations/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                                 return;
                             }
 
-                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                             if(errs[i].constraintName == 'uniqueItems') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -813,17 +804,17 @@ app.put('/api/locations/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                                 return;
                             }
 
-                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                             if(errs[i].constraintName == 'additionalProperties') {
 
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                                 return;
                             }
                             
@@ -856,7 +847,7 @@ app.put('/api/locations/:id', function(req, res) {
             if(req.body.name) {
                 propertyChanges = propertyChanges + 'SET l.name=' + JSON.stringify(req.body.name) + ' ';
             }
-            if(req.body.description) {
+            if(req.body.description || req.body.date == "") {
                 propertyChanges = propertyChanges + 'SET l.description=' + JSON.stringify(req.body.description) + ' ';
             }
             if(req.body.tags) {
@@ -1199,7 +1190,7 @@ app.put('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -1315,7 +1306,7 @@ app.delete ('/api/locations/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -1393,12 +1384,12 @@ app.post('/api/videos', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, postVideoSchema, function(errs) {
+            jayschema.validate(req.body, schemas.getSchema('postVideoSchema'), function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
 
-                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                         if(errs[i].constraintName == 'required') {
 
                             var errorMsg = errs[i].desc.split('missing: ');
@@ -1406,11 +1397,11 @@ app.post('/api/videos', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                             return;
                         }
 
-                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                         if(errs[i].constraintName == 'type') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -1418,11 +1409,11 @@ app.post('/api/videos', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                             return;
                         }
                         
-                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                         if(errs[i].constraintName == 'minLength') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -1430,11 +1421,11 @@ app.post('/api/videos', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                             return;
                         }
 
-                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                         if(errs[i].constraintName == 'enum') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -1442,11 +1433,11 @@ app.post('/api/videos', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                             return;
                         }
 
-                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                         if(errs[i].constraintName == 'uniqueItems') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -1454,17 +1445,17 @@ app.post('/api/videos', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                             return;
                         }
 
-                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                         if(errs[i].constraintName == 'additionalProperties') {
 
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                             return;
                         }
                         
@@ -1487,13 +1478,13 @@ app.post('/api/videos', function(req, res) {
             // Check if "url" is a valid URL
             if (req.body.url && !(req.body.url == "")) {
                 if(validator.isURL(req.body.url)) { 
-                    //console.log("recieved valid URL!");
+                    //console.log("received valid URL!");
                     callback(null);
                 } else {
                     res.writeHead(400, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end('Error: The attribute "url" is not a valid URL!');
+                    res.end('Error: The value of the property "url" is not a valid URL!');
                     return;
                 }
             }
@@ -1505,13 +1496,15 @@ app.post('/api/videos', function(req, res) {
             // Check if "date" is a valid DATE
             if (req.body.date && !(req.body.date == "")) {
                 if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
-                    console.log("recieved valid DATE!");
+                    //console.log("received valid DATE!");
                     callback(null);
                 } else {
                     res.writeHead(400, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
+                    res.end('Error: The value of the property "date" is not a valid DATE! ' +
+                        'Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" ' +
+                        '(Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!');
                     return;
                 }
             }
@@ -1612,7 +1605,7 @@ app.get('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -1648,12 +1641,12 @@ app.put('/api/videos/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, putVideoSchema, function(errs) {
+                jayschema.validate(req.body, schemas.getSchema('putVideoSchema'), function(errs) {
                     if (errs) {
-
+                        console.log(errs);
                         for (var i=0; i < errs.length; i++) {
 
-                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                             if(errs[i].constraintName == 'required') {
 
                                 var errorMsg = errs[i].desc.split('missing: ');
@@ -1661,11 +1654,11 @@ app.put('/api/videos/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                                 return;
                             }
 
-                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                             if(errs[i].constraintName == 'type') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -1673,11 +1666,11 @@ app.put('/api/videos/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                                 return;
                             }
                             
-                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                             if(errs[i].constraintName == 'minLength') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -1685,11 +1678,11 @@ app.put('/api/videos/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                                 return;
                             }
 
-                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                             if(errs[i].constraintName == 'enum') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -1697,11 +1690,11 @@ app.put('/api/videos/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                                 return;
                             }
 
-                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                             if(errs[i].constraintName == 'uniqueItems') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -1709,17 +1702,17 @@ app.put('/api/videos/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                                 return;
                             }
 
-                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                             if(errs[i].constraintName == 'additionalProperties') {
 
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                                 return;
                             }
                             
@@ -1742,13 +1735,13 @@ app.put('/api/videos/:id', function(req, res) {
                 // Check if "url" is a valid URL
                 if (req.body.url && !(req.body.url == "")) {
                     if(validator.isURL(req.body.url)) { 
-                        //console.log("recieved valid URL!");
+                        //console.log("received valid URL!");
                         callback(null);
                     } else {
                         res.writeHead(400, {
                             'Content-Type' : 'text/plain'
                         });
-                        res.end('Error: The attribute "url" is not a valid URL!');
+                        res.end('Error: The value of the property "url" is not a valid URL!');
                         return;
                     }
                 }
@@ -1760,13 +1753,15 @@ app.put('/api/videos/:id', function(req, res) {
                 // Check if "date" is a valid DATE
                 if (req.body.date && !(req.body.date == "")) {
                     if(validator.isDate(req.body.date) && (req.body.date.length == 16 || req.body.date.length == 10)) {
-                        console.log("recieved valid DATE!");
+                        //console.log("received valid DATE!");
                         callback(null);
                     } else {
                         res.writeHead(400, {
                             'Content-Type' : 'text/plain'
                         });
-                        res.end('Error: The attribute "date" is not a valid Date! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04"). If you don\'t know the date, please submit an empty String: ""');
+                        res.end('Error: The value of the property "date" is not a valid DATE! ' +
+                            'Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" ' +
+                            '(Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!');
                         return;
                     }
                 }
@@ -1786,14 +1781,14 @@ app.put('/api/videos/:id', function(req, res) {
             if(req.body.name) {
                 propertyChanges = propertyChanges + 'SET v.name=' + JSON.stringify(req.body.name) + ' ';
             }
-            if(req.body.description) {
+            if(req.body.description || req.body.description == "") {
                 propertyChanges = propertyChanges + 'SET v.description=' + JSON.stringify(req.body.description) + ' ';
             }
             if(req.body.tags) {
                 propertyChanges = propertyChanges + 'SET v.tags=' + JSON.stringify(req.body.tags) + ' ';
             }
-            if(req.body.date) {
-                propertyChanges = propertyChanges + 'SET v.date="' + req.body.date + '" ';
+            if(req.body.date || req.body.date == "") {
+                propertyChanges = propertyChanges + 'SET v.date=' + JSON.stringify(req.body.date) + ' ';
             }
             if(req.body.url) {
                 propertyChanges = propertyChanges + 'SET v.url=' + JSON.stringify(req.body.url) + ' ';
@@ -1841,7 +1836,7 @@ app.put('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -1957,7 +1952,7 @@ app.delete('/api/videos/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -2036,12 +2031,12 @@ app.post('/api/overlays', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, postOverlaySchema, function(errs) {
+            jayschema.validate(req.body, schemas.getSchema('postOverlaySchema'), function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
 
-                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                         if(errs[i].constraintName == 'required') {
 
                             var errorMsg = errs[i].desc.split('missing: ');
@@ -2049,11 +2044,11 @@ app.post('/api/overlays', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                             return;
                         }
 
-                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                         if(errs[i].constraintName == 'type') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -2061,11 +2056,11 @@ app.post('/api/overlays', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                             return;
                         }
                         
-                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                         if(errs[i].constraintName == 'minLength') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -2073,11 +2068,11 @@ app.post('/api/overlays', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                             return;
                         }
 
-                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                         if(errs[i].constraintName == 'enum') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -2085,11 +2080,11 @@ app.post('/api/overlays', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                             return;
                         }
 
-                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                         if(errs[i].constraintName == 'uniqueItems') {
 
                             var errorMsg = errs[i].instanceContext.split('#/');
@@ -2097,17 +2092,17 @@ app.post('/api/overlays', function(req, res) {
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                             return;
                         }
 
-                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                         if(errs[i].constraintName == 'additionalProperties') {
 
                             res.writeHead(400, {
                                 'Content-Type' : 'text/plain'
                             });
-                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                             return;
                         }
                         
@@ -2129,13 +2124,13 @@ app.post('/api/overlays', function(req, res) {
         jsonvalidation_3 : function(callback) {
             if (req.body.url && !(req.body.url == "")) {
                 if(validator.isURL(req.body.url)) { 
-                    //console.log("recieved valid URL!");
+                    //console.log("received valid URL!");
                     callback(null);
                 } else {
                     res.writeHead(400, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end('Error: The attribute "url" is not a valid URL!');
+                    res.end('Error: The value of the property "url" is not a valid URL!');
                     return;
                 }
             }
@@ -2248,7 +2243,7 @@ app.get('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -2285,12 +2280,12 @@ app.put('/api/overlays/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, putOverlaySchema, function(errs) {
+                jayschema.validate(req.body, schemas.getSchema('putOverlaySchema'), function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
 
-                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
                             if(errs[i].constraintName == 'required') {
 
                                 var errorMsg = errs[i].desc.split('missing: ');
@@ -2298,11 +2293,11 @@ app.put('/api/overlays/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                res.end('Error: The property "' + errorMsg[1] + '" was not found, but has to be defined!');
                                 return;
                             }
 
-                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            // Check if error occorred by a wrong domain constraint (e.g. Number received, but String required)
                             if(errs[i].constraintName == 'type') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -2310,11 +2305,11 @@ app.put('/api/overlays/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                res.end('The value of the property "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue + '!');
                                 return;
                             }
                             
-                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String received "", but String with minLength=1 required)
                             if(errs[i].constraintName == 'minLength') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -2322,11 +2317,11 @@ app.put('/api/overlays/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" can not be emtpy!');
                                 return;
                             }
 
-                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] received)
                             if(errs[i].constraintName == 'enum') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -2334,11 +2329,11 @@ app.put('/api/overlays/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                res.end('Error: The value of the property "' + errorMsg[1] + '" is incorrect! Only the values ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
                                 return;
                             }
 
-                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] received, but only unique items allowed)
                             if(errs[i].constraintName == 'uniqueItems') {
 
                                 var errorMsg = errs[i].instanceContext.split('#/');
@@ -2346,17 +2341,17 @@ app.put('/api/overlays/:id', function(req, res) {
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                res.end('Error: The element values of the array "' + errorMsg[1] + '" are not unique!');
                                 return;
                             }
 
-                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" received, but "yyy" is not defined in the JSON-Schema)
                             if(errs[i].constraintName == 'additionalProperties') {
 
                                 res.writeHead(400, {
                                     'Content-Type' : 'text/plain'
                                 });
-                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                res.end('Error: The property "' + errs[i].testedValue + '" is needless and not allowed!');
                                 return;
                             }
                             
@@ -2378,13 +2373,13 @@ app.put('/api/overlays/:id', function(req, res) {
             jsonvalidation_3 : function(callback) {
                 if (req.body.url && !(req.body.url == "")) {
                     if(validator.isURL(req.body.url)) { 
-                        //console.log("recieved valid URL!");
+                        //console.log("received valid URL!");
                         callback(null);
                     } else {
                         res.writeHead(400, {
                             'Content-Type' : 'text/plain'
                         });
-                        res.end('Error: The attribute "url" is not a valid URL!');
+                        res.end('Error: The value of the property "url" is not a valid URL!');
                         return;
                     }
                 }
@@ -2404,14 +2399,14 @@ app.put('/api/overlays/:id', function(req, res) {
             if(req.body.name) {
                 propertyChanges = propertyChanges + 'SET o.name=' + JSON.stringify(req.body.name) + ' ';
             }
-            if(req.body.description) {
+            if(req.body.description || req.body.date == "") {
                 propertyChanges = propertyChanges + 'SET o.description=' + JSON.stringify(req.body.description) + ' ';
             }
             if(req.body.tags) {
                 propertyChanges = propertyChanges + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' ';
             }
             if(req.body.type) {
-                propertyChanges = propertyChanges + 'SET o.type="' + req.body.type + '" ';
+                propertyChanges = propertyChanges + 'SET o.type=' + JSON.stringify(req.body.type) + ' ';
             }
             if(req.body.url) {
                 propertyChanges = propertyChanges + 'SET o.url=' + JSON.stringify(req.body.url) + ' ';
@@ -2483,7 +2478,7 @@ app.put('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -2598,7 +2593,7 @@ app.delete('/api/overlays/:id', function(req, res) {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
         });
-        var errorMsg = "Error: No valid request! The submitted ID is not a number!";
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
         res.end(errorMsg);
         return;
     }
@@ -2693,355 +2688,3 @@ app.get('/api/scenarios/:id', function(req, res) {
 
 // 3.4.5 Remove a Scenario [!]
 
-
-/*********************************************************
- 4. JSON-Schemas
- *********************************************************/
-
-/****************************
- 4.1 Location-Schema
- ****************************/
-
-// 4.1.1 For "Create a Location"
-var postLocationSchema = {
-    "title": "postLocationSchema",
-    "description": "A JSON-Schema to validate recieving Locations for POST-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "lat" :         {
-                                "type": "number"
-                            },
-            "lon" :         {
-                                "type": "number"
-                            },
-            "relatedLocations": { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "videos":       {
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "overlays":     {
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            }
-    },
-    "required": ["name", "description", "tags", "lat", "lon", "relatedLocations", "videos", "overlays"],
-    "additionalProperties": false
-};
-
-// 4.1.2 For "Edit a Location"
-var putLocationSchema = {
-    "title": "putLocationSchema",
-    "description": "A JSON-Schema to validate recieving Locations for PUT-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "lat" :         {
-                                "type": "number"
-                            },
-            "lon" :         {
-                                "type": "number"
-                            },
-            "relatedLocations": { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "videos":       {
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "overlays":     {
-                                "type": "array", 
-                                "items": { 
-                                    "type": "integer",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            }
-    },
-    "additionalProperties": false
-};
-
- /****************************
- 4.2 Video-Schema
- ****************************/
-
-// 4.2.1 For "Create a Video"
-var postVideoSchema = {
-    "title": "postVideoSchema",
-    "description": "A JSON-Schema to validate recieving Videos for POST-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "url" :         { 
-                                "type": "string", 
-                                "format": "uri",
-                                "minLength":1
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "date" :        {
-                                "type": "string"
-                            }
-    },
-    "required": ["name", "description", "url", "tags", "date"],
-    "additionalProperties": false
-};
-
-// 4.2.2 For "Edit a Video"
-var putVideoSchema = {
-    "title": "putVideoSchema",
-    "description": "A JSON-Schema to validate recieving Videos for PUT-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "url" :         { 
-                                "type": "string", 
-                                "format": "uri",
-                                "minLength":1
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "date" :        {
-                                "type": "string"
-                            }
-    },
-    "additionalProperties": false
-};
-
-
-/****************************
- 4.3 Overlay-Schema
- ****************************/
-
-// 4.3.1 For "Create an Overlay"
-var postOverlaySchema = {
-    "title": "postOverlaySchema",
-    "description": "A JSON-Schema to validate recieving Overlays for POST-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "url" :         { 
-                                "type": "string", 
-                                "format": "uri",
-                                "minLength":1
-                            },
-            "type" :        { 
-                                "enum": [ "html", "video", "image" ] 
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "w" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "h" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "x" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "y" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "z" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "d" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "rx" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "ry" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "rz" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            }
-    },
-    "required": ["name", "description", "url", "type", "tags", "w", "h", "x", "y", "z", "d", "rx", "ry", "rz"],
-    "additionalProperties": false
-};
-
-// 4.3.1 For "Edit an Overlay"
-var putOverlaySchema = {
-    "title": "putOverlaySchema",
-    "description": "A JSON-Schema to validate recieving Overlays for PUT-request",
-    "type": "object", 
-    "properties" : {
-            "name" :        { 
-                                "type": "string",
-                                "minLength":1
-                            },
-            "description" : { 
-                                "type": "string" 
-                            },
-            "url" :         { 
-                                "type": "string", 
-                                "format": "uri",
-                                "minLength":1
-                            },
-            "type" :        { 
-                                "enum": [ "html", "video", "image" ] 
-                            },
-            "tags" :        { 
-                                "type": "array", 
-                                "items": { 
-                                    "type": "string",
-                                    "minLength":1
-                                },
-                                "uniqueItems": true
-                            },
-            "w" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "h" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "x" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "y" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "z" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "d" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "rx" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "ry" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            },
-            "rz" :           {
-                                "type": "number",
-                                "minLength":1,
-                                "default": 0
-                            }
-    },
-    "additionalProperties": false
-};
