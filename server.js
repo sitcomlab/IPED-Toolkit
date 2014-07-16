@@ -10,15 +10,15 @@
  3. API
     3.1 Locations:
          3.1.1 List all Locations
-         3.1.2 Create a Location
+         3.1.2 Create a Location [x]
          3.1.3 Retrieve a Location
-         3.1.4 Edit a Location
+         3.1.4 Edit a Location [x]
          3.1.5 Remove a Location
     3.2 Videos:
          3.2.1 List all Videos
-         3.2.2 Create a Video
+         3.2.2 Create a Video [x]
          3.2.3 Retrieve a Video
-         3.2.4 Edit a Video
+         3.2.4 Edit a Video [x]
          3.2.4 Remove a Video
     3.3 Overlays
          3.3.1 List all Overlays
@@ -32,6 +32,10 @@
          3.4.3 Retrieve a Scenario [!]
          3.4.4 Edit a Scenario [!]
          3.4.5 Remove a Scenario [!]
+ 4. JSON-Schemas
+    4.1 Location-Schema [x]
+    4.2 Video-Schema [x]
+    4.3 Overlay-Schema
 
  [*] = not yet implemented
  [x] = in progress
@@ -57,7 +61,10 @@ var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
 var async = require('async');
+
+// for JSON-Schema validation of recieved data
 var validator = require('validator');
+var JaySchema = require('jayschema');
 
 /*********************************************************
  1. Server-Settings
@@ -1294,7 +1301,7 @@ app.post('/api/videos', function(req, res) {
                     res.writeHead(400, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end('Error: The elements of the attribute "tags" can not be empty like ""! Please define a valid tag-element(s)!');
+                    res.end('Error: The element(s) of the attribute "tags" can not be empty, like ""! Please define a valid tag-element(s)!');
                     return;
                 }
             }
@@ -1784,100 +1791,141 @@ app.post('/api/overlays', function(req, res) {
 
     console.log("+++ [POST] /api/overlays +++++++++++++++++++++++++++++++++++++++++++++++");
 
-    // Check if all attributes were submitted
-    if (JSON.stringify(req.body) == '{}') {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: No data submitted!');
-        return;
-    } else if (req.body.name == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "name"!');
-        return;
-    } else if (req.body.description == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "description"!');
-        return;
-    } else if (req.body.tags == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "tags"!');
-        return;
-    } else if (req.body.type == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "date"!');
-        return;
-    } else if (req.body.url == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "url"!');
-        return;
-    } else if (req.body.w == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "w"!');
-        return;
-    } else if (req.body.h == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "h"!');
-        return;
-    } else if (req.body.x == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "x"!');
-        return;
-    } else if (req.body.y == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "y"!');
-        return;
-    } else if (req.body.z == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "z"!');
-        return;
-    }else if (req.body.d == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "d"!');
-        return;
-    } else if (req.body.rx == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "rx"!');
-        return;
-    } else if (req.body.ry == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "ry"!');
-        return;
-    } else if (req.body.rz == undefined) {
-        res.writeHead(400, {
-            'Content-Type' : 'text/plain'
-        });
-        res.end('Error: Could not found the attribute "rz"!');
-        return;
-    } else {
+    console.log("--- Validating all properties for Insertion ---");
+    
+   
+    // JSON-Schema-Constructor
+    var jayschema = new JaySchema();
 
-        console.log("--- Creating new Overlay and Inserting properties ---");
+    async.series({
+        jsonvalidation_1 : function(callback) {
+
+            if (JSON.stringify(req.body) == '{}') {
+
+                res.writeHead(400, {
+                    'Content-Type' : 'text/plain'
+                });
+                res.end('Error: No data submitted!');
+                return;
+            }
+            else {
+                callback(null);
+            }
+        },
+        jsonvalidation_2 : function(callback) {
+            jayschema.validate(req.body, postOverlaySchema, function(errs) {
+                if (errs) {
+
+                    for (var i=0; i < errs.length; i++) {
+
+                        // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                        if(errs[i].constraintName == 'required') {
+
+                            var errorMsg = errs[i].desc.split('missing: ');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                            return;
+                        }
+
+                        // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                        if(errs[i].constraintName == 'type') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                            return;
+                        }
+                        
+                        // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                        if(errs[i].constraintName == 'minLength') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                            return;
+                        }
+
+                        // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                        if(errs[i].constraintName == 'enum') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                            return;
+                        }
+
+                        // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                        if(errs[i].constraintName == 'uniqueItems') {
+
+                            var errorMsg = errs[i].instanceContext.split('#/');
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                            return;
+                        }
+
+                        // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                        if(errs[i].constraintName == 'additionalProperties') {
+
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                            return;
+                        }
+                        
+                        // If an unknown error occurred
+                        else {
+                            res.writeHead(500, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                            return;
+                        }
+                    }
+                }
+                else {
+                    callback(null);
+                }
+            });
+        },
+        jsonvalidation_3 : function(callback) {
+            if (req.body.url && !(req.body.url == "")) {
+                if(validator.isURL(req.body.url)) { 
+                    //console.log("recieved valid URL!");
+                    callback(null);
+                } else {
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: The attribute "url" is not a valid URL!');
+                    return;
+                }
+            }
+            else {
+                callback(null);
+            }
+        }
+    },
+    function(err, results) {
+        
+        console.log("--- Finished validation of all properties successfully ---");
+
+        console.log("--- Creating new Overlay ---");
 
         // Database Query - Create new Overlay
         db.insertNode({
@@ -1898,11 +1946,13 @@ app.post('/api/overlays', function(req, res) {
 
         }, ['Overlay'], function(err, node) {
             if (err) {
+
                 res.writeHead(500, {
                     'Content-Type' : 'text/plain'
                 });
-                res.end("Error: Data couldn't saved in the database");
+                res.end("Error: Internal Server Error! Message: Data couldn't saved in the database!");
                 return;
+
             } else {
 
                 // Output node properties
@@ -1912,22 +1962,22 @@ app.post('/api/overlays', function(req, res) {
                 // Output node id
                 var newOverlayID = node._id;
                 console.log("--- Finished Creating new Overlay, new ID = " + newOverlayID + " ---");
-                
+                    
                 // Result
                 var finalResult = JSON.stringify(newOverlay);
                 console.log("================================ Result ================================");
                 console.log(finalResult);
                 console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        
+            
                 // Send final Result
                 res.writeHead(201, {
-                    'Content-Type' : 'application/json'
+                   'Content-Type' : 'application/json'
                 });
                 res.end(finalResult);
                 return;
             }    
         });
-    }
+    });
 });
 
 // 3.3.3 Retrieve an Overlay (Developer: Nicho)
@@ -1990,118 +2040,185 @@ app.put('/api/overlays/:id', function(req, res) {
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
 
-        // Check if all attributes were submitted
-        if (JSON.stringify(req.body) == '{}') {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: No data submitted!');
-            return;
-        } else if (req.body.name == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "name"!');
-            return;
-        } else if (req.body.description == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "description"!');
-            return;
-        } else if (req.body.tags == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "tags"!');
-            return;
-        } else if (req.body.type == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "date"!');
-            return;
-        } else if (req.body.url == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "url"!');
-            return;
-        } else if (req.body.w == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "w"!');
-            return;
-        } else if (req.body.h == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "h"!');
-            return;
-        } else if (req.body.x == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "x"!');
-            return;
-        } else if (req.body.y == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "y"!');
-            return;
-        } else if (req.body.z == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "z"!');
-            return;
-        } else if (req.body.d == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "d"!');
-            return;
-        } else if (req.body.rx == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "rx"!');
-            return;
-        } else if (req.body.ry == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "ry"!');
-            return;
-        } else if (req.body.rz == undefined) {
-            res.writeHead(400, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end('Error: Could not found the attribute "rz"!');
-            return;
-        } else {
+        // JSON-Schema-Constructor
+        var jayschema = new JaySchema();
+
+        async.series({
+            jsonvalidation_1 : function(callback) {
+
+                if (JSON.stringify(req.body) == '{}') {
+
+                    res.writeHead(400, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end('Error: No data submitted!');
+                    return;
+                }
+                else {
+                    callback(null);
+                }
+            },
+            jsonvalidation_2 : function(callback) {
+                jayschema.validate(req.body, putOverlaySchema, function(errs) {
+                    if (errs) {
+
+                        for (var i=0; i < errs.length; i++) {
+
+                            // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" recieved)
+                            if(errs[i].constraintName == 'required') {
+
+                                var errorMsg = errs[i].desc.split('missing: ');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Could not found the attribute "' + errorMsg[1] + '" has to be defined!');
+                                return;
+                            }
+
+                            // Check if error occorred by a wrong domain constraint (e.g. Number recieved, but String required)
+                            if(errs[i].constraintName == 'type') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has to be a ' + errs[i].constraintValue);
+                                return;
+                            }
+                            
+                            // Check if error occurred by a wrong domain constraint (e.g. empty String recieved "", but String with minLength=1 required)
+                            if(errs[i].constraintName == 'minLength') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" can not be emtpy!');
+                                return;
+                            }
+
+                            // Check if error occurred by a wrong domain constraint (e.g. ['a','b'] allowed, but ['c'] or ['c','d'] recieved)
+                            if(errs[i].constraintName == 'enum') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The attribute "' + errorMsg[1] + '" has a wrong value, only ' + JSON.stringify(errs[i].constraintValue) + ' are allowed!');
+                                return;
+                            }
+
+                            // Check if error occorred in an array, where a attribute was defined twice (e.g. ['a','a'] recieved, but only unique items allowed)
+                            if(errs[i].constraintName == 'uniqueItems') {
+
+                                var errorMsg = errs[i].instanceContext.split('#/');
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The elements of the array "' + errorMsg[1] + '" are not unique!');
+                                return;
+                            }
+
+                            // Check if error occorred by an additional properties (e.g. "yyy":"123" recieved, but "yyy" is not defined in the JSON-Schema)
+                            if(errs[i].constraintName == 'additionalProperties') {
+
+                                res.writeHead(400, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: The property "' + errs[i].testedValue + '" is not allowed!');
+                                return;
+                            }
+                            
+                            // If an unknown error occurred
+                            else {
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                res.end('Error: Internal Server Error! Message: Unknown Error. Please check your JSON for syntax errors. If there is still a problem, please contact the webmaster!');
+                                return;
+                            }
+                        }
+                    }
+                    else {
+                        callback(null);
+                    }
+                });
+            },
+            jsonvalidation_3 : function(callback) {
+                if (req.body.url && !(req.body.url == "")) {
+                    if(validator.isURL(req.body.url)) { 
+                        //console.log("recieved valid URL!");
+                        callback(null);
+                    } else {
+                        res.writeHead(400, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end('Error: The attribute "url" is not a valid URL!');
+                        return;
+                    }
+                }
+                else {
+                    callback(null);
+                }
+            }
+        },
+        function(err, results) {
+
+            console.log("--- Finished validation of all properties successfully ---");
+
+            // For Database Query
+            var propertyChanges = '';
+
+            // Preparing Database Query
+            if(req.body.name) {
+                propertyChanges = propertyChanges + 'SET o.name=' + JSON.stringify(req.body.name) + ' ';
+            }
+            if(req.body.description) {
+                propertyChanges = propertyChanges + 'SET o.description=' + JSON.stringify(req.body.description) + ' ';
+            }
+            if(req.body.tags) {
+                propertyChanges = propertyChanges + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' ';
+            }
+            if(req.body.type) {
+                propertyChanges = propertyChanges + 'SET o.type="' + req.body.type + '" ';
+            }
+            if(req.body.url) {
+                propertyChanges = propertyChanges + 'SET o.url=' + JSON.stringify(req.body.url) + ' ';
+            }
+            if(req.body.w) {
+                propertyChanges = propertyChanges + 'SET o.w="' + req.body.w + '" ';
+            }
+            if(req.body.h) {
+                propertyChanges = propertyChanges + 'SET o.h="' + req.body.h + '" ';
+            }
+            if(req.body.x) {
+                propertyChanges = propertyChanges + 'SET o.x="' + req.body.x + '" ';
+            }
+            if(req.body.y) {
+                propertyChanges = propertyChanges + 'SET o.y="' + req.body.y + '" ';
+            }
+            if(req.body.z) {
+                propertyChanges = propertyChanges + 'SET o.z="' + req.body.z + '" ';
+            }
+            if(req.body.rx) {
+                propertyChanges = propertyChanges + 'SET o.rx="' + req.body.rx + '" ';
+            }
+            if(req.body.ry) {
+                propertyChanges = propertyChanges + 'SET o.ry="' + req.body.ry + '" ';
+            }
+            if(req.body.rz) {
+                propertyChanges = propertyChanges + 'SET o.rz="' + req.body.rz + '" ';
+            }
 
             console.log("--- Updating properties of the Overlay ---");
 
             // Query - Update all properties of the Overlay
-            var query = 'MATCH (o:Overlay) WHERE ID(o)=' + req.params.id + ' '
-                + 'SET o.name="' + req.body.name + '" '
-                + 'SET o.description="' + req.body.description + '" '
-                + 'SET o.tags=' + JSON.stringify(req.body.tags) + ' '
-                + 'SET o.type="' + req.body.type + '" '
-                + 'SET o.url="' + req.body.url + '" '
-                + 'SET o.w="' + req.body.w + '" '
-                + 'SET o.h="' + req.body.h + '" '
-                + 'SET o.x="' + req.body.x + '" '
-                + 'SET o.y="' + req.body.y + '" '
-                + 'SET o.z="' + req.body.z + '" '
-                + 'SET o.d="' + req.body.d + '" ' 
-                + 'SET o.rx="' + req.body.rx + '" '
-                + 'SET o.ry="' + req.body.ry + '" '
-                + 'SET o.rz="' + req.body.rz + '" '
-                + 'RETURN o';
+            var query = 'MATCH (o:Overlay) WHERE ID(o)=' + req.params.id + ' ' + propertyChanges + 'RETURN o';
             //console.log(query);
 
             // Database Query
@@ -2135,7 +2252,7 @@ app.put('/api/overlays/:id', function(req, res) {
                     return;
                 }
             });
-        }
+        }); 
     } else {
         res.writeHead(406, {
             'Content-Type' : 'text/plain'
@@ -2350,3 +2467,210 @@ app.get('/api/scenarios/:id', function(req, res) {
 
 // 3.4.5 Remove a Scenario [!]
 
+
+/*********************************************************
+ 4. JSON-Schemas
+ *********************************************************/
+
+/****************************
+ 4.1 Location-Schema
+ ****************************/
+
+ /****************************
+ 4.2 Video-Schema
+ ****************************/
+// 4.2.1 For "Create a Video"
+var postVideoSchema = {
+    "title": "postVideoSchema",
+    "description": "A JSON-Schema to validate recieving Videos for POST-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "url" :         { 
+                                "type": "string", 
+                                "format": "uri",
+                                "minLength":1
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "date" :        {
+                                "type": "string"
+                            }
+    },
+    "required": ["name", "description", "url", "tags", "date"],
+    "additionalProperties": false
+};
+
+
+/****************************
+ 4.3 Overlay-Schema
+ ****************************/
+
+// 4.3.1 For "Create an Overlay"
+var postOverlaySchema = {
+    "title": "postOverlaySchema",
+    "description": "A JSON-Schema to validate recieving Overlays for POST-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "url" :         { 
+                                "type": "string", 
+                                "format": "uri",
+                                "minLength":1
+                            },
+            "type" :        { 
+                                "enum": [ "html", "video", "image" ] 
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "w" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "h" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "x" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "y" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "z" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "d" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "rx" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "ry" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "rz" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            }
+    },
+    "required": ["name", "description", "url", "type", "tags", "w", "h", "x", "y", "z", "d", "rx", "ry", "rz"],
+    "additionalProperties": false
+};
+
+// 4.3.1 For "Edit an Overlay"
+var putOverlaySchema = {
+    "title": "putOverlaySchema",
+    "description": "A JSON-Schema to validate recieving Overlays for PUT-request",
+    "type": "object", 
+    "properties" : {
+            "name" :        { 
+                                "type": "string",
+                                "minLength":1
+                            },
+            "description" : { 
+                                "type": "string" 
+                            },
+            "url" :         { 
+                                "type": "string", 
+                                "format": "uri",
+                                "minLength":1
+                            },
+            "type" :        { 
+                                "enum": [ "html", "video", "image" ] 
+                            },
+            "tags" :        { 
+                                "type": "array", 
+                                "items": { 
+                                    "type": "string",
+                                    "minLength":1
+                                },
+                                "uniqueItems": true
+                            },
+            "w" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "h" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "x" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "y" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "z" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "d" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "rx" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "ry" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            },
+            "rz" :           {
+                                "type": "number",
+                                "minLength":1,
+                                "default": 0
+                            }
+    },
+    "additionalProperties": false
+};
