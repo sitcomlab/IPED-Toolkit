@@ -325,7 +325,7 @@ var EditLocationView = Backbone.View.extend({
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
-							router.navigate('newOverlays', {
+							router.navigate('overlays/new/123', {
 								trigger: true
 							});
 						});
