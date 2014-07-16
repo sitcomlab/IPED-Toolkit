@@ -272,6 +272,7 @@ var EditLocationView = Backbone.View.extend({
 				lon = location.get("lon");
 				$("#tag-list").empty();
 				$("#tag-list").text(tags);
+				$("#footage-spinner").val(footageselection[0]);
 				$("#footage-list").empty();
 				$("#footage-list").text(footageselection);
 				$("#overlay-list").empty();
@@ -306,19 +307,25 @@ var EditLocationView = Backbone.View.extend({
 					$("#tag-list").empty();
 					$("#tag-list").text(tags);
 				});
+				$("#footage-spinner").change("selectmenuchange", function(){
+					footageselection = [];
+					footageselection.push(parseInt($("#footage-spinner").val(), 10));
+					console.log(footageselection);
+				});
 				$("#add-footage-btn").click(function() {
-					console.log("Footage Button clicked");
+					/*console.log("Footage Button clicked");
 					console.log($("#footage-spinner").val());
-					footageselection.push($("#footage-spinner").val());
+					footageselection.push(parseInt($("#footage-spinner").val(), 10));
 					console.log(footageselection);
 					$("#footage-list").empty();
-					$("#footage-list").text(footageselection);
+					$("#footage-list").text(footageselection);*/
 				});
 				overlays.fetch({
 					//url: '/api/overlays',
 					success : function(displays) {
 
 						console.log("EditLocationView: overlays.fetch() entered");
+						var footages = footageselection;
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
 						var template2 = _.template($("#add-new-location-template2").html(), {
@@ -331,17 +338,23 @@ var EditLocationView = Backbone.View.extend({
 						$.each(overlays, function(index, value) {
 							console.log(value.name);
 						});
-						//$("#add-overlay-btn").button();
-
+						$("#add-overlay-btn").button();
+						$("#add-new-overlay-btn").button();
 						$("#add-overlay-btn").click(function() {
+							var overlayId = $("#overlay-spinner").val();
 							console.log("Overlay Button clicked");
 							//console.log($("#overlay-spinner").spinner("value"));
 							console.log($("#overlay-spinner").val());
-							overlayselection.push($("#overlay-spinner").val());
+							overlayselection.push(parseInt(overlayId, 10));
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
-							router.navigate('overlays/new/123', {
+							
+						});
+						
+						$("#add-new-overlay-btn").click(function(){
+							var route = "overlays/new/" + $("#footage-spinner").val(); 
+							router.navigate(route, {
 								trigger: true
 							});
 						});
