@@ -728,7 +728,61 @@ app.put('/api/locations/:id', function(req, res) {
         var jayschema = new JaySchema();
 
         async.series({
-            jsonvalidation_1 : function(callback) {
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Location";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Video!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to an Overlay!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            },
+            jsonValidation_1 : function(callback) {
 
                 if (JSON.stringify(req.body) == '{}') {
 
@@ -891,77 +945,102 @@ app.put('/api/locations/:id', function(req, res) {
                     // Asynchron functions to set the relationships for the new Location
                     async.parallel({
                         relatedLocations : function(callback_01) {
-                            
-                            console.log("--- Updating the relationships for relatedLocations ---");
+
+                            var propertyName = "relatedLocations";
                             var locationIDs = new Array();
-                            
 
-                            // 3rd Query - Delete all relationships between the current Location and related Locations (only when relationships alreday exist)
-                            var query_2 = "START l=node("+ req.params.id +") MATCH l-[r:relatedTo]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
-                            //console.log(query_2);
-
-                            // 3rd Database Query
-                            db.cypherQuery(query_2, function(err, result) {
-                                if (err) {
-
-                                    console.log("Error: Could not update the related Locations!");
-                                    callback_01(null, locationIDs);
-
-                                } else {
-
-                                    async.forEach(req.body.relatedLocations, function(locationID_temp, callback_1) {
-
-                                        // 3rd Query - Check if all submitted related Locations exist
-                                        var query_3 = "START l=node("+ locationID_temp +") RETURN l";
-                                        //console.log(query_3);
-                
-                                        // 3rd Database Query
-                                        db.cypherQuery(query_3, function(err, result) {
-                                            if (err) {
-                                                console.log("Error: Could not find the related Location " + locationID_temp);
-                                                status_relatedLocation = false;
+                            // Check if property was submitted, if "true", then update all relationships, else get the old IDs
+                            if(req.body.relatedLocations) {
                                 
-                                                // tell async that the iterator has completed
-                                                callback_1();
-                                            } else {
-                                                //console.log(result.data);
-                                                //console.log(result.columns);
-                                                
-                                                console.log("Found the Location " + locationID_temp);
+                                console.log('--- Updating the relationships for "' + propertyName + '"! ---');
+                            
+                                // 3rd Query - Delete all relationships between the current Location and related Locations (only when relationships alreday exist)
+                                var query_2 = "START l=node("+ req.params.id +") MATCH l-[r:relatedTo]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
+                                //console.log(query_2);
 
+                                // 3rd Database Query
+                                db.cypherQuery(query_2, function(err, result) {
+                                    if (err) {
 
-                                                // 4th Query - Connect the submitted related Location to the current Location
-                                                var query_4 = "START l1=node(" + req.params.id + "), l2=node(" + locationID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
-                                                //console.log(query_4);
-
-                                                // 3rd Database Query
-                                                db.cypherQuery(query_4, function(err, result) {
-                                                    if (err) {
-                                                        console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Location " + locationID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_1();    
-                                                                    
-                                                    } else {
-                                                        
-                                                        console.log("A new relationship was set between the current Location " + req.params.id + " and the Location " + locationID_temp);
-                                                                    
-                                                        // Save the ID for the final result
-                                                        locationIDs.push(locationID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_1();    
-                                                    }
-                                                });
-                                            }
-                                        });   
-                                    }, function(err) {
-                                        console.log("relatedLocations: " + JSON.stringify(locationIDs));
-                                        console.log("--- Finished updating the relatedLocations ---");
+                                        console.log("Error: Could not update the related Locations!");
                                         callback_01(null, locationIDs);
-                                    });
-                                }
-                            });
+
+                                    } else {
+
+                                        async.forEach(req.body.relatedLocations, function(locationID_temp, callback_1) {
+
+                                            // 3rd Query - Check if all submitted related Locations exist
+                                            var query_3 = "START l=node("+ locationID_temp +") RETURN l";
+                                            //console.log(query_3);
+                    
+                                            // 3rd Database Query
+                                            db.cypherQuery(query_3, function(err, result) {
+                                                if (err) {
+                                                    console.log("Error: Could not find the related Location " + locationID_temp);
+                                                    status_relatedLocation = false;
+                                    
+                                                    // tell async that the iterator has completed
+                                                    callback_1();
+                                                } else {
+                                                    //console.log(result.data);
+                                                    //console.log(result.columns);
+                                                    
+                                                    console.log("Found the Location " + locationID_temp);
+
+
+                                                    // 4th Query - Connect the submitted related Location to the current Location
+                                                    var query_4 = "START l1=node(" + req.params.id + "), l2=node(" + locationID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
+                                                    //console.log(query_4);
+
+                                                    // 3rd Database Query
+                                                    db.cypherQuery(query_4, function(err, result) {
+                                                        if (err) {
+                                                            console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Location " + locationID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_1();    
+                                                                        
+                                                        } else {
+                                                            
+                                                            console.log("A new relationship was set between the current Location " + req.params.id + " and the Location " + locationID_temp);
+                                                                        
+                                                            // Save the ID for the final result
+                                                            locationIDs.push(locationID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_1();    
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }, function(err) {
+                                            console.log("relatedLocations: " + JSON.stringify(locationIDs));
+                                            console.log("--- Finished updating the relatedLocations ---");
+                                            callback_01(null, locationIDs);
+                                        });
+                                    }
+                                });
+                            } else {
+                                console.log('Could not found the property "' + propertyName + '"!');
+                                
+                                // Query - Get all IDs of the related Locations
+                                var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]->n RETURN ID(n) AS relatedTo";
+                                console.log(query);
+
+                                // Database Query
+                                db.cypherQuery(query, function(err, result) {
+                                    if (err) {
+
+                                        console.log("Error: Could not found related Locations!");
+                                        callback_01(null, locationIDs);
+
+                                    } else {
+                                        console.log(result.data);
+                                        locationIDs = result.data;
+                                        callback_01(null, locationIDs);
+                                    }
+                                });
+                            }
                         },
                         videos : function(callback_02) {
         
@@ -1626,6 +1705,60 @@ app.put('/api/videos/:id', function(req, res) {
         var jayschema = new JaySchema();
 
         async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Video";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Location'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Location!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to an Overlay!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            },
             jsonvalidation_1 : function(callback) {
 
                 if (JSON.stringify(req.body) == '{}') {
@@ -1643,7 +1776,7 @@ app.put('/api/videos/:id', function(req, res) {
             jsonvalidation_2 : function(callback) {
                 jayschema.validate(req.body, schemas.getSchema('putVideoSchema'), function(errs) {
                     if (errs) {
-                        console.log(errs);
+
                         for (var i=0; i < errs.length; i++) {
 
                             // Check if error occurred by a missing attribute (e.g. name required, but no attribute "name" received)
@@ -2265,6 +2398,60 @@ app.put('/api/overlays/:id', function(req, res) {
         var jayschema = new JaySchema();
 
         async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Overlay";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Video!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Location'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Location!";
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            },
             jsonvalidation_1 : function(callback) {
 
                 if (JSON.stringify(req.body) == '{}') {
@@ -2687,4 +2874,3 @@ app.get('/api/scenarios/:id', function(req, res) {
 // 3.4.4 Edit a Scenario [!]
 
 // 3.4.5 Remove a Scenario [!]
-
