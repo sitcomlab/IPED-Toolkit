@@ -474,6 +474,12 @@ Changeable attributes:
 
         Error: The element values of the array "<propertyName>" are not unique!
 
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
@@ -578,7 +584,6 @@ Required attributes:
         
         Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
 
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -662,7 +667,13 @@ Changeable attributes:
         Error: The value of the property "url" is not a valid URL!
         
         Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
         
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
@@ -940,6 +951,12 @@ Changeable attributes:
         Error: The element values of the array "<propertyName>" are not unique!
 
         Error: The value of the property "url" is not a valid URL!
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 406 (text/plain)
 
