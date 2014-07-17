@@ -740,7 +740,7 @@ app.put('/api/locations/:id', function(req, res) {
                         res.writeHead(404, {
                             'Content-Type' : 'text/plain'
                         });
-                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                         res.end(errorMsg);
                         return;
 
@@ -751,7 +751,7 @@ app.put('/api/locations/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                             res.end(errorMsg);
                             
                             return;
@@ -761,7 +761,7 @@ app.put('/api/locations/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Video!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
                             res.end(errorMsg);
                             return;
 
@@ -771,7 +771,7 @@ app.put('/api/locations/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to an Overlay!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
                             res.end(errorMsg);
                             return;
 
@@ -1717,7 +1717,7 @@ app.put('/api/videos/:id', function(req, res) {
                         res.writeHead(404, {
                             'Content-Type' : 'text/plain'
                         });
-                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                         res.end(errorMsg);
                         return;
 
@@ -1728,7 +1728,7 @@ app.put('/api/videos/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                             res.end(errorMsg);
                             
                             return;
@@ -1738,7 +1738,7 @@ app.put('/api/videos/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Location!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Location"!';
                             res.end(errorMsg);
                             return;
 
@@ -1748,7 +1748,7 @@ app.put('/api/videos/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to an Overlay!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
                             res.end(errorMsg);
                             return;
 
@@ -2410,7 +2410,7 @@ app.put('/api/overlays/:id', function(req, res) {
                         res.writeHead(404, {
                             'Content-Type' : 'text/plain'
                         });
-                        var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                         res.end(errorMsg);
                         return;
 
@@ -2421,7 +2421,7 @@ app.put('/api/overlays/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID could not be found!";
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
                             res.end(errorMsg);
                             
                             return;
@@ -2431,7 +2431,7 @@ app.put('/api/overlays/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Video!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
                             res.end(errorMsg);
                             return;
 
@@ -2441,7 +2441,7 @@ app.put('/api/overlays/:id', function(req, res) {
                             res.writeHead(404, {
                                 'Content-Type' : 'text/plain'
                             });
-                            var errorMsg = "Error: No valid request! The submitted " + label + "-ID belongs to a Location!";
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Location"!';
                             res.end(errorMsg);
                             return;
 
