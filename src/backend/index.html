@@ -111,6 +111,17 @@
 		</div-->
 		<div id="add-location-dialog" title="Add New Location" class="dialog"></div>
 		<div id="edit-location-dialog" title="Edit Location" class="dialog"></div>
+		
+		<!-- JQuery Dialogs (without templates) -->
+		<div id="add-video-dialog" title="Add Video" class="dialog">
+		</div>
+		<div id="delete-location-dialog">
+			<p>
+				<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The specified location will be deleted. Continue?
+			</p>
+			<input type="button" class="button" value="Confirm" id="confirm-deletion"/>
+			<input type="button" class="button" value="Cancel" id="cancel-deletion"/>
+		</div>
 		<div data-role="content">
 			<div id="map"></div>
 
@@ -142,7 +153,7 @@
 			<div id="tag-list"></div>
 			</td>
 			<td>
-			<input type="button" value="Add" class="button" id="add-tag-btn">	
+			<input type="button" value="Add" class="button" id="add-tag-btn">
 			</td>
 			</tr>
 			</table>
@@ -151,7 +162,7 @@
 			</div>
 			<br>
 			<div id="add-location-footage">
-			
+
 			<h3>Video Footage</h3>
 
 			<hr />
@@ -172,14 +183,14 @@
 			<div id="add-video-overlays">
 		</script>
 		<script type="text/template" id="add-new-location-template2">
-			
+
 			<h3>Overlays</h3>
 
 			<hr />
 			<form>
 			<select name="select-native-2" data-mini="true" id="overlay-spinner">
 			<option value="">Select Overlay From Library</option>
-			<% _.each(overlays, function(overlay) { %>	
+			<% _.each(overlays, function(overlay) { %>
 			<option value= <%= "'" + overlay._id + "'" %>><%= overlay.name %></option>
 			<% }); %>
 			</select>
@@ -187,8 +198,8 @@
 			<br>
 			<br>
 			<input type="button" value="Add" class="button" id="add-overlay-btn">
-			<input type="button" value="Add New Overlay" class="button" id="add-new-overlay-btn">
-			
+			<input type="button" value="New" class="button" id="add-new-overlay-btn">
+			<input type="button" value="Delete" class="button" id="delete-overlay-list">
 			</form>
 			</div>
 			<div>
@@ -196,11 +207,42 @@
 			<input type="button" value="Save" id="submit-location" class="button">
 			</div>
 		</script>
-		<div id="delete-location-dialog">
-  			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The specified location will be deleted. Continue?</p>
-  			<input type="button" class="button" value="Confirm" id="confirm-deletion"/>
-  			<input type="button" class="button" value="Cancel" id="cancel-deletion"/>
-		</div>
+		<script type="text/template" id="add-video-template">
+			<p class="validateTips">
+				All form fields are required.
+			</p>
+
+			<form>
+				<fieldset>
+					<table>
+					<tr>	
+					<td><label for="video-name">Name:</label></td>
+					<td><input type="text" name="video-name" id="video-name" value="Please insert video name" class="text ui-widget-content ui-corner-all"></td>
+					</tr>
+					<td><label for="video-date">Date:</label></td>
+					<td><input type="text" name="video-date" id="video-date" value="YYYY-MM-DD (HH:mm)" class="text ui-widget-content ui-corner-all"></td>
+					<tr>
+					<td><label for="video-url">URL:</label></td>
+					<td><input type="text" name="video-url" id="video-url" value="Please insert URL" class="text ui-widget-content ui-corner-all"></td>
+					</tr>
+					</table>
+					<label for="video-tags">Tags:</label>
+					<table>
+						<tr>
+							<td>
+							<input type="text" name="video-tags" id="video-tags" value="Add new tag here" class="text ui-widget-content ui-corner-all">
+							<div id="video-tag-list"></div></td>
+							<td>
+							<input type="button" value="Add" class="button" id="video-add-tag-btn">
+							</td>
+						</tr>
+					</table>
+					<!-- Allow form submission with keyboard without duplicating the dialog button -->
+					<input type="button" value="Add Video" id="submit-video" class="button">
+				</fieldset>
+			</form>
+		</script>
+		
 		<!-- JQuery -->
 		<script src="../libs/jquery.js" type="text/javascript"></script>
 		<!-- JQuery Mobile->
