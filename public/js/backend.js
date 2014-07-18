@@ -262,7 +262,7 @@ var AddLocationView = Backbone.View.extend({
 								tags : tags,
 								lat : latitude,
 								lon : longitude,
-								videos : footages,
+								videos : footageselection,
 								overlays : overlayselection
 
 							};
