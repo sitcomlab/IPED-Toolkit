@@ -960,7 +960,7 @@ app.put('/api/locations/:id', function(req, res) {
             if(req.body.name) {
                 propertyChanges = propertyChanges + 'SET l.name=' + JSON.stringify(req.body.name) + ' ';
             }
-            if(req.body.description || req.body.date == "") {
+            if(req.body.description || req.body.description == "") {
                 propertyChanges = propertyChanges + 'SET l.description=' + JSON.stringify(req.body.description) + ' ';
             }
             if(req.body.tags) {
@@ -1103,148 +1103,198 @@ app.put('/api/locations/:id', function(req, res) {
                         },
                         videos : function(callback_02) {
         
-                            console.log("--- Updating the relationships for Videos ---");
+                            var propertyName = "videos";
                             var videoIDs = new Array();
 
-
-                            // 2nd Query - Delete all relationships between the current Location and Videos (only when relationships alreday exist)
-                            var query_2 = "START l=node("+ req.params.id +") MATCH l<-[r:wasRecordedAt]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
-                            //console.log(query_2);
-
-                            // 2nd Database Query
-                            db.cypherQuery(query_2, function(err, result) {
-                                if (err) {
-                                                 
-                                    console.log("Error: Could not update the related Video!");
-                                    callback_02(null, videoIDs);
-
-                                } else {
-
-                                    async.forEach(req.body.videos, function(videoID_temp, callback_2) {
-
-                                        // 3rd Query - Check if all submitted related Videos exist
-                                        var query_3 = "START v=node("+ videoID_temp +") RETURN v";
-                                        //console.log(query_3);
-                
-                                        // 3rd Database Query
-                                        db.cypherQuery(query_3, function(err, result) {
-                                            if (err) {
-                                                console.log("Error: Could not find the related Videos " + videoID_temp);
-                                                status_videos = false;
+                            // Check if property was submitted, if "true", then update all relationships, else get the old IDs
+                            if(req.body.videos) {
                                 
-                                                // tell async that the iterator has completed
-                                                callback_2();
-                                            } else {
-                                                //console.log(result.data);
-                                                //console.log(result.columns);
-                                                
-                                                console.log("Found the Video " + videoID_temp);
+                                console.log('--- Updating the relationships for "' + propertyName + '"! ---');
 
+                                // 2nd Query - Delete all relationships between the current Location and Videos (only when relationships alreday exist)
+                                var query_2 = "START l=node("+ req.params.id +") MATCH l<-[r:wasRecordedAt]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
+                                //console.log(query_2);
 
-                                                // 4th Query - Connect the submitted Video to the current Location
-                                                var query_4 = "START l=node(" + req.params.id + "), v=node(" + videoID_temp + ") CREATE (v)-[:wasRecordedAt]->(l)";
-                                                //console.log(query_4);
-
-                                                // 3rd Database Query
-                                                db.cypherQuery(query_4, function(err, result) {
-                                                    if (err) {
-                                                        console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Video " + videoID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_2();    
-                                                                    
-                                                    } else {
-                                                        
-                                                        console.log("A new relationship was set between the current Location " + req.params.id + " and the Video " + videoID_temp);
-                                                                    
-                                                        // Save the ID for the final result
-                                                        videoIDs.push(videoID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_2();    
-                                                    }
-                                                });
-                                            }
-                                        });   
-                                    }, function(err) {
-                                        console.log("videos: " + JSON.stringify(videoIDs));
-                                        console.log("--- Finished updating the Videos ---");
+                                // 2nd Database Query
+                                db.cypherQuery(query_2, function(err, result) {
+                                    if (err) {
+                                                     
+                                        console.log("Error: Could not update the related Video!");
                                         callback_02(null, videoIDs);
-                                    });
-                                }
-                            });
+
+                                    } else {
+
+                                        async.forEach(req.body.videos, function(videoID_temp, callback_2) {
+
+                                            // 3rd Query - Check if all submitted related Videos exist
+                                            var query_3 = "START v=node("+ videoID_temp +") RETURN v";
+                                            //console.log(query_3);
+                    
+                                            // 3rd Database Query
+                                            db.cypherQuery(query_3, function(err, result) {
+                                                if (err) {
+                                                    console.log("Error: Could not find the related Videos " + videoID_temp);
+                                                    status_videos = false;
+                                    
+                                                    // tell async that the iterator has completed
+                                                    callback_2();
+                                                } else {
+                                                    //console.log(result.data);
+                                                    //console.log(result.columns);
+                                                    
+                                                    console.log("Found the Video " + videoID_temp);
+
+
+                                                    // 4th Query - Connect the submitted Video to the current Location
+                                                    var query_4 = "START l=node(" + req.params.id + "), v=node(" + videoID_temp + ") CREATE (v)-[:wasRecordedAt]->(l)";
+                                                    //console.log(query_4);
+
+                                                    // 3rd Database Query
+                                                    db.cypherQuery(query_4, function(err, result) {
+                                                        if (err) {
+                                                            console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Video " + videoID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_2();    
+                                                                        
+                                                        } else {
+                                                            
+                                                            console.log("A new relationship was set between the current Location " + req.params.id + " and the Video " + videoID_temp);
+                                                                        
+                                                            // Save the ID for the final result
+                                                            videoIDs.push(videoID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_2();    
+                                                        }
+                                                    });
+                                                }
+                                            });   
+                                        }, function(err) {
+                                            console.log("videos: " + JSON.stringify(videoIDs));
+                                            console.log("--- Finished updating the Videos ---");
+                                            callback_02(null, videoIDs);
+                                        });
+                                    }
+                                });
+                            } else {
+                                console.log('Could not found the property "' + propertyName + '"!');
+                                
+                                // Query - Get all IDs of the related Videos
+                                var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN ID(v) AS videos";
+                                console.log(query);
+
+                                // Database Query
+                                db.cypherQuery(query, function(err, result) {
+                                    if (err) {
+
+                                        console.log("Error: Could not found related Videos!");
+                                        callback_02(null, videoIDs);
+
+                                    } else {
+                                        console.log(result.data);
+                                        videoIDs = result.data;
+                                        callback_02(null, videoIDs);
+                                    }
+                                });
+                            }
                         },
                         overlays : function(callback_03) {
         
-                            console.log("--- Updating the relationships for Overlays ---");
+                            var propertyName = "overlays";
                             var overlayIDs = new Array();
 
-
-                            // 2nd Query - Delete all relationships between the current Location and Overlays (only when relationships alreday exist)
-                            var query_2 = "START l=node("+ req.params.id +") MATCH l<-[r:locatedAt]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";                        //console.log(query_2);
-
-                            // 2nd Database Query
-                            db.cypherQuery(query_2, function(err, result) {
-                                if (err) {
-                                                 
-                                    console.log("Error: Could not update the related Overlay!");
-                                    callback_03(null, overlayIDs);
-
-                                } else {
-
-                                    async.forEach(req.body.overlays, function(overlayID_temp, callback_3) {
-
-                                        // 3rd Query - Check if all submitted related Overlays exist
-                                        var query_3 = "START o=node("+ overlayID_temp +") RETURN o";
-                                        //console.log(query_3);
-                
-                                        // 3rd Database Query
-                                        db.cypherQuery(query_3, function(err, result) {
-                                            if (err) {
-                                                console.log("Error: Could not find the related Overlay " + overlayID_temp);
-                                                status_overlays = false;
+                            // Check if property was submitted, if "true", then update all relationships, else get the old IDs
+                            if(req.body.overlays) {
                                 
-                                                // tell async that the iterator has completed
-                                                callback_3();
-                                            } else {
-                                                //console.log(result.data);
-                                                //console.log(result.columns);
-                                                
-                                                console.log("Found the Overlay " + overlayID_temp);
+                                console.log('--- Updating the relationships for "' + propertyName + '"! ---');
 
+                                // 2nd Query - Delete all relationships between the current Location and Overlays (only when relationships alreday exist)
+                                var query_2 = "START l=node("+ req.params.id +") MATCH l<-[r:locatedAt]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";                        //console.log(query_2);
 
-                                                // 4th Query - Connect the submitted Overlay to the current Location
-                                                var query_4 = "START l=node(" + req.params.id + "), o=node(" + overlayID_temp + ") CREATE (o)-[:locatedAt]->(l)";
-                                                //console.log(query_4);
-
-                                                // 3rd Database Query
-                                                db.cypherQuery(query_4, function(err, result) {
-                                                    if (err) {
-                                                        console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Overlay " + overlayID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_3();    
-                                                                    
-                                                    } else {
-                                                        
-                                                        console.log("A new relationship was set between the current Location " + req.params.id + " and the Overlay " + overlayID_temp);
-                                                                    
-                                                        // Save the ID for the final result
-                                                        overlayIDs.push(overlayID_temp);
-                                                                    
-                                                        // tell async that the iterator has completed
-                                                        callback_3();    
-                                                    }
-                                                });
-                                            }
-                                        });   
-                                    }, function(err) {
-                                        console.log("overlays: " + JSON.stringify(overlayIDs));
-                                        console.log("--- Finished updating the Overlays ---");
+                                // 2nd Database Query
+                                db.cypherQuery(query_2, function(err, result) {
+                                    if (err) {
+                                                     
+                                        console.log("Error: Could not update the related Overlay!");
                                         callback_03(null, overlayIDs);
-                                    });
-                                }
-                            });
+
+                                    } else {
+
+                                        async.forEach(req.body.overlays, function(overlayID_temp, callback_3) {
+
+                                            // 3rd Query - Check if all submitted related Overlays exist
+                                            var query_3 = "START o=node("+ overlayID_temp +") RETURN o";
+                                            //console.log(query_3);
+                    
+                                            // 3rd Database Query
+                                            db.cypherQuery(query_3, function(err, result) {
+                                                if (err) {
+                                                    console.log("Error: Could not find the related Overlay " + overlayID_temp);
+                                                    status_overlays = false;
+                                    
+                                                    // tell async that the iterator has completed
+                                                    callback_3();
+                                                } else {
+                                                    //console.log(result.data);
+                                                    //console.log(result.columns);
+                                                    
+                                                    console.log("Found the Overlay " + overlayID_temp);
+
+
+                                                    // 4th Query - Connect the submitted Overlay to the current Location
+                                                    var query_4 = "START l=node(" + req.params.id + "), o=node(" + overlayID_temp + ") CREATE (o)-[:locatedAt]->(l)";
+                                                    //console.log(query_4);
+
+                                                    // 3rd Database Query
+                                                    db.cypherQuery(query_4, function(err, result) {
+                                                        if (err) {
+                                                            console.log("Error: Could not insert the relationship between the current Location " + req.params.id + " and the related Overlay " + overlayID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_3();    
+                                                                        
+                                                        } else {
+                                                            
+                                                            console.log("A new relationship was set between the current Location " + req.params.id + " and the Overlay " + overlayID_temp);
+                                                                        
+                                                            // Save the ID for the final result
+                                                            overlayIDs.push(overlayID_temp);
+                                                                        
+                                                            // tell async that the iterator has completed
+                                                            callback_3();    
+                                                        }
+                                                    });
+                                                }
+                                            });   
+                                        }, function(err) {
+                                            console.log("overlays: " + JSON.stringify(overlayIDs));
+                                            console.log("--- Finished updating the Overlays ---");
+                                            callback_03(null, overlayIDs);
+                                        });
+                                    }
+                                });
+                            } else {
+                                console.log('Could not found the property "' + propertyName + '"!');
+                                
+                                // Query - Get all IDs of the related Videos
+                                var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN ID(o) AS overlays";
+                                console.log(query);
+
+                                // Database Query
+                                db.cypherQuery(query, function(err, result) {
+                                    if (err) {
+
+                                        console.log("Error: Could not found related Overlays!");
+                                        callback_03(null, overlayIDs);
+
+                                    } else {
+                                        console.log(result.data);
+                                        overlayIDs = result.data;
+                                        callback_03(null, overlayIDs);
+                                    }
+                                });
+                            }
                         }
                     }, function(err, allResults) {
 
