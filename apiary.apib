@@ -4,7 +4,6 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 # IPED-Toolkit-API
 
 
-<!-- BEGIN OF THE INTRO -->
 #### Hosts
 * HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
 * HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
@@ -68,15 +67,13 @@ e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a f
 * For more examples check out: [http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)
 
 
-### API-Comments:
-It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding funtion click the 
+#### API-Comments:
+It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function click the 
 "Add comment"-Button on the right side of the box.
 
-<!-- END OF THE INTRO -->
 
 * * *
 
-<!-- BEGIN OF THE API -->
 
 # Group Locations
 
@@ -126,7 +123,7 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 ### Create a Location [POST]
 (Status: **implemented**, Developer: Nicho)
 
-Required attributes:
+<u>**Required properties**</u>:
 
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
@@ -138,7 +135,7 @@ Required attributes:
 - `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
 
 
-HTTP-Status:
+<u>**HTTP-Status**</u>:
 
 - `201` Created succesfully a Location with all relatedLocations, Videos and Overlays
 - `211` Created succesfully a Location, but couldn't set all relatedLocations (please check if all IDs of the relatedLocations exist)
@@ -391,9 +388,15 @@ A single Location object with all its details
                 ]
             }
             
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
 + Response 406 (text/plain)
 
-        Error: No valid request! The submitted ID is not an integer!            
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!        
             
 + Response 500 (text/plain)
 
@@ -403,7 +406,7 @@ A single Location object with all its details
 ### Edit a Location [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-Changeable attributes:
+<u>**Changeable properties**</u> (a minimum of one property is required):
 
 - `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
 - `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
@@ -478,11 +481,11 @@ Changeable attributes:
 
         Error: The submitted "<Object>"-ID could not be found!
         
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
         
 + Response 500 (text/plain)
 
@@ -493,6 +496,16 @@ Changeable attributes:
 (Status: **implemented**, Developer: Nicho)
 
 + Response 204 (text/plain)
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
@@ -537,7 +550,7 @@ Changeable attributes:
 ### Create a Video [POST]
 (Status: **implemented**, Developer: Nicho)
 
-Required attributes:
+<u>**Required properties**</u>:
 
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
@@ -611,9 +624,15 @@ A single Video object with all details
                 "tags":[]
             }
             
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -623,7 +642,7 @@ A single Video object with all details
 ### Edit a Video [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-Changeable attributes:
+<u>**Changeable properties**</u> (a minimum of one property is required):
 
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
@@ -672,11 +691,11 @@ Changeable attributes:
 
         Error: The submitted "<Object>"-ID could not be found!
         
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -688,9 +707,15 @@ Changeable attributes:
 
 + Response 204 (text/plain)
 
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -738,7 +763,7 @@ Changeable attributes:
 ### Create an Overlay [POST]
 (Status: **implemented**, Developer: Nicho)
 
-Required attributes:
+<u>**Required properties**</u>:
 
 - `name` **String** (can not be empty; example: *"1st Public Display"*)
 - `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
@@ -860,9 +885,15 @@ A single Overlay object with all its details
                 "x":100
             }
             
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -872,7 +903,7 @@ A single Overlay object with all its details
 ### Edit an Overlay [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-Changeable attributes:
+<u>**Changeable properties**</u> (a minimum of one property is required):
 
 - `name` **String** (can not be empty; example: *"1st Public Display"*)
 - `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
@@ -956,11 +987,11 @@ Changeable attributes:
 
         Error: The submitted "<Object>"-ID could not be found!
         
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -973,9 +1004,15 @@ Changeable attributes:
 
 + Response 204 (text/plain)
 
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -1012,7 +1049,7 @@ Changeable attributes:
 ### Create a Scenario [POST]
 (Status: **in design**)
 
-Required attributes:
+<u>**Required properties**</u>:
 
 - `name` **String** (e.g. *"Scenario 3"*)
 - `tags[]` **String[ ]** (e.g. *["Münster"]*)
