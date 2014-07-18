@@ -236,10 +236,14 @@ var AddLocationView = Backbone.View.extend({
 						});
 
 						$("#add-new-overlay-btn").click(function() {
-							var route = "overlays/new/" + $("#footage-spinner").val();
-							router.navigate(route, {
-								trigger : true
-							});
+							if ($("#footage-spinner").val() == 1) {
+								alert("First, you have to select a footage to create an overlay for.");
+							} else {
+								var route = "overlays/new/" + $("#footage-spinner").val();
+								router.navigate(route, {
+									trigger : true
+								});
+							}
 						});
 						$("#delete-overlay-list").click(function() {
 							overlayselection = [];
@@ -365,10 +369,11 @@ var EditLocationView = Backbone.View.extend({
 						var footages = footageselection;
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
-						/*var template2 = _.template($("#add-new-location-template2").html(), {
-						 overlays : overlays
-						 });*/
 						var template2 = initOverlaySpinner(overlays);
+						/*var template2 = _.template($("#add-new-location-template2").html(), {
+						overlays : overlays
+						});*/
+
 						//template =  _.template($("#add-new-location-template").html(), {overlays: overlays});
 						that.$el.append(template2);
 
@@ -474,6 +479,11 @@ var ROUTER = Backbone.Router.extend({
 		'locations/delete/:id' : 'deleteLocation',
 		'overlays/new/:id' : 'addOverlay',
 		'videos/new' : 'addVideo'
+	},
+	previous : function() {
+		this.navigate('#/' + this.history[this.history.length - 2], {
+			trigger: true
+		});
 	}
 });
 
@@ -652,6 +662,7 @@ function submitVideo(taglist) {
 			console.log(video.toJSON());
 			addLocation_view.render();
 			editLocation_view.render();
+			router.previous();
 		}
 	});
 
@@ -672,7 +683,7 @@ function initFootageSpinner(videos) {
 
 function initOverlaySpinner(overlays) {
 	var overlays = overlays;
-	var template2 = _.template($("#add-new-location-template2").html(), {
+	var template = _.template($("#add-new-location-template2").html(), {
 		overlays : overlays
 	});
 	return template;
