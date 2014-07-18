@@ -565,27 +565,8 @@ function openDialog() {
 }
 
 function submitLocation(details) {
-	/*
-	var locname = $("#name").val(), locdescription = $("#description").val();
-	var loctags = tags;
-	var latitude = coords.lat, longitude = coords.lng;
-	var locvideos = videos;
-	var locoverlays = overlays;
-	*/
-	//console.log("Location values: " + locname + ", " + locdescription + ", " + loctags);
-
 	var newLocation = new LocationModel();
 	var locationDetails = details;
-	/*var locationDetails = {
-	 name : locname,
-	 description : locdescription,
-	 tags : loctags,
-	 lat : latitude,
-	 lon : longitude,
-	 videos : locvideos,
-	 overlays : locoverlays
-
-	 };*/
 
 	console.log("Object to be transmitted: ");
 	console.log(locationDetails);
