@@ -113,33 +113,45 @@ Overlay.prototype.init = function() {
 };
 
 Overlay.prototype.createOverlays = function(id) {
-	var url = SERVER_URL+ PORT + 'api/locations/' + id + '/overlays';
-	var displays = (function() {
-		var displays = null;
-		$.ajax({
-			'async' : false,
-			'url' : url,
-			'dataType' : 'json',
-			'beforeSend' : function(request) {
-				console.log("Request prepared");
-			},
-			'success' : function(data) {
-				displays = data.overlays;
-				console.log(data);
-			},
-			'error' : function(jqXHR, textStatus, errorThrown) {
-				alert('' + errorThrown);
-			}
-		});
-		console.log("displays: " + displays);
-		return displays;
-	})();
+  var overlays = [];
+  
+  $.ajax({
+    'async' : false,
+    'url' : SERVER_URL+ PORT + 'api/locations/' + id,
+    'dataType' : 'json',
+    'beforeSend' : function(request) {
+      console.log("Request prepared");
+    },
+    'success' : function(data) {
+      
+      data.overlays.forEach(function(overlayId) {
+        $.ajax({
+          'async' : false,
+          'url' : SERVER_URL+ PORT + 'api/overlays/' + overlayId,
+          'dataType' : 'json',
+          'beforeSend' : function(request) {
+            console.log("Request prepared");
+          },
+          'success' : function(data) {
+            overlays.push(data);
+          },
+          'error' : function(jqXHR, textStatus, errorThrown) {
+            alert('' + errorThrown);
+          }
+        });
+      }, this);
+        
+    },
+    'error' : function(jqXHR, textStatus, errorThrown) {
+      alert('' + errorThrown);
+    }
+  });
 
-	if (displays == null || displays == "undefined") {
+	if (overlays == null || overlays == "undefined") {
 		console.log("There are no overlays at this location.");
 	} else {
-		console.log("There are " + displays.length + " displays at this location.");
-		displays.forEach(function(display) {
+		console.log("There are " + overlays.length + " overlays at this location.");
+		overlays.forEach(function(display) {
 			var object;
 			
 			switch(display.type) {

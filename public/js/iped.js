@@ -27,7 +27,7 @@ socket.on('command', function(data) {
 	console.log("Command: ");
 	console.log(data);
 	setCurrentId(data.videoId);
-	loadVideo(data.videoId);
+	loadVideo();
 	//loadDisplays(data.videoId);
 });
 console.log("activated SocketIO!");
@@ -57,7 +57,7 @@ $(document).ready(function() {
 		setCurrentId(currentId_temp);
 		console.log("the currentId is:" + currentId);
 	}	
-		loadVideo(currentId);
+		loadVideo();
 		activateSocketIO();
 		
 		console.log("video created!");
@@ -120,36 +120,46 @@ function setCurrentId(new_id) {
 }
 
 //Load a new video
-function loadVideo(id) {
-	console.log("video loading initiated");
+function loadVideo() {
+  console.log("video loading initiated");
+  
+  var video; 
+	
 	//Empty video source
 	$("#iPED-Video").empty();
 
-	var url = SERVER_URL + PORT + 'api/locations/' + id + '/videos/';
-
-	//Ajax request for loading the required video data
-	var video = (function() {
-		var video = null;
-		$.ajax({
-			'async' : false,
-			'url' : url,
-			'dataType' : 'json',
-			'beforeSend' : function(request) {
-				console.log("Request prepared");
-			},
-			'success' : function(data) {
-				video = data;
-				console.log(data);
-			},
-			'error' : function(jqXHR, textStatus, errorThrown) {
-				alert('' + errorThrown);
-			}
-		});
-		return video;
-	})();
+  $.ajax({
+    'async' : false,
+    'url' : SERVER_URL + PORT + 'api/locations/' + currentId,
+    'dataType' : 'json',
+    'beforeSend' : function(request) {
+      console.log("Request prepared");
+    },
+    'success' : function(data) {
+      
+      var videoId = data.videos[0];
+      $.ajax({
+        'async' : false,
+        'url' : SERVER_URL + PORT + 'api/videos/' + videoId,
+        'dataType' : 'json',
+        'beforeSend' : function(request) {
+          console.log("Request prepared");
+        },
+        'success' : function(data) {
+          video = data;
+        },
+        'error' : function(jqXHR, textStatus, errorThrown) {
+          alert('' + errorThrown);
+        }
+      });
+      
+    },
+    'error' : function(jqXHR, textStatus, errorThrown) {
+      alert('' + errorThrown);
+    }
+  });
 
 	//Set the video variable to the right position in the node-array
-	video = video.videos[0];
 	console.log(video.url);
 
 	//Fill video tag with source
@@ -158,7 +168,7 @@ function loadVideo(id) {
 	console.log("video tag filled with source " + video.url);
 	
 	// Required for JQuery AOP's method "after"
-	return id;
+	return currentId;
 }
 
 function getMousePos(canvas, evt) {

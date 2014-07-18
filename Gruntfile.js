@@ -15,6 +15,7 @@ module.exports = function(grunt) {
 		'public/js/remote.js': 'src/frontend/remote.js',
 		'public/js/socket.io.js': 'src/frontend/socket.io.js',
 		'public/js/webRTC.js': 'src/frontend/webRTC.js',
+    'public/js/chromaKey.js': 'src/frontend/chromaKey.js',
 		// Backend
 		'public/backend/index.html': 'src/backend/index.html',
 		'public/backend/map.html': 'src/backend/map.html',
