@@ -29,9 +29,9 @@ $("#add-location-dialog").dialog({
 		effect : "fade",
 		duration : 500
 	},
-	close: function(){
+	close : function() {
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	}
 });
@@ -47,42 +47,38 @@ $("#edit-location-dialog").dialog({
 		effect : "fade",
 		duration : 500
 	},
-	close: function(){
+	close : function() {
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	}
 });
 
-
-$( "#delete-location-dialog" ).dialog({
-title: "Delete Location",
-autoOpen: false,
-draggable: false,
-resizable: false,
-height:140,
-modal: true,
-close: function(){
+$("#delete-location-dialog").dialog({
+	title : "Delete Location",
+	autoOpen : false,
+	draggable : false,
+	resizable : false,
+	height : 140,
+	modal : true,
+	close : function() {
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	}
-}
-);
+});
 
-dialog = $( "#add-video-dialog" ).dialog({
-      autoOpen: false,
-      height: 300,
-      width: 400,
-      modal: true,
-      close: function(){
+dialog = $("#add-video-dialog").dialog({
+	autoOpen : false,
+	height : 300,
+	width : 400,
+	modal : true,
+	close : function() {
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	}
-    });
-
-
+});
 
 // Initialize map
 $(document).ready(function() {
@@ -131,13 +127,13 @@ var OverlayCollection = Backbone.Model.extend({
 });
 
 var Video = Backbone.Model.extend({
-	urlRoot: '/api/videos',
-	defaults: {
+	urlRoot : '/api/videos',
+	defaults : {
 		name : '',
-		date: '',
+		date : '',
 		url : '',
-		tags: [],
-		description: ''
+		tags : [],
+		description : ''
 	}
 });
 
@@ -179,10 +175,11 @@ var AddLocationView = Backbone.View.extend({
 				var overlayselection = [];
 				var taglist = [];
 				//videos = footages.get("videos");
-				var template = _.template($("#add-new-location-template").html(), {
-					videos : videos
-				});
+				/*var template = _.template($("#add-new-location-template").html(), {
+				videos : videos
+				});*/
 				//template =  _.template($("#add-new-location-template").html(), {videos: videos});
+				var template = initFootageSpinner(videos);
 				that.$el.empty();
 				that.$el.append(template);
 				$(".button").button();
@@ -193,17 +190,17 @@ var AddLocationView = Backbone.View.extend({
 					$("#tag-list").empty();
 					$("#tag-list").text(taglist);
 				});
-				$("#footage-spinner").change("selectmenuchange", function(){
+				$("#footage-spinner").change("selectmenuchange", function() {
 					footageselection = [];
 					footageselection.push(parseInt($("#footage-spinner").val(), 10));
 					console.log(footageselection);
 				});
 				$("#add-footage-btn").click(function() {
 					router.navigate('videos/new', {
-						trigger: true
+						trigger : true
 					});
 				});
-				
+
 				overlays.fetch({
 					//url: '/api/overlays',
 					success : function(displays) {
@@ -213,12 +210,13 @@ var AddLocationView = Backbone.View.extend({
 						console.log("AddLocationView: overlays.fetch() entered");
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
-						var template2 = _.template($("#add-new-location-template2").html(), {
-							overlays : overlays
-						});
+						/*var template2 = _.template($("#add-new-location-template2").html(), {
+						 overlays : overlays
+						 });*/
+						var template2 = initOverlaySpinner(overlays);
 						//template =  _.template($("#add-new-location-template").html(), {overlays: overlays});
 						that.$el.append(template2);
-						
+
 						$.each(overlays, function(index, value) {
 							console.log(value.name);
 						});
@@ -234,16 +232,16 @@ var AddLocationView = Backbone.View.extend({
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
-							
+
 						});
-						
-						$("#add-new-overlay-btn").click(function(){
-							var route = "overlays/new/" + $("#footage-spinner").val(); 
+
+						$("#add-new-overlay-btn").click(function() {
+							var route = "overlays/new/" + $("#footage-spinner").val();
 							router.navigate(route, {
-								trigger: true
+								trigger : true
 							});
 						});
-						$("#delete-overlay-list").click(function(){
+						$("#delete-overlay-list").click(function() {
 							overlayselection = [];
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
@@ -333,13 +331,14 @@ var EditLocationView = Backbone.View.extend({
 				console.log("EditLocationView: videos.fetch() entered");
 				var videos = footages.get("videos");
 				//videos = footages.get("videos");
-				var template = _.template($("#add-new-location-template").html(), {
-					videos : videos
-				});
+				/*var template = _.template($("#add-new-location-template").html(), {
+				 videos : videos
+				 });*/
+				var template = initFootageSpinner(videos);
 				//template =  _.template($("#add-new-location-template").html(), {videos: videos});
 				that.$el.empty();
 				that.$el.append(template);
-				
+
 				$(".button").button();
 				$("#add-tag-btn").click(function() {
 					tags.push($("#tags").val());
@@ -348,14 +347,14 @@ var EditLocationView = Backbone.View.extend({
 					$("#tag-list").empty();
 					$("#tag-list").text(tags);
 				});
-				$("#footage-spinner").change("selectmenuchange", function(){
+				$("#footage-spinner").change("selectmenuchange", function() {
 					footageselection = [];
 					footageselection.push(parseInt($("#footage-spinner").val(), 10));
 					console.log(footageselection);
 				});
 				$("#add-footage-btn").click(function() {
 					router.navigate('videos/new', {
-						trigger: true
+						trigger : true
 					});
 				});
 				overlays.fetch({
@@ -366,12 +365,13 @@ var EditLocationView = Backbone.View.extend({
 						var footages = footageselection;
 						var overlays = displays.get("overlays");
 						//overlays = displays.get("overlays");
-						var template2 = _.template($("#add-new-location-template2").html(), {
-							overlays : overlays
-						});
+						/*var template2 = _.template($("#add-new-location-template2").html(), {
+						 overlays : overlays
+						 });*/
+						var template2 = initOverlaySpinner(overlays);
 						//template =  _.template($("#add-new-location-template").html(), {overlays: overlays});
 						that.$el.append(template2);
-						
+
 						$.each(overlays, function(index, value) {
 							console.log(value.name);
 						});
@@ -387,15 +387,15 @@ var EditLocationView = Backbone.View.extend({
 							console.log(overlayselection);
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
-							
+
 						});
-						$("#add-new-overlay-btn").click(function(){
-							var route = "overlays/new/" + $("#footage-spinner").val(); 
+						$("#add-new-overlay-btn").click(function() {
+							var route = "overlays/new/" + $("#footage-spinner").val();
 							router.navigate(route, {
-								trigger: true
+								trigger : true
 							});
 						});
-						$("#delete-overlay-list").click(function(){
+						$("#delete-overlay-list").click(function() {
 							overlayselection = [];
 							$("#overlay-list").empty();
 							$("#overlay-list").text(overlayselection);
@@ -437,11 +437,11 @@ var EditLocationView = Backbone.View.extend({
 });
 
 var AddVideoView = Backbone.View.extend({
-	el: $("#add-video-dialog"),
-	initialize: function(){
+	el : $("#add-video-dialog"),
+	initialize : function() {
 		console.log("Add Video View created");
 	},
-	render: function(){
+	render : function() {
 		this.$el.empty();
 		var template = $("#add-video-template").html();
 		this.$el.append(template);
@@ -450,15 +450,15 @@ var AddVideoView = Backbone.View.extend({
 		var tags = [];
 		$("#add-video-dialog").dialog("open");
 		$("#video-add-tag-btn").click(function() {
-					tags.push($("#video-tags").val());
-					$("#video-tags").val("");
-					console.log(tags);
-					$("#video-tag-list").empty();
-					$("#video-tag-list").text(tags);
-				});
-		$("#submit-video").click(function(){
+			tags.push($("#video-tags").val());
+			$("#video-tags").val("");
+			console.log(tags);
+			$("#video-tag-list").empty();
+			$("#video-tag-list").text(tags);
+		});
+		$("#submit-video").click(function() {
 			submitVideo(tags);
-		});		
+		});
 	}
 });
 
@@ -504,11 +504,11 @@ router.on('route:deleteLocation', function(id) {
 	showDeleteLocationDialog(id);
 });
 
-router.on('route:addOverlay', function(id){
+router.on('route:addOverlay', function(id) {
 	alert(id);
 });
 
-router.on('route:addVideo', function(){
+router.on('route:addVideo', function() {
 	addVideo_view.render();
 });
 Backbone.history.start();
@@ -597,22 +597,24 @@ function submitLocation(details) {
 	});
 
 }
-function showDeleteLocationDialog(id){
+
+function showDeleteLocationDialog(id) {
 	$("#delete-location-dialog").dialog("open");
-	$("#cancel-deletion").click(function (){
+	$("#cancel-deletion").click(function() {
 		$("#delete-location-dialog").dialog("close");
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	});
-	$("#confirm-deletion").click(function (){
+	$("#confirm-deletion").click(function() {
 		$("#delete-location-dialog").dialog("close");
 		deleteLocation(id);
 		router.navigate('', {
-			trigger: true
+			trigger : true
 		});
 	});
 }
+
 function deleteLocation(id) {
 	var location = new LocationModel({
 		id : id
@@ -627,7 +629,7 @@ function deleteLocation(id) {
 	});
 }
 
-function submitVideo(taglist){
+function submitVideo(taglist) {
 	var video = new Video();
 	var tags = [];
 	var name = $("#video-name").val();
@@ -635,30 +637,43 @@ function submitVideo(taglist){
 	var url = $("#video-url").val();
 	var tags = taglist;
 	var description = $("#video-name").val();
-	
-	
-				
+
 	video.set({
 		name : name,
-		date: date,
-		url: url,
-		tags: tags,
-		description: description
+		date : date,
+		url : url,
+		tags : tags,
+		description : description
 	});
-	
+
 	video.save({
-		success: function(){
+		success : function() {
 			console.log("Video successful submitted:");
 			console.log(video.toJSON());
-			
-			
+			addLocation_view.render();
+			editLocation_view.render();
 		}
 	});
-	
-	router.navigate('', {
-				trigger : true
-			});
-			$("#add-video-dialog").dialog("close");
+
 	//addLocation_view.render();
-	//editLocation_view.render();		
+	//editLocation_view.render();
+	$("#add-video-dialog").dialog("close");
+
+}
+
+function initFootageSpinner(videos) {
+	var videos = videos;
+	var template = _.template($("#add-new-location-template").html(), {
+		videos : videos
+	});
+
+	return template;
+}
+
+function initOverlaySpinner(overlays) {
+	var overlays = overlays;
+	var template2 = _.template($("#add-new-location-template2").html(), {
+		overlays : overlays
+	});
+	return template;
 }
