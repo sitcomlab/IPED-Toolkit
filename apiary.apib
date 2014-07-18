@@ -422,7 +422,6 @@ A single Location object with all its details
     + Body
     
             {
-                "_id":4,
                 "name":"Frauenstraße 2",
                 "tags":[
                     "Münster",
@@ -430,15 +429,7 @@ A single Location object with all its details
                     "Trattoria",
                     "Kulturcafé",
                     "Fürstin-von-Gallitzin-Wohnheim"
-                ],
-                "lon":7.6189278,
-                "lat":51.9634288,
-                "description":"Gegenüber der Trattoria",
-                "relatedLocations": [],
-                "videos": [
-                    711
-                ],
-                "overlays": []
+                ]
             }
 
 + Response 201 (application/json)
@@ -655,19 +646,16 @@ A single Video object with all details
     + body
     
                 { 
-                    "description": "Frauenstraße bei Tag",
-                    "name": "Frauenstraße2",
-                    "date": "",
-                    "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
-                    "tags":[]
+                    "description": "Frauenstraße bei Nacht",
+                    "name": "Frauenstraße 2"
                 }
 
 + Response 201 (application/json)
 
         {  
             "_id":36,
-            "description":"Frauenstraße bei Tag",
-            "name":"Frauenstraße2",
+            "description":"Frauenstraße bei Nacht",
+            "name":"Frauenstraße 2",
             "date":"",
             "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
             "tags":[]
@@ -786,46 +774,46 @@ A single Video object with all details
     + body 
     
             {   
+                "name":"Video Overlay",
+                "description":"Video Overlay Test",
                 "tags":[
                     "video",
                     "test"
                 ],
-                "d":0,
                 "type":"html",
                 "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "h":600,
                 "w":800,
-                "rz":0,
-                "description":"Video Overlay Test",
-                "name":"Video Overlay",
-                "z":0,
-                "rx":0,
+                "h":600,
+                "x":100,
                 "y":0,
+                "z":0,
+                "d":0,
+                "rx":0,
                 "ry":0,
-                "x":100
+                "rz":0
             }
 
 + Response 201 (application/json)
 
         {   
             "_id":23,
+            "name":"Video Overlay",
+            "description":"Video Overlay Test",
             "tags":[
                 "video",
                 "test"
             ],
-            "d":0,
             "type":"html",
             "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "h":600,
             "w":800,
-            "rz":0,
-            "description":"Video Overlay Test",
-            "name":"Video Overlay",
-            "z":0,
-            "rx":0,
+            "h":600,
+            "x":100,
             "y":0,
+            "z":0,
+            "d":0,
+            "rx":0,
             "ry":0,
-            "x":100
+            "rz":0
         }
 
 + Response 400 (text/plain)
@@ -866,23 +854,23 @@ A single Overlay object with all its details
 
             {
                 "_id":23,
+                "name":"Video Overlay",
+                "description":"Video Overlay Test",
                 "tags":[
                     "video",
                     "test"
                 ],
-                "d":0,
                 "type":"html",
                 "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "h":600,
                 "w":800,
-                "rz":0,
-                "description":"Video Overlay Test",
-                "name":"Video Overlay",
-                "z":0,
-                "rx":0,
+                "h":600,
+                "x":100,
                 "y":0,
+                "z":0,
+                "d":0,
+                "rx":0,
                 "ry":0,
-                "x":100
+                "rz":0
             }
             
 + Response 404 (text/plain)
@@ -925,46 +913,37 @@ A single Overlay object with all its details
     + body 
     
             {   
+                "name":"Video Overlay 2",
+                "description":"Video Overlay Test 2",
                 "tags":[
                     "video",
                     "test"
                 ],
-                "d":0,
                 "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "h":600,
-                "w":800,
-                "rz":0,
-                "description":"Video Overlay Test",
-                "name":"Video Overlay",
-                "z":0,
-                "rx":0,
-                "y":0,
-                "ry":0,
-                "x":100
+                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"
             }
 
 + Response 201 (application/json)
 
         {   
             "_id":23,
+            "name":"Video Overlay 2",
+            "description":"Video Overlay Test 2",
             "tags":[
                 "video",
                 "test"
             ],
-            "d":0,
             "type":"html",
             "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "h":600,
             "w":800,
-            "rz":0,
-            "description":"Video Overlay Test",
-            "name":"Video Overlay",
-            "z":0,
-            "rx":0,
+            "h":600,
+            "x":100,
             "y":0,
+            "z":0,
+            "d":0,
+            "rx":0,
             "ry":0,
-            "x":100
+            "rz":0
         }
         
 + Response 400 (text/plain)
