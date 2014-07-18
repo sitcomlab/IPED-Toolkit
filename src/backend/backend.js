@@ -299,7 +299,7 @@ var EditLocationView = Backbone.View.extend({
 		var footageselection, overlayselection, tags, lat, lon;
 		location.fetch({
 			success : function(location) {
-				console.log("Fetch for id " + location.get("d") + " successful!");
+				console.log("Fetch for id " + location.get("id") + " successful!");
 				console.log(location.toJSON());
 				$("#name").val(location.get("name"));
 				$("#description").val(location.get("description"));

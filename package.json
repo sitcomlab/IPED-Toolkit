@@ -5,6 +5,7 @@
   "main": "server.js",
   "author": "Münster University, Institute for Geoinformatics, Sitcom Lab",
   "dependencies": {
+    "async": "0.9.x",
     "express": "^4.0.0",
     "neo4j": "1.1.x",
     "node-neo4j": "2.0.x",
