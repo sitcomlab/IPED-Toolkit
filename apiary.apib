@@ -21,13 +21,6 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **200** `OK` - the request was successful (some API calls may return 201 instead).
 * **201** `Created` - the request was successful and a resource was created.
 * **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
-* **211** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **212** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **213** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **214** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **215** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **216** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
-* **217** `Unkown` - the request was partially successful and the resource was created (see more information in the corresponding functions)
 
 ##### 4XX (Errors) 
 * **400** `Bad Request` - the request could not be understood or was missing required parameters.
@@ -135,18 +128,6 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 - `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
 
 
-<u>**HTTP-Status**</u>:
-
-- `201` Created succesfully a Location with all relatedLocations, Videos and Overlays
-- `211` Created succesfully a Location, but couldn't set all relatedLocations (please check if all IDs of the relatedLocations exist)
-- `212` Created succesfully a Location, but couldn't set all Videos (please check if all IDs of the Videos exist)
-- `213` Created succesfully a Location, but couldn't set all Overlays (please check if all IDs of the Overlays exist)
-- `214` Created succesfully a Location, but couldn't set all relatedLocations and Videos (please check if all IDs of the relatedLocations and Videos exist)
-- `215` Created succesfully a Location, but couldn't set all relatedLocations and Overlays (please check if all IDs of the relatedLocations and Overlays exist)
-- `216` Created succesfully a Location, but couldn't set all Videos and Overlays (please check if all IDs of the Videos and Overlays exist)
-- `217` Created succesfully a Location, but couldn't set all relatedLocations, Videos and Overlays (please check if all IDs of the relatedLocations, Videos and Overlays exist)
-
-
 + Request (application/json)
 
     + Body
@@ -187,146 +168,6 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
             "videos": [],
             "overlays": []
         }
-        
-+ Response 211 (application/json)
-        
-        {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-        
-+ Response 212 (application/json)
-        
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-
-+ Response 213 (application/json)
-
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-
-+ Response 214 (application/json)
-
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-
-+ Response 215 (application/json)
-
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-
-+ Response 216 (application/json)
-
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
-
-+ Response 217 (application/json)
-
-         {
-            "_id":4,
-            "name":"Frauenstraße",
-            "tags":[
-                "Münster",
-                "Frauenstraße",
-                "Trattoria",
-                "Kulturcafé",
-                "Fürstin-von-Gallitzin-Wohnheim"
-            ],
-            "lon": 7.6189278,
-            "lat": 51.9634288,
-            "description":"Gegenüber der Trattoria",
-            "relatedLocations": [],
-            "videos": [],
-            "overlays": []
-        }
 
 + Response 400 (text/plain)
         
@@ -343,6 +184,14 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
         Error: The value of the property "<propertyName>" has to be an integer!
 
         Error: The element values of the array "<propertyName>" are not unique!
+
++ Response 404 (text/plain)
+        
+        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
+        
++ Response 406 (text/plain)
+        
+        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
@@ -472,11 +321,15 @@ A single Location object with all its details
 
         Error: The submitted "<Object>"-ID could not be found!
         
+        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
+        
 + Response 406 (text/plain)
 
         Error: No valid request! The submitted ID is not an integer!
         
         Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+        
+        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
         
 + Response 500 (text/plain)
 
