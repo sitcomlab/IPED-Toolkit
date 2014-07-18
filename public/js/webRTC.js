@@ -81,7 +81,7 @@ localMedia.render(local);
 // once the local media is captured broadcast the media
 localMedia.once('capture', function(stream) {
   // handle the connection stuff
-  quickconnect(location.href + '../../', {
+  quickconnect(location.href + '../../../', {
     // debug: true,
     room: room,
     iceServers: iceServers,

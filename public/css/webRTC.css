@@ -8,6 +8,11 @@ body {
   display: none;
 }
 .remote {
+  visibility: hidden;
+  max-width: 100%;
+}
+.chroma-key,
+#chroma-key-canvas {
   max-width: 100%;
 }
 .remote video {
