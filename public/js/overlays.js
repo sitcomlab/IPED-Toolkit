@@ -119,9 +119,7 @@ Overlay.prototype.createOverlays = function(id) {
     'async' : false,
     'url' : SERVER_URL+ PORT + 'api/locations/' + id,
     'dataType' : 'json',
-    'beforeSend' : function(request) {
-      console.log("Request prepared");
-    },
+    'beforeSend' : function(request) {},
     'success' : function(data) {
       
       data.overlays.forEach(function(overlayId) {
@@ -129,9 +127,7 @@ Overlay.prototype.createOverlays = function(id) {
           'async' : false,
           'url' : SERVER_URL+ PORT + 'api/overlays/' + overlayId,
           'dataType' : 'json',
-          'beforeSend' : function(request) {
-            console.log("Request prepared");
-          },
+          'beforeSend' : function(request) {},
           'success' : function(data) {
             overlays.push(data);
           },

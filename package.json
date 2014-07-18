@@ -13,6 +13,7 @@
     "body-parser": "1.2.x",
     "stylus": "^0.43.1",
     "nib": "~1.0.1",
+    "browserify": "4.2.x",
     "browserify-middleware": "^2",
     "rtc-switchboard": "~0.10.1",
     "rtc-quickconnect": "^1.0.0",
