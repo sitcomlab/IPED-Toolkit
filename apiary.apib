@@ -339,7 +339,7 @@ A single Location object with all its details
 ### Remove a Location [DELETE]
 (Status: **implemented**, Developer: Nicho)
 
-+ Response 204 (text/plain)
++ Response 204
 
 + Response 404 (text/plain)
 
@@ -546,7 +546,7 @@ A single Video object with all details
 ### Remove a Video [DELETE]
 (Status: **implemented**, Developer: Nicho)
 
-+ Response 204 (text/plain)
++ Response 204
 
 + Response 404 (text/plain)
 
@@ -834,7 +834,7 @@ A single Overlay object with all its details
 ### Remove an Overlay [DELETE]
 (Status: **implemented**, Developer: Nicho)
 
-+ Response 204 (text/plain)
++ Response 204
 
 + Response 404 (text/plain)
 
@@ -851,201 +851,3 @@ A single Overlay object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-
-# Group Scenarios
-
-## Scenario Collection [/api/scenarios]
-
-### List all Scenarios [GET]
-(Status: **in design**)
-
-+ Response 200 (application/json)
-
-        {
-            "scenarios": [
-                {
-                    "_id":9,
-                    "added":1401379792309,
-                    "creator": "nicho90",
-                    "name": "Scenario 1"
-                }, {
-                    "_id":2,
-                    "added":1401378034808,
-                    "creator": "mostkamp", 
-                    "name": "Scenario 2",
-                    }
-                }
-            ]
-        }
-        
-### Create a Scenario [POST]
-(Status: **in design**)
-
-<u>**Required properties**</u>:
-
-- `name` **String** (e.g. *"Scenario 3"*)
-- `tags[]` **String[ ]** (e.g. *["Münster"]*)
-- `description` **String** (e.g. *""*)
-- `containedLocations` **Int[ ]** (e.g. *[ ]*, have to contained a minimum of 2 Locations)
-
-+ Request (application/json)
-
-    + body
-        
-            {
-                "name":"Scenario 3"
-                "tags": [
-                    "Münster"
-                ],
-                "description": "",
-                "containedLocations": [
-                    1,
-                    3
-                ]
-            }
-
-+ Response 201 (application/json)
-
-        {  
-                    "_id":10,
-                    "added":1401379792309,
-                    "creator": "nicho90",
-                    "name":"Scenario 3"
-                    "tags": [
-                        "Münster"
-                    ],
-                    "description": "",
-                    "containedLocations": [
-                        1,
-                        3
-                    ]
-        }
-        
-        
-## Scenario [/api/scenarios/{id}]
-A single, complete Scenario object with all details (meta-data), locations, videos and overlays
-
-+ Parameters
-    + id (required, number, `2`) ... Numeric `id` of the Location to perform action with. Has example value.
-
-
-### Retrieve a scenario [GET]
-(Status: **in design**)
-
-+ Response 200 (application/json)
-
-    + Body
-
-            {
-                "scenario":[
-                    "_id":10,
-                    "added":1401379792309,
-                    "creator": "nicho90",
-                    "name":"Scenario 3",
-                    "startAtLocation": 1,
-                    "locations": [
-                            {
-                                "_id":3,
-                                "name":"Schlossplatz",
-                                "tags": [
-                                    "Münster",
-                                    "Schlossplatz",
-                                    "Stadtmitte"
-                                ],
-                                "lon":"7.6178207",
-                                "lat":"51.9634296",
-                                "description":"Der im Westen der Stadt Münster gelegene Platz gilt als zweitgrößter innerstädtischer Platz Europas. Er entstand an Stelle der von Fürstbischof Christoph Bernhard von Galen 1661 angelegten Zitadelle, die im Jahr 1765 niedergelegt wurde. Nach dem Bau des Residenzschlosses wurde ein Teil des Platzes mit gärtnerischen Anlagen ausgestattet. Das übrige Areal diente zeitweise als Exerzierplatz. Auf der Freifläche finden bis heute regelmäßig Großveranstaltungen wie etwa der Send statt.\nDer Hindenburgplatz, der mehr als 150 Jahre Neuplatz hieß, hat für Münster hohe Bedeutung. Sowohl die Benennung des Platzes als auch seine Gestaltung werden seit Jahren intensiv diskutiert. 2008 ging ein weiterer Antrag zur Umbenennung des Hindenburgplatzes in die Beratung der politischen Gremien.\n",
-                                "videos": [ 
-                                    {
-                                        "_id":34,
-                                        "description":"Schlossplatz bei Tag",
-                                        "name":"Schlossplatz",
-                                        "date":"No date available",
-                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_01"
-                                    }
-                                ],
-                                "overlays": [
-                                    {   
-                                        "_id":23,
-                                        "tags":[
-                                            "video",
-                                            "test"
-                                        ],
-                                        "d":0,
-                                        "type":"html",
-                                        "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                                        "h":600,
-                                        "w":800,
-                                        "rz":0,
-                                        "description":"Video Overlay Test",
-                                        "name":"Video Overlay",
-                                        "z":0,
-                                        "rx":0,
-                                        "y":0,
-                                        "ry":0,
-                                        "x":100
-                                    }    
-                                ]
-                            }, {
-                                "_id":6,
-                                "name":"Krummer Timpen",
-                                "tags": [
-                                    "Münster",
-                                    "Krummer Timpen",
-                                    "ULB",
-                                    "Juridicum"
-                                ],
-                                "lon":"7.6201791",
-                                "lat":"51.9627494",
-                                "description":"Gegenüber der ULB",
-                                "videos": [
-                                    {
-                                        "_id":37,
-                                        "description":"Krummer Timpen bei Tag",
-                                        "name":"Krummer Timpen",
-                                        "date":"No date available",
-                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_04"
-                                    }
-                                 ],
-                                "overlays": [
-                                    
-                                ]
-                            }, {
-                                "_id":4,
-                                "name":"Frauenstraße",
-                                "tags":[
-                                    "Münster",
-                                    "Frauenstraße",
-                                    "Trattoria",
-                                    "Kulturcafé",
-                                    "Fürstin-von-Gallitzin-Wohnheim"
-                                ],
-                                "lon":"7.6189278",
-                                "lat":"51.9634288",
-                                "description":"Gegenüber der Trattoria",
-                                "videos": [
-                                    "id":2,
-                                        "_id":35,
-                                        "description":"Frauenstraße bei Tag",
-                                        "name":"Frauenstraße",
-                                        "date":"No date available",
-                                        "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02"
-                                ],
-                                "overlays": [
-                                
-                                ]
-                            }    
-                    ]
-            }
-
-        
-### Remove a Scenario  [DELETE]
-(Status: **in design**)
-+ Response 204 (text/plain)
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>      
-        
-        
