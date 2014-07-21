@@ -3,7 +3,6 @@
 * iPED Toolkit Overlays
 * (c) 2014 Morin Ostkamp, Institute for Geoinformatics (ifgi)
 *
-* See: http://www.xindustry.com/html5greenscreen/
 */
 
 function ChromaKey() {
@@ -23,7 +22,47 @@ ChromaKey.prototype.draw = function() {
   }
 };
 
-ChromaKey.prototype.drawVideoOnCanvas = function() {  
+ChromaKey.prototype.drawVideoOnCanvas = function() {
+  // See: http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
+  var selectedR = 10;
+  var selectedG = 245
+  var selectedB = 10;
+  
+  var sourceVideo = $('.remote video')[0];
+  var width = $('.remote video').width();
+  var height = $('.remote video').height();
+  
+  var displayCanvas = $('#chroma-key-canvas')[0];
+      displayCanvas.setAttribute('width', width);
+      displayCanvas.setAttribute('height', height);
+  var displayContext = displayCanvas.getContext('2d');
+  
+  var hiddenCanvas = document.createElement('canvas');
+      hiddenCanvas.setAttribute('width', width);
+      hiddenCanvas.setAttribute('height', height);
+  var hiddenContext = hiddenCanvas.getContext('2d');
+      hiddenContext.drawImage(sourceVideo, 0, 0, width, height);
+  
+  if (!displayContext || !hiddenContext) {
+    return;
+  }
+  
+  var frame = hiddenContext.getImageData(0, 0, width, height);
+  var length = frame.data.length;
+  
+  for (var i = 0; i < length; i++) {
+    var r = frame.data [i * 4 + 0];
+    var g = frame.data [i * 4 + 1];
+    var b = frame.data [i * 4 + 2];
+
+    if (r <= selectedR && b <= selectedB && g >= selectedG) {
+      frame.data[i * 4 + 3] = 0; 
+    } 
+  }
+  displayContext.putImageData(frame, 0, 0);
+  
+  /*
+  // See: http://www.xindustry.com/html5greenscreen/
   var object = $('.remote video')[0];
   var width = $('.remote video').width();
   var height = $('.remote video').height();
@@ -117,6 +156,7 @@ ChromaKey.prototype.drawVideoOnCanvas = function() {
     }
     context.putImageData(imgData, 0, 0);       
   }
+  */
 };
 
 new ChromaKey();
