@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-		
+    <script>
+      /*!
+      * The iPED Toolkit
+      * Frontend
+      *
+      * (c) 2014 Morin Ostkamp
+      * Institute for Geoinformatics (ifgi), University of Münster
+      */
+    </script>
+    
 		<!-- iPED Frontend -->
 		<!--(if target master)><!-->
 		<title>iPED Toolkit (Master)</title>
@@ -31,26 +40,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 		
-		<link rel="stylesheet" href="css/jquery mobile/jquery.mobile-1.4.2.min.css" type="text/css" />
-		<link rel="stylesheet" href="css/style.css" type="text/css" />
-		<!--<link rel="stylesheet" href="css/jquery mobile/ifgi/ifgi.css" />-->
-		<!--<link rel="stylesheet" href="css/jquery mobile/ifgi/jquery.mobile.icons.min.css" />-->
+		<link rel="stylesheet" href="css/frontend.css" />
 	</head>
+  
 	<body>
 		<video id="iPED-Video" autoplay="autoplay" loop="loop"></video>
 		<div id="iPED-Overlay"></div>
 
-		<!-- JQuery -->
-		<script src="libs/jquery.js" type="text/javascript"></script>
-		<!-- JQuery Mobile -->
-		<script src="libs/jquery.mobile-1.4.2.min.js"></script>
-		<!-- Socket.io -->
-		<script src="js/socket.io.js"></script>
-		<!-- individual javascripts -->
-		<script src="js/aop.min.js" type="text/javascript"></script>
-		<script src="js/overlays.js" type="text/javascript"></script>
-		<script src="js/iped.js" type="text/javascript"></script>
-		
+    <script src="../lib/jsnlog/js/jsnlog.min.js"></script>
+    <script type="text/javascript">
+      var consoleAppender = JL.createConsoleAppender('consoleAppender');
+      JL().setOptions({
+        'appenders': [consoleAppender],
+        //'level': JL.getOffLevel()
+        'level': JL.getDebugLevel()
+        //'level': JL.getErrorLevel()
+      });
+      
+      /* This is an example log output:
+      JL('iPED Toolkit.Frontend').fatal('Something very bad happened!');
+      */
+    </script>
+    
+		<script src="../lib/jquery/js/jquery.min.js"></script>
+		<script src="../lib/socketio/js/socket.io.js"></script>
+		<script src="../lib/aop/js/aop.min.js"></script>
+    <script src="../lib/utils/js/getUrlParameters.js"></script>
+    <script src="js/overlays.js"></script>
+		<script src="js/frontend.js"></script>
 	</body>
 </html>
 
