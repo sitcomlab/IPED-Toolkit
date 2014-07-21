@@ -35,8 +35,8 @@ ChromaKey.prototype.drawVideoOnCanvas = function() {
   
   if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
     this.sourceVideo = $('.remote video');
-    this.width = this.sourceVideo.width();
-    this.height = this.sourceVideo.height();
+    this.width = this.sourceVideo.width() / 2;
+    this.height = this.sourceVideo.height() / 2;
   
     this.displayCanvas = $('#chroma-key-canvas')[0];
     this.displayCanvas.setAttribute('width', this.width);
