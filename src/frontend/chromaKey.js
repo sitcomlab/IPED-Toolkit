@@ -6,8 +6,20 @@
 */
 
 function ChromaKey() {
+  // <Configuration>
+  this.scale = 4;
+  this.fps = 1;
+  // </Configuration>
+  
+  
+  this.isEnabled = true;
+  this.lastTimestamp = 0;
+  
   this.drawDelegate = window.draw.bind(this);
   this.drawDelegate();
+  
+  this.onKeyDownDelegate = window.onKeyDown.bind(this);
+  window.addEventListener('keydown', this.onKeyDownDelegate);
   
   this.selectedR = 10;
   this.selectedG = 245
@@ -18,9 +30,23 @@ function ChromaKey() {
   this.height = 0;
 }
 
-function draw(){
-	requestAnimationFrame(this.drawDelegate);
-	this.draw();
+function onKeyDown(event) {
+  //console.log(event.which);
+  switch (event.keyCode) {
+    case 75: // k
+			this.isEnabled = !this.isEnabled;
+      console.log('Chroma Keying is now turned ' + this.isEnabled);
+      break;
+  }
+}
+
+function draw(timestamp) {
+  requestAnimationFrame(this.drawDelegate);
+  
+  if (timestamp - this.lastTimestamp > this.fps * 1000) {
+    this.lastTimestamp = timestamp;
+  	this.draw();
+  }
 }
 
 ChromaKey.prototype.draw = function() {
@@ -35,12 +61,12 @@ ChromaKey.prototype.drawVideoOnCanvas = function() {
   
   if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
     this.sourceVideo = $('.remote video');
-    this.width = this.sourceVideo.width() / 2;
-    this.height = this.sourceVideo.height() / 2;
+    this.width = this.sourceVideo.width() / this.scale;
+    this.height = this.sourceVideo.height() / this.scale;
   
     this.displayCanvas = $('#chroma-key-canvas')[0];
-    this.displayCanvas.setAttribute('width', this.width);
-    this.displayCanvas.setAttribute('height', this.height);
+    this.displayCanvas.setAttribute('width', this.width * this.scale);
+    this.displayCanvas.setAttribute('height', this.height * this.scale);
     this.displayContext = this.displayCanvas.getContext('2d');
   
     this.hiddenCanvas = document.createElement('canvas');
@@ -53,16 +79,21 @@ ChromaKey.prototype.drawVideoOnCanvas = function() {
   var frame = this.hiddenContext.getImageData(0, 0, this.width, this.height);
   var length = frame.data.length;
   
-  for (var i = 0; i < length; i++) {
-    var r = frame.data [i * 4 + 0];
-    var g = frame.data [i * 4 + 1];
-    var b = frame.data [i * 4 + 2];
+  if (this.isEnabled) {
+    for (var i = 0; i < length; i++) {
+      var r = frame.data [i * 4 + 0];
+      var g = frame.data [i * 4 + 1];
+      var b = frame.data [i * 4 + 2];
 
-    if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
-      frame.data[i * 4 + 3] = 0; 
-    } 
+      if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
+        frame.data[i * 4 + 3] = 0; 
+      } 
+    }
   }
-  this.displayContext.putImageData(frame, 0, 0);
+  //this.displayContext.putImageData(frame, 0, 0);
+  this.hiddenContext.putImageData(frame, 0, 0);
+  this.displayContext.drawImage(this.hiddenCanvas, 0, 0, this.width * this.scale, this.height * this.scale);
+
   
   /*
   // See: http://www.xindustry.com/html5greenscreen/
