@@ -8,6 +8,14 @@
 function ChromaKey() {
   this.drawDelegate = window.draw.bind(this);
   this.drawDelegate();
+  
+  this.selectedR = 10;
+  this.selectedG = 245
+  this.selectedB = 10;
+  
+  this.sourceVideo = null;
+  this.width = 0;
+  this.height = 0;
 }
 
 function draw(){
@@ -24,30 +32,25 @@ ChromaKey.prototype.draw = function() {
 
 ChromaKey.prototype.drawVideoOnCanvas = function() {
   // See: http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
-  var selectedR = 10;
-  var selectedG = 245
-  var selectedB = 10;
   
-  var sourceVideo = $('.remote video')[0];
-  var width = $('.remote video').width();
-  var height = $('.remote video').height();
+  if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
+    this.sourceVideo = $('.remote video');
+    this.width = this.sourceVideo.width();
+    this.height = this.sourceVideo.height();
   
-  var displayCanvas = $('#chroma-key-canvas')[0];
-      displayCanvas.setAttribute('width', width);
-      displayCanvas.setAttribute('height', height);
-  var displayContext = displayCanvas.getContext('2d');
+    this.displayCanvas = $('#chroma-key-canvas')[0];
+    this.displayCanvas.setAttribute('width', this.width);
+    this.displayCanvas.setAttribute('height', this.height);
+    this.displayContext = this.displayCanvas.getContext('2d');
   
-  var hiddenCanvas = document.createElement('canvas');
-      hiddenCanvas.setAttribute('width', width);
-      hiddenCanvas.setAttribute('height', height);
-  var hiddenContext = hiddenCanvas.getContext('2d');
-      hiddenContext.drawImage(sourceVideo, 0, 0, width, height);
-  
-  if (!displayContext || !hiddenContext) {
-    return;
+    this.hiddenCanvas = document.createElement('canvas');
+    this.hiddenCanvas.setAttribute('width', this.width);
+    this.hiddenCanvas.setAttribute('height', this.height);
+    this.hiddenContext = this.hiddenCanvas.getContext('2d');
   }
   
-  var frame = hiddenContext.getImageData(0, 0, width, height);
+  this.hiddenContext.drawImage(this.sourceVideo[0], 0, 0, this.width, this.height);
+  var frame = this.hiddenContext.getImageData(0, 0, this.width, this.height);
   var length = frame.data.length;
   
   for (var i = 0; i < length; i++) {
@@ -55,11 +58,11 @@ ChromaKey.prototype.drawVideoOnCanvas = function() {
     var g = frame.data [i * 4 + 1];
     var b = frame.data [i * 4 + 2];
 
-    if (r <= selectedR && b <= selectedB && g >= selectedG) {
+    if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
       frame.data[i * 4 + 3] = 0; 
     } 
   }
-  displayContext.putImageData(frame, 0, 0);
+  this.displayContext.putImageData(frame, 0, 0);
   
   /*
   // See: http://www.xindustry.com/html5greenscreen/
