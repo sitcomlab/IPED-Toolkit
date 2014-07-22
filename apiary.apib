@@ -34,6 +34,10 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
+* * * 
+
+### For developers
+
 #### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
 * **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
@@ -42,7 +46,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **in design** :  The Starting point, designing the function in this tool
 
 \[+] Please write your name, after the following status, so it is possible to see, how works on which part,
-e.g. "(Status: **implemented**, Developer: Nicho)". If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
+e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
 
 #### API-Example of the blueprint code:
 * for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
@@ -75,37 +79,36 @@ It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and
 (Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
-        
-        {
-            "locations": 
-                [
-                    {  "_id":0, 
-                        "name":"Juridicum", 
-                        "tags":[
-                            "Juridicum", 
-                            "Krummer Timpen", 
-                            "ULB", 
-                            "Münster"
-                        ], 
-                        "lon": 7.619681,
-                        "lat": 51.962367, 
-                        "description":""
-                    }, {
-                        "_id":1, 
-                        "name":"Jesuitengang", 
-                        "tags":[
-                            "Juridicum", 
-                            "Jesuitengang", 
-                            "ULB", 
-                            "Münster", 
-                            "Petrikirche"
-                        ],
-                        "lon": 7.621709,
-                        "lat": 51.961971,
-                        "description":" Behind the ULB"
-                    }
-                ]
-        }
+
+        [
+            {
+                "_id": 0,
+                "name": "Juridicum",
+                "tags": [
+                    "Juridicum",
+                    "Krummer Timpen",
+                    "ULB",
+                    "Münster"
+                ],
+                "lon": 7.619681,
+                "lat": 51.962367,
+                "description": ""
+            },
+            {
+                "_id": 1,
+                "name": "Jesuitengang",
+                "tags": [
+                    "Juridicum",
+                    "Jesuitengang",
+                    "ULB",
+                    "Münster",
+                    "Petrikirche"
+                ],
+                "lon": 7.621709,
+                "lat": 51.961971,
+                "description": " Behind the ULB"
+            }
+        ] 
 
 + Response 500 (text/plain)
 
@@ -356,6 +359,70 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
+## Relations of a Location [/api/locations/{id}/videos]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Videos of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [
+                711
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
+
+## Relations of a Location [/api/locations/{id}/overlays]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Overlays of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [   
+                92
+                434,
+                721,
+                8
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
 
 # Group Videos
 
@@ -366,25 +433,24 @@ A single Location object with all its details
 
 + Response 200 (application/json)
 
-        {
-            "videos": [
-                {
-                    "_id":35 , 
-                    "description":"Frauenstraße bei Tag",
-                    "name":"Frauenstraße",
-                    "date":"",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
-                    "tags":[]
-                }, {
-                    "_id":36,
-                    "description":"Frauenstraße bei Tag",
-                    "name":"Frauenstraße2",
-                    "date":"",
-                    "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
-                    "tags":[]
-                }
-            ]
-        }
+        [
+            {
+                "_id": 35,
+                "description": "Frauenstraße bei Tag",
+                "name": "Frauenstraße",
+                "date": "",
+                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                "tags": []
+            },
+            {
+                "_id": 36,
+                "description": "Frauenstraße bei Tag",
+                "name": "Frauenstraße2",
+                "date": "",
+                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "tags": []
+            }
+        ]
         
 + Response 500 (text/plain)
 
@@ -571,30 +637,28 @@ A single Video object with all details
 
 + Response 200 (application/json)
         
-        {
-            "overlays": [
-                {   
-                    "_id":23,
-                    "tags":[
-                        "video",
-                        "test"
-                    ],
-                    "d":0,
-                    "type":"html",
-                    "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                    "h":600,
-                    "w":800,
-                    "rz":0,
-                    "description":"Video Overlay Test",
-                    "name":"Video Overlay",
-                    "z":0,
-                    "rx":0,
-                    "y":0,
-                    "ry":0,
-                    "x":100
-                }
-            ]
-        }   
+        [
+            {
+                "_id": 23,
+                "tags": [
+                    "video",
+                    "test"
+                ],
+                "d": 0,
+                "type": "html",
+                "url": "https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
+                "h": 600,
+                "w": 800,
+                "rz": 0,
+                "description": "Video Overlay Test",
+                "name": "Video Overlay",
+                "z": 0,
+                "rx": 0,
+                "y": 0,
+                "ry": 0,
+                "x": 100
+            }
+        ]
 
 + Response 500 (text/plain)
 
