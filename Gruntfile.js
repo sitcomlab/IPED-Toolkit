@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 		'public/frontend/remote.html'               : 'src/frontend/remote.html',
 		'public/frontend/webRTC.html'               : 'src/frontend/webRTC.html',
 		'public/frontend/js/frontend.js'            : 'src/frontend/js/frontend.js',
-		'public/frontend/js/overlay.js'             : 'src/frontend/js/overlay.js',
+		'public/frontend/js/overlayPlugin.js'       : 'src/frontend/js/overlayPlugin.js',
 		'public/frontend/js/remote.js'              : 'src/frontend/js/remote.js',
 		'public/frontend/js/webRTC.js'              : 'src/frontend/js/webRTC.js',
     'public/frontend/js/chromaKey.js'           : 'src/frontend/js/chromaKey.js',

@@ -34,14 +34,13 @@ require.config({
 require(['jsnlog/js/jsnlog.min',
          'jquery/js/jquery.min',
          'socketio/js/socket.io',
-         'aop/js/aop.min',
          'utils/js/getUrlParameters',
          'underscorejs/js/underscore',
          'backbonejs/js/backbone',
          // Additional iPED Toolkit Plugins, e.g., Overlays
-         'frontend/overlay'],
+         'frontend/overlayPlugin'],
          
-         function(JSNLog, JQuery, Socket, AOP, getUrlParameters, Underscore, Backbone, Overlay) {
+         function(JSNLog, JQuery, Socket, getUrlParameters, Underscore, Backbone, OverlayPlugin) {
            (function setupJSNLog() {
              var consoleAppender = JL.createConsoleAppender('consoleAppender');
              JL().setOptions({
@@ -76,87 +75,85 @@ require(['jsnlog/js/jsnlog.min',
              }
            });
            
+           /**
+            * The frontend of the iPED Toolkit.
+            * @constructor
+            */
+           function Frontend() {
+             this.location = null;
+             this.socket = null;
+             this.video = new Video;
+  
+             this.activateWebSockets();
+             this.setLocationId(getURLParameters('locationId'));
+           }
+
+           /**
+            * Activates the web sockets that are used by the remote control.
+            */
+           Frontend.prototype.activateWebSockets = function() {
+             this.socket = io.connect(SERVER_URL + PORT);
+             this.socket.on('goToLocation', function(data) {
+               JL('iPED Toolkit.Frontend').debug(data);
+               this.goToLocation(data.locationId);
+             });
+             JL('iPED Toolkit.Frontend').debug('Web sockets activated');
+           };
+
+           /**
+            * Fetches the location matching locationId from the server and loads it
+            * @param {Number} locationId - The ID of the requested location
+            */
+           Frontend.prototype.setLocationId = function(locationId) {
+             var thiz = this;
+  
+             if (!locationId) {
+               JL('iPED Toolkit.Frontend').error('Please sepcify URL parameter "locationId"!');
+               return;
+             }
+  
+             JL('iPED Toolkit.Frontend').info('Set Location ID to: ' + locationId);
+             this.location = new Location({id: locationId});
+             this.location.fetch({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Frontend').debug(thiz.location);
+                 thiz.loadVideo();
+               },
+               error: function(model, response, options) {
+                 JL('iPED Toolkit.Frontend').error(respone); 
+               }
+             });
+           };
+
+           /**
+           * Loads the video that belongs to the current location
+           */
+           Frontend.prototype.loadVideo = function() {
+             var thiz = this;
+             var videoId = this.location.get('videos')[0];
+  
+             JL('iPED Toolkit.Frontend').debug('Loading video id ' + videoId + ' for current location');
+           	// Remove current video
+           	$('#iPED-Video').empty();
+  
+             this.video = new Video({id: videoId});
+             this.video.fetch({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Frontend').debug(thiz.video);
+      
+               	// Fill video tag with the new source
+               	$('#iPED-Video').append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
+               	$('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
+               },
+               error: function(model, response, options) {
+                 JL('iPED Toolkit.Frontend').error(respone); 
+               }
+             });
+           };
+           
            $(document).ready(function() {
              var frontend = new Frontend();
-             new Overlay(frontend, $('#iPED-Overlay'));
+             new OverlayPlugin(frontend, $('#iPED-Overlay'));
            });
          }
 );
-
-/**
- * The frontend of the iPED Toolkit.
- * @constructor
- */
-function Frontend() {
-  this.location = null;
-  this.socket = null;
-  this.video = new Video;
-  
-  this.activateWebSockets();
-  this.setLocationId(getURLParameters('locationId'));
-}
-
-
-/**
- * Activates the web sockets that are used by the remote control.
- */
-Frontend.prototype.activateWebSockets = function() {
-  this.socket = io.connect(SERVER_URL + PORT);
-  this.socket.on('goToLocation', function(data) {
-    JL('iPED Toolkit.Frontend').debug(data);
-    this.goToLocation(data.locationId);
-  });
-  JL('iPED Toolkit.Frontend').debug('Web sockets activated');
-};
-
-/**
- * Fetches the location matching locationId from the server and loads it
- * @param {Number} locationId - The ID of the requested location
- */
-Frontend.prototype.setLocationId = function(locationId) {
-  var thiz = this;
-  
-  if (!locationId) {
-    JL('iPED Toolkit.Frontend').error('Please sepcify URL parameter "locationId"!');
-    return;
-  }
-  
-  JL('iPED Toolkit.Frontend').info('Set Location ID to: ' + locationId);
-  this.location = new Location({id: locationId});
-  this.location.fetch({
-    success: function(model, response, options) {
-      JL('iPED Toolkit.Frontend').debug(thiz.location);
-      thiz.loadVideo();
-    },
-    error: function(model, response, options) {
-      JL('iPED Toolkit.Frontend').error(respone); 
-    }
-  });
-  
-};
-
-/**
-* Loads the video that belongs to the current location
-*/
-Frontend.prototype.loadVideo = function() {
-  var thiz = this;
-  var videoId = this.location.get('videos')[0];
-  
-  JL('iPED Toolkit.Frontend').debug('Loading video id ' + videoId + ' for current location');
-	// Remove current video
-	$('#iPED-Video').empty();
-  
-  this.video = new Video({id: videoId});
-  this.video.fetch({
-    success: function(model, response, options) {
-      JL('iPED Toolkit.Frontend').debug(thiz.video);
-      
-    	// Fill video tag with the new source
-    	$('#iPED-Video').append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
-    	$('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
-    },
-    error: function(model, response, options) {
-      JL('iPED Toolkit.Frontend').error(respone); 
-    }
-  });
-};
