@@ -14,6 +14,8 @@
          3.1.3 Retrieve a Location
          3.1.4 Edit a Location
          3.1.5 Remove a Location
+         3.1.6 Retrieve all Videos of a Location 
+         3.1.7 Retrieve all Overlays of a Location 
     3.2 Videos:
          3.2.1 List all Videos
          3.2.2 Create a Video
@@ -210,15 +212,12 @@ app.get('/api/locations', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var finalResult = '{"locations":' + JSON.stringify(result.data) + '}';
-            console.log("================================ Result ================================");
-            console.log(finalResult);
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(finalResult);
+            res.end(JSON.stringify(result.data));
             return;
         }
     });
@@ -1969,6 +1968,221 @@ app.delete ('/api/locations/:id', function(req, res) {
     }
 });
 
+// 3.1.6 Retrieve all Videos of a Location (Developer: Nicho)
+app.get ('/api/locations/:id/videos', function(req, res) {
+
+    console.log("+++ [GET] /api/locations/" + req.params.id+ "/videos +++++++++++++++++++++++++++++++++++++");
+
+    // Check if submitted ID is a number
+    if(validator.isInt(req.params.id)) {
+
+        async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Location";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            }
+        },
+        function(err, results) {
+
+            // Query - Get all Overlays of the current Location
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT ID(v) AS videos";
+            //console.log(query);
+
+            // Database Query
+            db.cypherQuery(query, function(err, result) {
+                if (err) {
+
+                    res.writeHead(500, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                    res.end(errorMsg);
+                    return;
+
+                } else {
+                    //console.log(result.data);
+                    // delivers an array of query results
+                    //console.log(result.columns);
+                    // delivers an array of names of objects getting returned
+
+                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                    res.writeHead(200, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end(JSON.stringify(result.data));
+                    return;
+                }
+            });
+        });
+    } else {
+        res.writeHead(406, {
+            'Content-Type' : 'text/plain'
+        });
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
+        res.end(errorMsg);
+        return;
+    }
+});
+
+// 3.1.7 Retrieve all Overlays of a Location (Developer: Nicho)
+app.get ('/api/locations/:id/overlays', function(req, res) {
+
+    console.log("+++ [GET] /api/locations/" + req.params.id+ "/overlays +++++++++++++++++++++++++++++++++++");
+
+    // Check if submitted ID is a number
+    if(validator.isInt(req.params.id)) {
+
+        async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Location";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            }
+        },
+        function(err, results) {
+
+            // Query - Get all Overlays of the current Location
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT ID(o) AS overlays";
+            //console.log(query);
+
+            // Database Query
+            db.cypherQuery(query, function(err, result) {
+                if (err) {
+
+                    res.writeHead(500, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                    res.end(errorMsg);
+                    return;
+
+                } else {
+                    //console.log(result.data);
+                    // delivers an array of query results
+                    //console.log(result.columns);
+                    // delivers an array of names of objects getting returned
+
+                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                    res.writeHead(200, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end(JSON.stringify(result.data));
+                    return;
+                }
+            });
+        });
+    } else {
+        res.writeHead(406, {
+            'Content-Type' : 'text/plain'
+        });
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
+        res.end(errorMsg);
+        return;
+    }
+});
+
+
 /****************************
  3.2 Videos
  ****************************/
@@ -2589,15 +2803,12 @@ app.put('/api/videos/:id', function(req, res) {
 
                     console.log("--- Finished updating properties of the Video ---");
 
-                    var finalResult = JSON.stringify(result.data[0]);
-                    console.log("================================ Result ================================");
-                    console.log(finalResult);
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                     res.writeHead(201, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult);
+                    res.end(JSON.stringify(result.data[0]));
                     return;
                 }
             });
@@ -2818,15 +3029,12 @@ app.get('/api/overlays', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var finalResult = '{"overlays":' + JSON.stringify(result.data) + '}';
-            console.log("================================ Result ================================");
-            console.log(finalResult);
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(finalResult);
+            res.end(JSON.stringify(result.data));
             return;
         }
 
@@ -3010,17 +3218,12 @@ app.post('/api/overlays', function(req, res) {
                 var newOverlayID = node._id;
                 console.log("--- Finished Creating new Overlay, new ID = " + newOverlayID + " ---");
                     
-                // Result
-                var finalResult = JSON.stringify(newOverlay);
-                console.log("================================ Result ================================");
-                console.log(finalResult);
-                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-            
-                // Send final Result
+                console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
                 res.writeHead(201, {
-                   'Content-Type' : 'application/json'
+                    'Content-Type' : 'application/json'
                 });
-                res.end(finalResult);
+                res.end(JSON.stringify(newOverlay));
                 return;
             }    
         });
@@ -3114,15 +3317,12 @@ app.get('/api/overlays/:id', function(req, res) {
                     //console.log(result.columns);
                     // delivers an array of names of objects getting returned
 
-                    var finalResult = JSON.stringify(result.data[0]);
-                    console.log("================================ Result ================================");
-                    console.log(finalResult);
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                     res.writeHead(200, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult);
+                    res.end(JSON.stringify(result.data[0]));
                     return;
                 }
             });
@@ -3403,16 +3603,14 @@ app.put('/api/overlays/:id', function(req, res) {
 
                     console.log("--- Finished updating properties of the Overlay ---");
 
-                    var finalResult = '{"overlay": '+ JSON.stringify(result.data) +'}';
-                    console.log("================================ Result ================================");
-                    console.log(finalResult);
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                     res.writeHead(201, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult);
+                    res.end(JSON.stringify(result.data));
                     return;
+
                 }
             });
         }); 
