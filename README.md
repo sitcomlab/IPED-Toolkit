@@ -2,9 +2,8 @@ IPED-Toolkit
 =============================================================
 
 ##### Build-Status
-* MASTER-Branch: [![Build Status](http://giv-sitcomlab.uni-muenster.de:4711/job/iPED%20Toolkit%20Master%20(Stable)/badge/icon)](http://giv-sitcomlab.uni-muenster.de:4711/job/iPED%20Toolkit%20Master%20(Stable)/)
-
-* DEVELOP-Branch: [![Build Status](http://giv-sitcomlab.uni-muenster.de:4711/job/iPED%20Toolkit%20Development%20(Unstable)/badge/icon)](http://giv-sitcomlab.uni-muenster.de:4711/job/iPED%20Toolkit%20Development%20(Unstable)/)
+* MASTER-Branch: ![Build Status](http://bit.ly/1yUHwBo)
+* DEVELOP-Branch: ![Build Status](http://bit.ly/1A0vbxb)
 
 
 ##### Links to the Project

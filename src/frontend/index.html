@@ -47,27 +47,7 @@
 		<video id="iPED-Video" autoplay="autoplay" loop="loop"></video>
 		<div id="iPED-Overlay"></div>
 
-    <script src="../lib/jsnlog/js/jsnlog.min.js"></script>
-    <script type="text/javascript">
-      var consoleAppender = JL.createConsoleAppender('consoleAppender');
-      JL().setOptions({
-        'appenders': [consoleAppender],
-        //'level': JL.getOffLevel()
-        'level': JL.getDebugLevel()
-        //'level': JL.getErrorLevel()
-      });
-      
-      /* This is an example log output:
-      JL('iPED Toolkit.Frontend').fatal('Something very bad happened!');
-      */
-    </script>
-    
-		<script src="../lib/jquery/js/jquery.min.js"></script>
-		<script src="../lib/socketio/js/socket.io.js"></script>
-		<script src="../lib/aop/js/aop.min.js"></script>
-    <script src="../lib/utils/js/getUrlParameters.js"></script>
-    <script src="js/overlays.js"></script>
-		<script src="js/frontend.js"></script>
+    <script data-main="js/frontend" data-baseUrl="../lib/requirejs/js" src="../lib/requirejs/js/require.js"></script>
 	</body>
 </html>
 

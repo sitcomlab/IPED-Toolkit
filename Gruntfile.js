@@ -9,7 +9,7 @@ module.exports = function(grunt) {
 		'public/frontend/remote.html'               : 'src/frontend/remote.html',
 		'public/frontend/webRTC.html'               : 'src/frontend/webRTC.html',
 		'public/frontend/js/frontend.js'            : 'src/frontend/js/frontend.js',
-		'public/frontend/js/overlays.js'            : 'src/frontend/js/overlays.js',
+		'public/frontend/js/overlay.js'             : 'src/frontend/js/overlay.js',
 		'public/frontend/js/remote.js'              : 'src/frontend/js/remote.js',
 		'public/frontend/js/webRTC.js'              : 'src/frontend/js/webRTC.js',
     'public/frontend/js/chromaKey.js'           : 'src/frontend/js/chromaKey.js',
@@ -36,14 +36,25 @@ module.exports = function(grunt) {
 		  developOnServer: {
 		    files: targethtmlFiles
 		  }
-		}
+		},
+    jsdoc: {
+      all: {
+        src: ['README.md', 'src/frontend/js/*.js', 'src/backend/js/*.js'],
+        dest: 'public/doc',
+        options: {
+          template : 'node_modules/ink-docstrap/template',
+          configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json'
+        }
+      }
+    }
   });
 
 	// Load the plugin that provides the xyz task.
 	grunt.loadNpmTasks('grunt-targethtml');
+  grunt.loadNpmTasks('grunt-jsdoc');
 
   // Default task(s).
-  grunt.registerTask('master',          ['targethtml:master']);
+  grunt.registerTask('master',          ['targethtml:master', 'jsdoc:all']);
 	grunt.registerTask('develop',         ['targethtml:develop']);
-	grunt.registerTask('developOnServer', ['targethtml:developOnServer']);
+	grunt.registerTask('developOnServer', ['targethtml:developOnServer', 'jsdoc:all']);
 };

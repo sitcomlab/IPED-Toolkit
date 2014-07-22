@@ -6,22 +6,94 @@
 * Institute for Geoinformatics (ifgi), University of Münster
 */
 
+require.config({
+  baseUrl: '../lib',
+  paths: {
+    'frontend'  : '../frontend/js',
+    'backend'   : '../backend/js',
+  },
+  shim: {
+    'threejs/js/three.min': {
+      exports: 'THREE'
+    },
+    'threejs/js/Detector': {
+      deps: ['threejs/js/three.min'],
+      exports: 'Detector'
+    },
+    'threejs/js/CSS3DRenderer': {
+      deps: ['threejs/js/three.min'],
+      exports: 'CSS3DRenderer'
+    },
+    'threejs/js/TransformControls': {
+      deps: ['threejs/js/three.min'],
+      exports: 'TransformControls'
+    }
+  }
+});
+
+require(['jsnlog/js/jsnlog.min',
+         'jquery/js/jquery.min',
+         'socketio/js/socket.io',
+         'aop/js/aop.min',
+         'utils/js/getUrlParameters',
+         'underscorejs/js/underscore',
+         'backbonejs/js/backbone',
+         // Additional iPED Toolkit Plugins, e.g., Overlays
+         'frontend/overlay'],
+         
+         function(JSNLog, JQuery, Socket, AOP, getUrlParameters, Underscore, Backbone, Overlay) {
+           (function setupJSNLog() {
+             var consoleAppender = JL.createConsoleAppender('consoleAppender');
+             JL().setOptions({
+               'appenders': [consoleAppender],
+               //'level': JL.getOffLevel()
+               'level': JL.getDebugLevel()
+               //'level': JL.getErrorLevel()
+             });
+      
+             /* This is an example log output:
+             JL('iPED Toolkit.Frontend').fatal('Something very bad happened!');
+             */
+           })();
+           
+           /**
+           * The Backbone.js model of a location
+           */
+           Location = Backbone.Model.extend({
+             urlRoot: SERVER_URL + PORT + 'api/locations',
+             initialize: function() {
+               _.bindAll(this, 'fetch');
+             }
+           });
+           
+           /**
+           * The Backbone.js model of a video
+           */
+           Video = Backbone.Model.extend({
+             urlRoot: SERVER_URL + PORT + 'api/videos',
+             initialize: function() {
+               _.bindAll(this, 'fetch');
+             }
+           });
+           
+           $(document).ready(function() {
+             var frontend = new Frontend();
+             new Overlay(frontend, $('#iPED-Overlay'));
+           });
+         }
+);
+
 /**
  * The frontend of the iPED Toolkit.
  * @constructor
  */
 function Frontend() {
-  this.locationId = null;
-  this.videoHeight = null;
-  this.videoWidth = null;
-  this.videoOuterHeight = null;
-  this.videoOuterWidth = null;
+  this.location = null;
   this.socket = null;
-  this.overlay = null;
+  this.video = new Video;
   
-  this.setLocationId(getURLParameters('locationId'));
   this.activateWebSockets();
-  this.overlay = new Overlay($('#iPED-Overlay'));
+  this.setLocationId(getURLParameters('locationId'));
 }
 
 
@@ -34,114 +106,57 @@ Frontend.prototype.activateWebSockets = function() {
     JL('iPED Toolkit.Frontend').debug(data);
     this.goToLocation(data.locationId);
   });
-  JL('iPED Toolkit.Frontend').debug('Web sockets activated.');
+  JL('iPED Toolkit.Frontend').debug('Web sockets activated');
 };
 
+/**
+ * Fetches the location matching locationId from the server and loads it
+ * @param {Number} locationId - The ID of the requested location
+ */
 Frontend.prototype.setLocationId = function(locationId) {
-  JL('iPED Toolkit.Frontend').info('Set Location ID to: ' + locationId);
-  this.locationId = locationId;
-};
-	
-		loadVideo();
-		activateSocketIO();
-		
-		console.log("video created!");
-		var video = $('#iPED-Video')[0];
-		video.addEventListener("loadedmetadata", function() {
-			//Return video size
-			getVideoSize();
-		
-			//Draw Displays
-			//loadDisplays(currentId);
-		}, false);
-		
-		$(window).resize(function() {
-			//Draw Displays
-			//loadDisplays(currentId);
-		});
-
-});
-
-
-
-
-
-
-
-//Update the id of the current video
-function setCurrentId(new_id) {
-	currentId = new_id;
-	console.log("currentId changed to " + currentId);
-}
-
-//Load a new video
-function loadVideo() {
-  console.log("video loading initiated");
+  var thiz = this;
   
-  var video; 
-	
-	//Empty video source
-	$("#iPED-Video").empty();
-
-  $.ajax({
-    'async' : false,
-    'url' : SERVER_URL + PORT + 'api/locations/' + currentId,
-    'dataType' : 'json',
-    'beforeSend' : function(request) {
-      console.log("Request prepared");
+  if (!locationId) {
+    JL('iPED Toolkit.Frontend').error('Please sepcify URL parameter "locationId"!');
+    return;
+  }
+  
+  JL('iPED Toolkit.Frontend').info('Set Location ID to: ' + locationId);
+  this.location = new Location({id: locationId});
+  this.location.fetch({
+    success: function(model, response, options) {
+      JL('iPED Toolkit.Frontend').debug(thiz.location);
+      thiz.loadVideo();
     },
-    'success' : function(data) {
-      
-      var videoId = data.videos[0];
-      $.ajax({
-        'async' : false,
-        'url' : SERVER_URL + PORT + 'api/videos/' + videoId,
-        'dataType' : 'json',
-        'beforeSend' : function(request) {
-          console.log("Request prepared");
-        },
-        'success' : function(data) {
-          video = data;
-        },
-        'error' : function(jqXHR, textStatus, errorThrown) {
-          alert('' + errorThrown);
-        }
-      });
-      
-    },
-    'error' : function(jqXHR, textStatus, errorThrown) {
-      alert('' + errorThrown);
+    error: function(model, response, options) {
+      JL('iPED Toolkit.Frontend').error(respone); 
     }
   });
+  
+};
 
-	//Set the video variable to the right position in the node-array
-	console.log(video.url);
-
-	//Fill video tag with source
-	$("#iPED-Video").append('<source id ="video_source_mp4" src="' + video.url + '.mp4" type="video/mp4" />');
-	$("#iPED-Video").append('<source id ="video_source_ogv" src="' + video.url + '.ogv" type="video/ogg" />');
-	console.log("video tag filled with source " + video.url);
-	
-	// Required for JQuery AOP's method "after"
-	return currentId;
-}
-
-function getMousePos(canvas, evt) {
-	var rect = canvas.getBoundingClientRect();
-	return {
-		x : evt.clientX - rect.left,
-		y : evt.clientY - rect.top
-	};
-}
-
-function getVideoSize() {
-	var video = $('#iPED-Video')[0];
-	video_outer_height = $("#iPED-Video").outerHeight();
-	video_outer_width = $("#iPED-Video").outerWidth();
-	video_height = video.videoHeight;
-	video_width = video.videoWidth;
-}
-
-$(document).ready(function() {
-  var frontend = new Frontend();
-});
+/**
+* Loads the video that belongs to the current location
+*/
+Frontend.prototype.loadVideo = function() {
+  var thiz = this;
+  var videoId = this.location.get('videos')[0];
+  
+  JL('iPED Toolkit.Frontend').debug('Loading video id ' + videoId + ' for current location');
+	// Remove current video
+	$('#iPED-Video').empty();
+  
+  this.video = new Video({id: videoId});
+  this.video.fetch({
+    success: function(model, response, options) {
+      JL('iPED Toolkit.Frontend').debug(thiz.video);
+      
+    	// Fill video tag with the new source
+    	$('#iPED-Video').append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
+    	$('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
+    },
+    error: function(model, response, options) {
+      JL('iPED Toolkit.Frontend').error(respone); 
+    }
+  });
+};

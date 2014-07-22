@@ -5,3 +5,21 @@
 * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
 * Institute for Geoinformatics (ifgi), University of Münster
 */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  
+  <!--(if target master)>
+  background-color: #000000;
+  <!(endif)-->
+  
+  <!--(if target develop || developOnServer)>
+  background-color: #ff0000;
+  <!(endif)-->
+}
+
+#iPED-Video {
+  width: 100%;
+  max-width: 100%;
+}
