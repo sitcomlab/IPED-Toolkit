@@ -151,7 +151,7 @@ var switchboard = require('rtc-switchboard')(httpsServer);
 
 // convert stylus stylesheets
 app.use(stylus.middleware({
-    src : __dirname + '/public',
+    src : __dirname + '/public/lib/webRTC/css',
     compile : function(str, sourcePath) {
         return stylus(str).set('filename', sourcePath).set('compress', false).use(nib());
     }
@@ -161,15 +161,15 @@ app.use(stylus.middleware({
 app.get('/rtc.io/primus.js', switchboard.library());
 app.get('/room/:roomname', function(req, res, next) {
     res.writeHead(200);
-    fs.createReadStream(path.resolve(__dirname, 'public', 'webRTC.html')).pipe(res);
+    fs.createReadStream(path.resolve(__dirname, 'public/lib/webRTC', 'webRTC.html')).pipe(res);
 });
 
 // serve the rest statically
 //app.use(browserify('./public', {debug: false}));
-app.get('/js/webRTC.js', function(req, res, next) {
+app.get('/lib/webRTC/js/webRTC.js', function(req, res, next) {
     res.writeHead(200);
     var b = browserify();
-    b.add('./public/js/webRTC.js');
+    b.add('./public/lib/webRTC/js/webRTC.js');
     b.bundle().pipe(res);
 });
 
@@ -2035,7 +2035,7 @@ app.get ('/api/locations/:id/videos', function(req, res) {
         function(err, results) {
 
             // Query - Get all Overlays of the current Location
-            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT ID(v) AS videos";
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT v AS videos";
             //console.log(query);
 
             // Database Query
@@ -2142,7 +2142,7 @@ app.get ('/api/locations/:id/overlays', function(req, res) {
         function(err, results) {
 
             // Query - Get all Overlays of the current Location
-            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT ID(o) AS overlays";
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT o AS overlays";
             //console.log(query);
 
             // Database Query

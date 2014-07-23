@@ -12,7 +12,7 @@ module.exports = function(grunt) {
 		'public/frontend/js/overlayPlugin.js'       : 'src/frontend/js/overlayPlugin.js',
 		'public/frontend/js/remote.js'              : 'src/frontend/js/remote.js',
 		'public/frontend/js/webRTC.js'              : 'src/frontend/js/webRTC.js',
-    'public/frontend/js/chromaKey.js'           : 'src/frontend/js/chromaKey.js',
+    'public/frontend/js/chromaKeyPlugin.js'     : 'src/frontend/js/chromaKeyPlugin.js',
     'public/frontend/css/frontend.css'          : 'src/frontend/css/frontend.css',
     
 		// Backend

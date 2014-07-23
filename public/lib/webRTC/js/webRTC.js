@@ -1,3 +1,11 @@
+/*!
+* The iPED Toolkit
+* webRTC component -- Projects screen contents of 3rd party systems into the iPED Toolkit
+*
+* (c) 2014 Morin Ostkamp
+* Institute for Geoinformatics (ifgi), University of Münster
+*/
+
 var quickconnect = require('rtc-quickconnect');
 var captureConfig = require('rtc-captureconfig');
 var media = require('rtc-media');

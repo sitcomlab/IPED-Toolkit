@@ -1,3 +1,7 @@
 .mp4
 .ogv
 node_modules
+public/api
+public/backend
+public/doc
+public/frontend

@@ -37,10 +37,12 @@ require(['jsnlog/js/jsnlog.min',
          'utils/js/getUrlParameters',
          'underscorejs/js/underscore',
          'backbonejs/js/backbone',
-         // Additional iPED Toolkit Plugins, e.g., Overlays
-         'frontend/overlayPlugin'],
          
-         function(JSNLog, JQuery, Socket, getUrlParameters, Underscore, Backbone, OverlayPlugin) {
+         // Additional iPED Toolkit Plugins, e.g., Overlays
+         'frontend/overlayPlugin',
+         'frontend/chromaKeyPlugin'],
+         
+         function(JSNLog, JQuery, Socket, getUrlParameters, Underscore, Backbone, OverlayPlugin, ChromaKeyPlugin) {
            (function setupJSNLog() {
              var consoleAppender = JL.createConsoleAppender('consoleAppender');
              JL().setOptions({
@@ -73,6 +75,13 @@ require(['jsnlog/js/jsnlog.min',
              initialize: function() {
                _.bindAll(this, 'fetch');
              }
+           });
+           
+           /**
+           * The Backbone.js collection of videos
+           */
+           Videos = Backbone.Collection.extend({
+             model: Video
            });
            
            /**
@@ -130,20 +139,19 @@ require(['jsnlog/js/jsnlog.min',
            */
            Frontend.prototype.loadVideo = function() {
              var thiz = this;
-             var videoId = this.location.get('videos')[0];
-  
-             JL('iPED Toolkit.Frontend').debug('Loading video id ' + videoId + ' for current location');
-           	// Remove current video
-           	$('#iPED-Video').empty();
-  
-             this.video = new Video({id: videoId});
-             this.video.fetch({
+
+             this.videos  = new Videos();
+             this.videos.url = SERVER_URL + PORT + 'api/locations/' + this.location.get('_id') + '/videos';
+             this.videos.fetch({
                success: function(model, response, options) {
-                 JL('iPED Toolkit.Frontend').debug(thiz.video);
-      
-               	// Fill video tag with the new source
-               	$('#iPED-Video').append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
-               	$('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
+                 thiz.video = thiz.videos.at(0);
+                 JL('iPED Toolkit.Frontend').debug('Loading video id ' + thiz.video.get('_id') + ' for current location');
+                 // Remove current video
+                 $('#iPED-Video').empty();
+                 
+                 // Fill video tag with the new source
+                 $('#iPED-Video').append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
+                 $('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');  
                },
                error: function(model, response, options) {
                  JL('iPED Toolkit.Frontend').error(respone); 
@@ -153,7 +161,8 @@ require(['jsnlog/js/jsnlog.min',
            
            $(document).ready(function() {
              var frontend = new Frontend();
-             new OverlayPlugin(frontend, $('#iPED-Overlay'));
+             var overlayPlugin = new OverlayPlugin({parent: frontend, jqueryElement: $('#iPED-Overlay')});
+             var chromaKeyPlugin = new ChromaKeyPlugin({parent: overlayPlugin, scale: 4, fps: 1});
            });
          }
 );

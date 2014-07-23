@@ -39,7 +39,6 @@ define(['threejs/js/three.min',
           * The Backbone.js collection of overlays
           */
           Overlays = Backbone.Collection.extend({
-            url: SERVER_URL + PORT + 'api/overlays',
             model: Overlay
           });
     
@@ -47,9 +46,11 @@ define(['threejs/js/three.min',
            * Overlays can be placed on top of a video to create the illusion of 3D objects that are blended into the simulation, e.g., public displays.
            * @constructor
            */
-          function OverlayPlugin(parent, jqueryElement) {
-            this.parent = parent;
-          	this.jqueryElement = jqueryElement;
+          function OverlayPlugin(opts) {
+            JL('iPED Toolkit.OverlayPlugin').info('OverlayPlugin loaded');
+            
+            this.parent = opts.parent;
+          	this.jqueryElement = opts.jqueryElement;
           	this.camera = '';
           	this.gridhelper = '';
           	this.scene = '';
@@ -76,6 +77,9 @@ define(['threejs/js/three.min',
             // Hooks the Overlay plugin to the frontend's functions
             // Morin: This could also be done by using Backbone.js's on change listener
             Meld.after(this.parent, 'setLocationId', this.createOverlays);
+            
+            // Make sure that Three.js uses CORS to load external urls as textures, for example.
+            THREE.ImageUtils.crossOrigin = '';
             
           	this.jqueryElement.css('position', 'absolute');
           	this.jqueryElement.css('top', '0px');
@@ -119,6 +123,7 @@ define(['threejs/js/three.min',
             thiz = this;
             
             this.overlays = new Overlays();
+            this.overlays.url = SERVER_URL + PORT + 'api/locations/' + this.parent.location.get('id') + '/overlays';
             this.overlays.fetch({
               success: function(model, response, options) {                
               	if (!thiz.overlays || thiz.overlays.length == 0) {
@@ -174,7 +179,7 @@ define(['threejs/js/three.min',
 
 		
               				case 'image':
-              					var texture = THREE.ImageUtils.loadTexture(overlay.get('url'), new THREE.UVMapping(), render);
+              					var texture = THREE.ImageUtils.loadTexture(overlay.get('url'), new THREE.UVMapping(), thiz.render);
               					texture.anisotropy = thiz.renderer.getMaxAnisotropy();
               					var material = new THREE.MeshLambertMaterial({map: texture});
 
