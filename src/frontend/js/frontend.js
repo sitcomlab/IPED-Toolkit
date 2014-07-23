@@ -162,7 +162,7 @@ require(['jsnlog/js/jsnlog.min',
            $(document).ready(function() {
              var frontend = new Frontend();
              var overlayPlugin = new OverlayPlugin({parent: frontend, jqueryElement: $('#iPED-Overlay')});
-             var chromaKeyPlugin = new ChromaKeyPlugin({parent: overlayPlugin, scale: 4, fps: 1});
+             var chromaKeyPlugin = new ChromaKeyPlugin({parent: frontend, scale: 4, fps: 1});
            });
          }
 );

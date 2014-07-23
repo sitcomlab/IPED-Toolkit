@@ -18,7 +18,7 @@ define(['underscorejs/js/underscore',
             this.fps    = opts.fps   || 1;
             // </Configuration>
             
-            this.parent = opts.parent;
+            this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'overlayPlugin'
             this.isEnabled = true;
             this.lastTimestamp = 0;
   

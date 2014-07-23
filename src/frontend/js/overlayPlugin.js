@@ -49,7 +49,7 @@ define(['threejs/js/three.min',
           function OverlayPlugin(opts) {
             JL('iPED Toolkit.OverlayPlugin').info('OverlayPlugin loaded');
             
-            this.parent = opts.parent;
+            this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'frontend'
           	this.jqueryElement = opts.jqueryElement;
           	this.camera = '';
           	this.gridhelper = '';
@@ -117,7 +117,7 @@ define(['threejs/js/three.min',
           };
     
           /**
-          * 
+          * Creates an Three.js object for each overlay
           */
           OverlayPlugin.prototype.createOverlays = function() {
             thiz = this;
@@ -219,6 +219,9 @@ define(['threejs/js/three.min',
             });
           };
 
+          /**
+          * Handles key events, e.g., "toggle interactive mode (i)" or "disable chroma keying (k)".
+          */
           OverlayPlugin.prototype.onKeyDown = function(event) {
             //console.log(event.which);
             switch (event.keyCode) {
@@ -275,6 +278,9 @@ define(['threejs/js/three.min',
             }
           };
 
+          /**
+          * Updates Three.js according to window resizing events.
+          */
           OverlayPlugin.prototype.onWindowResize = function() {
           	if (this.camera) {
           		this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -293,6 +299,9 @@ define(['threejs/js/three.min',
           	}
           };
 
+          /**
+          * Renders the Three.js scene. Is called by window.requestAnimationFrame().
+          */
           OverlayPlugin.prototype.render = function() {
             requestAnimationFrame(this.render);
           	if (this.videos) {
