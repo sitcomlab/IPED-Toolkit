@@ -30,7 +30,7 @@ define(['underscorejs/js/underscore',
             this.width = 0;
             this.height = 0;
             
-            _.bindAll(this, 'onKeyDown');
+            _.bindAll(this, 'onKeyDown', 'render');
             window.addEventListener('keydown', this.onKeyDown);
             Meld.after(this.parent, 'render', this.render);
           }
@@ -40,13 +40,13 @@ define(['underscorejs/js/underscore',
             switch (event.keyCode) {
               case 75: // k
           			this.isEnabled = !this.isEnabled;
-                JL('iPED Toolkit.ChromaKeyPlugin').info('Chroma Keying is now turned ' + this.isEnabled?'on':'off'); 
+                JL('iPED Toolkit.ChromaKeyPlugin').info('Chroma Keying is now turned ' + (this.isEnabled?'on':'off')); 
                 break;
             }
           };
 
           ChromaKeyPlugin.prototype.render = function() {
-            if ($('#iPED-Overlay iframe .remote video')[0]) {
+            if (this.sourceVideo || $('#iPED-Overlay iframe').contents().find('.remote video')[0]) {
               // Maybe there is no remote video yet.
               this.drawVideoOnCanvas();  
             }
@@ -56,11 +56,11 @@ define(['underscorejs/js/underscore',
             // See: http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
   
             if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
-              this.sourceVideo = $('#iPED-Overlay iframe .remote video');
+              this.sourceVideo = $('#iPED-Overlay iframe').contents().find('.remote video');
               this.width = this.sourceVideo.width() / this.scale;
               this.height = this.sourceVideo.height() / this.scale;
   
-              this.displayCanvas = $('#chroma-key-canvas')[0];
+              this.displayCanvas = $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas')[0];
               this.displayCanvas.setAttribute('width', this.width * this.scale);
               this.displayCanvas.setAttribute('height', this.height * this.scale);
               this.displayContext = this.displayCanvas.getContext('2d');
