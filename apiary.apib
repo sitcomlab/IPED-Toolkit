@@ -36,7 +36,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
 * * * 
 
-### For developers
+### For developers (only for the Apiary-Specification)
 
 #### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
@@ -65,7 +65,7 @@ e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a f
 
 
 #### API-Comments:
-It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function click the 
+It is possible to write a comments to discuss the API-Specification on Apiary. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function and click the 
 "Add comment"-Button on the right side of the box.
 
 
@@ -359,12 +359,12 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/videos]
+## Relations of a Location [/api/locations/{id}/locations]
 
 + Parameters
     + id (required, `699`) ... `id` **Interger** of a **Location**
 
-### Retrieve all Videos of a Location [GET]
+### Retrieve all related Locations of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
 + Response 200
@@ -372,7 +372,33 @@ A single Location object with all its details
     + Body
     
             [
-                711
+                {
+                    "tags": [
+                        "Münster",
+                        "Frauenstraße",
+                        "Trattoria",
+                        "Kulturcafé",
+                        "Fürstin-von-Gallitzin-Wohnheim"
+                    ],
+                    "lon": "7.6189278",
+                    "description": "Gegenüber der Trattoria",
+                    "name": "Frauenstraße",
+                    "lat": "51.9634288",
+                    "_id": 710
+                },
+                {
+                    "tags": [
+                        "Münster",
+                        "Krummer Timpen",
+                        "ULB",
+                        "Juridicum"
+                    ],
+                    "lon": 7.6201791,
+                    "description": "Gegenüber der ULB",
+                    "name": "Krummer Timpen",
+                    "lat": 51.9627494,
+                    "_id": 702
+                }
             ]
 
 + Response 404 (text/plain)
@@ -390,39 +416,6 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/overlays]
-
-+ Parameters
-    + id (required, `699`) ... `id` **Interger** of a **Location**
-
-### Retrieve all Overlays of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
-
-+ Response 200
-
-    + Body
-    
-            [   
-                92
-                434,
-                721,
-                8
-            ]
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
 
 # Group Videos
 
@@ -624,6 +617,47 @@ A single Video object with all details
         
         Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
+
+## Relations of a Location [/api/locations/{id}/videos]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Videos of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [
+                {
+                    "tags": [
+                        "Schlossplatz",
+                        "bei Tag"
+                    ],
+                    "description": "Schlossplatz bei Tag",
+                    "name": "Schlossplatz",
+                    "date": "No date available",
+                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/media/video/task_01",
+                    "_id": 711
+                }
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -915,3 +949,52 @@ A single Overlay object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
+## Relations of a Location [/api/locations/{id}/overlays]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Overlays of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [
+                {
+                    "tags": [
+                        "video",
+                        "test"
+                    ],
+                    "rz": 0,
+                    "w": 800,
+                    "d": 0,
+                    "description": "Video Overlay Test",
+                    "name": "Video Overlay",
+                    "type": "html",
+                    "z": 0,
+                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/room/main",
+                    "y": 0,
+                    "rx": 0,
+                    "h": 600,
+                    "x": 100,
+                    "ry": 0,
+                    "_id": 721
+                }
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
