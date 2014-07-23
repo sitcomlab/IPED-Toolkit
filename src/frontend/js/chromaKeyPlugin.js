@@ -45,50 +45,47 @@ define(['underscorejs/js/underscore',
             }
           };
 
+          /**
+          * Does the actual chroma keying, cf. http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
+          */
           ChromaKeyPlugin.prototype.render = function() {
             if (this.sourceVideo || $('#iPED-Overlay iframe').contents().find('.remote video')[0]) {
-              // Maybe there is no remote video yet.
-              this.drawVideoOnCanvas();  
-            }
-          };
-
-          ChromaKeyPlugin.prototype.drawVideoOnCanvas = function() {
-            // See: http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
+              
+              if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
+                this.sourceVideo = $('#iPED-Overlay iframe').contents().find('.remote video');
+                this.width = this.sourceVideo.width() / this.scale;
+                this.height = this.sourceVideo.height() / this.scale;
   
-            if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
-              this.sourceVideo = $('#iPED-Overlay iframe').contents().find('.remote video');
-              this.width = this.sourceVideo.width() / this.scale;
-              this.height = this.sourceVideo.height() / this.scale;
+                this.displayCanvas = $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas')[0];
+                this.displayCanvas.setAttribute('width', this.width * this.scale);
+                this.displayCanvas.setAttribute('height', this.height * this.scale);
+                this.displayContext = this.displayCanvas.getContext('2d');
   
-              this.displayCanvas = $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas')[0];
-              this.displayCanvas.setAttribute('width', this.width * this.scale);
-              this.displayCanvas.setAttribute('height', this.height * this.scale);
-              this.displayContext = this.displayCanvas.getContext('2d');
-  
-              this.hiddenCanvas = document.createElement('canvas');
-              this.hiddenCanvas.setAttribute('width', this.width);
-              this.hiddenCanvas.setAttribute('height', this.height);
-              this.hiddenContext = this.hiddenCanvas.getContext('2d');
-            }
-  
-            this.hiddenContext.drawImage(this.sourceVideo[0], 0, 0, this.width, this.height);
-            var frame = this.hiddenContext.getImageData(0, 0, this.width, this.height);
-            var length = frame.data.length;
-  
-            if (this.isEnabled) {
-              for (var i = 0; i < length; i++) {
-                var r = frame.data [i * 4 + 0];
-                var g = frame.data [i * 4 + 1];
-                var b = frame.data [i * 4 + 2];
-
-                if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
-                  frame.data[i * 4 + 3] = 0; 
-                } 
+                this.hiddenCanvas = document.createElement('canvas');
+                this.hiddenCanvas.setAttribute('width', this.width);
+                this.hiddenCanvas.setAttribute('height', this.height);
+                this.hiddenContext = this.hiddenCanvas.getContext('2d');
               }
+  
+              this.hiddenContext.drawImage(this.sourceVideo[0], 0, 0, this.width, this.height);
+              var frame = this.hiddenContext.getImageData(0, 0, this.width, this.height);
+              var length = frame.data.length;
+  
+              if (this.isEnabled) {
+                for (var i = 0; i < length; i++) {
+                  var r = frame.data [i * 4 + 0];
+                  var g = frame.data [i * 4 + 1];
+                  var b = frame.data [i * 4 + 2];
+
+                  if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
+                    frame.data[i * 4 + 3] = 0; 
+                  } 
+                }
+              }
+              //this.displayContext.putImageData(frame, 0, 0);
+              this.hiddenContext.putImageData(frame, 0, 0);
+              this.displayContext.drawImage(this.hiddenCanvas, 0, 0, this.width * this.scale, this.height * this.scale);
             }
-            //this.displayContext.putImageData(frame, 0, 0);
-            this.hiddenContext.putImageData(frame, 0, 0);
-            this.displayContext.drawImage(this.hiddenCanvas, 0, 0, this.width * this.scale, this.height * this.scale);
           };
           
           return ChromaKeyPlugin;
