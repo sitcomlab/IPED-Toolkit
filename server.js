@@ -1,9 +1,14 @@
+/*!
+* The iPED Toolkit
+* Node.js Webserver
+*
+* (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
+* Institute for Geoinformatics (ifgi), University of Münster
+*/
+
 /*********************************************************************************************
- Node.js Webserver
- *********************************************************************************************
- 
  Table of content
- ---------------------------------------
+ *********************************************************************************************
 
  1. Server-Settings
  2. webRTC
@@ -14,20 +19,21 @@
          3.1.3 Retrieve a Location
          3.1.4 Edit a Location
          3.1.5 Remove a Location
-         3.1.6 Retrieve all Videos of a Location 
-         3.1.7 Retrieve all Overlays of a Location 
+         3.1.6 Retrieve all related Locations of a Location
     3.2 Videos:
          3.2.1 List all Videos
          3.2.2 Create a Video
          3.2.3 Retrieve a Video
          3.2.4 Edit a Video
-         3.2.4 Remove a Video
+         3.2.5 Remove a Video
+         3.2.6 Retrieve all Videos of a Location 
     3.3 Overlays
          3.3.1 List all Overlays
          3.3.2 Create an Overlay
          3.3.3 Retrieve an Overlay
          3.3.4 Edit an Overlay
          3.3.5 Remove an Overlay
+         3.3.6 Retrieve all Overlays of a Location 
     3.4 Scenarios [!]
          3.4.1 List all Scenarios [!]
          3.4.2 Create a Scenario [!]
@@ -42,7 +48,7 @@
  If there is a problem, you can contact the developer.
  So please write your name to your implemented function, e.g. "(Developer: Nicho)"
 
- *********************************************************************************************/
+*********************************************************************************************/
 
 'use strict';
 
@@ -1968,117 +1974,10 @@ app.delete ('/api/locations/:id', function(req, res) {
     }
 });
 
-// 3.1.6 Retrieve all Videos of a Location (Developer: Nicho)
-app.get ('/api/locations/:id/videos', function(req, res) {
+// 3.1.6 Retrieve all related Locations of a Location (Developer: Nicho)
+app.get ('/api/locations/:id/locations', function(req, res) {
 
-    console.log("+++ [GET] /api/locations/" + req.params.id+ "/videos +++++++++++++++++++++++++++++++++++++");
-
-    // Check if submitted ID is a number
-    if(validator.isInt(req.params.id)) {
-
-        async.series({
-            idValidation : function(callback) {
-                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
-                //console.log(query);
-
-                var label = "Location";
-
-                    db.cypherQuery(query, function(err, result) {
-                    if (err) {
-
-                        res.writeHead(404, {
-                            'Content-Type' : 'text/plain'
-                        });
-                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
-                        res.end(errorMsg);
-                        return;
-
-                    } else {
-                        if(result.data[0] == undefined) {
-                            console.log('No Node with label "' + label +'" found!');
-
-                            res.writeHead(404, {
-                                'Content-Type' : 'text/plain'
-                            });
-                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
-                            res.end(errorMsg);
-                            
-                            return;
-                        } else if(result.data[0] == 'Video'){
-                            console.log('Node with label "' + result.data[0] + '" found!');
-
-                            res.writeHead(406, {
-                                'Content-Type' : 'text/plain'
-                            });
-                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
-                            res.end(errorMsg);
-                            return;
-
-                        } else if(result.data[0] == 'Overlay'){
-                            console.log('Node with label "' + result.data[0] + '" found!');
-
-                            res.writeHead(406, {
-                                'Content-Type' : 'text/plain'
-                            });
-                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
-                            res.end(errorMsg);
-                            return;
-
-                        } else {
-                            console.log('Node with label "' + result.data[0] + '" found!');
-                            callback(null);
-                        }
-                    }
-                });
-            }
-        },
-        function(err, results) {
-
-            // Query - Get all Overlays of the current Location
-            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT v AS videos";
-            //console.log(query);
-
-            // Database Query
-            db.cypherQuery(query, function(err, result) {
-                if (err) {
-
-                    res.writeHead(500, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    var errorMsg = "Error: Internal Server Error; Message: " + err;
-                    res.end(errorMsg);
-                    return;
-
-                } else {
-                    //console.log(result.data);
-                    // delivers an array of query results
-                    //console.log(result.columns);
-                    // delivers an array of names of objects getting returned
-
-                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-                    res.writeHead(200, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    res.end(JSON.stringify(result.data));
-                    return;
-                }
-            });
-        });
-    } else {
-        res.writeHead(406, {
-            'Content-Type' : 'text/plain'
-        });
-        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
-        res.end(errorMsg);
-        return;
-    }
-});
-
-// 3.1.7 Retrieve all Overlays of a Location (Developer: Nicho)
-app.get ('/api/locations/:id/overlays', function(req, res) {
-
-    console.log("+++ [GET] /api/locations/" + req.params.id+ "/overlays +++++++++++++++++++++++++++++++++++");
+    console.log("+++ [GET] /api/locations/" + req.params.id+ "/locations ++++++++++++++++++++++++++++++++++");
 
     // Check if submitted ID is a number
     if(validator.isInt(req.params.id)) {
@@ -2141,8 +2040,8 @@ app.get ('/api/locations/:id/overlays', function(req, res) {
         },
         function(err, results) {
 
-            // Query - Get all Overlays of the current Location
-            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT o AS overlays";
+            // Query - Get all related Locations of the current Location
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT l2";
             //console.log(query);
 
             // Database Query
@@ -2348,15 +2247,23 @@ app.post('/api/videos', function(req, res) {
         jsonvalidation_3 : function(callback) {
             // Check if "url" is a valid URL
             if (req.body.url && !(req.body.url == "")) {
-                if(validator.isURL(req.body.url)) { 
+                if(req.body.url.match('.mp4') || req.body.url.match('.ogv')) {
+                        res.writeHead(400, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end('Error: The value of the property "url" contains a videoformat! Please submit only the filename!');
+                        return;
+                } else {
+                    if(validator.isURL(req.body.url + '.mp4') || validator.isURL(req.body.url + '.ogv')) {
                     //console.log("received valid URL!");
                     callback(null);
-                } else {
-                    res.writeHead(400, {
-                        'Content-Type' : 'text/plain'
-                    });
-                    res.end('Error: The value of the property "url" is not a valid URL!');
-                    return;
+                    } else {
+                        res.writeHead(400, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        res.end('Error: The value of the property "url" is not a valid URL!');
+                        return;
+                    }
                 }
             }
             else {
@@ -2718,15 +2625,23 @@ app.put('/api/videos/:id', function(req, res) {
             jsonvalidation_3 : function(callback) {
                 // Check if "url" is a valid URL
                 if (req.body.url && !(req.body.url == "")) {
-                    if(validator.isURL(req.body.url)) { 
-                        //console.log("received valid URL!");
-                        callback(null);
-                    } else {
+                    if(req.body.url.match('.mp4') || req.body.url.match('.ogv')) {
                         res.writeHead(400, {
                             'Content-Type' : 'text/plain'
                         });
-                        res.end('Error: The value of the property "url" is not a valid URL!');
+                        res.end('Error: The value of the property "url" contains a videoformat! Please submit only the filename!');
                         return;
+                    } else {
+                        if(validator.isURL(req.body.url + '.mp4') || validator.isURL(req.body.url + '.ogv')) {
+                            //console.log("received valid URL!");
+                            callback(null);
+                        } else {
+                            res.writeHead(400, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            res.end('Error: The value of the property "url" is not a valid URL!');
+                            return;
+                        }
                     }
                 }
                 else {
@@ -2997,6 +2912,115 @@ app.delete('/api/videos/:id', function(req, res) {
         return;
     }
 });
+
+
+// 3.2.6 Retrieve all Videos of a Location (Developer: Nicho)
+app.get ('/api/locations/:id/videos', function(req, res) {
+
+    console.log("+++ [GET] /api/locations/" + req.params.id+ "/videos +++++++++++++++++++++++++++++++++++++");
+
+    // Check if submitted ID is a number
+    if(validator.isInt(req.params.id)) {
+
+        async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
+
+                var label = "Location";
+
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
+
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            }
+        },
+        function(err, results) {
+
+            // Query - Get all Videos of the current Location
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT v";
+            //console.log(query);
+
+            // Database Query
+            db.cypherQuery(query, function(err, result) {
+                if (err) {
+
+                    res.writeHead(500, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                    res.end(errorMsg);
+                    return;
+
+                } else {
+                    //console.log(result.data);
+                    // delivers an array of query results
+                    //console.log(result.columns);
+                    // delivers an array of names of objects getting returned
+
+                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                    res.writeHead(200, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end(JSON.stringify(result.data));
+                    return;
+                }
+            });
+        });
+    } else {
+        res.writeHead(406, {
+            'Content-Type' : 'text/plain'
+        });
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
+        res.end(errorMsg);
+        return;
+    }
+});
+
 
 /****************************
  3.3 Overlays
@@ -3798,91 +3822,109 @@ app.delete('/api/overlays/:id', function(req, res) {
     }
 });
 
-/****************************
- 3.4 Scenarios
- ****************************/
+// 3.3.6 Retrieve all Overlays of a Location (Developer: Nicho)
+app.get ('/api/locations/:id/overlays', function(req, res) {
 
-// 3.4.1 GET a list of all scenarios (Developer: Nicho) [!]
-app.get('/api/scenarios', function(req, res) {
+    console.log("+++ [GET] /api/locations/" + req.params.id+ "/overlays +++++++++++++++++++++++++++++++++++");
 
-    console.log("+++ [GET] /api/scenarios +++++++++++++++++++++++++++++++++++++++++++++++");
+    // Check if submitted ID is a number
+    if(validator.isInt(req.params.id)) {
 
-    // Query
-    var query = "MATCH (s:Scenario) RETURN s";
-    //console.log(query);
+        async.series({
+            idValidation : function(callback) {
+                var query = 'MATCH node WHERE ID(node)=' + req.params.id + ' RETURN LABELS(node) AS label';
+                //console.log(query);
 
-    // Database Query
-    db.cypherQuery(query, function(err, result) {
+                var label = "Location";
 
-        if (err) {
+                    db.cypherQuery(query, function(err, result) {
+                    if (err) {
 
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
+                        res.writeHead(404, {
+                            'Content-Type' : 'text/plain'
+                        });
+                        var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                        res.end(errorMsg);
+                        return;
+
+                    } else {
+                        if(result.data[0] == undefined) {
+                            console.log('No Node with label "' + label +'" found!');
+
+                            res.writeHead(404, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = "Error: The submitted " + label + "-ID could not be found!";
+                            res.end(errorMsg);
+                            
+                            return;
+                        } else if(result.data[0] == 'Video'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to a "Video"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else if(result.data[0] == 'Overlay'){
+                            console.log('Node with label "' + result.data[0] + '" found!');
+
+                            res.writeHead(406, {
+                                'Content-Type' : 'text/plain'
+                            });
+                            var errorMsg = 'Error: No valid request! The submitted "' + label + '"-ID belongs to an "Overlay"!';
+                            res.end(errorMsg);
+                            return;
+
+                        } else {
+                            console.log('Node with label "' + result.data[0] + '" found!');
+                            callback(null);
+                        }
+                    }
+                });
+            }
+        },
+        function(err, results) {
+
+            // Query - Get all Overlays of the current Location
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT o";
+            //console.log(query);
+
+            // Database Query
+            db.cypherQuery(query, function(err, result) {
+                if (err) {
+
+                    res.writeHead(500, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                    res.end(errorMsg);
+                    return;
+
+                } else {
+                    //console.log(result.data);
+                    // delivers an array of query results
+                    //console.log(result.columns);
+                    // delivers an array of names of objects getting returned
+
+                    console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                    res.writeHead(200, {
+                        'Content-Type' : 'text/plain'
+                    });
+                    res.end(JSON.stringify(result.data));
+                    return;
+                }
             });
-            res.end("Error:" + err);
-            return;
-        } else {
-            //console.log(result.data);
-            // delivers an array of query results
-            //console.log(result.columns);
-            // delivers an array of names of objects getting returned
-
-            var finalResult = '{"scenarios":' + JSON.stringify(result.data) + '}';
-            console.log("================================ Result ================================");
-            console.log(finalResult);
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-            res.writeHead(200, {
-                'Content-Type' : 'application/json'
-            });
-            res.end(finalResult);
-            return;
-        }
-    });
+        });
+    } else {
+        res.writeHead(406, {
+            'Content-Type' : 'text/plain'
+        });
+        var errorMsg = "Error: No valid request! The submitted ID is not an integer!";
+        res.end(errorMsg);
+        return;
+    }
 });
-
-// 3.4.2 Create a Scenario [!]
-
-// 3.4.3 Retrieve a Scenario (Developer: Nicho) [!]
-app.get('/api/scenarios/:id', function(req, res) {
-
-    console.log("+++ [GET] /api/scenarios/" + req.params.id + " ++++++++++++++++++++++++++++++++++++++++++++");
-
-    // Query
-    var query = "MATCH (l:Location)<-[:contains]-(s:Scenario { name: \"Scenario 1\" }) RETURN {s AS scenario, l AS startLocation} AS scenario";
-    //console.log(query);
-
-    // Database Query
-    db.cypherQuery(query, function(err, result) {
-
-        if (err) {
-
-            res.writeHead(500, {
-                'Content-Type' : 'text/plain'
-            });
-            res.end("Error:" + err);
-            return;
-
-        } else {
-            //console.log(result.data);
-            // delivers an array of query results
-            //console.log(result.columns);
-            // delivers an array of names of objects getting returned
-
-            var finalResult = '{"scenario":' + JSON.stringify(result.data) + '}';
-            console.log("================================ Result ================================");
-            console.log(finalResult);
-            console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-            res.writeHead(200, {
-                'Content-Type' : 'application/json'
-            });
-            res.end(finalResult);
-            return;
-        }
-    });
-});
-
-// 3.4.4 Edit a Scenario [!]
-
-// 3.4.5 Remove a Scenario [!]
