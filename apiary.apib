@@ -34,9 +34,19 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
+#### Browser and Videoformats
+The application runs only in the 2 Browser below. If you upload videos on the server, please make sure that you upload:
+
+* a `.mp4`-Format for **Google Chrome** and
+* a `.ogv`-Format for **Mozilla Firefox**.
+
+Please upload both formats everytime for a better browsersupport and make sure that the **filenames are still the same**!
+
+**ATTENTION: If you use the requests `[POST] /api/videos` or `[PUT] /api/videos/:id` and you submit a server-path, for example *http://giv-sitcomlab.uni-muenster.de:8080/media/video/task08* or *http://localhost:8080/media/video/task08*) DO NOT SUBMIT THE DATATYPE `.mp4` or `.ogv` IN YOUR URL! The application will check the browser and will pick the right videoformat.
+
 * * * 
 
-### For developers (only for the Apiary-Specification)
+### For developers (only for the Specification on Apiary)
 
 #### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
@@ -458,7 +468,7 @@ A single Location object with all its details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#Browser-and-Videoformats) on the top of this document**; can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
@@ -469,7 +479,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
                 "tags":[]
             }
 
@@ -480,7 +490,7 @@ A single Location object with all its details
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
             "tags":[]
         }
         
@@ -523,7 +533,7 @@ A single Video object with all details
                 "description":"Frauenstraße bei Tag",
                 "name":"Frauenstraße2",
                 "date":"",
-                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
                 "tags":[]
             }
             
@@ -550,7 +560,7 @@ A single Video object with all details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#Browser-and-Videoformats) on the top of this document**; can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
@@ -569,7 +579,7 @@ A single Video object with all details
             "description":"Frauenstraße bei Nacht",
             "name":"Frauenstraße 2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
             "tags":[]
         }
         
