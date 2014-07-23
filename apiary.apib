@@ -42,7 +42,15 @@ The application runs only in the 2 Browser below. If you upload videos on the se
 
 Please upload both formats everytime for a better browsersupport and make sure that the **filenames are still the same**!
 
-**ATTENTION: If you use the requests `[POST] /api/videos` or `[PUT] /api/videos/:id` and you submit a server-path, for example *http://giv-sitcomlab.uni-muenster.de:8080/media/video/task08* or *http://localhost:8080/media/video/task08*) DO NOT SUBMIT THE DATATYPE `.mp4` or `.ogv` IN YOUR URL! The application will check the browser and will pick the right videoformat.
+**ATTENTION IF YOU USE THE REQUESTS:**
+
+* `[POST] /api/videos` or 
+* `[PUT] /api/videos/:id` 
+
+and you want to submit a server-path, of the uploaded files, for example **task08.mp4** and **task08.ogv**,<br/>
+**DO NEVER SUBMIT THE DATATYPE** `.mp4` **OR** `.ogv` **WITH YOUR URL!**<br/>
+**YOUR URL SHOULD ONLY CONENTS THE FILENAME, for example:** `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task08`.<br/>
+The application will check the browser and will pick the right videoformat automatically, so you don't need to submit them, thank you!
 
 * * * 
 
@@ -468,7 +476,7 @@ A single Location object with all its details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#Browser-and-Videoformats) on the top of this document**; can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
@@ -560,7 +568,7 @@ A single Video object with all details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#Browser-and-Videoformats) on the top of this document**; can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
