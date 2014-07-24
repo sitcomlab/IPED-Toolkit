@@ -4,7 +4,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 # IPED-Toolkit-API (v3.2)
 
 
-#### Hosts
+### Hosts
 * HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
 * HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
@@ -34,9 +34,27 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
+### Browser and Videoformats
+The application runs only in the 2 Browser below. If you upload videos on the server, please make sure that you upload:
+
+* a `*.mp4`-Format for **Google Chrome** and
+* a `*.ogv`-Format for **Mozilla Firefox**.
+
+Please upload both formats everytime for a better browsersupport and make sure that the **filenames are still the same**!
+
+**ATTENTION IF YOU USE THE REQUESTS:**
+
+* `[POST] /api/videos` or 
+* `[PUT] /api/videos/:id` 
+
+and you want to submit a server-path, of the uploaded files, for example **task08.mp4** and **task08.ogv**,<br/>
+**DO NEVER SUBMIT THE DATATYPE** `*.mp4` **OR** `*.ogv` **WITH YOUR URL!**<br/>
+**YOUR URL SHOULD ONLY CONENTS THE FILENAME, for example:** `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task08`.<br/>
+The application will check the browser and will pick the right videoformat automatically, so you don't need to submit them, thank you!
+
 * * * 
 
-### For developers
+### For developers (only for the API-Specification on Apiary.io)
 
 #### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
@@ -65,7 +83,7 @@ e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a f
 
 
 #### API-Comments:
-It is possible to write a comments to discuss the API. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function click the 
+It is possible to write a comments to discuss the API-Specification on Apiary. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function and click the 
 "Add comment"-Button on the right side of the box.
 
 
@@ -359,12 +377,12 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/videos]
+## Relations of a Location [/api/locations/{id}/locations]
 
 + Parameters
     + id (required, `699`) ... `id` **Interger** of a **Location**
 
-### Retrieve all Videos of a Location [GET]
+### Retrieve all related Locations of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
 + Response 200
@@ -372,7 +390,33 @@ A single Location object with all its details
     + Body
     
             [
-                711
+                {
+                    "tags": [
+                        "Münster",
+                        "Frauenstraße",
+                        "Trattoria",
+                        "Kulturcafé",
+                        "Fürstin-von-Gallitzin-Wohnheim"
+                    ],
+                    "lon": "7.6189278",
+                    "description": "Gegenüber der Trattoria",
+                    "name": "Frauenstraße",
+                    "lat": "51.9634288",
+                    "_id": 710
+                },
+                {
+                    "tags": [
+                        "Münster",
+                        "Krummer Timpen",
+                        "ULB",
+                        "Juridicum"
+                    ],
+                    "lon": 7.6201791,
+                    "description": "Gegenüber der ULB",
+                    "name": "Krummer Timpen",
+                    "lat": 51.9627494,
+                    "_id": 702
+                }
             ]
 
 + Response 404 (text/plain)
@@ -390,39 +434,6 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/overlays]
-
-+ Parameters
-    + id (required, `699`) ... `id` **Interger** of a **Location**
-
-### Retrieve all Overlays of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
-
-+ Response 200
-
-    + Body
-    
-            [   
-                92
-                434,
-                721,
-                8
-            ]
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
 
 # Group Videos
 
@@ -465,7 +476,7 @@ A single Location object with all its details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
@@ -476,7 +487,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
                 "tags":[]
             }
 
@@ -487,7 +498,7 @@ A single Location object with all its details
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
             "tags":[]
         }
         
@@ -504,6 +515,8 @@ A single Location object with all its details
         Error: The element values of the array "<propertyName>" are not unique!
         
         Error: The value of the property "url" is not a valid URL!
+        
+        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
         
         Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
 
@@ -530,7 +543,7 @@ A single Video object with all details
                 "description":"Frauenstraße bei Tag",
                 "name":"Frauenstraße2",
                 "date":"",
-                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
                 "tags":[]
             }
             
@@ -557,7 +570,7 @@ A single Video object with all details
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (can not be empty and url has to be available; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4"*)
+- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
 
 + Request (application/json)
@@ -576,7 +589,7 @@ A single Video object with all details
             "description":"Frauenstraße bei Nacht",
             "name":"Frauenstraße 2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03.mp4",
+            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
             "tags":[]
         }
         
@@ -591,6 +604,8 @@ A single Video object with all details
         Error: The element values of the array "<propertyName>" are not unique!
 
         Error: The value of the property "url" is not a valid URL!
+        
+        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
         
         Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
 
@@ -624,6 +639,47 @@ A single Video object with all details
         
         Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
+
+## Relations of a Location [/api/locations/{id}/videos]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Videos of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [
+                {
+                    "tags": [
+                        "Schlossplatz",
+                        "bei Tag"
+                    ],
+                    "description": "Schlossplatz bei Tag",
+                    "name": "Schlossplatz",
+                    "date": "No date available",
+                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/media/video/task_01",
+                    "_id": 711
+                }
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -915,3 +971,52 @@ A single Overlay object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
+## Relations of a Location [/api/locations/{id}/overlays]
+
++ Parameters
+    + id (required, `699`) ... `id` **Interger** of a **Location**
+
+### Retrieve all Overlays of a Location [GET]
+(Status: **implemented**, Developer: Nicho)
+
++ Response 200
+
+    + Body
+    
+            [
+                {
+                    "tags": [
+                        "video",
+                        "test"
+                    ],
+                    "rz": 0,
+                    "w": 800,
+                    "d": 0,
+                    "description": "Video Overlay Test",
+                    "name": "Video Overlay",
+                    "type": "html",
+                    "z": 0,
+                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/room/main",
+                    "y": 0,
+                    "rx": 0,
+                    "h": 600,
+                    "x": 100,
+                    "ry": 0,
+                    "_id": 721
+                }
+            ]
+
++ Response 404 (text/plain)
+
+        Error: The submitted "<Object>"-ID could not be found!
+        
++ Response 406 (text/plain)
+
+        Error: No valid request! The submitted ID is not an integer!
+        
+        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
+
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage>
