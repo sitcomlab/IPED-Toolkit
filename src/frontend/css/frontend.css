@@ -9,6 +9,7 @@
 html, body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
   
   <!--(if target master)>
   background-color: #000000;

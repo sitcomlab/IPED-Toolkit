@@ -5,17 +5,11 @@ body {
   margin: 0;
   overflow: hidden;
 }
+
 .local {
   display: none;
 }
-.remote {
-  visibility: hidden;
-  max-width: 100%;
-}
-.chroma-key,
-#chroma-key-canvas {
-  max-width: 100%;
-}
-.remote video {
+
+.remote, .remote video {
   max-width: 100%;
 }

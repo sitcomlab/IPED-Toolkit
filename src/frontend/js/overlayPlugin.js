@@ -10,10 +10,9 @@ define(['threejs/js/three.min',
         'threejs/js/Detector',
         'threejs/js/CSS3DRenderer',
         'threejs/js/TransformControls',
-        'underscorejs/js/underscore',
-        'aop/js/meld'],
+        'underscorejs/js/underscore'],
         
-        function(THREE, Detector, CSS3DRenderer, TransformControls, Underscore, Meld) {
+        function(THREE, Detector, CSS3DRenderer, TransformControls, Underscore) {
           
           /**
           * The Backbone.js model of a location
@@ -63,6 +62,9 @@ define(['threejs/js/three.min',
           	this.controls = new Array();
             this.overlays = null;
             
+            this.hooks = [];
+            this.hooks['render'] = [];
+            
             _.bindAll(this, 'render', 'onKeyDown', 'onWindowResize', 'createOverlays');
 
           	this.init();
@@ -76,7 +78,7 @@ define(['threejs/js/three.min',
           OverlayPlugin.prototype.init = function() {
             // Hooks the Overlay plugin to the frontend's functions
             // Morin: This could also be done by using Backbone.js's on change listener
-            Meld.after(this.parent, 'setLocationId', this.createOverlays);
+            this.parent.hooks['setLocationId'].push(this.createOverlays);
             
             // Make sure that Three.js uses CORS to load external urls as textures, for example.
             THREE.ImageUtils.crossOrigin = '';
@@ -327,6 +329,10 @@ define(['threejs/js/three.min',
           	if (this.renderer) {
           		this.renderer.render(this.scene, this.camera);
           	}
+            
+            this.hooks['render'].forEach(function(hook) {
+              hook();
+            }, this);
           };
     
           return OverlayPlugin;

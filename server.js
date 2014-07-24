@@ -53,7 +53,6 @@ var util = require('util');
 
 var neo4j = require('node-neo4j');
 var express = require('express');
-var stylus = require('stylus');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
@@ -148,14 +147,6 @@ io.sockets.on('connection', function(socket) {
 
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
-
-// convert stylus stylesheets
-app.use(stylus.middleware({
-    src : __dirname + '/public/lib/webRTC/css',
-    compile : function(str, sourcePath) {
-        return stylus(str).set('filename', sourcePath).set('compress', false).use(nib());
-    }
-}));
 
 // we need to expose the primus library
 app.get('/rtc.io/primus.js', switchboard.library());

@@ -27,6 +27,13 @@ require.config({
     'threejs/js/TransformControls': {
       deps: ['threejs/js/three.min'],
       exports: 'TransformControls'
+    },
+    'seriouslyjs/js/seriously': {
+      exports: 'Seriously'
+    },
+    'seriouslyjs/js/seriously.chroma': {
+      deps: ['seriouslyjs/js/seriously'],
+      exports: 'SeriouslyChroma'
     }
   }
 });
@@ -92,6 +99,8 @@ require(['jsnlog/js/jsnlog.min',
              this.location = null;
              this.socket = null;
              this.video = new Video;
+             this.hooks = [];
+             this.hooks['setLocationId'] = [];
   
              this.activateWebSockets();
              this.setLocationId(getURLParameters('locationId'));
@@ -132,6 +141,10 @@ require(['jsnlog/js/jsnlog.min',
                  JL('iPED Toolkit.Frontend').error(respone); 
                }
              });
+             
+             this.hooks['setLocationId'].forEach(function(hook) {
+               hook();
+             }, this);
            };
 
            /**
@@ -162,7 +175,7 @@ require(['jsnlog/js/jsnlog.min',
            $(document).ready(function() {
              var frontend = new Frontend();
              var overlayPlugin = new OverlayPlugin({parent: frontend, jqueryElement: $('#iPED-Overlay')});
-             var chromaKeyPlugin = new ChromaKeyPlugin({parent: overlayPlugin, scale: 4, fps: 1});
+             var chromaKeyPlugin = new ChromaKeyPlugin({parent: overlayPlugin});
            });
          }
 );

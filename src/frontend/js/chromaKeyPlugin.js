@@ -7,84 +7,75 @@
 */
 
 define(['underscorejs/js/underscore',
-        'aop/js/meld'],
+        'seriouslyjs/js/seriously',
+        'seriouslyjs/js/seriously.chroma'],
         
-        function(Underscore, Meld) {
+        function(Underscore) {
           function ChromaKeyPlugin(opts) {
             JL('iPED Toolkit.ChromaKeyPlugin').info('ChromaKeyPlugin loaded');
-            
-            // <Configuration>
-            this.scale  = opts.scale || 4;
-            this.fps    = opts.fps   || 1;
-            // </Configuration>
-            
+                        
             this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'overlayPlugin'
-            this.isEnabled = true;
-            this.lastTimestamp = 0;
-  
-            this.selectedR = 10;
-            this.selectedG = 245
-            this.selectedB = 10;
-  
+            this.enable(true);
             this.sourceVideo = null;
-            this.width = 0;
-            this.height = 0;
             
-            _.bindAll(this, 'onKeyDown', 'render');
+            _.bindAll(this, 'onKeyDown');
             window.addEventListener('keydown', this.onKeyDown);
-            Meld.after(this.parent, 'render', this.render);
           }
           
           ChromaKeyPlugin.prototype.onKeyDown = function(event) {
             //console.log(event.which);
             switch (event.keyCode) {
               case 75: // k
-          			this.isEnabled = !this.isEnabled;
-                JL('iPED Toolkit.ChromaKeyPlugin').info('Chroma Keying is now turned ' + (this.isEnabled?'on':'off')); 
+                this.enable(!this.isEnabled);
                 break;
             }
           };
-
+          
           /**
-          * Does the actual chroma keying, cf. http://tech.pro/tutorial/1281/chroma-key-video-effects-using-javascript-and-the-html5-canvas-element
+          * Enables or disables the Chroma Key plugin, i.e., hides or shows the raw remote video tag
           */
-          ChromaKeyPlugin.prototype.render = function() {
-            if (this.sourceVideo || $('#iPED-Overlay iframe').contents().find('.remote video')[0]) {
-              
-              if (this.sourceVideo == null || this.sourceVideo.width() != this.width || this.sourceVideo.height() != this.height) {
-                this.sourceVideo = $('#iPED-Overlay iframe').contents().find('.remote video');
-                this.width = this.sourceVideo.width() / this.scale;
-                this.height = this.sourceVideo.height() / this.scale;
-  
-                this.displayCanvas = $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas')[0];
-                this.displayCanvas.setAttribute('width', this.width * this.scale);
-                this.displayCanvas.setAttribute('height', this.height * this.scale);
-                this.displayContext = this.displayCanvas.getContext('2d');
-  
-                this.hiddenCanvas = document.createElement('canvas');
-                this.hiddenCanvas.setAttribute('width', this.width);
-                this.hiddenCanvas.setAttribute('height', this.height);
-                this.hiddenContext = this.hiddenCanvas.getContext('2d');
-              }
-  
-              this.hiddenContext.drawImage(this.sourceVideo[0], 0, 0, this.width, this.height);
-              var frame = this.hiddenContext.getImageData(0, 0, this.width, this.height);
-              var length = frame.data.length;
-  
-              if (this.isEnabled) {
-                for (var i = 0; i < length; i++) {
-                  var r = frame.data [i * 4 + 0];
-                  var g = frame.data [i * 4 + 1];
-                  var b = frame.data [i * 4 + 2];
-
-                  if (r <= this.selectedR && b <= this.selectedB && g >= this.selectedG) {
-                    frame.data[i * 4 + 3] = 0; 
-                  } 
+          ChromaKeyPlugin.prototype.enable = function(isEnabled) {
+            var _enable = function(thiz) {
+              if ($('#iPED-Overlay iframe').contents().find('.remote video')[0] && $('#iPED-Overlay iframe').contents().find('.remote video')[0].videoWidth != 0 && $('#iPED-Overlay iframe').contents().find('.remote video')[0].videoHeight != 0) {
+                thiz.sourceVideo = $('#iPED-Overlay iframe').contents().find('.remote video');
+                thiz.sourceVideo.css('position', 'absolute');
+                thiz.sourceVideo.css('left', '-99999px');
+                
+                if ($('#iPED-Overlay iframe').contents().find('#chroma-key-canvas')) {
+                  $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas').remove();
                 }
+                thiz.sourceVideo.before('<canvas id="chroma-key-canvas" width="' + thiz.sourceVideo[0].videoWidth + '" height="' + thiz.sourceVideo[0].videoHeight + '" style="max-width: 100%;"></canvas>'); 
+                thiz.displayCanvas = $('#iPED-Overlay iframe').contents().find('#chroma-key-canvas');
+                
+                this.seriously = null;
+                thiz.seriously = new Seriously();
+                thiz.seriouslySource = thiz.seriously.source(thiz.sourceVideo[0]);
+                thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas[0]);
+                thiz.seriouslyChroma = thiz.seriously.effect('chroma');
+                thiz.seriouslyChroma.source = thiz.seriouslySource;
+                thiz.seriouslyTarget.source = thiz.seriouslyChroma;
+
+                thiz.seriously.go();
+              } else {
+                setTimeout(function(){_enable(thiz);}, 1000); 
               }
-              //this.displayContext.putImageData(frame, 0, 0);
-              this.hiddenContext.putImageData(frame, 0, 0);
-              this.displayContext.drawImage(this.hiddenCanvas, 0, 0, this.width * this.scale, this.height * this.scale);
+            };
+            
+            this.isEnabled = isEnabled;
+            JL('iPED Toolkit.ChromaKeyPlugin').info('Chroma Keying is now turned ' + (this.isEnabled?'on':'off'));
+            
+            if(this.isEnabled) {
+              _enable(this);    
+            } else {
+              this.seriously.stop();
+              this.seriously = null;
+              
+              this.displayCanvas.remove();  
+              this.displayCanvas = null;
+                
+              this.sourceVideo.css('position', 'relative');
+              this.sourceVideo.css('left', '0');
+              this.sourceVideo = null;
             }
           };
           
