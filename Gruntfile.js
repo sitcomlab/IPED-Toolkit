@@ -5,22 +5,21 @@ module.exports = function(grunt) {
 		// means: compile src/bar.html to public/foo.html
 		//
 		// Frontend
-    'public/frontend/index.html'                : 'src/frontend/index.html',
-		'public/frontend/remote.html'               : 'src/frontend/remote.html',
-		'public/frontend/webRTC.html'               : 'src/frontend/webRTC.html',
-		'public/frontend/js/frontend.js'            : 'src/frontend/js/frontend.js',
-		'public/frontend/js/overlayPlugin.js'       : 'src/frontend/js/overlayPlugin.js',
-		'public/frontend/js/remote.js'              : 'src/frontend/js/remote.js',
-		'public/frontend/js/webRTC.js'              : 'src/frontend/js/webRTC.js',
-    'public/frontend/js/chromaKeyPlugin.js'     : 'src/frontend/js/chromaKeyPlugin.js',
-    'public/frontend/css/frontend.css'          : 'src/frontend/css/frontend.css',
+    'public/frontend/index.html'                      : 'src/frontend/index.html',
+		'public/frontend/remote.html'                     : 'src/frontend/remote.html',
+		'public/frontend/webRTC.html'                     : 'src/frontend/webRTC.html',
+		'public/frontend/js/frontend.js'                  : 'src/frontend/js/frontend.js',
+		'public/frontend/js/overlayPlugin.js'             : 'src/frontend/js/overlayPlugin.js',
+		'public/frontend/js/remote.js'                    : 'src/frontend/js/remote.js',
+		'public/frontend/js/webRTC.js'                    : 'src/frontend/js/webRTC.js',
+    'public/frontend/js/chromaKeyPlugin.js'           : 'src/frontend/js/chromaKeyPlugin.js',
+    'public/frontend/css/frontend.css'                : 'src/frontend/css/frontend.css',
     
 		// Backend
-		'public/backend/index.html'                 : 'src/backend/index.html',
-		'public/backend/js/backend.js'              : 'src/backend/js/backend.js',
-		'public/backend/js/leaflet.contextmenu.js'  : 'src/backend/js/leaflet.contextmenu.js',
-    'public/backend/css/backend.css'            : 'src/backend/css/backend.css',
-    'public/backend/css/leaflet.contextmenu.css': 'src/backend/css/leaflet.contextmenu.css'
+		'public/backend/index.html'                       : 'src/backend/index.html',
+		'public/backend/js/backend.js'                    : 'src/backend/js/backend.js',
+    'public/backend/css/backend.css'                  : 'src/backend/css/backend.css',
+    'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl'
 	};
 	
   // Project configuration.
@@ -46,15 +45,29 @@ module.exports = function(grunt) {
           configure : 'node_modules/ink-docstrap/template/jsdoc.conf.json'
         }
       }
-    }
+    },
+    concat: {
+        options: {
+          separator: '\n\n'
+        },
+        backendCSS: {
+          src: ['public/lib/*/css/*.css', 'public/backend/css/*.css'],
+          dest: 'public/backend/css/backend.css'
+        },
+        frontendCSS: {
+          src: ['public/lib/*/css/*.css', 'public/frontend/css/*.css'],
+          dest: 'public/frontend/css/frontend.css'
+        }
+      }
   });
 
 	// Load the plugin that provides the xyz task.
 	grunt.loadNpmTasks('grunt-targethtml');
   grunt.loadNpmTasks('grunt-jsdoc');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Default task(s).
-  grunt.registerTask('master',          ['targethtml:master', 'jsdoc:all']);
-	grunt.registerTask('develop',         ['targethtml:develop']);
-	grunt.registerTask('developOnServer', ['targethtml:developOnServer', 'jsdoc:all']);
+  grunt.registerTask('master',          ['targethtml:master',           'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
+	grunt.registerTask('develop',         ['targethtml:develop',          'concat:backendCSS', 'concat:frontendCSS']);
+	grunt.registerTask('developOnServer', ['targethtml:developOnServer',  'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
 };
