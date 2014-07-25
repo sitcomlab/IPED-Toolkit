@@ -34,6 +34,10 @@ require.config({
     'seriouslyjs/js/seriously.chroma': {
       deps: ['seriouslyjs/js/seriously'],
       exports: 'SeriouslyChroma'
+    },
+    'backbonejs/js/backbone': {
+      deps: ['underscorejs/js/underscore'],
+      exports: 'Backbone'
     }
   }
 });

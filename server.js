@@ -204,7 +204,7 @@ app.get('/api/locations', function(req, res) {
             return;
 
         } else {
-            //console.log(result.data);
+            //console.log(JSON.parse(JSON.stringify(result.data).replace(/_id/g, 'id')));
             // delivers an array of query results
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
@@ -214,7 +214,7 @@ app.get('/api/locations', function(req, res) {
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(JSON.stringify(result.data));
+            res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
             return;
         }
     });
@@ -703,7 +703,7 @@ app.post('/api/locations', function(req, res) {
                             res.writeHead(201, {
                                 'Content-Type' : 'application/json'
                             });
-                            res.end(JSON.stringify(newLocation));
+                            res.end(JSON.stringify(newLocation).replace(/_id/g, 'id'));
                             return;
                         }
                     });
@@ -889,7 +889,7 @@ app.get('/api/locations/:id', function(req, res) {
                                             res.writeHead(200, {
                                                 'Content-Type' : 'application/json'
                                             });
-                                            res.end(finalResult);
+                                            res.end(finalResult.replace(/_id/g, 'id'));
                                             return;
                                         }
                                     });
@@ -1774,7 +1774,7 @@ app.put('/api/locations/:id', function(req, res) {
             res.writeHead(201, {
                 'Content-Type' : 'application/json'
             });
-            res.end(JSON.stringify(updatedLocation));
+            res.end(JSON.stringify(updatedLocation).replace(/_id/g, 'id'));
             return;
         });
         /* -------- End of AS1 -------- */
@@ -2057,7 +2057,7 @@ app.get ('/api/locations/:id/locations', function(req, res) {
                     res.writeHead(200, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end(JSON.stringify(result.data));
+                    res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -2112,7 +2112,7 @@ app.get('/api/videos', function(req, res) {
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(finalResult);
+            res.end(finalResult.replace(/_id/g, 'id'));
             return;
         }
     });
@@ -2322,7 +2322,7 @@ app.post('/api/videos', function(req, res) {
                 res.writeHead(201, {
                     'Content-Type' : 'application/json'
                 });
-                res.end(finalResult);
+                res.end(finalResult.replace(/_id/g, 'id'));
                 return;
             }    
         });
@@ -2424,7 +2424,7 @@ app.get('/api/videos/:id', function(req, res) {
                     res.writeHead(200, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult);
+                    res.end(finalResult.replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -2714,7 +2714,7 @@ app.put('/api/videos/:id', function(req, res) {
                     res.writeHead(201, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(JSON.stringify(result.data[0]));
+                    res.end(JSON.stringify(result.data[0]).replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -2997,7 +2997,7 @@ app.get ('/api/locations/:id/videos', function(req, res) {
                     res.writeHead(200, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end(JSON.stringify(result.data));
+                    res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -3049,7 +3049,7 @@ app.get('/api/overlays', function(req, res) {
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(JSON.stringify(result.data));
+            res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
             return;
         }
 
@@ -3238,7 +3238,7 @@ app.post('/api/overlays', function(req, res) {
                 res.writeHead(201, {
                     'Content-Type' : 'application/json'
                 });
-                res.end(JSON.stringify(newOverlay));
+                res.end(JSON.stringify(newOverlay).replace(/_id/g, 'id'));
                 return;
             }    
         });
@@ -3337,7 +3337,7 @@ app.get('/api/overlays/:id', function(req, res) {
                     res.writeHead(200, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(JSON.stringify(result.data[0]));
+                    res.end(JSON.stringify(result.data[0]).replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -3623,7 +3623,7 @@ app.put('/api/overlays/:id', function(req, res) {
                     res.writeHead(201, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(JSON.stringify(result.data));
+                    res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
                     return;
 
                 }
@@ -3905,7 +3905,7 @@ app.get ('/api/locations/:id/overlays', function(req, res) {
                     res.writeHead(200, {
                         'Content-Type' : 'text/plain'
                     });
-                    res.end(JSON.stringify(result.data));
+                    res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
                     return;
                 }
             });
