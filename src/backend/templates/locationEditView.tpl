@@ -2,7 +2,7 @@
   <div class="form-group">
     <label for="_id" class="col-xs-5 control-label">ID</label>
     <div class="col-xs-7">
-      <p class="form-control-static"><%= id %></p>
+      <p class="form-control-static"><% if(typeof id !== 'undefined') { %> <%= id %> <% } %></p>
     </div>
   </div>
   <div class="form-group">

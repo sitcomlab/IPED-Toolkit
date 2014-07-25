@@ -13,9 +13,6 @@ require.config({
     'backend'   : '../backend/js',
   },
   shim: {
-    'leaflet/js/leaflet': {
-      exports: 'Leaflet'
-    },
     'leaflet/js/leaflet.contextmenu': {
       deps: ['leaflet/js/leaflet'],
       exports: 'LeafletContextmenu'
@@ -23,6 +20,18 @@ require.config({
     'backbonejs/js/backbone': {
       deps: ['underscorejs/js/underscore'],
       exports: 'Backbone'
+    },
+    'bootstrap/js/bootstrap.min': {
+      deps: ['jquery/js/jquery.min'],
+      exports: 'Bootstrap'
+    },
+    'bootstrap/js/bootstrap-tagsinput.min': {
+      deps: ['bootstrap/js/bootstrap.min'],
+      exports: 'BootstrapTagsinput'
+    },
+    'jquery/js/jquery-ui.min': {
+      deps: ['jquery/js/jquery.min'],
+      exports: 'JQueryUI'
     }
   }
 });
@@ -32,14 +41,13 @@ require(['jsnlog/js/jsnlog.min',
          'jquery/js/jquery-ui.min',
          'bootstrap/js/bootstrap.min',
          'bootstrap/js/bootstrap-tagsinput.min',
-         'utils/js/getUrlParameters',
          'underscorejs/js/underscore',
          'backbonejs/js/backbone',
          'leaflet/js/leaflet',
          'leaflet/js/leaflet.contextmenu',
          'form2js/js/form2js'],
          
-         function(JSNLog, JQuery, JQueryUI, Bootstrap, BootstrapTagsinput, getUrlParameters, Underscore, Backbone, Leaflet, LeafletContextmenu, form2js) {
+         function(JSNLog, JQuery, JQueryUI, Bootstrap, BootstrapTagsinput, Underscore, Backbone, Leaflet, LeafletContextmenu, form2js) {
            (function setupJSNLog() {
              var consoleAppender = JL.createConsoleAppender('consoleAppender');
              JL().setOptions({
@@ -54,7 +62,76 @@ require(['jsnlog/js/jsnlog.min',
              */
            })();
            
+           
+           // ### <Backbone> ###
            var TPL_PATH = 'requirejs/js/text!../backend/templates/';
+           
+           /**
+           * The Backbone.js model of a leaflet marker
+           */
+           Marker = Backbone.Model.extend({
+           });
+           
+           /**
+           * The Backbone.js view for a leaflet marker
+           */
+           MarkerView = Backbone.View.extend({
+             initialize: function(opts) {
+               this.map = opts.map;
+               this.markerIcon = L.icon({
+                                         iconUrl: '../lib/leaflet/images/marker-icon.png',
+                                         shadowUrl: '../lib/leaflet/images/marker-shadow.png'
+                                        });
+               this.marker = L.marker([this.model.location.get('lat'), this.model.location.get('lon')], {icon: this.markerIcon});
+               this.locationMarkerView = new LocationMakerView({model: {location: this.model.location, backend: this.model.backend}});
+             },
+             render: function() {
+               this.marker.addTo(this.map)
+                          .bindPopup(this.locationMarkerView.el, {minWidth: 300});
+             }
+           });
+           
+           /**
+           * The Backbone.js view for a leaflet map
+           */
+           MapView = Backbone.View.extend({
+             id: 'map',
+             initialize: function() {
+               var thiz = this;
+               
+               var options = {
+                 contextmenu: true,
+                 contextmenuWidth: 180,
+                 contextmenuItems: [{text: 'Add New Location Here',
+                                     callback : this.model.backend.addLocation}]
+               };
+               var muenster = [51.962655, 7.625763];
+               var zoom = 15;
+
+               this.map = L.map(this.$el.attr('id'), options).setView(muenster, zoom);
+               L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                 attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                 maxZoom : 18
+               }).addTo(this.map);
+               
+               this.featureGroup = L.featureGroup().addTo(this.map);
+               
+               this.map.on('contextmenu', function(e) {
+                 this.coords = e.latlng;
+                 JL('iPED Toolkit.Backend').debug('Click on map (' + this.coords + ')');
+               });
+               
+               this.listenTo(this.model.locations, 'all', this.render);
+             },
+             render: function() {
+               var thiz = this;
+               
+               this.featureGroup.clearLayers();
+               this.markerViews = this.model.locations.map(function(location) {
+                 return new MarkerView({model: {location: location, backend: thiz.model.backend}, map: thiz.featureGroup}).render();
+               });
+             }
+           });
            
            /**
            * The Backbone.js model of a location
@@ -109,9 +186,9 @@ require(['jsnlog/js/jsnlog.min',
                'click button.edit': '_edit',
                'click button.delete': '_delete'
              },
-             _add: function() {this.model.frontend.addLocation(this.model.location);},
-             _edit: function() {this.model.frontend.editLocation(this.model.location);},
-             _delete: function() {this.model.frontend.deleteLocation(this.model.location);}
+             _add: function() {this.model.backend.addLocation({location: this.model.location});},
+             _edit: function() {this.model.backend.editLocation({location: this.model.location});},
+             _delete: function() {this.model.backend.deleteLocation({location: this.model.location});}
            });
            
            /**
@@ -138,70 +215,37 @@ require(['jsnlog/js/jsnlog.min',
                'click button.save': '_save'
              },
              _save: function() {
-               this.model.frontend.saveLocation(this.model.location, 
-                                                form2js(this.$el.find('form')[0], '.', true));
+               this.$el.find('button').attr('disabled', 'disabled');
+               this.model.backend.saveLocation({location: this.model.location, 
+                                                attributes: form2js(this.$el.find('form')[0], '.', true),
+                                                dialog: this.el});
              }
            });
+           // ### </Backbone> ###
+         
          
            /**
             * The backend of the iPED Toolkit.
             * @constructor
             */
            function Backend() {
-             this.glob = [];
-             this.map = null;
-             this.coords = null;
+             this.mapView = null;
+             _.bindAll(this, 'addLocation');
              
              this.initMap();
-             this.drawMarkers();
            }
            
            /**
            * Initializes the leaflet map
            */
            Backend.prototype.initMap = function() {
-           	var options = {
-           		contextmenu: true,
-           		contextmenuWidth: 180,
-           		contextmenuItems: [{text: 'Add New Location Here',
-                                  callback : this.addLocation}]
-           	};
-            var muenster = [51.962655, 7.625763];
-            var zoom = 15;
-
-           	this.map = L.map('map', options).setView(muenster, zoom);
-           	L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-           		attribution : '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-           		maxZoom : 18
-           	}).addTo(this.map);
-            
-           	this.map.on('contextmenu', function(e) {
-           		this.coords = e.latlng;
-              JL('iPED Toolkit.Backend').debug('Click on map (' + this.coords + ')');
-           	});
-           };
-           
-           /**
-           * Fetches all locations from the server and draws markers on the map accordingly
-           */
-           Backend.prototype.drawMarkers = function() {
              var thiz = this;
-             var markerIcon = L.icon({
-                 iconUrl: '../lib/leaflet/images/marker-icon.png',
-                 shadowUrl: '../lib/leaflet/images/marker-shadow.png'
-             });
              
              this.locations = new Locations();
              this.locations.fetch({
                success: function(model, response, options) {
-                 thiz.locations.each(function(location) {
-                   JL('iPED Toolkit.Backend').debug('Adding marker for location: ' + JSON.stringify(location));
-                   var locationMarkerView = new LocationMakerView({model: {location: location, frontend: thiz}});
-                   L.marker([location.get('lat'), location.get('lon')],
-                            {icon: markerIcon, riseOnHover: true, riseOffset: 25})
-                   .addTo(thiz.map)
-                   .bindPopup(locationMarkerView.el, {minWidth: 300});
-                 });
+                 thiz.mapView = new MapView({model: {locations: thiz.locations, backend: thiz}});
+                 thiz.mapView.render();
                },
                error: function(model, response, options) {
                  JL('iPED Toolkit.Backend').error(respone); 
@@ -213,11 +257,33 @@ require(['jsnlog/js/jsnlog.min',
            * Add a new location, either a new one (location == null) or to an existing location (location != null)
            * @param location - Either null (add new location) or existing location
            */
-           Backend.prototype.addLocation = function(location) {
-             if (location instanceof Backbone.Model) {
-               JL('iPED Toolkit.Backend').debug('Add new location to existing location: ' + JSON.stringify(location)); 
+           Backend.prototype.addLocation = function(opts) {
+             if (opts.location instanceof Backbone.Model) {
+               JL('iPED Toolkit.Backend').debug('Add new location to existing location: ' + JSON.stringify(opts.location)); 
+               this.mapView.map.closePopup();
+               var newLocation = opts.location.clone();
+               newLocation.unset('id');
+               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
+               $(locationEditView.el).dialog({title: 'Edit location',
+                                              position: {my: 'right-20 top+20',
+                                                         at: 'right top',
+                                                         of: $('.container')[0]
+                                                        }
+                                              })
+                                     .dialog('open');
              } else {
-               JL('iPED Toolkit.Backend').debug('Add new location: ' + JSON.stringify(location)); 
+               JL('iPED Toolkit.Backend').debug('Add new location: ' + JSON.stringify(opts));
+               var newLocation = new Location();
+               newLocation.set('lat', opts.latlng.lat);
+               newLocation.set('lon', opts.latlng.lng);
+               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
+               $(locationEditView.el).dialog({title: 'Edit location',
+                                              position: {my: 'right-20 top+20',
+                                                         at: 'right top',
+                                                         of: $('.container')[0]
+                                                        }
+                                              })
+                                     .dialog('open');
              }
            }
            
@@ -225,14 +291,14 @@ require(['jsnlog/js/jsnlog.min',
            * Edit an existing location
            * @param location - The location to be edited
            */
-           Backend.prototype.editLocation = function(location) {
-             JL('iPED Toolkit.Backend').debug('Edit location: ' + JSON.stringify(location));
-             this.map.closePopup();
-             var locationEditView = new LocationEditView({model: {location: location, frontend: this}});
+           Backend.prototype.editLocation = function(opts) {
+             JL('iPED Toolkit.Backend').debug('Edit location: ' + JSON.stringify(opts.location));
+             this.mapView.map.closePopup();
+             var locationEditView = new LocationEditView({model: {location: opts.location, backend: this}});
              $(locationEditView.el).dialog({title: 'Edit location',
-                                            position: {my: 'left+100 top+100',
-                                                       at: 'center top',
-                                                       of: this.map[0]
+                                            position: {my: 'right-20 top+20',
+                                                       at: 'right top',
+                                                       of: $('.container')[0]
                                                       }
                                             })
                                    .dialog('open');
@@ -242,8 +308,18 @@ require(['jsnlog/js/jsnlog.min',
            * Delete a location
            * @param location - The location to be deleted
            */
-           Backend.prototype.deleteLocation = function(location) {
-             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(location)); 
+           Backend.prototype.deleteLocation = function(opts) {
+             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(location));
+             var thiz = this;
+             
+             opts.location.destroy({
+               success: function(model, response, options) {
+                 thiz.mapView.map.closePopup();
+               },
+               error: function(model, response, options) {
+                 alert(JSON.stringify(response));
+               }
+             })
            }
            
            /**
@@ -251,9 +327,20 @@ require(['jsnlog/js/jsnlog.min',
            * @param location - The location to be saved
            * @param attributes - The set of (changed) attributes
            */
-           Backend.prototype.saveLocation = function(location, attributes) {
-             JL('iPED Toolkit.Backend').debug('Save location: ' + JSON.stringify(location) + ', with new attributes: ' + JSON.stringify(attributes)); 
-             location.save(attributes);             
+           Backend.prototype.saveLocation = function(opts) {
+             JL('iPED Toolkit.Backend').debug('Save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes)); 
+             var thiz = this;
+             
+             opts.location.save(opts.attributes, {
+               success: function(model, response, options) {
+                 $(opts.dialog).dialog('close');
+                 thiz.locations.fetch(); // Refresh collection (alternative: thiz.locations.add(model);)
+               },
+               error: function(model, response, options) {
+                 $(opts.dialog).find('button').removeAttr('disabled');
+                 alert(JSON.stringify(response));
+               }
+             });             
            }
            
            $(document).ready(function() {
