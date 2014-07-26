@@ -3,17 +3,17 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
 # IPED-Toolkit-API (v3.2)
 
-
-### Hosts
-* HOST-OFFICIAL ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
-* HOST-OFFICIAL ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
+# Group Hosts
+* HOST-OFFICIAL-HTTP ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
+* HOST-OFFICIAL-HTTP ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
+* HOST-OFFICIAL-HTTPS ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8444](http://giv-sitcomlab.uni-muenster.de:8444)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
 
 #### Allowed HTTPs requests:
-* **GET** - Get a resource or list of resources
-* **POST** - To create or update resource
-* **PUT** - To create or update resource
-* **DELETE** - To delete resource
+* `GET` - Get a resource or list of resources
+* `POST` - To create or update resource
+* `PUT` - To create or update resource
+* `DELETE` - To delete resource
 
 #### Description of Server Responses:
 
@@ -34,7 +34,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * **500** `Internal Server Error` - the request is unavailable
 * **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
-### Browser and Videoformats
+# Group Browser and Videoformats
 The application runs only in the 2 Browser below. If you upload videos on the server, please make sure that you upload:
 
 * a `*.mp4`-Format for **Google Chrome** and
@@ -52,9 +52,10 @@ and you want to submit a server-path, of the uploaded files, for example **task0
 **YOUR URL SHOULD ONLY CONENTS THE FILENAME, for example:** `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task08`.<br/>
 The application will check the browser and will pick the right videoformat automatically, so you don't need to submit them, thank you!
 
-* * * 
 
-### For developers (only for the API-Specification on Apiary.io)
+# Group For developers 
+
+>**Note**: only for the API-Specification on Apiary.io
 
 #### API-Status options:
 * **implemented** \[+]: Implementation on official Server is finished and works
@@ -63,7 +64,7 @@ The application will check the browser and will pick the right videoformat autom
 * **not yet implemented** :  Design is finished, but not yet implemented on official Server, but is planned
 * **in design** :  The Starting point, designing the function in this tool
 
-\[+] Please write your name, after the following status, so it is possible to see, how works on which part,
+>**Note**: Please write your name, after the following status **\[+]**, so it is possible to see, how works on which part,
 e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
 
 #### API-Example of the blueprint code:
@@ -79,15 +80,12 @@ e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a f
 
 (...)
 ```
-* For more examples check out: [http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)
-
+* for a good example of the API-Syntax check out the **GoodData API** ([http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)) with the corresponding Markdownfile *apiary.apib* in the GitHub-Respository ([https://github.com/gooddata/gooddata-api-docs.git](https://github.com/gooddata/gooddata-api-docs.git)).
 
 #### API-Comments:
 It is possible to write a comments to discuss the API-Specification on Apiary. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function and click the 
-"Add comment"-Button on the right side of the box.
+**Add comment**-Button on the right side of the box.
 
-
-* * *
 
 
 # Group Locations
@@ -100,7 +98,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 
         [
             {
-                "_id": 0,
+                "id": 0,
                 "name": "Juridicum",
                 "tags": [
                     "Juridicum",
@@ -113,7 +111,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
                 "description": ""
             },
             {
-                "_id": 1,
+                "id": 1,
                 "name": "Jesuitengang",
                 "tags": [
                     "Juridicum",
@@ -173,7 +171,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 + Response 201 (application/json)
 
         {
-            "_id":4,
+            "id":4,
             "name":"Frauenstraße",
             "tags":[
                 "Münster",
@@ -223,7 +221,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 A single Location object with all its details
 
 + Parameters
-    + id (required, `4`) ... `id` **Interger** of a **Location**
+    + id (required, Interger, `4`) ... `id` of a **Location**
 
 ### Retrieve a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -233,7 +231,7 @@ A single Location object with all its details
     + Body
     
             {
-                "_id":4,
+                "id":4,
                 "name":"Frauenstraße",
                 "tags":[
                     "Münster",
@@ -276,7 +274,10 @@ A single Location object with all its details
 ### Edit a Location [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-<u>**Changeable properties**</u> (a minimum of one property is required):
+
+<u>**Changeable properties**</u>
+
+>**Note**: A minimum of one property is required.
 
 - `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
 - `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
@@ -286,6 +287,11 @@ A single Location object with all its details
 - `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
 - `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
 - `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+
+<u>**Optional property**</u>
+>**Note**: This property is not neccessary, but acceptable.
+
+- `id` **Integer** (can not be empty; Example: *4*)
 
 + Request (application/json)
 
@@ -305,7 +311,7 @@ A single Location object with all its details
 + Response 201 (application/json)
 
         {
-                "_id":4,
+                "id":4,
                 "name":"Frauenstraße 2",
                 "tags":[
                     "Münster",
@@ -380,7 +386,7 @@ A single Location object with all its details
 ## Relations of a Location [/api/locations/{id}/locations]
 
 + Parameters
-    + id (required, `699`) ... `id` **Interger** of a **Location**
+    + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all related Locations of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -402,7 +408,7 @@ A single Location object with all its details
                     "description": "Gegenüber der Trattoria",
                     "name": "Frauenstraße",
                     "lat": "51.9634288",
-                    "_id": 710
+                    "id": 710
                 },
                 {
                     "tags": [
@@ -415,7 +421,7 @@ A single Location object with all its details
                     "description": "Gegenüber der ULB",
                     "name": "Krummer Timpen",
                     "lat": 51.9627494,
-                    "_id": 702
+                    "id": 702
                 }
             ]
 
@@ -446,7 +452,7 @@ A single Location object with all its details
 
         [
             {
-                "_id": 35,
+                "id": 35,
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße",
                 "date": "",
@@ -454,7 +460,7 @@ A single Location object with all its details
                 "tags": []
             },
             {
-                "_id": 36,
+                "id": 36,
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
@@ -494,7 +500,7 @@ A single Location object with all its details
 + Response 201 (application/json)
 
         {  
-            "_id":36,
+            "id":36,
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"",
@@ -529,7 +535,7 @@ A single Location object with all its details
 A single Video object with all details
 
 + Parameters
-    + id (required, `36`) ... `id` **Interger** of a **Video**
+   + id (required, Interger, `36`) ... `id` of a **Video**
 
 ### Retrieve a video [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -539,7 +545,7 @@ A single Video object with all details
     + Body
 
             {  
-                "_id":36,
+                "id":36,
                 "description":"Frauenstraße bei Tag",
                 "name":"Frauenstraße2",
                 "date":"",
@@ -565,13 +571,20 @@ A single Video object with all details
 ### Edit a Video [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-<u>**Changeable properties**</u> (a minimum of one property is required):
+<u>**Changeable properties**</u>
+
+>**Note**: A minimum of one property is required.
 
 - `name` **String** (can not be empty; example: *"Frauenstraße"*)
 - `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
 - `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
 - `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
 - `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
+
+<u>**Optional property**</u>
+>**Note**: This property is not neccessary, but acceptable.
+
+- `id` **Integer** (can not be empty; Example: *36*)
 
 + Request (application/json)
 
@@ -585,7 +598,7 @@ A single Video object with all details
 + Response 201 (application/json)
 
         {  
-            "_id":36,
+            "id":36,
             "description":"Frauenstraße bei Nacht",
             "name":"Frauenstraße 2",
             "date":"",
@@ -647,7 +660,7 @@ A single Video object with all details
 ## Relations of a Location [/api/locations/{id}/videos]
 
 + Parameters
-    + id (required, `699`) ... `id` **Interger** of a **Location**
+    + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all Videos of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -666,7 +679,7 @@ A single Video object with all details
                     "name": "Schlossplatz",
                     "date": "No date available",
                     "url": "https://giv-sitcomlab.uni-muenster.de:8444/media/video/task_01",
-                    "_id": 711
+                    "id": 711
                 }
             ]
 
@@ -695,7 +708,7 @@ A single Video object with all details
         
         [
             {
-                "_id": 23,
+                "id": 23,
                 "tags": [
                     "video",
                     "test"
@@ -769,7 +782,7 @@ A single Video object with all details
 + Response 201 (application/json)
 
         {   
-            "_id":23,
+            "id":23,
             "name":"Video Overlay",
             "description":"Video Overlay Test",
             "tags":[
@@ -816,7 +829,7 @@ A single Video object with all details
 A single Overlay object with all its details
 
 + Parameters
-   + id (required, `23`) ... `id` **Interger** of an **Overlay**
+   + id (required, Interger, `23`) ... `id` of an **Overlay**
 
 ### Retrieve an Overlay [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -826,7 +839,7 @@ A single Overlay object with all its details
     + Body
 
             {
-                "_id":23,
+                "id":23,
                 "name":"Video Overlay",
                 "description":"Video Overlay Test",
                 "tags":[
@@ -864,7 +877,9 @@ A single Overlay object with all its details
 ### Edit an Overlay [PUT]
 (Status: **implemented**, Developer: Nicho)
 
-<u>**Changeable properties**</u> (a minimum of one property is required):
+<u>**Changeable properties**</u>
+
+>**Note**: A minimum of one property is required.
 
 - `name` **String** (can not be empty; example: *"1st Public Display"*)
 - `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
@@ -880,6 +895,11 @@ A single Overlay object with all its details
 - `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
 - `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
 - `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+
+<u>**Optional property**</u>
+>**Note**: This property is not neccessary, but acceptable.
+
+- `id` **Integer** (can not be empty; Example: *23*)
 
 + Request (application/json)
 
@@ -899,7 +919,7 @@ A single Overlay object with all its details
 + Response 201 (application/json)
 
         {   
-            "_id":23,
+            "id":23,
             "name":"Video Overlay 2",
             "description":"Video Overlay Test 2",
             "tags":[
@@ -974,7 +994,7 @@ A single Overlay object with all its details
 ## Relations of a Location [/api/locations/{id}/overlays]
 
 + Parameters
-    + id (required, `699`) ... `id` **Interger** of a **Location**
+    + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all Overlays of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -1002,7 +1022,7 @@ A single Overlay object with all its details
                     "h": 600,
                     "x": 100,
                     "ry": 0,
-                    "_id": 721
+                    "id": 721
                 }
             ]
 
