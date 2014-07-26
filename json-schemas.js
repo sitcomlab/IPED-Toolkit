@@ -86,7 +86,8 @@ exports.getSchema = function (i) {
             "type": "object", 
             "properties" : {
                     "id" :          {
-                                        "type": "number"
+                                        "type": "integer",
+                                        "minLength":1
                                     }, 
                     "name" :        { 
                                         "type": "string",
@@ -181,6 +182,10 @@ exports.getSchema = function (i) {
             "description": "A JSON-Schema to validate recieving Videos for PUT-request",
             "type": "object", 
             "properties" : {
+                    "id" :          {
+                                        "type": "integer",
+                                        "minLength":1
+                                    },
                     "name" :        { 
                                         "type": "string",
                                         "minLength":1
@@ -297,6 +302,10 @@ exports.getSchema = function (i) {
             "description": "A JSON-Schema to validate recieving Overlays for PUT-request",
             "type": "object", 
             "properties" : {
+                    "id" :          {
+                                        "type": "integer",
+                                        "minLength":1
+                                    },
                     "name" :        { 
                                         "type": "string",
                                         "minLength":1
