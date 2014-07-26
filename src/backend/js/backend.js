@@ -82,12 +82,20 @@ require(['jsnlog/js/jsnlog.min',
                                          iconUrl: '../lib/leaflet/images/marker-icon.png',
                                          shadowUrl: '../lib/leaflet/images/marker-shadow.png'
                                         });
-               this.marker = L.marker([this.model.location.get('lat'), this.model.location.get('lon')], {icon: this.markerIcon});
-               this.locationMarkerView = new LocationMakerView({model: {location: this.model.location, backend: this.model.backend}});
+               
+               // All locations are at the very same location, so just use the lat/lon of the first element
+               this.marker = L.marker([this.model.locations[0].get('lat'), this.model.locations[0].get('lon')], {icon: this.markerIcon});
+               this.locationMarkerView = new LocationMakerView({model: {locations: this.model.locations, backend: this.model.backend}});
+               this.featureGroup = L.featureGroup().addTo(this.map);
+               
+               _.bindAll(this, 'removeMarker')
              },
              render: function() {
-               this.marker.addTo(this.map)
+               this.marker.addTo(this.featureGroup)
                           .bindPopup(this.locationMarkerView.el, {minWidth: 300});
+             },
+             removeMarker: function() {
+               this.featureGroup.clearLayers();
              }
            });
            
@@ -125,10 +133,26 @@ require(['jsnlog/js/jsnlog.min',
              },
              render: function() {
                var thiz = this;
+               var previousLocation = null;
+               var previousMarkerView = null;
                
                this.featureGroup.clearLayers();
                this.markerViews = this.model.locations.map(function(location) {
-                 return new MarkerView({model: {location: location, backend: thiz.model.backend}, map: thiz.featureGroup}).render();
+                 var locations = [];
+                 
+                 if (previousLocation && 
+                    previousLocation.get('lat') == location.get('lat') && previousLocation.get('lon') == location.get('lon')) {
+                      // There are two markers on top of each other (e.g., one location in two 'states').
+                      // Clear the previous one and apply special treatment to the new one
+                      previousMarkerView.removeMarker();
+                      locations = previousMarkerView.model.locations;
+                 }
+                 locations.push(location);
+                 var markerView = new MarkerView({model: {locations: locations, backend: thiz.model.backend}, map: thiz.featureGroup});
+                 
+                 previousLocation = location;
+                 previousMarkerView = markerView;
+                 return markerView.render();
                });
              }
            });
@@ -159,7 +183,14 @@ require(['jsnlog/js/jsnlog.min',
            */
            Locations = Backbone.Collection.extend({
              model: Location,
-             url: SERVER_URL + PORT + 'api/locations'
+             url: SERVER_URL + PORT + 'api/locations',
+             comparator: function(a, b) {
+               if (a.get('lat') < b.get('lat') && a.get('lon') < b.get('lon')) {
+                 return -1;
+               } else {
+                 return 1;
+               }
+             }
            });
            
            /**
@@ -171,12 +202,15 @@ require(['jsnlog/js/jsnlog.min',
              },
              render: function() {
                var thiz = this;
+               
                require([TPL_PATH+'locationMarkerView.tpl'], function (html) {
-                 var template = _.template(html, thiz.model.location.attributes);
+                 var template = _.template(html, {locations: thiz.model.locations});
                  thiz.$el.html(template); 
                  thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
-                 _.each(thiz.model.location.get('tags'), function(tag) {
-                   thiz.$el.find('input[data-role=tagsinput]').tagsinput('add', tag);
+                 _.each(thiz.model.locations, function(location) {
+                   _.each(location.get('tags'), function(tag) {
+                     thiz.$el.find('input[data-role=tagsinput]').tagsinput('add', tag);
+                   });
                  });
                });
                return this;
@@ -244,6 +278,7 @@ require(['jsnlog/js/jsnlog.min',
              this.locations = new Locations();
              this.locations.fetch({
                success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(thiz.locations));
                  thiz.mapView = new MapView({model: {locations: thiz.locations, backend: thiz}});
                  thiz.mapView.render();
                },
