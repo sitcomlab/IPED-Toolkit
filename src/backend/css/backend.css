@@ -6,6 +6,22 @@ body {
   height: 650px;
 }
 
+.ui-dialog {
+  background: #ffffff;
+}
+
+.ui-dialog-titlebar-hidden .ui-dialog-titlebar {
+  display: none;
+}
+
+.ui-dialog p.lead {
+  margin: 0;
+}
+
+.ui-front {
+  z-index: 1001 !important; /* Make sure JQuery dialogs are on top of leaflet controls */
+}
+
 .leaflet-popup-content .bootstrap-tagsinput {
   border: 0 solid black;
   box-shadow: 0 0 0 0 #ffffff;

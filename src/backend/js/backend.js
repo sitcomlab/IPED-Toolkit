@@ -257,7 +257,11 @@ require(['jsnlog/js/jsnlog.min',
              },
              events:
              {
+               'click button.close': '_close',
                'click button.save': '_save'
+             },
+             _close: function() {
+               $(this.el).dialog('close');
              },
              _save: function() {
                this.$el.find('button').attr('disabled', 'disabled');
@@ -311,12 +315,14 @@ require(['jsnlog/js/jsnlog.min',
                newLocation.unset('id');
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
                $(locationEditView.el).dialog({title: 'Edit location',
+                                              dialogClass: 'ui-dialog-titlebar-hidden',
                                               position: {my: 'right-20 top+20',
                                                          at: 'right top',
                                                          of: $('.container')[0]
                                                         }
                                               })
-                                     .dialog('open');
+                                     .dialog('open')
+                                     .parent().draggable();
              } else {
                JL('iPED Toolkit.Backend').debug('Add new location: ' + JSON.stringify(opts));
                var newLocation = new Location();
@@ -324,12 +330,14 @@ require(['jsnlog/js/jsnlog.min',
                newLocation.set('lon', opts.latlng.lng);
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
                $(locationEditView.el).dialog({title: 'Edit location',
+                                              dialogClass: 'ui-dialog-titlebar-hidden',
                                               position: {my: 'right-20 top+20',
                                                          at: 'right top',
                                                          of: $('.container')[0]
                                                         }
                                               })
-                                     .dialog('open');
+                                     .dialog('open')
+                                     .parent().draggable();
              }
            }
            
@@ -342,12 +350,15 @@ require(['jsnlog/js/jsnlog.min',
              this.mapView.map.closePopup();
              var locationEditView = new LocationEditView({model: {location: opts.location, backend: this}});
              $(locationEditView.el).dialog({title: 'Edit location',
+                                            dialogClass: 'ui-dialog-titlebar-hidden',
+                                            draggable: false,
                                             position: {my: 'right-20 top+20',
                                                        at: 'right top',
                                                        of: $('.container')[0]
                                                       }
                                             })
-                                   .dialog('open');
+                                   .dialog('open')
+                                   .parent().draggable();
            }
            
            /**

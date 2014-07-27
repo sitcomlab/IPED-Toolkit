@@ -9,8 +9,6 @@
 <div class="tab-content">
 <% locations.each(function(location, index) { %>
   <div class="tab-pane <% if(index == 0) {print('active')} %>" id="<%= location.get('id') %>">
-    <h1><%= location.get('name') %></h1>
-
     <form class="form-horizontal" role="form">
       <div class="form-group">
         <label for="ID" class="col-xs-5 control-label">ID</label>

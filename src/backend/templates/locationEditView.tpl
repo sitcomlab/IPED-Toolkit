@@ -1,3 +1,12 @@
+<div class="row">
+  <div class="col-xs-10">
+    <p class="lead">Edit location</p>
+  </div>
+  <div class="col-xs-2">
+    <button type="button" class="close"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+  </div>
+</div>
+<hr/>
 <form class="form-horizontal" role="form">
   <div class="form-group">
     <label for="id" class="col-xs-5 control-label">ID</label>
