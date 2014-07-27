@@ -72,7 +72,7 @@ require(['jsnlog/js/jsnlog.min',
            * The Backbone.js model of a location
            */
            Location = Backbone.Model.extend({
-             urlRoot: SERVER_URL + PORT + 'api/locations',
+             urlRoot: '/api/locations',
              initialize: function() {
                _.bindAll(this, 'fetch');
              }
@@ -82,7 +82,7 @@ require(['jsnlog/js/jsnlog.min',
            * The Backbone.js model of a video
            */
            Video = Backbone.Model.extend({
-             urlRoot: SERVER_URL + PORT + 'api/videos',
+             urlRoot: '/api/videos',
              initialize: function() {
                _.bindAll(this, 'fetch');
              }
@@ -114,7 +114,7 @@ require(['jsnlog/js/jsnlog.min',
             * Activates the web sockets that are used by the remote control.
             */
            Frontend.prototype.activateWebSockets = function() {
-             this.socket = io.connect(SERVER_URL + PORT);
+             this.socket = io.connect(window.location.origin);
              this.socket.on('goToLocation', function(data) {
                JL('iPED Toolkit.Frontend').debug(data);
                this.goToLocation(data.locationId);
@@ -158,11 +158,11 @@ require(['jsnlog/js/jsnlog.min',
              var thiz = this;
 
              this.videos  = new Videos();
-             this.videos.url = SERVER_URL + PORT + 'api/locations/' + this.location.get('_id') + '/videos';
+             this.videos.url = '/api/locations/' + this.location.get('id') + '/videos';
              this.videos.fetch({
                success: function(model, response, options) {
                  thiz.video = thiz.videos.at(0);
-                 JL('iPED Toolkit.Frontend').debug('Loading video id ' + thiz.video.get('_id') + ' for current location');
+                 JL('iPED Toolkit.Frontend').debug('Loading video id ' + thiz.video.get('id') + ' for current location');
                  // Remove current video
                  $('#iPED-Video').empty();
                  

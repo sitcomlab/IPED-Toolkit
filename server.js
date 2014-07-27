@@ -147,6 +147,21 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
+var ios = socketio.listen(httpsServer);
+ios.sockets.on('connection', function(socket) {
+    io.sockets.emit('news', {
+        Info : 'New Connection'
+    });
+    socket.on('message', function(data) {
+        console.log(data);
+
+    });
+    socket.on('remote', function(data) {
+        io.sockets.emit('command', data);
+        console.log(data);
+    });
+});
+
 /*********************************************************
  2. webRTC
  *********************************************************/

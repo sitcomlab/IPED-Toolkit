@@ -18,7 +18,7 @@ define(['threejs/js/three.min',
           * The Backbone.js model of a location
           */
           Location = Backbone.Model.extend({
-            urlRoot: SERVER_URL + PORT + 'api/locations',
+            urlRoot: '/api/locations',
             initialize: function() {
               _.bindAll(this, 'fetch');
             }
@@ -28,7 +28,7 @@ define(['threejs/js/three.min',
           * The Backbone.js model of an overlay
           */
           Overlay = Backbone.Model.extend({
-            urlRoot: SERVER_URL + PORT + 'api/overlays',
+            urlRoot: '/api/overlays',
             initialize: function() {
               _.bindAll(this, 'fetch');
             }
@@ -125,7 +125,7 @@ define(['threejs/js/three.min',
             thiz = this;
             
             this.overlays = new Overlays();
-            this.overlays.url = SERVER_URL + PORT + 'api/locations/' + this.parent.location.get('id') + '/overlays';
+            this.overlays.url = '/api/locations/' + this.parent.location.get('id') + '/overlays';
             this.overlays.fetch({
               success: function(model, response, options) {                
               	if (!thiz.overlays || thiz.overlays.length == 0) {

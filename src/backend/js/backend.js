@@ -161,7 +161,7 @@ require(['jsnlog/js/jsnlog.min',
            * The Backbone.js model of a location
            */
            Location = Backbone.Model.extend({
-             urlRoot: SERVER_URL + PORT + 'api/locations',
+             urlRoot: '/api/locations',
              initialize: function() {
                _.bindAll(this, 'fetch');
              },
@@ -183,7 +183,7 @@ require(['jsnlog/js/jsnlog.min',
            */
            Locations = Backbone.Collection.extend({
              model: Location,
-             url: SERVER_URL + PORT + 'api/locations',
+             url: '/api/locations',
              comparator: function(a, b) {
                if (a.get('lat') < b.get('lat') && a.get('lon') < b.get('lon')) {
                  return -1;
