@@ -84,7 +84,7 @@ require(['jsnlog/js/jsnlog.min',
                                         });
                
                // All locations are at the very same location, so just use the lat/lon of the first element
-               this.marker = L.marker([this.model.locations[0].get('lat'), this.model.locations[0].get('lon')], {icon: this.markerIcon});
+               this.marker = L.marker([this.model.locations.at(0).get('lat'), this.model.locations.at(0).get('lon')], {icon: this.markerIcon});
                this.locationMarkerView = new LocationMakerView({model: {locations: this.model.locations, backend: this.model.backend}});
                this.featureGroup = L.featureGroup().addTo(this.map);
                
@@ -138,7 +138,7 @@ require(['jsnlog/js/jsnlog.min',
                
                this.featureGroup.clearLayers();
                this.markerViews = this.model.locations.map(function(location) {
-                 var locations = [];
+                 var locations = new Locations();
                  
                  if (previousLocation && 
                     previousLocation.get('lat') == location.get('lat') && previousLocation.get('lon') == location.get('lon')) {
@@ -147,7 +147,7 @@ require(['jsnlog/js/jsnlog.min',
                       previousMarkerView.removeMarker();
                       locations = previousMarkerView.model.locations;
                  }
-                 locations.push(location);
+                 locations.add(location);
                  var markerView = new MarkerView({model: {locations: locations, backend: thiz.model.backend}, map: thiz.featureGroup});
                  
                  previousLocation = location;
@@ -185,7 +185,9 @@ require(['jsnlog/js/jsnlog.min',
              model: Location,
              url: '/api/locations',
              comparator: function(a, b) {
-               if (a.get('lat') < b.get('lat') && a.get('lon') < b.get('lon')) {
+               // Morin: I just defined my very own naive metric here.
+               // Does anyone with geoinformatics background have something better here?
+               if (a.get('lat') + a.get('lon') < b.get('lat') + b.get('lon')) {
                  return -1;
                } else {
                  return 1;
@@ -207,9 +209,9 @@ require(['jsnlog/js/jsnlog.min',
                  var template = _.template(html, {locations: thiz.model.locations});
                  thiz.$el.html(template); 
                  thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
-                 _.each(thiz.model.locations, function(location) {
+                 thiz.model.locations.each(function(location) {
                    _.each(location.get('tags'), function(tag) {
-                     thiz.$el.find('input[data-role=tagsinput]').tagsinput('add', tag);
+                     thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']').tagsinput('add', tag);
                    });
                  });
                });
@@ -220,9 +222,18 @@ require(['jsnlog/js/jsnlog.min',
                'click button.edit': '_edit',
                'click button.delete': '_delete'
              },
-             _add: function() {this.model.backend.addLocation({location: this.model.location});},
-             _edit: function() {this.model.backend.editLocation({location: this.model.location});},
-             _delete: function() {this.model.backend.deleteLocation({location: this.model.location});}
+             _add: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.addLocation({location: this.model.locations.get(locationId)});
+             },
+             _edit: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.editLocation({location: this.model.locations.get(locationId)});
+             },
+             _delete: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.deleteLocation({location: this.model.locations.get(locationId)});
+             }
            });
            
            /**
