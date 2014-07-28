@@ -67,39 +67,6 @@ require(['jsnlog/js/jsnlog.min',
            var TPL_PATH = 'requirejs/js/text!../backend/templates/';
            
            /**
-           * The Backbone.js model of a leaflet marker
-           */
-           Marker = Backbone.Model.extend({
-           });
-           
-           /**
-           * The Backbone.js view for a leaflet marker
-           */
-           MarkerView = Backbone.View.extend({
-             initialize: function(opts) {
-               this.map = opts.map;
-               this.markerIcon = L.icon({
-                                         iconUrl: '../lib/leaflet/images/marker-icon.png',
-                                         shadowUrl: '../lib/leaflet/images/marker-shadow.png'
-                                        });
-               
-               // All locations are at the very same location, so just use the lat/lon of the first element
-               this.marker = L.marker([this.model.locations.at(0).get('lat'), this.model.locations.at(0).get('lon')], {icon: this.markerIcon});
-               this.locationMarkerView = new LocationMakerView({model: {locations: this.model.locations, backend: this.model.backend}});
-               this.featureGroup = L.featureGroup().addTo(this.map);
-               
-               _.bindAll(this, 'removeMarker')
-             },
-             render: function() {
-               this.marker.addTo(this.featureGroup)
-                          .bindPopup(this.locationMarkerView.el, {minWidth: 300});
-             },
-             removeMarker: function() {
-               this.featureGroup.clearLayers();
-             }
-           });
-           
-           /**
            * The Backbone.js view for a leaflet map
            */
            MapView = Backbone.View.extend({
@@ -129,6 +96,10 @@ require(['jsnlog/js/jsnlog.min',
                  JL('iPED Toolkit.Backend').debug('Click on map (' + this.coords + ')');
                });
                
+               this.map.on('popupopen', function(e) {
+                 //console.log('POPUP EVENT: ' + e);
+               })
+               
                this.listenTo(this.model.locations, 'all', this.render);
              },
              render: function() {
@@ -148,12 +119,89 @@ require(['jsnlog/js/jsnlog.min',
                       locations = previousMarkerView.model.locations;
                  }
                  locations.add(location);
-                 var markerView = new MarkerView({model: {locations: locations, backend: thiz.model.backend}, map: thiz.featureGroup});
+                 var markerView = new MarkerView({model: {backend: thiz.model.backend,
+                                                          locations: locations,
+                                                          videos: thiz.model.videos,
+                                                          overlays: thiz.model.overlays},
+                                                          map: thiz.featureGroup});
                  
                  previousLocation = location;
                  previousMarkerView = markerView;
                  return markerView.render();
                });
+             }
+           });
+           
+           /**
+           * The Backbone.js view for a leaflet marker
+           */
+           MarkerView = Backbone.View.extend({
+             initialize: function(opts) {
+               this.map = opts.map;
+               this.markerIcon = L.icon({
+                                         iconUrl: '../lib/leaflet/images/marker-icon.png',
+                                         shadowUrl: '../lib/leaflet/images/marker-shadow.png'
+                                        });
+               
+               // All locations are at the very same location, so just use the lat/lon of the first element
+               this.marker = L.marker([this.model.locations.at(0).get('lat'), this.model.locations.at(0).get('lon')], {icon: this.markerIcon});
+               this.locationMarkerView = new LocationMakerView({model: {backend: this.model.backend,
+                                                                        locations: this.model.locations,
+                                                                        videos: this.model.videos,
+                                                                        overlays: this.model.overlays}});
+               this.featureGroup = L.featureGroup().addTo(this.map);
+               
+               _.bindAll(this, 'removeMarker')
+             },
+             render: function() {
+               this.marker.addTo(this.featureGroup)
+                          .bindPopup(this.locationMarkerView.el, {minWidth: 300});
+             },
+             removeMarker: function() {
+               this.featureGroup.clearLayers();
+             }
+           });
+           
+           /**
+           * The backbone.js view for a leaflet marker
+           */
+           LocationMakerView = Backbone.View.extend({
+             initialize: function() {
+               this.render();
+             },
+             render: function() {
+               var thiz = this;
+               
+               require([TPL_PATH+'locationMarkerView.tpl'], function (html) {
+                 var template = _.template(html, {locations: thiz.model.locations,
+                                                  videos: thiz.model.videos,
+                                                  overlays: thiz.model.overlays});
+                 thiz.$el.html(template); 
+                 thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
+                 thiz.model.locations.each(function(location) {
+                   _.each(location.get('tags'), function(tag) {
+                     thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']').tagsinput('add', tag);
+                   });
+                 });
+               });
+               return this;
+             },
+             events: {
+               'click button.add': '_add',
+               'click button.edit': '_edit',
+               'click button.delete': '_delete'
+             },
+             _add: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.addLocation({location: this.model.locations.get(locationId)});
+             },
+             _edit: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.editLocation({location: this.model.locations.get(locationId)});
+             },
+             _delete: function(event) {
+               var locationId = $(event.currentTarget).data('location');
+               this.model.backend.deleteLocation({location: this.model.locations.get(locationId)});
              }
            });
            
@@ -196,47 +244,6 @@ require(['jsnlog/js/jsnlog.min',
            });
            
            /**
-           * The backbone.js view for a leaflet marker
-           */
-           LocationMakerView = Backbone.View.extend({
-             initialize: function() {
-               this.render();
-             },
-             render: function() {
-               var thiz = this;
-               
-               require([TPL_PATH+'locationMarkerView.tpl'], function (html) {
-                 var template = _.template(html, {locations: thiz.model.locations});
-                 thiz.$el.html(template); 
-                 thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
-                 thiz.model.locations.each(function(location) {
-                   _.each(location.get('tags'), function(tag) {
-                     thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']').tagsinput('add', tag);
-                   });
-                 });
-               });
-               return this;
-             },
-             events: {
-               'click button.add': '_add',
-               'click button.edit': '_edit',
-               'click button.delete': '_delete'
-             },
-             _add: function(event) {
-               var locationId = $(event.currentTarget).data('location');
-               this.model.backend.addLocation({location: this.model.locations.get(locationId)});
-             },
-             _edit: function(event) {
-               var locationId = $(event.currentTarget).data('location');
-               this.model.backend.editLocation({location: this.model.locations.get(locationId)});
-             },
-             _delete: function(event) {
-               var locationId = $(event.currentTarget).data('location');
-               this.model.backend.deleteLocation({location: this.model.locations.get(locationId)});
-             }
-           });
-           
-           /**
            * The backbone.js view used for editing a location
            */
            LocationEditView = Backbone.View.extend({
@@ -270,6 +277,42 @@ require(['jsnlog/js/jsnlog.min',
                                                 dialog: this.el});
              }
            });
+           
+           /**
+           * The Backbone.js model of a video
+           */
+           Video = Backbone.Model.extend({
+             urlRoot: '/api/videos',
+             initialize: function() {
+               _.bindAll(this, 'fetch');
+             }
+           });
+           
+           /**
+           * The backbone.js collection for videos
+           */
+           Videos = Backbone.Collection.extend({
+             model: Video,
+             url: '/api/videos'
+           });
+           
+           /**
+           * The Backbone.js model of an overlay
+           */
+           Overlay = Backbone.Model.extend({
+             urlRoot: '/api/overlays',
+             initialize: function() {
+               _.bindAll(this, 'fetch');
+             }
+           });
+           
+           /**
+           * The backbone.js collection for overlays
+           */
+           Overlays = Backbone.Collection.extend({
+             model: Overlay,
+             url: '/api/overlays'
+           });
            // ### </Backbone> ###
          
          
@@ -278,29 +321,98 @@ require(['jsnlog/js/jsnlog.min',
             * @constructor
             */
            function Backend() {
+             var thiz = this;
+             
              this.mapView = null;
              _.bindAll(this, 'addLocation');
              
-             this.initMap();
+             this.fetchAll({callback: function() {
+               thiz.initMap();
+             }});
            }
            
            /**
-           * Initializes the leaflet map
+           * Fetches all collections from the server and prepares them for use in the backend
            */
-           Backend.prototype.initMap = function() {
+           Backend.prototype.fetchAll = function(opts) {
+             var thiz = this;
+             
+             thiz.fetchLocations({callback: function() {
+               thiz.fetchVideos({callback: function() {
+                 thiz.fetchOverlays({callback: function() {
+                   if (opts && opts.callback) {
+                    opts.callback(opts.params);
+                   }
+                   JL('iPED Toolkit.Backend').debug('Done fetching all collections'); 
+                 }});
+               }});
+             }});
+           };
+           
+           /**
+           * Fetches all locations from the server and prepares them for use in the backend
+           */
+           Backend.prototype.fetchLocations = function(opts) {
              var thiz = this;
              
              this.locations = new Locations();
              this.locations.fetch({
                success: function(model, response, options) {
-                 JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(thiz.locations));
-                 thiz.mapView = new MapView({model: {locations: thiz.locations, backend: thiz}});
-                 thiz.mapView.render();
+                 JL('iPED Toolkit.Backend').debug(thiz.locations);
+                 opts.callback(opts.params);
                },
                error: function(model, response, options) {
                  JL('iPED Toolkit.Backend').error(respone); 
                } 
              });
+           };
+           
+           /**
+           * Fetches all videos from the server and prepares them for use in the backend
+           */
+           Backend.prototype.fetchVideos = function(opts) {
+             var thiz = this;
+             
+             this.videos = new Videos();
+             this.videos.fetch({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug(thiz.videos);
+                 opts.callback(opts.params);
+               },
+               error: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').error(respone); 
+               } 
+             });
+           };
+           
+           /**
+           * Fetches all overlays from the server and prepares them for use in the backend
+           */
+           Backend.prototype.fetchOverlays = function(opts) {
+             var thiz = this;
+             
+             this.overlays = new Overlays();
+             this.overlays.fetch({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug(thiz.overlays);
+                 opts.callback(opts.params);
+               },
+               error: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').error(respone); 
+               } 
+             });
+           };
+           
+           /**
+           * Initializes the leaflet map
+           */
+           Backend.prototype.initMap = function() {
+             JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(this.locations));
+             this.mapView = new MapView({model: {backend: this,
+                                                 locations: this.locations,
+                                                 videos: this.videos,
+                                                 overlays: this.overlays}});
+             this.mapView.render();
            };
            
            /**
@@ -380,6 +492,7 @@ require(['jsnlog/js/jsnlog.min',
            */
            Backend.prototype.showEditLocationDialog = function(opts) {
              $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
+                                     maxHeight: 600,
                                      draggable: false,
                                      position: {my: 'right-20 top+20',
                                                 at: 'right top',

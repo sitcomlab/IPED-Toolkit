@@ -10,6 +10,7 @@
 <% locations.each(function(location, index) { %>
   <div class="tab-pane <% if(index == 0) {print('active')} %>" id="<%= location.get('id') %>">
     <form class="form-horizontal" role="form">
+      <h4>General data</h4>
       <div class="form-group">
         <label for="ID" class="col-xs-5 control-label">ID</label>
         <div class="col-xs-7">
@@ -34,6 +35,45 @@
           <input type="text" value="" data-role="tagsinput" disabled="disabled" data-location="<%= location.get('id') %>"/>
         </div>
       </div>
+      
+      <hr/>
+      <h4>Video footage</h4>
+      <div class="form-group">
+        <div class="col-xs-12">
+          <p class="form-control-static">
+            <%
+            // Note: _.each throws an error if called on empty array.
+            // Native .forEach does not do that crap.
+            location.get('videos').forEach(function(videoId) {
+            %>
+              <%= videos.get(videoId).get('name') %>
+              <%= videos.get(videoId).get('description')?'('+videos.get(videoId).get('description')+')':'' %>
+            <%
+            });
+            %>
+          </p>
+        </div>
+      </div>
+      
+      <hr/>
+      <h4>Overlays</h4>
+      <div class="form-group">
+        <div class="col-xs-12">
+          <p class="form-control-static">
+            <%
+            // Note: _.each throws an error if called on empty array.
+            // Native .forEach does not do that crap.
+            location.get('overlays').forEach(function(overlayId) {
+            %>
+              <%= overlays.get(overlayId).get('name') %>
+              <%= overlays.get(overlayId).get('description')?'('+overlays.get(overlayId).get('description')+')':'' %>
+            <%
+            });
+            %>
+          </p>
+        </div>
+      </div>
+      
       <div class="form-group">
         <div class="col-xs-6">
           <button type="button" class="btn btn-primary btn-sm add" data-location="<%= location.get('id') %>">Add state</button>

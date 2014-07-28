@@ -2217,7 +2217,7 @@ app.get('/api/videos', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var finalResult = '{"videos":' + JSON.stringify(result.data) + '}';
+            var finalResult = JSON.stringify(result.data);
             //console.log("================================ Result ================================");
             //console.log(finalResult);
             console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
