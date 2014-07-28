@@ -36,7 +36,7 @@
       </div>
       <div class="form-group">
         <div class="col-xs-6">
-          <button type="button" class="btn btn-primary btn-sm add" data-location="<%= location.get('id') %>">Add new</button>
+          <button type="button" class="btn btn-primary btn-sm add" data-location="<%= location.get('id') %>">Add state</button>
           <button type="button" class="btn btn-primary btn-sm edit" data-location="<%= location.get('id') %>">Edit</button>
         </div>
         <div class="col-xs-6">

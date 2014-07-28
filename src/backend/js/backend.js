@@ -110,7 +110,7 @@ require(['jsnlog/js/jsnlog.min',
                var options = {
                  contextmenu: true,
                  contextmenuWidth: 180,
-                 contextmenuItems: [{text: 'Add New Location Here',
+                 contextmenuItems: [{text: 'Add new location',
                                      callback : this.model.backend.addLocation}]
                };
                var muenster = [51.962655, 7.625763];
@@ -246,7 +246,7 @@ require(['jsnlog/js/jsnlog.min',
              render: function() {
                var thiz = this;
                require([TPL_PATH+'locationEditView.tpl'], function (html) {
-                 var template = _.template(html, thiz.model.location.attributes);
+                 var template = _.template(html, {location: thiz.model.location, title: thiz.model.title});
                  thiz.$el.html(template);
                  thiz.$el.find('select[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-primary';}});
                  _.each(thiz.model.location.get('tags'), function(tag) {
@@ -313,9 +313,10 @@ require(['jsnlog/js/jsnlog.min',
                this.mapView.map.closePopup();
                var newLocation = opts.location.clone();
                newLocation.unset('id');
-               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
+               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add state'}});
                $(locationEditView.el).dialog({title: 'Edit location',
                                               dialogClass: 'ui-dialog-titlebar-hidden',
+                                              draggable: false,
                                               position: {my: 'right-20 top+20',
                                                          at: 'right top',
                                                          of: $('.container')[0]
@@ -328,9 +329,10 @@ require(['jsnlog/js/jsnlog.min',
                var newLocation = new Location();
                newLocation.set('lat', opts.latlng.lat);
                newLocation.set('lon', opts.latlng.lng);
-               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this}});
+               var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add new location'}});
                $(locationEditView.el).dialog({title: 'Edit location',
                                               dialogClass: 'ui-dialog-titlebar-hidden',
+                                              draggable: false,
                                               position: {my: 'right-20 top+20',
                                                          at: 'right top',
                                                          of: $('.container')[0]
@@ -348,7 +350,7 @@ require(['jsnlog/js/jsnlog.min',
            Backend.prototype.editLocation = function(opts) {
              JL('iPED Toolkit.Backend').debug('Edit location: ' + JSON.stringify(opts.location));
              this.mapView.map.closePopup();
-             var locationEditView = new LocationEditView({model: {location: opts.location, backend: this}});
+             var locationEditView = new LocationEditView({model: {location: opts.location, backend: this, title: 'Edit location'}});
              $(locationEditView.el).dialog({title: 'Edit location',
                                             dialogClass: 'ui-dialog-titlebar-hidden',
                                             draggable: false,
