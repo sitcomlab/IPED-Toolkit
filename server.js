@@ -224,13 +224,110 @@ app.get('/api/locations', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            var locations = result.data;
 
-            res.writeHead(200, {
-                'Content-Type' : 'application/json'
-            });
-            res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
-            return;
+            // Check relatedLocations, Videos and Overlays for each Locationobject
+            async.forEach(locations, function(location, callback_AFE) {
+
+                async.parallel({
+                    getRelatedLocations : function(callback) {
+                        
+                        // Query
+                        var query = "MATCH (l:Location) WHERE ID(l)="+ location._id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT ID(l2) AS relatedTo";
+                        //console.log(query);
+
+                        // Database Query
+                        db.cypherQuery(query, function(err, result) {
+
+                            if (err) {
+
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                var errorMsg = "Error: Internal Server Error; Message: " + err;
+                                res.end(errorMsg);
+                                return;
+
+                            } else { 
+                                //console.log(result.data);
+                                // delivers an array of query results
+                                //console.log(result.columns);
+                                // delivers an array of names of objects getting returned
+                                
+                                 location.relatedLocations = result.data;
+                                 callback(null);
+                            }
+                        });
+                    },
+                    getVideos : function(callback) {
+                        // Query
+                        var query = "MATCH (l:Location) WHERE ID(l)="+ location._id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT ID(v) AS videos";
+                        //console.log(query);
+
+                        // Database Query
+                        db.cypherQuery(query, function(err, result) {
+
+                            if (err) {
+
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                var errorMsg = "Error: Internal Server Error; Message: " + err;
+                                res.end(errorMsg);
+                                return;
+
+                            } else { 
+                                //console.log(JSON.parse(JSON.stringify(result.data).replace(/_id/g, 'id')));
+                                // delivers an array of query results
+                                //console.log(result.columns);
+                                // delivers an array of names of objects getting returned
+                                
+                                 location.videos = result.data;
+                                 callback(null);
+                            }
+                        });
+                    },
+                    getOverlays : function(callback) {
+                        // Query
+                        var query = "MATCH (l:Location) WHERE ID(l)="+ location._id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT ID(o) AS overlays";
+                        //console.log(query);
+
+                        // Database Query
+                        db.cypherQuery(query, function(err, result) {
+
+                            if (err) {
+
+                                res.writeHead(500, {
+                                    'Content-Type' : 'text/plain'
+                                });
+                                var errorMsg = "Error: Internal Server Error; Message: " + err;
+                                res.end(errorMsg);
+                                return;
+
+                            } else { 
+                                //console.log(JSON.parse(JSON.stringify(result.data).replace(/_id/g, 'id')));
+                                // delivers an array of query results
+                                //console.log(result.columns);
+                                // delivers an array of names of objects getting returned
+                                
+                                 location.overlays = result.data;
+                                 callback(null);
+                            }
+                        });
+                    }
+                }, function(err, results) {
+                    callback_AFE();
+                });
+            }, function(err, results) {
+                
+                console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                res.writeHead(200, {
+                    'Content-Type' : 'application/json'
+                });
+                res.end(JSON.stringify(locations).replace(/_id/g, 'id'));
+                return;
+            });            
         }
     });
 });
@@ -818,35 +915,16 @@ app.get('/api/locations/:id', function(req, res) {
                     // Results
                     var location = result.data[0];
 
-                    // 2nd Query
-                    var query_2 = "START l=node(" + req.params.id + ") MATCH l-[:relatedTo]->n RETURN id(n) AS relatedTo";
-                    //console.log(query_2);
+                    async.parallel({
+                        getRelatedLocations : function(callback) {
+                            
+                            // Query
+                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT ID(l2) AS relatedTo";
+                            //console.log(query);
 
-                    // 2nd Database Query
-                    db.cypherQuery(query_2, function(err, result) {
-                        if (err) {
+                            // Database Query
+                            db.cypherQuery(query, function(err, result) {
 
-                            res.writeHead(500, {
-                                'Content-Type' : 'text/plain'
-                            });
-                            var errorMsg = "Error: Internal Server Error; Message: " + err;
-                            res.end(errorMsg);
-                            return;
-
-                        } else {
-
-                            // Results
-                            var relations = result.data;
-
-                            // Adding the attribute "relatedLocations" to JSON-Objekt
-                            location.relatedLocations = relations;
-
-                            // 3rd Query
-                            var query_3 = "START l=node(" + req.params.id + ") MATCH l<-[:wasRecordedAt]-v RETURN id(v) AS wasRecordedAt";
-                            //console.log(query_3);
-
-                            // 3rd Database Query
-                            db.cypherQuery(query_3, function(err, result) {
                                 if (err) {
 
                                     res.writeHead(500, {
@@ -856,61 +934,81 @@ app.get('/api/locations/:id', function(req, res) {
                                     res.end(errorMsg);
                                     return;
 
-                                } else {
+                                } else { 
                                     //console.log(result.data);
                                     // delivers an array of query results
                                     //console.log(result.columns);
                                     // delivers an array of names of objects getting returned
+                                    
+                                     location.relatedLocations = result.data;
+                                     callback(null);
+                                }
+                            });
+                        },
+                        getVideos : function(callback) {
+                            // Query
+                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:wasRecordedAt]-v RETURN DISTINCT ID(v) AS videos";
+                            //console.log(query);
 
-                                    // Results
-                                    var videos = result.data;
+                            // Database Query
+                            db.cypherQuery(query, function(err, result) {
 
-                                    // Adding the attribute "videos" to JSON-Objekt
-                                    location.videos = videos;
+                                if (err) {
 
-                                    // 4th Query
-                                    var query_4 = "START l=node(" + req.params.id + ") MATCH l<-[:locatedAt]-o RETURN id(o) AS locatedAt";
-                                    //console.log(query_4);
-
-                                    // 3rd Database Query
-                                    db.cypherQuery(query_4, function(err, result) {
-                                        if (err) {
-
-                                            res.writeHead(500, {
-                                                'Content-Type' : 'text/plain'
-                                            });
-                                            var errorMsg = "Error: Internal Server Error; Message: " + err;
-                                            res.end(errorMsg);
-                                            return;
-
-                                        } else {
-                                            //console.log(result.data);
-                                            // delivers an array of query results
-                                            //console.log(result.columns);
-                                            // delivers an array of names of objects getting returned
-
-                                            // Results
-                                            var overlays = result.data;
-
-                                            // Adding the attribute "overlays" to JSON-Objekt
-                                            location.overlays = overlays;
-
-                                            // Return final Result
-                                            var finalResult = JSON.stringify(location);
-                                            //console.log("================================ Result ================================");
-                                            //console.log(finalResult);
-                                            console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
-
-                                            res.writeHead(200, {
-                                                'Content-Type' : 'application/json'
-                                            });
-                                            res.end(finalResult.replace(/_id/g, 'id'));
-                                            return;
-                                        }
+                                    res.writeHead(500, {
+                                        'Content-Type' : 'text/plain'
                                     });
+                                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                                    res.end(errorMsg);
+                                    return;
+
+                                } else { 
+                                    //console.log(JSON.parse(JSON.stringify(result.data).replace(/_id/g, 'id')));
+                                    // delivers an array of query results
+                                    //console.log(result.columns);
+                                    // delivers an array of names of objects getting returned
+                                    
+                                     location.videos = result.data;
+                                     callback(null);
+                                }
+                            });
+                        },
+                        getOverlays : function(callback) {
+                            // Query
+                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l<-[:locatedAt]-o RETURN DISTINCT ID(o) AS overlays";
+                            //console.log(query);
+
+                            // Database Query
+                            db.cypherQuery(query, function(err, result) {
+
+                                if (err) {
+
+                                    res.writeHead(500, {
+                                        'Content-Type' : 'text/plain'
+                                    });
+                                    var errorMsg = "Error: Internal Server Error; Message: " + err;
+                                    res.end(errorMsg);
+                                    return;
+
+                                } else { 
+                                    //console.log(JSON.parse(JSON.stringify(result.data).replace(/_id/g, 'id')));
+                                    // delivers an array of query results
+                                    //console.log(result.columns);
+                                    // delivers an array of names of objects getting returned
+                                    
+                                     location.overlays = result.data;
+                                     callback(null);
                                 }
                             });
                         }
+                    }, function(err, results) {
+                        console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+                        res.writeHead(200, {
+                            'Content-Type' : 'application/json'
+                        });
+                        res.end(JSON.stringify(location).replace(/_id/g, 'id'));
+                        return;
                     });
                 }
             });
