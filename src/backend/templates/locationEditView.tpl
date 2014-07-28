@@ -34,7 +34,7 @@
   </div>
   <div class="form-group">
     <label for="tags" class="col-xs-5 control-label">Tags</label>
-    <div class="col-xs-7">
+    <div class="col-xs-7" style="max-height: 100px; overflow: scroll;">
       <select multiple data-role="tagsinput" name="tags">
         
       </select>

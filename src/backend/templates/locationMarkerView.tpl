@@ -30,7 +30,7 @@
       </div>
       <div class="form-group">
         <label for="Tags" class="col-xs-5 control-label">Tags</label>
-        <div class="col-xs-7">
+        <div class="col-xs-7" style="max-height: 100px; overflow: scroll;">
           <input type="text" value="" data-role="tagsinput" disabled="disabled" data-location="<%= location.get('id') %>"/>
         </div>
       </div>

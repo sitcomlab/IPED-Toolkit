@@ -314,32 +314,14 @@ require(['jsnlog/js/jsnlog.min',
                var newLocation = opts.location.clone();
                newLocation.unset('id');
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add state'}});
-               $(locationEditView.el).dialog({title: 'Edit location',
-                                              dialogClass: 'ui-dialog-titlebar-hidden',
-                                              draggable: false,
-                                              position: {my: 'right-20 top+20',
-                                                         at: 'right top',
-                                                         of: $('.container')[0]
-                                                        }
-                                              })
-                                     .dialog('open')
-                                     .parent().draggable();
+               this.showEditLocationDialog({content: locationEditView.el});
              } else {
                JL('iPED Toolkit.Backend').debug('Add new location: ' + JSON.stringify(opts));
                var newLocation = new Location();
                newLocation.set('lat', opts.latlng.lat);
                newLocation.set('lon', opts.latlng.lng);
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add new location'}});
-               $(locationEditView.el).dialog({title: 'Edit location',
-                                              dialogClass: 'ui-dialog-titlebar-hidden',
-                                              draggable: false,
-                                              position: {my: 'right-20 top+20',
-                                                         at: 'right top',
-                                                         of: $('.container')[0]
-                                                        }
-                                              })
-                                     .dialog('open')
-                                     .parent().draggable();
+               this.showEditLocationDialog({content: locationEditView.el});
              }
            }
            
@@ -351,16 +333,7 @@ require(['jsnlog/js/jsnlog.min',
              JL('iPED Toolkit.Backend').debug('Edit location: ' + JSON.stringify(opts.location));
              this.mapView.map.closePopup();
              var locationEditView = new LocationEditView({model: {location: opts.location, backend: this, title: 'Edit location'}});
-             $(locationEditView.el).dialog({title: 'Edit location',
-                                            dialogClass: 'ui-dialog-titlebar-hidden',
-                                            draggable: false,
-                                            position: {my: 'right-20 top+20',
-                                                       at: 'right top',
-                                                       of: $('.container')[0]
-                                                      }
-                                            })
-                                   .dialog('open')
-                                   .parent().draggable();
+             this.showEditLocationDialog({content: locationEditView.el});
            }
            
            /**
@@ -401,6 +374,21 @@ require(['jsnlog/js/jsnlog.min',
                }
              });             
            }
+           
+           /**
+           * Shows a customized JQuery dialog
+           */
+           Backend.prototype.showEditLocationDialog = function(opts) {
+             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
+                                     draggable: false,
+                                     position: {my: 'right-20 top+20',
+                                                at: 'right top',
+                                                of: $('.container')[0]
+                                                }
+                                    })
+                                   .dialog('open')
+                                   .parent().draggable();
+           };
            
            $(document).ready(function() {
              var backend = new Backend();
