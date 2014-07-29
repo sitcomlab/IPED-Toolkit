@@ -96,9 +96,10 @@ require(['jsnlog/js/jsnlog.min',
                  JL('iPED Toolkit.Backend').debug('Click on map (' + this.coords + ')');
                });
                
-               this.map.on('popupopen', function(e) {
-                 //console.log('POPUP EVENT: ' + e);
-               })
+               this.map.on('popupopen', function(event) {
+                 var locationMarkerView = event.popup._source.markerView.locationMarkerView;
+                 locationMarkerView.fetch();
+               });
                
                this.listenTo(this.model.locations, 'all', this.render);
              },
@@ -120,9 +121,7 @@ require(['jsnlog/js/jsnlog.min',
                  }
                  locations.add(location);
                  var markerView = new MarkerView({model: {backend: thiz.model.backend,
-                                                          locations: locations,
-                                                          videos: thiz.model.videos,
-                                                          overlays: thiz.model.overlays},
+                                                          locations: locations},
                                                           map: thiz.featureGroup});
                  
                  previousLocation = location;
@@ -144,11 +143,11 @@ require(['jsnlog/js/jsnlog.min',
                                         });
                
                // All locations are at the very same location, so just use the lat/lon of the first element
-               this.marker = L.marker([this.model.locations.at(0).get('lat'), this.model.locations.at(0).get('lon')], {icon: this.markerIcon});
+               this.marker = L.marker([this.model.locations.at(0).get('lat'), this.model.locations.at(0).get('lon')],
+                                      {icon: this.markerIcon});
+               this.marker.markerView = this;
                this.locationMarkerView = new LocationMakerView({model: {backend: this.model.backend,
-                                                                        locations: this.model.locations,
-                                                                        videos: this.model.videos,
-                                                                        overlays: this.model.overlays}});
+                                                                        locations: this.model.locations}});
                this.featureGroup = L.featureGroup().addTo(this.map);
                
                _.bindAll(this, 'removeMarker')
@@ -167,15 +166,14 @@ require(['jsnlog/js/jsnlog.min',
            */
            LocationMakerView = Backbone.View.extend({
              initialize: function() {
+               this.isFetched = false;
                this.render();
              },
              render: function() {
                var thiz = this;
                
                require([TPL_PATH+'locationMarkerView.tpl'], function (html) {
-                 var template = _.template(html, {locations: thiz.model.locations,
-                                                  videos: thiz.model.videos,
-                                                  overlays: thiz.model.overlays});
+                 var template = _.template(html, {locations: thiz.model.locations});
                  thiz.$el.html(template); 
                  thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
                  thiz.model.locations.each(function(location) {
@@ -185,6 +183,51 @@ require(['jsnlog/js/jsnlog.min',
                  });
                });
                return this;
+             },
+             fetch: function() {
+               var thiz = this;
+               
+               if (this.isFetched == true) {
+                 return;
+               }
+               
+               JL('iPED Toolkit.Backend').debug('Updating the LocationMarkerView');
+               this.model.locations.each(function(location) {
+                 if (location.get('videos').length == 0) {
+                   thiz.$el.find('.videos[data-location=' + location.get('id') + ']').html('None');
+                 }
+                 location.get('videos').forEach(function(videoId) {
+                   var video = new Video({id: videoId});
+                   video.fetch({
+                    success: function(model, response, options) {
+                      thiz.$el.find('.videos[data-location=' + location.get('id') + '] .spinner').remove();
+                      thiz.$el.find('.videos[data-location=' + location.get('id') + ']').html(thiz.$el.find('.videos').html() + 
+                                                                                              model.get('name') + ' (' + model.get('description') + ')');
+                    },
+                    error: function(model, response, options) {
+                      JL('iPED Toolkit.Backend').error(response);
+                    }
+                   });
+                 });
+                 
+                 if (location.get('overlays').length == 0) {
+                   thiz.$el.find('.overlays[data-location=' + location.get('id') + ']').html('None');
+                 }
+                 location.get('overlays').forEach(function(overlayId) {
+                   var overlay = new Overlay({id: overlayId});
+                   overlay.fetch({
+                    success: function(model, response, options) {
+                      thiz.$el.find('.overlays[data-location=' + location.get('id') + '] .spinner').remove();
+                      thiz.$el.find('.overlays[data-location=' + location.get('id') + ']').html(thiz.$el.find('.overlays').html() + 
+                                                                                                model.get('name') + ' (' + model.get('description') + ')');
+                    },
+                    error: function(model, response, options) {
+                      JL('iPED Toolkit.Backend').error(response);
+                    }
+                   });
+                 });
+               });
+               this.isFetched = true;
              },
              events: {
                'click button.add': '_add',
@@ -326,7 +369,12 @@ require(['jsnlog/js/jsnlog.min',
              this.mapView = null;
              _.bindAll(this, 'addLocation');
              
-             this.fetchAll({callback: function() {
+             /*this.fetchAll({callback: function() {
+               thiz.initMap();
+             }});
+             */
+               
+             this.fetchLocations({callback: function() {
                thiz.initMap();
              }});
            }
@@ -409,9 +457,7 @@ require(['jsnlog/js/jsnlog.min',
            Backend.prototype.initMap = function() {
              JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(this.locations));
              this.mapView = new MapView({model: {backend: this,
-                                                 locations: this.locations,
-                                                 videos: this.videos,
-                                                 overlays: this.overlays}});
+                                                 locations: this.locations}});
              this.mapView.render();
            };
            

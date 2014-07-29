@@ -22,6 +22,11 @@ module.exports = function(grunt) {
     'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
     'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl'
 	};
+  
+  copyFiles = [
+    // includes files within path and its sub-directories
+    {expand: true, flatten: true, src: ['src/backend/images/**'], dest: 'public/backend/images/', filter: 'isFile'},
+  ];
 	
   // Project configuration.
   grunt.initConfig({
@@ -48,27 +53,33 @@ module.exports = function(grunt) {
       }
     },
     concat: {
-        options: {
-          separator: '\n\n'
-        },
-        backendCSS: {
-          src: ['public/lib/*/css/*.css', 'public/backend/css/*.css'],
-          dest: 'public/backend/css/backend.css'
-        },
-        frontendCSS: {
-          src: ['public/lib/*/css/*.css', 'public/frontend/css/*.css'],
-          dest: 'public/frontend/css/frontend.css'
-        }
+      options: {
+        separator: '\n\n'
+      },
+      backendCSS: {
+        src: ['public/lib/*/css/*.css', 'public/backend/css/*.css'],
+        dest: 'public/backend/css/backend.css'
+      },
+      frontendCSS: {
+        src: ['public/lib/*/css/*.css', 'public/frontend/css/*.css'],
+        dest: 'public/frontend/css/frontend.css'
       }
+    },
+    copy: {
+      all: {
+        files: copyFiles
+      }
+    }
   });
 
 	// Load the plugin that provides the xyz task.
 	grunt.loadNpmTasks('grunt-targethtml');
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   // Default task(s).
-  grunt.registerTask('master',          ['targethtml:master',           'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
-	grunt.registerTask('develop',         ['targethtml:develop',          'concat:backendCSS', 'concat:frontendCSS']);
-	grunt.registerTask('developOnServer', ['targethtml:developOnServer',  'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
+  grunt.registerTask('master',          ['targethtml:master',           'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
+	grunt.registerTask('develop',         ['targethtml:develop',          'copy:all', 'concat:backendCSS', 'concat:frontendCSS']);
+	grunt.registerTask('developOnServer', ['targethtml:developOnServer',  'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
 };

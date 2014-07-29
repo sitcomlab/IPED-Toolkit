@@ -40,18 +40,7 @@
       <h4>Video footage</h4>
       <div class="form-group">
         <div class="col-xs-12">
-          <p class="form-control-static">
-            <%
-            // Note: _.each throws an error if called on empty array.
-            // Native .forEach does not do that crap.
-            location.get('videos').forEach(function(videoId) {
-            %>
-              <%= videos.get(videoId).get('name') %>
-              <%= videos.get(videoId).get('description')?'('+videos.get(videoId).get('description')+')':'' %>
-            <%
-            });
-            %>
-          </p>
+          <p class="form-control-static videos" data-location="<%= location.get('id') %>"><img class="spinner" src="images/spinner_text.gif"/></p>
         </div>
       </div>
       
@@ -59,18 +48,7 @@
       <h4>Overlays</h4>
       <div class="form-group">
         <div class="col-xs-12">
-          <p class="form-control-static">
-            <%
-            // Note: _.each throws an error if called on empty array.
-            // Native .forEach does not do that crap.
-            location.get('overlays').forEach(function(overlayId) {
-            %>
-              <%= overlays.get(overlayId).get('name') %>
-              <%= overlays.get(overlayId).get('description')?'('+overlays.get(overlayId).get('description')+')':'' %>
-            <%
-            });
-            %>
-          </p>
+          <p class="form-control-static overlays" data-location="<%= location.get('id') %>"><img class="spinner" src="images/spinner_text.gif"/></p>
         </div>
       </div>
       
