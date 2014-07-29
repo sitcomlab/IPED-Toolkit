@@ -43,9 +43,11 @@
   
   <hr/>
   <h4>Video footage</h4>
-  <div class="form-group form-group-sm">
+  <div class="form-group">
     <div class="col-xs-12">
-      <select class="form-control"></select>
+      <select multiple class="form-control videos" name="videos">
+        <option value="-1">None</option>
+      </select>
     </div>
   </div>
   <div class="form-group form-group-sm">
@@ -56,9 +58,11 @@
   
   <hr/>
   <h4>Overlays</h4>
-  <div class="form-group form-group-sm">
+  <div class="form-group">
     <div class="col-xs-12">
-      <select class="form-control"></select>
+      <select multiple class="form-control overlays" name="overlays">
+        <option value="-1">None</option>
+      </select>
     </div>
   </div>
   <div class="form-group form-group-sm">

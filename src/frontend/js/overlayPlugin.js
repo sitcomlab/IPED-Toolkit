@@ -133,7 +133,7 @@ define(['threejs/js/three.min',
               	} else {
                   JL('iPED Toolkit.OverlayPlugin').info('There are ' + thiz.overlays.length + ' overlays at this location');
                   JL('iPED Toolkit.OverlayPlugin').debug(thiz.overlays);
-              		thiz.overlays.each(function(overlay) {
+              		thiz.overlays.forEach(function(overlay) {
                     var object;
               			switch(overlay.get('type')) {
               				case 'html':

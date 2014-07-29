@@ -176,8 +176,8 @@ require(['jsnlog/js/jsnlog.min',
                  var template = _.template(html, {locations: thiz.model.locations});
                  thiz.$el.html(template); 
                  thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
-                 thiz.model.locations.each(function(location) {
-                   _.each(location.get('tags'), function(tag) {
+                 thiz.model.locations.forEach(function(location) {
+                   location.get('tags').forEach(function(tag) {
                      thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']').tagsinput('add', tag);
                    });
                  });
@@ -192,7 +192,7 @@ require(['jsnlog/js/jsnlog.min',
                }
                
                JL('iPED Toolkit.Backend').debug('Updating the LocationMarkerView');
-               this.model.locations.each(function(location) {
+               this.model.locations.forEach(function(location) {
                  if (location.get('videos').length == 0) {
                    thiz.$el.find('.videos[data-location=' + location.get('id') + ']').html('None');
                  }
@@ -202,7 +202,7 @@ require(['jsnlog/js/jsnlog.min',
                     success: function(model, response, options) {
                       thiz.$el.find('.videos[data-location=' + location.get('id') + '] .spinner').remove();
                       thiz.$el.find('.videos[data-location=' + location.get('id') + ']').html(thiz.$el.find('.videos').html() + 
-                                                                                              model.get('name') + ' (' + model.get('description') + ')');
+                                                                                              '<span>' + model.get('name') + ' (' + model.get('description') + ')' + '</span>');
                     },
                     error: function(model, response, options) {
                       JL('iPED Toolkit.Backend').error(response);
@@ -219,7 +219,7 @@ require(['jsnlog/js/jsnlog.min',
                     success: function(model, response, options) {
                       thiz.$el.find('.overlays[data-location=' + location.get('id') + '] .spinner').remove();
                       thiz.$el.find('.overlays[data-location=' + location.get('id') + ']').html(thiz.$el.find('.overlays').html() + 
-                                                                                                model.get('name') + ' (' + model.get('description') + ')');
+                                                                                                '<span>' + model.get('name') + ' (' + model.get('description') + ')' + '</span>');
                     },
                     error: function(model, response, options) {
                       JL('iPED Toolkit.Backend').error(response);
@@ -291,6 +291,7 @@ require(['jsnlog/js/jsnlog.min',
            */
            LocationEditView = Backbone.View.extend({
              initialize: function() {
+               this.isFetched = false;
                this.render();
              },
              render: function() {
@@ -299,11 +300,54 @@ require(['jsnlog/js/jsnlog.min',
                  var template = _.template(html, {location: thiz.model.location, title: thiz.model.title});
                  thiz.$el.html(template);
                  thiz.$el.find('select[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-primary';}});
-                 _.each(thiz.model.location.get('tags'), function(tag) {
+                 thiz.model.location.get('tags').forEach(function(tag) {
                    thiz.$el.find('select[data-role=tagsinput]').tagsinput('add', tag);
                  });
+                 thiz.fetch();
                });
                return this;
+             },
+             fetch: function() {
+               var thiz = this;
+               
+               if (this.isFetched == true) {
+                 return;
+               }
+               
+               JL('iPED Toolkit.Backend').debug('Updating the LocationEditView');
+               var videos = new Videos();
+               videos.fetch({
+                 success: function(model, response, options) {
+                   model.forEach(function(video) {
+                     var selected = '';
+                     if (_.contains(thiz.model.location.get('videos'), video.get('id'))) {
+                       selected = 'selected';
+                     }
+                     thiz.$el.find('.videos').append('<option value="' + video.get('id') + '" ' + selected + '>' + video.get('name') + '</option>');
+                   });
+                 },
+                 error: function(model, response, options) {
+                   JL('iPED Toolkit.Backend').error(response);
+                 }
+               });
+               
+               var overlays = new Overlays();
+               overlays.fetch({
+                 success: function(model, response, options) {
+                   model.forEach(function(overlay) {
+                     var selected = '';
+                     if (_.contains(thiz.model.location.get('overlays'), overlay.get('id'))) {
+                       selected = 'selected';
+                     }
+                     thiz.$el.find('.overlays').append('<option value="' + overlay.get('id') + '" ' + selected + '>' + overlay.get('name') + '</option>');
+                   });
+                 },
+                 error: function(model, response, options) {
+                   JL('iPED Toolkit.Backend').error(response);
+                 }
+               });
+               
+               this.isFetched = true;
              },
              events:
              {
@@ -316,7 +360,7 @@ require(['jsnlog/js/jsnlog.min',
              _save: function() {
                this.$el.find('button').attr('disabled', 'disabled');
                this.model.backend.saveLocation({location: this.model.location, 
-                                                attributes: form2js(this.$el.find('form')[0], '.', true),
+                                                attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
                                                 dialog: this.el});
              }
            });
@@ -511,6 +555,20 @@ require(['jsnlog/js/jsnlog.min',
                }
              })
            }
+           
+           /**
+           * Converts form data into a JSON object
+           * (Basically uses form2js.js and applies special number treatment.)
+           * (Morin's notes: /"[^{},:]*"/g)
+           */
+           Backend.prototype.form2js = function(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName) {
+             var json = JSON.stringify(form2js(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName));
+             json = json.replace(/"[-0-9]*"/g, function(match, capture) {
+               return parseInt(match.replace(/"/g, ''), 10);
+             });
+             json = json.replace('-1', '');
+             return JSON.parse(json);
+           };
            
            /**
            * Save a location by pushing it the the server

@@ -1,13 +1,13 @@
 <!-- Nav tabs -->
 <ul class="nav nav-tabs" role="tablist">
-<% locations.each(function(location, index) { %>
+<% locations.forEach(function(location, index) { %>
   <li class="<% if(index == 0) {print('active')} %>"><a href="#<%= location.get('id') %>" role="tab" data-toggle="tab"><%= location.get('name') %></a></li>
 <% }) %>
 </ul>
 
 <!-- Tab panes -->
 <div class="tab-content">
-<% locations.each(function(location, index) { %>
+<% locations.forEach(function(location, index) { %>
   <div class="tab-pane <% if(index == 0) {print('active')} %>" id="<%= location.get('id') %>">
     <form class="form-horizontal" role="form">
       <h4>General data</h4>
