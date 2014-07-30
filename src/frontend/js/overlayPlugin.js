@@ -48,8 +48,19 @@ define(['threejs/js/three.min',
           function OverlayPlugin(opts) {
             JL('iPED Toolkit.OverlayPlugin').info('OverlayPlugin loaded');
             
-            this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'frontend'
-          	this.jqueryElement = opts.jqueryElement;
+            this.parent = opts.parent;
+            this.overlays = opts.overlays || null;
+            
+            this.isRunning = true;
+            this.video = null;
+            this.top = 0;
+            this.left = 0;
+            this.width = 0;
+            this.height = 0;
+            this.myHooks = [];
+            this.myHooks['render'] = [];
+            this.location = null;
+            
           	this.camera = '';
           	this.gridhelper = '';
           	this.scene = '';
@@ -58,36 +69,62 @@ define(['threejs/js/three.min',
           	this.cssRenderer = '';
           	this.videos = new Array();
           	this.videoTextures = new Array();
-          	this.showUI = true;
+          	this.showUI = false;
           	this.controls = new Array();
-            this.overlays = null;
             
-            this.hooks = [];
-            this.hooks['render'] = [];
-            
-            _.bindAll(this, 'render', 'onKeyDown', 'onWindowResize', 'createOverlays');
+            _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'setLocationId', 'fetchOverlays', 'createOverlays');
 
           	this.init();
-            this.createOverlays();
+            if (this.parent.location && this.parent.location.get) {
+              this.setLocationId(this.parent.location.get('id'));
+            }
+            if (this.overlays) {
+              this.createOverlays();
+            }
           	this.render();
+            
+            if (opts.showUI && opts.showUI == true) {
+              var thiz = this;
+              setTimeout(function() {
+                thiz.toggleUI();
+              }, 1000);
+            }
+          }
+          
+          /**
+          * Stops the overlay, i.e., requestAnimationFrame
+          */
+          OverlayPlugin.prototype.stop = function() {
+            this.isRunning = false;
+            
+          	this.camera = null;
+          	this.gridhelper = null;
+          	this.scene = null;
+          	this.cssScene = null;
+          	this.renderer = null;
+          	this.cssRenderer = null;
+          	this.videos = null;
+          	this.videoTextures = null;
+          	this.controls = null;
           }
 
           /**
           * Initializes the Overlay plugin
           */
           OverlayPlugin.prototype.init = function() {
-            // Hooks the Overlay plugin to the frontend's functions
-            // Morin: This could also be done by using Backbone.js's on change listener
-            this.parent.hooks['setLocationId'].push(this.createOverlays);
+            this.video = $('#iPED-Video');
+            this.video.on('resize', this.onResize);
+            
+            // Create DOM element: <div id="iPED-Overlay"></div>
+            this.video.after('<div id="iPED-Overlay"></div>');
+            this.jqueryElement = $('#iPED-Overlay');
+            this.jqueryElement.css('position', 'absolute');
             
             // Make sure that Three.js uses CORS to load external urls as textures, for example.
             THREE.ImageUtils.crossOrigin = '';
-            
-          	this.jqueryElement.css('position', 'absolute');
-          	this.jqueryElement.css('top', '0px');
 
           	this.cssRenderer = new THREE.CSS3DRenderer({antialias: true, alpha: true});
-          	this.cssRenderer.setSize(window.innerWidth, window.innerHeight);
+          	this.cssRenderer.setSize(this.width, this.height);
           	this.cssRenderer.domElement.style.position = 'absolute';
           	this.jqueryElement.append(this.cssRenderer.domElement);
 
@@ -96,17 +133,17 @@ define(['threejs/js/three.min',
           	} else {
           		this.renderer = new THREE.CanvasRenderer(); 
           	}
-          	this.renderer.setSize(window.innerWidth, window.innerHeight);
+          	this.renderer.setSize(this.width, this.height);
           	this.renderer.domElement.style.position = 'absolute';
           	this.jqueryElement.append(this.renderer.domElement);
 
           	this.cssScene = new THREE.Scene();
           	this.scene = new THREE.Scene();
           	this.gridhelper = new THREE.GridHelper(500, 100);
-          	this.gridhelper.setColors('#000000', '#000000')
-          	this.scene.add(this.gridhelper);
+          	this.gridhelper.setColors('#00ff00', '#00ff00')
+          	//this.scene.add(this.gridhelper);
 
-          	this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 3000);
+          	this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 1, 3000);
           	this.camera.position.set(0, 101, 300);
           	this.camera.lookAt(new THREE.Vector3(0, 101, 0));
 
@@ -114,111 +151,135 @@ define(['threejs/js/three.min',
           	light.position.set(1, 1, 1);
           	this.scene.add(light);
 
-          	window.addEventListener('resize', this.onWindowResize);
+            // Hooks the Overlay plugin to the frontend's functions
+            // Morin: This could also be done by using Backbone.js's on change listener
+            if (this.parent.myHooks) {
+              if (this.parent.myHooks['setLocationId']) {
+                this.parent.myHooks['setLocationId'].push(this.setLocationId);    
+              }
+            }
           	window.addEventListener('keydown', this.onKeyDown);
           };
+          
+          /**
+          * Hooked to the corresponding frontend method
+          */
+          OverlayPlugin.prototype.setLocationId = function(locationId) {
+            JL('iPED Toolkit.OverlayPlugin').info('Set Location ID to: ' + locationId);
+            this.location = new Location({id: locationId});
+            this.fetchOverlays();
+          }
     
+          /**
+          * Fetch overlays
+          */
+          OverlayPlugin.prototype.fetchOverlays = function() {
+            thiz = this;
+            
+            this.overlays = new Overlays();
+            this.overlays.url = '/api/locations/' + this.location.get('id') + '/overlays';
+            this.overlays.fetch({
+              success: function(model, response, options) {                
+                thiz.createOverlays();
+              },
+              error: function(model, response, options) {
+                JL('iPED Toolkit.OverlayPlugin').error(respone); 
+              }
+            }); 
+          };
+          
           /**
           * Creates an Three.js object for each overlay
           */
           OverlayPlugin.prototype.createOverlays = function() {
             thiz = this;
             
-            this.overlays = new Overlays();
-            this.overlays.url = '/api/locations/' + this.parent.location.get('id') + '/overlays';
-            this.overlays.fetch({
-              success: function(model, response, options) {                
-              	if (!thiz.overlays || thiz.overlays.length == 0) {
-              		JL('iPED Toolkit.OverlayPlugin').info('There are no overlays at this location');
-              	} else {
-                  JL('iPED Toolkit.OverlayPlugin').info('There are ' + thiz.overlays.length + ' overlays at this location');
-                  JL('iPED Toolkit.OverlayPlugin').debug(thiz.overlays);
-              		thiz.overlays.forEach(function(overlay) {
-                    var object;
-              			switch(overlay.get('type')) {
-              				case 'html':
-              					var element = document.createElement('iframe');
-              					element.src = overlay.get('url');
-              					element.style.width = overlay.get('w') + 'px';
-              					element.style.height = overlay.get('h') + 'px';
-              					element.style.border = '0px';
+          	if (!thiz.overlays || thiz.overlays.length == 0) {
+          		JL('iPED Toolkit.OverlayPlugin').info('There are no overlays at this location');
+          	} else {
+              JL('iPED Toolkit.OverlayPlugin').info('There are ' + thiz.overlays.length + ' overlays at this location');
+              JL('iPED Toolkit.OverlayPlugin').debug(thiz.overlays);
+          		thiz.overlays.forEach(function(overlay) {
+                var object;
+          			switch(overlay.get('type')) {
+          				case 'html':
+          					var element = document.createElement('iframe');
+          					element.src = overlay.get('url');
+          					element.style.width = overlay.get('w') + 'px';
+          					element.style.height = overlay.get('h') + 'px';
+          					element.style.border = '0px';
 
-              					object = new THREE.CSS3DObject(element);
-              					thiz.cssScene.add(object);
-              					break;
+          					object = new THREE.CSS3DObject(element);
+          					thiz.cssScene.add(object);
+          					break;
 
-		
-              				case 'video':
-              					var n = thiz.videos.push(document.createElement('video')) - 1;
-              					thiz.jqueryElement[0].appendChild(thiz.videos[n]);
-		
-              					var mp4Source = document.createElement('source');
-              					mp4Source.src = overlay.get('url') + '.mp4';
-              					mp4Source.type = 'video/mp4';
-              					thiz.videos[n].appendChild(mp4Source);
 
-              					var ogvSource = document.createElement('source');
-              					ogvSource.src = overlay.get('url') + '.ogv';
-              					ogvSource.type = 'video/ogv';
-              					thiz.videos[n].appendChild(ogvSource);
-		
-              					thiz.videos[n].autoplay = 'autoplay';
-              					thiz.videos[n].loop = 'loop';
-              					thiz.videos[n].style.display = 'none';
+          				case 'video':
+          					var n = thiz.videos.push(document.createElement('video')) - 1;
+          					thiz.jqueryElement[0].appendChild(thiz.videos[n]);
 
-              					if (thiz.videos[n]) {
-              						var m = thiz.videoTextures.push(new THREE.Texture(thiz.videos[n])) - 1;
-              						var material = new THREE.MeshLambertMaterial({
-              					 	 map : thiz.videoTextures[m]
-              						});
-              						thiz.videos[n].play(); // Make sure the video plays
-              					}
-		
-              					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
-              					object = new THREE.Mesh(geometry, material);
-              					thiz.scene.add(object);
-              					break;
+          					var mp4Source = document.createElement('source');
+          					mp4Source.src = overlay.get('url') + '.mp4';
+          					mp4Source.type = 'video/mp4';
+          					thiz.videos[n].appendChild(mp4Source);
 
-		
-              				case 'image':
-              					var texture = THREE.ImageUtils.loadTexture(overlay.get('url'), new THREE.UVMapping(), thiz.render);
-              					texture.anisotropy = thiz.renderer.getMaxAnisotropy();
-              					var material = new THREE.MeshLambertMaterial({map: texture});
+          					var ogvSource = document.createElement('source');
+          					ogvSource.src = overlay.get('url') + '.ogv';
+          					ogvSource.type = 'video/ogv';
+          					thiz.videos[n].appendChild(ogvSource);
 
-              					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
-              					object = new THREE.Mesh(geometry, material);
-              					thiz.scene.add(object);
-              					break;
+          					thiz.videos[n].autoplay = 'autoplay';
+          					thiz.videos[n].loop = 'loop';
+          					thiz.videos[n].style.display = 'none';
 
-		
-              				default:
-              					var material = new THREE.MeshBasicMaterial({color: 0xff0000, side: THREE.DoubleSide});
-              					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
-              					object = new THREE.Mesh(geometry, material);
-              					thiz.scene.add(object);
-              					break;
-              			}
+          					if (thiz.videos[n]) {
+          						var m = thiz.videoTextures.push(new THREE.Texture(thiz.videos[n])) - 1;
+          						var material = new THREE.MeshLambertMaterial({
+          					 	 map : thiz.videoTextures[m]
+          						});
+          						thiz.videos[n].play(); // Make sure the video plays
+          					}
 
-              			object.position.x = overlay.get('x');
-              			object.position.y = overlay.get('y');
-              			object.position.z = overlay.get('z');
-              			object.rotation.x = overlay.get('rx');
-              			object.rotation.y = overlay.get('ry');
-              			object.rotation.z = overlay.get('rz');
-              			object.scale.x = 0.25; //FIXME: This is a magic number without meaning
-              			object.scale.y = 0.25; //FIXME: This is a magic number without meaning
+          					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+          					object = new THREE.Mesh(geometry, material);
+          					thiz.scene.add(object);
+          					break;
 
-              			var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
-              			thiz.controls[n].addEventListener('change', thiz.render);
-              			thiz.controls[n].attach(object);
-              			thiz.scene.add(thiz.controls[n]);
-              		});
-              	}
-              },
-              error: function(model, response, options) {
-                JL('iPED Toolkit.OverlayPlugin').error(respone); 
-              }
-            });
+
+          				case 'image':
+          					var texture = THREE.ImageUtils.loadTexture(overlay.get('url'), new THREE.UVMapping(), thiz.render);
+          					texture.anisotropy = thiz.renderer.getMaxAnisotropy();
+          					var material = new THREE.MeshLambertMaterial({map: texture});
+
+          					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+          					object = new THREE.Mesh(geometry, material);
+          					thiz.scene.add(object);
+          					break;
+
+
+          				default:
+          					var material = new THREE.MeshBasicMaterial({color: 0xff0000, side: THREE.DoubleSide});
+          					var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+          					object = new THREE.Mesh(geometry, material);
+          					thiz.scene.add(object);
+          					break;
+          			}
+
+          			object.position.x = overlay.get('x');
+          			object.position.y = overlay.get('y');
+          			object.position.z = overlay.get('z');
+          			object.rotation.x = overlay.get('rx');
+          			object.rotation.y = overlay.get('ry');
+          			object.rotation.z = overlay.get('rz');
+          			object.scale.x = 0.25; //FIXME: This is a magic number without meaning
+          			object.scale.y = 0.25; //FIXME: This is a magic number without meaning
+
+          			var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
+          			thiz.controls[n].addEventListener('change', thiz.render);
+          			thiz.controls[n].attach(object);
+          			//thiz.scene.add(thiz.controls[n]);
+          		});
+          	}
           };
 
           /**
@@ -260,40 +321,57 @@ define(['threejs/js/three.min',
           			}, this);
           			break;
           		case 73: //I
-          			if (this.showUI == true) {
-          				this.controls.forEach(function(control) {
-          					this.scene.remove(control);
-          				}, this);
-          				this.scene.remove(this.gridhelper);
-          				this.cssRenderer.domElement.style.zIndex = '9999';
-          				this.showUI = false;
-          			} else {
-          				this.controls.forEach(function(control) {
-          					this.scene.add(control);
-          				}, this);
-          				this.scene.add(this.gridhelper);
-          				this.cssRenderer.domElement.style.zIndex = '0';
-          				this.showUI = true;
-          			}
+                this.toggleUI();
           			this.render();
           			break;
             }
           };
+          
+          /*
+          * Toggles the UI
+          */
+          OverlayPlugin.prototype.toggleUI = function() {
+      			if (this.showUI == true) {
+      				this.controls.forEach(function(control) {
+      					this.scene.remove(control);
+      				}, this);
+      				this.scene.remove(this.gridhelper);
+      				this.cssRenderer.domElement.style.zIndex = '9999';
+      				this.showUI = false;
+      			} else {
+      				this.controls.forEach(function(control) {
+      					this.scene.add(control);
+      				}, this);
+      				this.scene.add(this.gridhelper);
+      				this.cssRenderer.domElement.style.zIndex = '0';
+      				this.showUI = true;
+      			}
+          }
 
           /**
           * Updates Three.js according to window resizing events.
           */
-          OverlayPlugin.prototype.onWindowResize = function() {
+          OverlayPlugin.prototype.onResize = function() {
+            this.top = this.video.position().top;
+            this.left = this.video.position().left;
+            this.width = this.video.width();
+            this.height = this.video.height();
+            
+            this.jqueryElement.css('top', this.top + 'px');
+            this.jqueryElement.css('left', this.left + 'px');
+            this.jqueryElement.css('width', this.width + 'px');
+            this.jqueryElement.css('height', this.height + 'px');
+            
           	if (this.camera) {
-          		this.camera.aspect = window.innerWidth / window.innerHeight;
+          		this.camera.aspect = this.width / this.height;
           		this.camera.updateProjectionMatrix();
           	}
 
           	if (this.cssRenderer) {
-          		this.cssRenderer.setSize(window.innerWidth, window.innerHeight);
+          		this.cssRenderer.setSize(this.width, this.height);
           	}
           	if (this.renderer) {
-          		this.renderer.setSize(window.innerWidth, window.innerHeight);	
+          		this.renderer.setSize(this.width, this.height);	
           	}
 
           	if (this.render) {
@@ -305,7 +383,10 @@ define(['threejs/js/three.min',
           * Renders the Three.js scene. Is called by window.requestAnimationFrame().
           */
           OverlayPlugin.prototype.render = function() {
-            requestAnimationFrame(this.render);
+            if (this.isRunning) {
+              requestAnimationFrame(this.render);  
+            }
+            
           	if (this.videos) {
           		var i = 0;
           		this.videos.forEach(function(video) {
@@ -330,7 +411,7 @@ define(['threejs/js/three.min',
           		this.renderer.render(this.scene, this.camera);
           	}
             
-            this.hooks['render'].forEach(function(hook) {
+            this.myHooks['render'].forEach(function(hook) {
               hook();
             }, this);
           };

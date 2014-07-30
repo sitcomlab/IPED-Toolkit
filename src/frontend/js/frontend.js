@@ -103,11 +103,15 @@ require(['jsnlog/js/jsnlog.min',
              this.location = null;
              this.socket = null;
              this.video = new Video;
-             this.hooks = [];
-             this.hooks['setLocationId'] = [];
+             this.myHooks = [];
+             this.myHooks['setLocationId'] = [];
+             this.myHooks['onWindowResize'] = [];
   
              this.activateWebSockets();
              this.setLocationId(getURLParameters('locationId'));
+             
+             _.bindAll(this, 'onWindowResize');
+             window.addEventListener('resize', this.onWindowResize);
            }
 
            /**
@@ -146,8 +150,8 @@ require(['jsnlog/js/jsnlog.min',
                }
              });
              
-             this.hooks['setLocationId'].forEach(function(hook) {
-               hook();
+             this.myHooks['setLocationId'].forEach(function(hook) {
+               hook(locationId);
              }, this);
            };
 
@@ -171,14 +175,23 @@ require(['jsnlog/js/jsnlog.min',
                  $('#iPED-Video').append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');  
                },
                error: function(model, response, options) {
-                 JL('iPED Toolkit.Frontend').error(respone); 
+                 JL('iPED Toolkit.Frontend').error(respone);
                }
              });
            };
            
+           /*
+           * Update/refresh views when window resizes
+           */
+           Frontend.prototype.onWindowResize = function() {
+             this.myHooks['onWindowResize'].forEach(function(hook) {
+               hook($(window).width(), $(window).height());
+             }, this);
+           }
+           
            $(document).ready(function() {
              var frontend = new Frontend();
-             var overlayPlugin = new OverlayPlugin({parent: frontend, jqueryElement: $('#iPED-Overlay')});
+             var overlayPlugin = new OverlayPlugin({parent: frontend});
              var chromaKeyPlugin = new ChromaKeyPlugin({parent: overlayPlugin});
            });
          }

@@ -45,8 +45,8 @@
   <h4>Video footage</h4>
   <div class="form-group">
     <div class="col-xs-12">
-      <select multiple class="form-control videos" name="videos">
-        <option value="-1">None</option>
+      <select class="form-control videos" name="videos[0]">
+        <option value="-1"></option>
       </select>
     </div>
   </div>
@@ -61,13 +61,12 @@
   <div class="form-group">
     <div class="col-xs-12">
       <select multiple class="form-control overlays" name="overlays">
-        <option value="-1">None</option>
       </select>
     </div>
   </div>
   <div class="form-group form-group-sm">
     <div class="col-xs-12">
-      <button type="button" class="btn btn-primary btn-sm add-video">Add new overlay</button>
+      <button type="button" class="btn btn-primary btn-sm add-overlay">Add new overlay</button>
     </div>
   </div>
   

@@ -32,6 +32,21 @@ require.config({
     'jquery/js/jquery-ui.min': {
       deps: ['jquery/js/jquery.min'],
       exports: 'JQueryUI'
+    },
+    'threejs/js/three.min': {
+      exports: 'THREE'
+    },
+    'threejs/js/Detector': {
+      deps: ['threejs/js/three.min'],
+      exports: 'Detector'
+    },
+    'threejs/js/CSS3DRenderer': {
+      deps: ['threejs/js/three.min'],
+      exports: 'CSS3DRenderer'
+    },
+    'threejs/js/TransformControls': {
+      deps: ['threejs/js/three.min'],
+      exports: 'TransformControls'
     }
   }
 });
@@ -352,16 +367,26 @@ require(['jsnlog/js/jsnlog.min',
              events:
              {
                'click button.close': '_close',
-               'click button.save': '_save'
+               'click button.save': '_save',
+               'click button.add-overlay': '_addOverlay'
              },
              _close: function() {
-               $(this.el).dialog('close');
+               $(this.el).dialog('destroy');
              },
              _save: function() {
                this.$el.find('button').attr('disabled', 'disabled');
                this.model.backend.saveLocation({location: this.model.location, 
                                                 attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
                                                 dialog: this.el});
+             },
+             _addOverlay: function() {
+               if (this.$el.find('.videos :selected').text() == "None") {
+                 this.$el.find('.videos').parentsUntil('div.form-group').addClass('has-error');
+                 alert('Please select a video footage first.');
+                 return;
+               }
+               this.$el.find('.videos').parentsUntil('div.form-group').removeClass('has-error');
+               this.model.backend.addOverlay({location: this.model.location});
              }
            });
            
@@ -581,7 +606,7 @@ require(['jsnlog/js/jsnlog.min',
              
              opts.location.save(opts.attributes, {
                success: function(model, response, options) {
-                 $(opts.dialog).dialog('close');
+                 $(opts.dialog).dialog('destroy');
                  thiz.locations.fetch(); // Refresh collection (alternative: thiz.locations.add(model);)
                },
                error: function(model, response, options) {
@@ -596,7 +621,7 @@ require(['jsnlog/js/jsnlog.min',
            */
            Backend.prototype.showEditLocationDialog = function(opts) {
              $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
-                                     maxHeight: 600,
+                                     height: 600,
                                      draggable: false,
                                      position: {my: 'right-20 top+20',
                                                 at: 'right top',
@@ -605,6 +630,56 @@ require(['jsnlog/js/jsnlog.min',
                                     })
                                    .dialog('open')
                                    .parent().draggable();
+           };
+           
+           /**
+           * Opens a new view/frame that lets the user position a new overlay on top the video
+           */
+           Backend.prototype.addOverlay = function(opts) {
+             var thiz = this;
+             var overlayPlugin = null;
+             
+             JL('iPED Toolkit.Backend').debug('Add new overlay');
+             
+             var video = new Video({id: opts.location.get('videos')[0]});
+             video.fetch({
+               success: function(model, response, options) {
+                 require([TPL_PATH+'addOverlay.tpl', '../frontend/js/overlayPlugin'], function (html, OverlayPlugin) {
+                   var template = _.template(html, {video: model});
+                   var dialog = $(template).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
+                                                    width: '90%',
+                                                    draggable: false});
+                  dialog.dialog('open')
+                        .parent().draggable();
+                        
+                   dialog.find('.close').on('click', function(event) {
+                     dialog.dialog('destroy');
+                     overlayPlugin.stop();
+                     overlayPlugin = null;
+                   });
+
+                   var newOverlay = new Overlay({name: 'New overlay',
+                                                 type: 'image',
+                                                 url: window.location.href + 'images/testimage.jpg',
+                                                 x: 100,
+                                                 y: 0,
+                                                 z: 0,
+                                                 rx: 0,
+                                                 ry: 0,
+                                                 rz: 0,
+                                                 w: 800,
+                                                 h: 600,
+                                                 d: 0});
+                   var newOverlays = new Overlays();
+                   newOverlays.add(newOverlay);
+                   
+                   overlayPlugin = new OverlayPlugin({parent: thiz, overlays: newOverlays, showUI: true});
+                 });
+               },
+               error: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').error(response);
+               }
+             });
            };
            
            $(document).ready(function() {

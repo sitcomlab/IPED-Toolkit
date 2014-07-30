@@ -20,7 +20,8 @@ module.exports = function(grunt) {
 		'public/backend/js/backend.js'                    : 'src/backend/js/backend.js',
     'public/backend/css/backend.css'                  : 'src/backend/css/backend.css',
     'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
-    'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl'
+    'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
+    'public/backend/templates/addOverlay.tpl'         : 'src/backend/templates/addOverlay.tpl'
 	};
   
   copyFiles = [

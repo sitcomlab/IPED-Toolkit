@@ -8,6 +8,7 @@ body {
 
 .ui-dialog {
   background: #ffffff;
+  border: 2px solid #e7e7e7;
 }
 
 .ui-dialog-titlebar-hidden .ui-dialog-titlebar {
@@ -16,6 +17,10 @@ body {
 
 .ui-dialog p.lead {
   margin: 0;
+}
+
+.ui-dialog #iPED-Video {
+  max-width: 100%;
 }
 
 .ui-front {
