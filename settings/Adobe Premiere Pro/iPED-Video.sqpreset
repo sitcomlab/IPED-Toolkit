@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PremiereData Version="3">
+	<SequencePreset ObjectRef="1"/>
+	<SequencePreset ObjectID="1" ClassID="5e73dd7e-4f86-4917-80eb-08ddb2f4a5f3" Version="2">
+		<PreviewVideoFrameSize>0,0,1920,360</PreviewVideoFrameSize>
+		<InitialNumberOfFiveOneSubmixTracks>0</InitialNumberOfFiveOneSubmixTracks>
+		<InitialNumberOfStereoSubmixTracks>0</InitialNumberOfStereoSubmixTracks>
+		<InitialNumberOfMonoSubmixTracks>0</InitialNumberOfMonoSubmixTracks>
+		<InitialNumberOfFiveOneTracks>0</InitialNumberOfFiveOneTracks>
+		<InitialNumberOfStereoTracks>3</InitialNumberOfStereoTracks>
+		<InitialNumberOfMonoTracks>0</InitialNumberOfMonoTracks>
+		<InitialNumberOfVideoTracks>3</InitialNumberOfVideoTracks>
+		<VideoUseMaxRenderQuality>false</VideoUseMaxRenderQuality>
+		<VideoUseMaxBitDepth>false</VideoUseMaxBitDepth>
+		<VideoPixelAspectRatio>1,1</VideoPixelAspectRatio>
+		<PreviewPresetVideoCodec.Win>1297107278</PreviewPresetVideoCodec.Win>
+		<PreviewPresetFileName.Win>I-Frame Only MPEG</PreviewPresetFileName.Win>
+		<PreviewPresetVideoCodec.Mac>1297107278</PreviewPresetVideoCodec.Mac>
+		<PreviewPresetFileName.Mac>I-Frame Only MPEG</PreviewPresetFileName.Mac>
+		<EditingModeGUID.Win>795454d9-d3c2-429d-9474-923ab13b7018</EditingModeGUID.Win>
+		<EditingModeGUID.Mac>795454d9-d3c2-429d-9474-923ab13b7018</EditingModeGUID.Mac>
+		<Descriptions Version="1">
+			<DescriptionItem Version="1" Index="0">
+				<Second>Vorlage zur Erstellung von 5760x1080p Videos für das IVE</Second>
+				<First>de_DE</First>
+			</DescriptionItem>
+		</Descriptions>
+		<Names Version="1">
+			<NameItem Version="1" Index="0">
+				<Second>iPED-Video</Second>
+				<First>de_DE</First>
+			</NameItem>
+		</Names>
+		<VideoFieldType>0</VideoFieldType>
+		<AudioTimeDisplay>200</AudioTimeDisplay>
+		<VideoTimeDisplay>101</VideoTimeDisplay>
+		<AudioChannelType>1</AudioChannelType>
+		<AudioFrameRate>5292000</AudioFrameRate>
+		<VideoFrameSize>0,0,5760,1080</VideoFrameSize>
+		<VideoFrameRate>10160640000</VideoFrameRate>
+	</SequencePreset>
+</PremiereData>
