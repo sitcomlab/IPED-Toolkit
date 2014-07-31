@@ -19,9 +19,23 @@ module.exports = function(grunt) {
 		'public/backend/index.html'                       : 'src/backend/index.html',
 		'public/backend/js/backend.js'                    : 'src/backend/js/backend.js',
     'public/backend/css/backend.css'                  : 'src/backend/css/backend.css',
+    
     'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
     'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
-    'public/backend/templates/addOverlay.tpl'         : 'src/backend/templates/addOverlay.tpl'
+    'public/backend/templates/addOverlay.tpl'         : 'src/backend/templates/addOverlay.tpl',
+    
+    'public/backend/js/models/Location.js'            : 'src/backend/js/models/Location.js',
+    'public/backend/js/models/Locations.js'           : 'src/backend/js/models/Locations.js',
+    'public/backend/js/models/Overlay.js'             : 'src/backend/js/models/Overlay.js',
+    'public/backend/js/models/Overlays.js'            : 'src/backend/js/models/Overlays.js',
+    'public/backend/js/models/Video.js'               : 'src/backend/js/models/Video.js',
+    'public/backend/js/models/Videos.js'              : 'src/backend/js/models/Videos.js',
+    
+    'public/backend/js/views/LocationEditView.js'     : 'src/backend/js/views/LocationEditView.js',
+    'public/backend/js/views/LocationMarkerView.js'   : 'src/backend/js/views/LocationMarkerView.js',
+    'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
+    'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
+    'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js'
 	};
   
   copyFiles = [

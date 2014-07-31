@@ -6,41 +6,7 @@
 * Institute for Geoinformatics (ifgi), University of Münster
 */
 
-require.config({
-  baseUrl: '../lib',
-  paths: {
-    'frontend'  : '../frontend/js',
-    'backend'   : '../backend/js',
-  },
-  shim: {
-    'threejs/js/three.min': {
-      exports: 'THREE'
-    },
-    'threejs/js/Detector': {
-      deps: ['threejs/js/three.min'],
-      exports: 'Detector'
-    },
-    'threejs/js/CSS3DRenderer': {
-      deps: ['threejs/js/three.min'],
-      exports: 'CSS3DRenderer'
-    },
-    'threejs/js/TransformControls': {
-      deps: ['threejs/js/three.min'],
-      exports: 'TransformControls'
-    },
-    'seriouslyjs/js/seriously': {
-      exports: 'Seriously'
-    },
-    'seriouslyjs/js/seriously.chroma': {
-      deps: ['seriouslyjs/js/seriously'],
-      exports: 'SeriouslyChroma'
-    },
-    'backbonejs/js/backbone': {
-      deps: ['underscorejs/js/underscore'],
-      exports: 'Backbone'
-    }
-  }
-});
+require.config(requireConfig);
 
 require(['jsnlog/js/jsnlog.min',
          'jquery/js/jquery.min',
