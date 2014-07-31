@@ -307,6 +307,8 @@ require(['jsnlog/js/jsnlog.min',
            LocationEditView = Backbone.View.extend({
              initialize: function() {
                this.isFetched = false;
+               this.videos = null;
+               this.overlays = null;
                this.render();
              },
              render: function() {
@@ -322,6 +324,10 @@ require(['jsnlog/js/jsnlog.min',
                });
                return this;
              },
+             update: function() {
+               this.isFetched = false;
+               this.render();
+             },
              fetch: function() {
                var thiz = this;
                
@@ -330,9 +336,10 @@ require(['jsnlog/js/jsnlog.min',
                }
                
                JL('iPED Toolkit.Backend').debug('Updating the LocationEditView');
-               var videos = new Videos();
-               videos.fetch({
+               this.videos = new Videos();
+               this.videos.fetch({
                  success: function(model, response, options) {
+                   thiz.$el.find('.videos').empty();
                    model.forEach(function(video) {
                      var selected = '';
                      if (_.contains(thiz.model.location.get('videos'), video.get('id'))) {
@@ -346,9 +353,10 @@ require(['jsnlog/js/jsnlog.min',
                  }
                });
                
-               var overlays = new Overlays();
-               overlays.fetch({
+               this.overlays = new Overlays();
+               this.overlays.fetch({
                  success: function(model, response, options) {
+                   thiz.$el.find('.overlays').empty();
                    model.forEach(function(overlay) {
                      var selected = '';
                      if (_.contains(thiz.model.location.get('overlays'), overlay.get('id'))) {
@@ -368,25 +376,69 @@ require(['jsnlog/js/jsnlog.min',
              {
                'click button.close': '_close',
                'click button.save': '_save',
-               'click button.add-overlay': '_addOverlay'
+               'click button.add-overlay': '_addOverlay',
+               'click button.edit-overlay': '_editOverlay',
+               'click button.delete-overlay': '_deleteOverlay'
+             },
+             _disableButtons: function() {
+               this.$el.find('button').attr('disabled', 'disabled');
+             },
+             _enableButtons: function() {
+               this.$el.find('button').removeAttr('disabled');
              },
              _close: function() {
                $(this.el).dialog('destroy');
              },
              _save: function() {
-               this.$el.find('button').attr('disabled', 'disabled');
+               this._disableButtons();
                this.model.backend.saveLocation({location: this.model.location, 
                                                 attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
-                                                dialog: this.el});
+                                                dialog: this});
              },
              _addOverlay: function() {
-               if (this.$el.find('.videos :selected').text() == "None") {
+               if (this.$el.find('.videos :selected').attr('value') == -1) {
                  this.$el.find('.videos').parentsUntil('div.form-group').addClass('has-error');
                  alert('Please select a video footage first.');
                  return;
                }
                this.$el.find('.videos').parentsUntil('div.form-group').removeClass('has-error');
-               this.model.backend.addOverlay({location: this.model.location});
+               
+               var videoId = this.$el.find('.videos :selected').attr('value');
+               var video = this.videos.get(videoId);
+               this.model.backend.addOverlay({video: video});
+             },
+             _editOverlay: function() {
+               if (this.$el.find('.videos :selected').attr('value') == -1) {
+                 this.$el.find('.videos').parentsUntil('div.form-group').addClass('has-error');
+                 alert('Please select a video footage first.');
+                 return;
+               }
+               this.$el.find('.videos').parentsUntil('div.form-group').removeClass('has-error');
+               
+               if (this.$el.find('.overlays :selected').length == 0) {
+                 this.$el.find('.overlays').parentsUntil('div.form-group').addClass('has-error');
+                 alert('Please select an overlay first.');
+                 return;
+               }
+               this.$el.find('.overlays').parentsUntil('div.form-group').removeClass('has-error');
+               
+               var videoId = this.$el.find('.videos :selected').attr('value');
+               var video = this.videos.get(videoId);
+               var overlayId = this.$el.find('.overlays :selected').attr('value');
+               var overlay = this.overlays.get(overlayId);
+               this.model.backend.editOverlay({video: video, overlay: overlay});
+             },
+             _deleteOverlay: function() {
+               if (this.$el.find('.overlays :selected').length == 0) {
+                 this.$el.find('.overlays').parentsUntil('div.form-group').addClass('has-error');
+                 alert('Please select an overlay first.');
+                 return;
+               }
+               this.$el.find('.overlays').parentsUntil('div.form-group').removeClass('has-error');
+               
+               var overlayId = this.$el.find('.overlays :selected').attr('value');
+               var overlay = this.overlays.get(overlayId);
+               this.model.backend.deleteOverlay({overlay: overlay});
              }
            });
            
@@ -425,6 +477,72 @@ require(['jsnlog/js/jsnlog.min',
              model: Overlay,
              url: '/api/overlays'
            });
+           
+           /**
+           * The backbone.js view used for editing an overlay
+           */
+           OverlayEditView = Backbone.View.extend({
+             initialize: function() {
+               this.overlayPlugin = null;
+               this.render();
+             },
+             render: function() {
+               var thiz = this;
+               
+               var video = new Video({id: this.model.video.get('id')});
+               video.fetch({
+                 success: function(model, response, options) {
+                   require([TPL_PATH+'addOverlay.tpl', '../frontend/js/overlayPlugin'], function (html, OverlayPlugin) {
+                     var overlays = new Overlays();
+                     overlays.add(thiz.model.overlay);
+                     
+                     var template = _.template(html, {video: model, overlay: thiz.model.overlay});
+                     thiz.$el.html(template);
+                     thiz.$el.find('select[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-primary';}});
+                     thiz.$el.find('.bootstrap-tagsinput').addClass('form-group')
+                                                          .css('padding-top', '5px')
+                                                          .css('padding-bottom', '5px')
+                                                          .css('width', '100%');
+                                                          
+                     thiz.overlayPlugin = new OverlayPlugin({parent: thiz.model.backend, overlays: overlays, showUI: true});
+                     thiz.$el.find('form').on('focusin', function() {
+                       thiz.overlayPlugin.enableEventListeners(false);
+                     });
+                     thiz.$el.find('form').on('focusout', function() {
+                       thiz.overlayPlugin.enableEventListeners(true);
+                     });
+                   });
+                 },
+                 error: function(model, response, options) {
+                   JL('iPED Toolkit.Backend').error(response);
+                 }
+               });
+               
+               return this;
+             },
+             events:
+             {
+               'click button.close': '_close',
+               'click button.save': '_save'
+             },
+             _disableButtons: function() {
+               this.$el.find('button').attr('disabled', 'disabled');
+             },
+             _enableButtons: function() {
+               this.$el.find('button').removeAttr('disabled');
+             },
+             _close: function() {
+               $(this.el).dialog('destroy');
+               this.overlayPlugin.stop();
+               this.overlayPlugin = null;
+             },
+             _save: function() {
+               this.$el.find('button').attr('disabled', 'disabled');
+               this.model.backend.saveOverlay({overlay: this.model.overlay, 
+                                               attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
+                                               dialog: this});
+             }
+           });
            // ### </Backbone> ###
          
          
@@ -436,17 +554,13 @@ require(['jsnlog/js/jsnlog.min',
              var thiz = this;
              
              this.mapView = null;
+             this.locationEditViews = [];
              _.bindAll(this, 'addLocation');
-             
-             /*this.fetchAll({callback: function() {
-               thiz.initMap();
-             }});
-             */
                
              this.fetchLocations({callback: function() {
                thiz.initMap();
              }});
-           }
+           };
            
            /**
            * Fetches all collections from the server and prepares them for use in the backend
@@ -541,6 +655,7 @@ require(['jsnlog/js/jsnlog.min',
                var newLocation = opts.location.clone();
                newLocation.unset('id');
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add state'}});
+               this.locationEditViews.push(locationEditView);
                this.showEditLocationDialog({content: locationEditView.el});
              } else {
                JL('iPED Toolkit.Backend').debug('Add new location: ' + JSON.stringify(opts));
@@ -548,9 +663,10 @@ require(['jsnlog/js/jsnlog.min',
                newLocation.set('lat', opts.latlng.lat);
                newLocation.set('lon', opts.latlng.lng);
                var locationEditView = new LocationEditView({model: {location: newLocation, backend: this, title: 'Add new location'}});
+               this.locationEditViews.push(locationEditView);
                this.showEditLocationDialog({content: locationEditView.el});
              }
-           }
+           };
            
            /**
            * Edit an existing location
@@ -560,26 +676,28 @@ require(['jsnlog/js/jsnlog.min',
              JL('iPED Toolkit.Backend').debug('Edit location: ' + JSON.stringify(opts.location));
              this.mapView.map.closePopup();
              var locationEditView = new LocationEditView({model: {location: opts.location, backend: this, title: 'Edit location'}});
+             this.locationEditViews.push(locationEditView);
              this.showEditLocationDialog({content: locationEditView.el});
-           }
+           };
            
            /**
            * Delete a location
            * @param location - The location to be deleted
            */
            Backend.prototype.deleteLocation = function(opts) {
-             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(location));
+             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(opts.location));
              var thiz = this;
              
              opts.location.destroy({
                success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug('Location ' + opts.location.get('id') + ' deleted');
                  thiz.mapView.map.closePopup();
                },
                error: function(model, response, options) {
                  alert(JSON.stringify(response));
                }
              })
-           }
+           };
            
            /**
            * Converts form data into a JSON object
@@ -591,7 +709,7 @@ require(['jsnlog/js/jsnlog.min',
              json = json.replace(/"[-0-9]*"/g, function(match, capture) {
                return parseInt(match.replace(/"/g, ''), 10);
              });
-             json = json.replace('-1', '');
+             json = json.replace('null', '');
              return JSON.parse(json);
            };
            
@@ -606,18 +724,18 @@ require(['jsnlog/js/jsnlog.min',
              
              opts.location.save(opts.attributes, {
                success: function(model, response, options) {
-                 $(opts.dialog).dialog('destroy');
+                 opts.dialog._close();
                  thiz.locations.fetch(); // Refresh collection (alternative: thiz.locations.add(model);)
                },
                error: function(model, response, options) {
-                 $(opts.dialog).find('button').removeAttr('disabled');
+                 opts.dialog._enableButtons();
                  alert(JSON.stringify(response));
                }
              });             
-           }
+           };
            
            /**
-           * Shows a customized JQuery dialog
+           * Shows a customized JQuery dialog to add/edit locations
            */
            Backend.prototype.showEditLocationDialog = function(opts) {
              $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
@@ -637,49 +755,89 @@ require(['jsnlog/js/jsnlog.min',
            */
            Backend.prototype.addOverlay = function(opts) {
              var thiz = this;
-             var overlayPlugin = null;
              
              JL('iPED Toolkit.Backend').debug('Add new overlay');
+             var newOverlay = new Overlay({name: '',
+                                           description: '',
+                                           tags: [],
+                                           type: 'image',
+                                           url: window.location.origin + window.location.pathname + 'images/testimage.jpg',
+                                           w: 800,
+                                           h: 600,
+                                           x: 100,
+                                           y: 0,
+                                           z: 0,
+                                           d: 0,
+                                           rx: 0,
+                                           ry: 0,
+                                           rz: 0});
+             var overlayEditView = new OverlayEditView({model: {video: opts.video, overlay: newOverlay, backend: this, title: 'Add overlay'}});
+             this.showEditOverlayDialog({content: overlayEditView.el});
+           };
+           
+           /**
+           * Edit an existing overlay
+           * @param video - The video behind the overlay
+           * @param overlay - The overlay to be edited
+           */
+           Backend.prototype.editOverlay = function(opts) {
+             JL('iPED Toolkit.Backend').debug('Edit overlay: ' + JSON.stringify(opts.overlay));
+             var overlayEditView = new OverlayEditView({model: {video: opts.video, overlay: opts.overlay, backend: this, title: 'Edit overlay'}});
+             this.showEditOverlayDialog({content: overlayEditView.el});
+           };
+           
+           /**
+           * Delete an overlay
+           * @param overlay - The overlay to be deleted
+           */
+           Backend.prototype.deleteOverlay = function(opts) {
+             JL('iPED Toolkit.Backend').debug('About to delete overlay: ' + JSON.stringify(opts.overlay));
+             var thiz = this;
              
-             var video = new Video({id: opts.location.get('videos')[0]});
-             video.fetch({
+             opts.overlay.destroy({
                success: function(model, response, options) {
-                 require([TPL_PATH+'addOverlay.tpl', '../frontend/js/overlayPlugin'], function (html, OverlayPlugin) {
-                   var template = _.template(html, {video: model});
-                   var dialog = $(template).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
-                                                    width: '90%',
-                                                    draggable: false});
-                  dialog.dialog('open')
-                        .parent().draggable();
-                        
-                   dialog.find('.close').on('click', function(event) {
-                     dialog.dialog('destroy');
-                     overlayPlugin.stop();
-                     overlayPlugin = null;
-                   });
-
-                   var newOverlay = new Overlay({name: 'New overlay',
-                                                 type: 'image',
-                                                 url: window.location.href + 'images/testimage.jpg',
-                                                 x: 100,
-                                                 y: 0,
-                                                 z: 0,
-                                                 rx: 0,
-                                                 ry: 0,
-                                                 rz: 0,
-                                                 w: 800,
-                                                 h: 600,
-                                                 d: 0});
-                   var newOverlays = new Overlays();
-                   newOverlays.add(newOverlay);
-                   
-                   overlayPlugin = new OverlayPlugin({parent: thiz, overlays: newOverlays, showUI: true});
+                 JL('iPED Toolkit.Backend').debug('Overlay ' + opts.overlay.get('id') + ' deleted');
+                 thiz.locationEditViews.forEach(function(locationEditView) {
+                   locationEditView.update();
                  });
                },
                error: function(model, response, options) {
-                 JL('iPED Toolkit.Backend').error(response);
+                 alert(JSON.stringify(response));
                }
-             });
+             })
+           }
+           
+           /**
+           * Shows a customized JQuery dialog to add/edit locations
+           */
+           Backend.prototype.showEditOverlayDialog = function(opts) {
+             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
+                                    width: '90%',
+                                    resizable: false,
+                                    draggable: false})
+                                    .dialog('open')
+                                    .parent().draggable();
+           };
+           
+           /**
+           * Saves overlay created by addOverlay to the database
+           */
+           Backend.prototype.saveOverlay = function(opts) {
+             var thiz = this;
+             
+             JL('iPED Toolkit.Backend').debug('Save overlay: ' + JSON.stringify(opts.overlay) + ', with new attributes: ' + JSON.stringify(opts.attributes));  
+             opts.overlay.save(opts.attributes, {
+               success: function(model, response, options) {
+                 opts.dialog._close();
+                 thiz.locationEditViews.forEach(function(locationEditView) {
+                   locationEditView.update();
+                 });
+               },
+               error: function(model, response, options) {
+                 opts.dialog._enableButtons();
+                 alert(JSON.stringify(response));
+               }
+             }); 
            };
            
            $(document).ready(function() {

@@ -46,7 +46,7 @@
   <div class="form-group">
     <div class="col-xs-12">
       <select class="form-control videos" name="videos[0]">
-        <option value="-1"></option>
+        <option value="null"></option>
       </select>
     </div>
   </div>
@@ -65,8 +65,14 @@
     </div>
   </div>
   <div class="form-group form-group-sm">
-    <div class="col-xs-12">
-      <button type="button" class="btn btn-primary btn-sm add-overlay">Add new overlay</button>
+    <div class="col-xs-4">
+      <button type="button" class="btn btn-primary btn-sm add-overlay">New</button>
+    </div>
+    <div class="col-xs-4">
+      <button type="button" class="btn btn-primary btn-sm edit-overlay">Edit</button>
+    </div>
+    <div class="col-xs-4">
+      <button type="button" class="btn btn-danger btn-sm delete-overlay">Delete</button>
     </div>
   </div>
   

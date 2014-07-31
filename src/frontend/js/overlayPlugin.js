@@ -38,7 +38,8 @@ define(['threejs/js/three.min',
           * The Backbone.js collection of overlays
           */
           Overlays = Backbone.Collection.extend({
-            model: Overlay
+            model: Overlay,
+            url: '/api/overlays'
           });
     
           /**
@@ -72,7 +73,7 @@ define(['threejs/js/three.min',
           	this.showUI = false;
           	this.controls = new Array();
             
-            _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'setLocationId', 'fetchOverlays', 'createOverlays');
+            _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'setLocationId', 'updateOverlay', 'fetchOverlays', 'createOverlays');
 
           	this.init();
             if (this.parent.location && this.parent.location.get) {
@@ -158,7 +159,19 @@ define(['threejs/js/three.min',
                 this.parent.myHooks['setLocationId'].push(this.setLocationId);    
               }
             }
-          	window.addEventListener('keydown', this.onKeyDown);
+          	this.enableEventListeners(true);
+          };
+          
+          /**
+          * Enables or disables the key down event listener
+          * @param enabled - true: enables listeners, false: disables listeners
+          */
+          OverlayPlugin.prototype.enableEventListeners = function(enabled) {
+            if (enabled) {
+              window.addEventListener('keydown', this.onKeyDown);
+            } else {
+              window.removeEventListener('keydown', this.onKeyDown);
+            }
           };
           
           /**
@@ -265,6 +278,7 @@ define(['threejs/js/three.min',
           					break;
           			}
 
+                object._overlay = overlay;
           			object.position.x = overlay.get('x');
           			object.position.y = overlay.get('y');
           			object.position.z = overlay.get('z');
@@ -275,7 +289,7 @@ define(['threejs/js/three.min',
           			object.scale.y = 0.25; //FIXME: This is a magic number without meaning
 
           			var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
-          			thiz.controls[n].addEventListener('change', thiz.render);
+          			thiz.controls[n].addEventListener('change', thiz.updateOverlay);
           			thiz.controls[n].attach(object);
           			//thiz.scene.add(thiz.controls[n]);
           		});
@@ -287,6 +301,9 @@ define(['threejs/js/three.min',
           */
           OverlayPlugin.prototype.onKeyDown = function(event) {
             //console.log(event.which);
+            if (!this.controls) {
+              return;
+            }
             switch (event.keyCode) {
               case 81: // Q
           			this.controls.forEach(function(control) {
@@ -304,9 +321,11 @@ define(['threejs/js/three.min',
           			}, this);
                 break;
               case 82: // R
+              /*
           			this.controls.forEach(function(control) {
           				control.setMode("scale");
           			}, this);
+              */
                 break;
           		case 187:
           		case 107: // +,=,num+
@@ -378,6 +397,22 @@ define(['threejs/js/three.min',
           		this.render();
           	}
           };
+          
+          /**
+          * Updates the overlay model according to the user control
+          */
+          OverlayPlugin.prototype.updateOverlay = function(event) {
+            var overlay = event.target.object._overlay;
+            overlay.set('x', event.target.object.position.x);
+            overlay.set('y', event.target.object.position.y);
+            overlay.set('z', event.target.object.position.z);
+            
+            overlay.set('rx', event.target.object.rotation.x);
+            overlay.set('ry', event.target.object.rotation.y);
+            overlay.set('rz', event.target.object.rotation.z);
+            
+            this.render();
+          }
 
           /**
           * Renders the Three.js scene. Is called by window.requestAnimationFrame().
