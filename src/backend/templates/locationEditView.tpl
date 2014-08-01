@@ -46,7 +46,6 @@
   <div class="form-group">
     <div class="col-xs-12">
       <select class="form-control videos" name="videos[0]">
-        <option value="null"></option>
       </select>
     </div>
   </div>
