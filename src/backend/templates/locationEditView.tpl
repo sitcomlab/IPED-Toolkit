@@ -28,7 +28,7 @@
       <p class="form-control-static">(<%= location.get('lat') %>, <%= location.get('lon') %>)</p>
     </div>
   </div>
-  <div class="form-group form-group-sm">
+  <div class="form-group">
     <label for="description" class="col-xs-5 control-label">Description</label>
     <div class="col-xs-7">
       <textarea class="form-control" rows="3" name="description"><%= location.get('description') %></textarea>
@@ -36,7 +36,7 @@
   </div>
   <div class="form-group form-group-sm">
     <label for="tags" class="col-xs-5 control-label">Tags</label>
-    <div class="col-xs-7" style="max-height: 100px; overflow: scroll;">
+    <div class="col-xs-7">
       <select multiple data-role="tagsinput" name="tags"></select>
     </div>
   </div>

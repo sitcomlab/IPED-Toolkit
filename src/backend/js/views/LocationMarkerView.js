@@ -1,6 +1,7 @@
 define(['backbonejs/js/backbone',
         'backend/models/Overlay',
-        'backend/models/Video'],
+        'backend/models/Video',
+        'succinct/js/succinct.min'],
   function(Backbone) {
     /**
     * The backbone.js view for a leaflet marker
@@ -17,6 +18,7 @@ define(['backbonejs/js/backbone',
           var template = _.template(html, {locations: thiz.model.locations});
           thiz.$el.html(template); 
           thiz.$el.find('input[data-role=tagsinput]').tagsinput({tagClass: function(item) {return 'label label-default';}});
+          thiz.$el.find('.succinct').succinct({size: 100});
           thiz.model.locations.forEach(function(location) {
             location.get('tags').forEach(function(tag) {
               thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']').tagsinput('add', tag);

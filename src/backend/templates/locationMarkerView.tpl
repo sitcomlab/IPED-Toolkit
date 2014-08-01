@@ -26,12 +26,12 @@
       <div class="form-group form-group-sm">
         <label for="Description" class="col-xs-5 control-label">Description</label>
         <div class="col-xs-7">
-          <p class="form-control-static" style="max-height: 100px; overflow: scroll;"><%= location.get('description') %></p>
+          <p class="form-control-static succinct"><%= location.get('description') %></p>
         </div>
       </div>
       <div class="form-group form-group-sm">
         <label for="Tags" class="col-xs-5 control-label">Tags</label>
-        <div class="col-xs-7" style="max-height: 100px; overflow: scroll;">
+        <div class="col-xs-7">
           <input type="text" value="" data-role="tagsinput" disabled="disabled" data-location="<%= location.get('id') %>"/>
         </div>
       </div>

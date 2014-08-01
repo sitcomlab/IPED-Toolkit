@@ -70,6 +70,16 @@ require(['jsnlog/js/jsnlog.min',
            };
            
            /**
+           * Initializes the leaflet map
+           */
+           Backend.prototype.initMap = function() {
+             JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(this.locations));
+             this.mapView = new MapView({model: {backend: this,
+                                                 locations: this.locations}});
+             this.mapView.render();
+           };
+           
+           /**
            * Fetches all collections from the server and prepares them for use in the backend
            */
            Backend.prototype.fetchAll = function(opts) {
@@ -142,16 +152,6 @@ require(['jsnlog/js/jsnlog.min',
            };
            
            /**
-           * Initializes the leaflet map
-           */
-           Backend.prototype.initMap = function() {
-             JL('iPED Toolkit.Backend').debug('Init map with locations: ' + JSON.stringify(this.locations));
-             this.mapView = new MapView({model: {backend: this,
-                                                 locations: this.locations}});
-             this.mapView.render();
-           };
-           
-           /**
            * Add a new location, either a new one (location == null) or to an existing location (location != null)
            * @param location - Either null (add new location) or existing location
            */
@@ -188,39 +188,6 @@ require(['jsnlog/js/jsnlog.min',
            };
            
            /**
-           * Delete a location
-           * @param location - The location to be deleted
-           */
-           Backend.prototype.deleteLocation = function(opts) {
-             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(opts.location));
-             var thiz = this;
-             
-             opts.location.destroy({
-               success: function(model, response, options) {
-                 JL('iPED Toolkit.Backend').debug('Location ' + opts.location.get('id') + ' deleted');
-                 thiz.mapView.map.closePopup();
-               },
-               error: function(model, response, options) {
-                 alert(JSON.stringify(response));
-               }
-             })
-           };
-           
-           /**
-           * Converts form data into a JSON object
-           * (Basically uses form2js.js and applies special number treatment.)
-           * (Morin's notes: /"[^{},:]*"/g)
-           */
-           Backend.prototype.form2js = function(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName) {
-             var json = JSON.stringify(form2js(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName));
-             json = json.replace(/"[-0-9]*"/g, function(match, capture) {
-               return parseInt(match.replace(/"/g, ''), 10);
-             });
-             json = json.replace('null', '');
-             return JSON.parse(json);
-           };
-           
-           /**
            * Save a location by pushing it the the server
            * @param location - The location to be saved
            * @param attributes - The set of (changed) attributes
@@ -242,19 +209,22 @@ require(['jsnlog/js/jsnlog.min',
            };
            
            /**
-           * Shows a customized JQuery dialog to add/edit locations
+           * Delete a location
+           * @param location - The location to be deleted
            */
-           Backend.prototype.showEditLocationDialog = function(opts) {
-             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
-                                     height: 600,
-                                     draggable: false,
-                                     position: {my: 'right-20 top+20',
-                                                at: 'right top',
-                                                of: $('.container')[0]
-                                                }
-                                    })
-                                   .dialog('open')
-                                   .parent().draggable();
+           Backend.prototype.deleteLocation = function(opts) {
+             JL('iPED Toolkit.Backend').debug('About to delete location: ' + JSON.stringify(opts.location));
+             var thiz = this;
+             
+             opts.location.destroy({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug('Location ' + opts.location.get('id') + ' deleted');
+                 thiz.mapView.map.closePopup();
+               },
+               error: function(model, response, options) {
+                 alert(JSON.stringify(response));
+               }
+             })
            };
            
            /**
@@ -294,39 +264,6 @@ require(['jsnlog/js/jsnlog.min',
            };
            
            /**
-           * Delete an overlay
-           * @param overlay - The overlay to be deleted
-           */
-           Backend.prototype.deleteOverlay = function(opts) {
-             JL('iPED Toolkit.Backend').debug('About to delete overlay: ' + JSON.stringify(opts.overlay));
-             var thiz = this;
-             
-             opts.overlay.destroy({
-               success: function(model, response, options) {
-                 JL('iPED Toolkit.Backend').debug('Overlay ' + opts.overlay.get('id') + ' deleted');
-                 thiz.locationEditViews.forEach(function(locationEditView) {
-                   locationEditView.update();
-                 });
-               },
-               error: function(model, response, options) {
-                 alert(JSON.stringify(response));
-               }
-             })
-           }
-           
-           /**
-           * Shows a customized JQuery dialog to add/edit locations
-           */
-           Backend.prototype.showEditOverlayDialog = function(opts) {
-             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden',
-                                    width: '90%',
-                                    resizable: false,
-                                    draggable: false})
-                                    .dialog('open')
-                                    .parent().draggable();
-           };
-           
-           /**
            * Saves overlay created by addOverlay to the database
            */
            Backend.prototype.saveOverlay = function(opts) {
@@ -345,6 +282,74 @@ require(['jsnlog/js/jsnlog.min',
                  alert(JSON.stringify(response));
                }
              }); 
+           };
+           
+           /**
+           * Delete an overlay
+           * @param overlay - The overlay to be deleted
+           */
+           Backend.prototype.deleteOverlay = function(opts) {
+             JL('iPED Toolkit.Backend').debug('About to delete overlay: ' + JSON.stringify(opts.overlay));
+             var thiz = this;
+             
+             opts.overlay.destroy({
+               success: function(model, response, options) {
+                 JL('iPED Toolkit.Backend').debug('Overlay ' + opts.overlay.get('id') + ' deleted');
+                 thiz.locationEditViews.forEach(function(locationEditView) {
+                   locationEditView.update();
+                 });
+               },
+               error: function(model, response, options) {
+                 alert(JSON.stringify(response));
+               }
+             })
+           };
+           
+           /**
+           * Shows a customized JQuery dialog to add/edit locations
+           */
+           Backend.prototype.showEditLocationDialog = function(opts) {
+             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
+                                     height: 600,
+                                     draggable: false,
+                                     position: {my: 'right-20 top+20',
+                                                at: 'right top',
+                                                of: $('.container')[0]
+                                                }
+                                    })
+                                   .dialog('open')
+                                   .parent().draggable();
+           };
+           
+           /**
+           * Shows a customized JQuery dialog to add/edit locations
+           */
+           Backend.prototype.showEditOverlayDialog = function(opts) {
+             $(opts.content).dialog({dialogClass: 'ui-dialog-titlebar-hidden overflow-hidden',
+                                    width: '90%',
+                                    resizable: false,
+                                    draggable: false,
+                                    position: {my: 'top+20',
+                                               at: 'top',
+                                               of: $('.container')[0]
+                                               }
+                                    })
+                                    .dialog('open')
+                                    .parent().draggable();
+           };
+           
+           /**
+           * Converts form data into a JSON object
+           * (Basically uses form2js.js and applies special number treatment.)
+           * (Morin's notes: /"[^{},:]*"/g)
+           */
+           Backend.prototype.form2js = function(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName) {
+             var json = JSON.stringify(form2js(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName));
+             json = json.replace(/"[-0-9]*"/g, function(match, capture) {
+               return parseInt(match.replace(/"/g, ''), 10);
+             });
+             json = json.replace('null', '');
+             return JSON.parse(json);
            };
            
            $(document).ready(function() {
