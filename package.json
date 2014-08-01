@@ -1,9 +1,9 @@
 {
-  "name": "iPED-Toolkit-Server",
-  "version": "0.0.1",
+  "name": "iPED-Toolkit",
+  "version": "0.0.2",
   "description": "This server orchestrates all services required to run the iPED Toolkit",
   "main": "server.js",
-  "author": "Münster University, Institute for Geoinformatics, Sitcom Lab",
+  "author": "Institut für Geoinformatik, Universität Münster",
   "dependencies": {
     "async": "0.9.0",
     "body-parser": "1.2.x",
@@ -30,7 +30,8 @@
     "grunt-contrib-copy": "0.5.0",
     "grunt-jsdoc": "0.5.6",
     "grunt-targethtml": "~0.2.6",
-    "ink-docstrap": "0.4.12"
+    "ink-docstrap": "0.4.12",
+    "grunt-jsbeautifier": "~0.2.7"
   },
   "repository": {
     "type": "git",

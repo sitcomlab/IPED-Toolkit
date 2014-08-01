@@ -46,6 +46,10 @@ var requireConfig = {
     'seriouslyjs/js/seriously.chroma': {
       deps: ['seriouslyjs/js/seriously'],
       exports: 'SeriouslyChroma'
+    },
+    'leaflet/js/leaflet.awesome-markers.min': {
+      deps: ['bootstrap/js/bootstrap.min'],
+      exports: 'LeafletAwesomeMarker'
     }
   }
 };

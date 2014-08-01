@@ -23,6 +23,7 @@ module.exports = function(grunt) {
     'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
     'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
     'public/backend/templates/addOverlay.tpl'         : 'src/backend/templates/addOverlay.tpl',
+    'public/backend/templates/aboutView.tpl'          : 'src/backend/templates/aboutView.tpl',
     
     'public/backend/js/models/Location.js'            : 'src/backend/js/models/Location.js',
     'public/backend/js/models/Locations.js'           : 'src/backend/js/models/Locations.js',
@@ -35,7 +36,8 @@ module.exports = function(grunt) {
     'public/backend/js/views/LocationMarkerView.js'   : 'src/backend/js/views/LocationMarkerView.js',
     'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
     'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
-    'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js'
+    'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js',
+    'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js'
 	};
   
   copyFiles = [
@@ -84,6 +86,46 @@ module.exports = function(grunt) {
       all: {
         files: copyFiles
       }
+    },
+    jsbeautifier: {
+      all: {
+        src : ['src/**/*.js', 'src/**/*.css', 'src/**/*.html'],
+        options: {
+          html: {
+            braceStyle: 'collapse',
+            indentChar: ' ',
+            indentScripts: 'keep',
+            indentSize: 4,
+            maxPreserveNewlines: 10,
+            preserveNewlines: true,
+            unformatted: [],
+            wrapLineLength: 0
+          },
+          css: {
+            indentChar: ' ',
+            indentSize: 4
+          },
+          js: {
+            braceStyle: 'collapse',
+            breakChainedMethods: true,
+            e4x: false,
+            evalCode: false,
+            indentChar: ' ',
+            indentLevel: 0,
+            indentSize: 4,
+            indentWithTabs: false,
+            jslintHappy: false,
+            keepArrayIndentation: false,
+            keepFunctionIndentation: false,
+            maxPreserveNewlines: 10,
+            preserveNewlines: true,
+            spaceBeforeConditional: true,
+            spaceInParen: false,
+            unescapeStrings: false,
+            wrapLineLength: 0
+          }
+        }
+      }
     }
   });
 
@@ -92,9 +134,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-jsbeautifier');
 
   // Default task(s).
-  grunt.registerTask('master',          ['targethtml:master',           'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
-	grunt.registerTask('develop',         ['targethtml:develop',          'copy:all', 'concat:backendCSS', 'concat:frontendCSS']);
-	grunt.registerTask('developOnServer', ['targethtml:developOnServer',  'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
+  grunt.registerTask('master',          ['jsbeautifier:all', 'targethtml:master',           'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
+	grunt.registerTask('develop',         ['jsbeautifier:all', 'targethtml:develop',          'copy:all', 'concat:backendCSS', 'concat:frontendCSS']);
+	grunt.registerTask('developOnServer', ['jsbeautifier:all', 'targethtml:developOnServer',  'copy:all', 'concat:backendCSS', 'concat:frontendCSS', 'jsdoc:all']);
 };

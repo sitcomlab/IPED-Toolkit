@@ -6,21 +6,16 @@
 * Institute for Geoinformatics (ifgi), University of Münster
 */
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  
-  <!--(if target master)>
-  background-color: #000000;
-  <!(endif)-->
-  
-  <!--(if target develop || developOnServer)>
-  background-color: #ff0000;
-  <!(endif)-->
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    <!--(if target master)> background-color: #000000;
+    <!(endif)--> <!--(if target develop || developOnServer)> background-color: #ff0000;
+    <!(endif)-->
 }
-
 #iPED-Video {
-  width: 100%;
-  max-width: 100%;
+    width: 100%;
+    max-width: 100%;
 }

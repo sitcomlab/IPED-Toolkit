@@ -1,67 +1,70 @@
 <!DOCTYPE HTML>
 <html lang="en">
-	<head>
+
+<head>
     <script>
-      /*!
-      * The iPED Toolkit
-      * Backend
-      *
-      * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
-      * Institute for Geoinformatics (ifgi), University of Münster
-      */
+    /*!
+     * The iPED Toolkit
+     * Backend
+     *
+     * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
+     * Institute for Geoinformatics (ifgi), University of Münster
+     */
     </script>
-    
-		<!-- iPED Frontend -->
-		<!--(if target master)><!-->
-		<title>iPED Toolkit Backend (Master)</title>
-		<!--<!(endif)-->
-		
-		<!--(if target develop)><!-->
-		<title>iPED Toolkit Backend (Develop)</title>
-		<!--<!(endif)-->
-		
-		<!--(if target developOnServer)><!-->
-		<title>iPED Toolkit Backend (Develop)</title>
-		<!--<!(endif)-->
-    
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <!-- iPED Frontend -->
+    <!--(if target master)><!-->
+    <title>iPED Toolkit Backend (Master)</title>
+    <!--<!(endif)-->
+
+    <!--(if target develop)><!-->
+    <title>iPED Toolkit Backend (Develop)</title>
+    <!--<!(endif)-->
+
+    <!--(if target developOnServer)><!-->
+    <title>iPED Toolkit Backend (Develop)</title>
+    <!--<!(endif)-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<link rel="stylesheet" href="css/backend.css" />
-	</head>
+    <link rel="stylesheet" href="css/backend.css" />
+</head>
 
-	<body>
+<body>
     <nav class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">iPED Toolkit – Backend</a>
-        </div>
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">iPED Toolkit – Backend</a>
+            </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-            <li><a href="#">Link</a></li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#about" class="about">About</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
     </nav>
-    
-		<div class="container">
-      <div id="map"></div>
-		</div>
-    
+
+    <div class="container">
+        <div id="map"></div>
+    </div>
+
     <script src="../lib/requirejs/js/config.js"></script>
     <script data-main="js/backend" data-baseUrl="../lib/requirejs/js" src="../lib/requirejs/js/require.js"></script>
-	</body>
+</body>
+
 </html>
