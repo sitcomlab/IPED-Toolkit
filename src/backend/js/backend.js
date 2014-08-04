@@ -64,8 +64,10 @@ require(['jsnlog/js/jsnlog.min',
             _.bindAll(this, 'addLocation');
 
             this.mapView = null;
-            this.createRouteFromLocations = null;
-            this.createRouteToLocations = [];
+            this.createRouteFromLocation = null;
+            this.createRouteFromMarker = null;
+            this.createRouteToLocation = null;
+            this.createRouteToMarker = null;
             this.locationEditViews = [];
 
             this.fetchLocations({
@@ -90,12 +92,11 @@ require(['jsnlog/js/jsnlog.min',
             JL('iPED Toolkit.Backend')
                 .debug('Init map with locations: ' + JSON.stringify(this.locations));
             this.mapView = new MapView({
+                backend: this,
                 model: {
-                    backend: this,
                     locations: this.locations
                 }
             });
-            this.mapView.render();
         };
 
         /**
@@ -132,8 +133,6 @@ require(['jsnlog/js/jsnlog.min',
             this.locations = new Locations();
             this.locations.fetch({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
-                        .debug(thiz.locations);
                     opts.callback(opts.params);
                 },
                 error: function(model, response, options) {
@@ -195,9 +194,9 @@ require(['jsnlog/js/jsnlog.min',
                 var newLocation = opts.location.clone();
                 newLocation.unset('id');
                 var locationEditView = new LocationEditView({
+                    backend: this,
                     model: {
                         location: newLocation,
-                        backend: this,
                         title: 'Add state'
                     }
                 });
@@ -212,9 +211,9 @@ require(['jsnlog/js/jsnlog.min',
                 newLocation.set('lat', opts.latlng.lat);
                 newLocation.set('lon', opts.latlng.lng);
                 var locationEditView = new LocationEditView({
+                    backend: this,
                     model: {
                         location: newLocation,
-                        backend: this,
                         title: 'Add new location'
                     }
                 });
@@ -234,9 +233,9 @@ require(['jsnlog/js/jsnlog.min',
                 .debug('Edit location: ' + JSON.stringify(opts.location));
             this.mapView.map.closePopup();
             var locationEditView = new LocationEditView({
+                backend: this,
                 model: {
                     location: opts.location,
-                    backend: this,
                     title: 'Edit location'
                 }
             });
@@ -263,6 +262,8 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
                     alert(JSON.stringify(response));
                 }
             });
@@ -284,6 +285,8 @@ require(['jsnlog/js/jsnlog.min',
                     thiz.mapView.map.closePopup();
                 },
                 error: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
                     alert(JSON.stringify(response));
                 }
             })
@@ -314,10 +317,10 @@ require(['jsnlog/js/jsnlog.min',
                 rz: 0
             });
             var overlayEditView = new OverlayEditView({
+                backend: this,
                 model: {
                     video: opts.video,
                     overlay: newOverlay,
-                    backend: this,
                     title: 'Add overlay'
                 }
             });
@@ -335,10 +338,10 @@ require(['jsnlog/js/jsnlog.min',
             JL('iPED Toolkit.Backend')
                 .debug('Edit overlay: ' + JSON.stringify(opts.overlay));
             var overlayEditView = new OverlayEditView({
+                backend: this,
                 model: {
                     video: opts.video,
                     overlay: opts.overlay,
-                    backend: this,
                     title: 'Edit overlay'
                 }
             });
@@ -364,6 +367,8 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
                     alert(JSON.stringify(response));
                 }
             });
@@ -387,6 +392,8 @@ require(['jsnlog/js/jsnlog.min',
                     });
                 },
                 error: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
                     alert(JSON.stringify(response));
                 }
             })
@@ -454,20 +461,88 @@ require(['jsnlog/js/jsnlog.min',
         };
 
         /**
-         * Defines the start location(s) for creating a route
+         * Defines the start location for creating a route
+         * @param location - The location to start at
+         * @param marker - The corresponding leaflet marker
          */
         Backend.prototype.createRouteFrom = function(opts) {
             JL('iPED Toolkit.Backend')
-                .debug('Create route from: ' + JSON.stringify(opts.locations));
+                .debug('Route from: ' + JSON.stringify(opts.location));
 
+            if (this.createRouteFromMarker) {
+                this.createRouteFromMarker.setIcon(this.createRouteFromMarker.markerView.normalMarkerIcon);
+            }
+            this.createRouteFromLocation = opts.location;
+            this.createRouteFromMarker = opts.marker;
+            this.createRouteFromMarker.setIcon(this.createRouteFromMarker.markerView.createRouteFromMarkerIcon);
         };
 
         /**
-         * Defines the end location(s) for creating a route
+         * Defines the end location for creating a route
+         * @param location - The location to end at
+         * @param marker - The corresponding leaflet marker
          */
         Backend.prototype.createRouteTo = function(opts) {
             JL('iPED Toolkit.Backend')
-                .debug('Create route to: ' + JSON.stringify(opts.locations));
+                .debug('Route to: ' + JSON.stringify(opts.location));
+
+            if (this.createRouteToMarker) {
+                this.createRouteToMarker.setIcon(this.createRouteToMarker.markerView.normalMarkerIcon);
+            }
+            this.createRouteToLocation = opts.location;
+            this.createRouteToMarker = opts.marker;
+            this.createRouteToMarker.setIcon(this.createRouteToMarker.markerView.createRouteToMarkerIcon);
+
+            this.saveRoute();
+        };
+
+        /**
+         * Saves a new route by pusing it to the server
+         */
+        Backend.prototype.saveRoute = function(opts) {
+            var thiz = this;
+
+            JL('iPED Toolkit.Backend')
+                .debug('Save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+
+            var relatedLocations = this.createRouteFromLocation.get('relatedLocations');
+            relatedLocations.push(this.createRouteToLocation.get('id'));
+            this.createRouteFromLocation.save({
+                relatedLocations: relatedLocations
+            }, {
+                success: function(model, response, options) {
+                    thiz.locations.fetch();
+                },
+                error: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            });
+        };
+
+        /**
+         * Deletes a route
+         */
+        Backend.prototype.deleteRoute = function(opts) {
+            var thiz = this;
+            
+            JL('iPED Toolkit.Backend')
+                .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + ' -> ' + JSON.stringify(opts.toLocation));
+
+            var relatedLocations = _.without(opts.fromLocation.get('relatedLocations'), opts.toLocation.get('id'));
+            opts.fromLocation.save({
+                relatedLocations: relatedLocations
+            }, {
+                success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Route deleted');
+                    thiz.locations.fetch();
+                },
+                error: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            })
 
         };
 

@@ -16,7 +16,8 @@ define(['backbonejs/js/backbone',
          * The backbone.js view for a leaflet marker
          */
         LocationMarkerView = Backbone.View.extend({
-            initialize: function() {
+            initialize: function(opts) {
+                this.backend = opts.backend;
                 this.isFetched = false;
                 this.render();
             },
@@ -120,21 +121,21 @@ define(['backbonejs/js/backbone',
             _add: function(event) {
                 var locationId = $(event.currentTarget)
                     .data('location');
-                this.model.backend.addLocation({
+                this.backend.addLocation({
                     location: this.model.locations.get(locationId)
                 });
             },
             _edit: function(event) {
                 var locationId = $(event.currentTarget)
                     .data('location');
-                this.model.backend.editLocation({
+                this.backend.editLocation({
                     location: this.model.locations.get(locationId)
                 });
             },
             _delete: function(event) {
                 var locationId = $(event.currentTarget)
                     .data('location');
-                this.model.backend.deleteLocation({
+                this.backend.deleteLocation({
                     location: this.model.locations.get(locationId)
                 });
             }

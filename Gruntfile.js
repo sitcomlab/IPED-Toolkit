@@ -37,7 +37,8 @@ module.exports = function(grunt) {
     'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
     'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
     'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js',
-    'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js'
+    'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js',
+    'public/backend/js/views/RouteView.js'            : 'src/backend/js/views/RouteView.js'
 	};
   
   copyFiles = [

@@ -7,17 +7,20 @@
  */
 
 define(['backbonejs/js/backbone',
+        'leaflet/js/leaflet',
         'backend/models/Locations',
-        'backend/views/MarkerView'
+        'backend/views/MarkerView',
+        'backend/views/RouteView'
     ],
-    function(Backbone, Locations, MarkerView) {
+    function(Backbone, Leaflet, Locations, MarkerView, RouteView) {
         /**
          * The Backbone.js view for a leaflet map
          */
         MapView = Backbone.View.extend({
             id: 'map',
-            initialize: function() {
+            initialize: function(opts) {
                 var thiz = this;
+                this.backend = opts.backend;
 
                 var options = {
                     contextmenu: true,
@@ -25,7 +28,7 @@ define(['backbonejs/js/backbone',
                     contextmenuItems: [{
                         index: 0,
                         text: '<span class="glyphicon glyphicon-plus"></span> Add new location',
-                        callback: this.model.backend.addLocation
+                        callback: this.backend.addLocation
                     }]
                 };
                 var muenster = [51.962655, 7.625763];
@@ -39,7 +42,9 @@ define(['backbonejs/js/backbone',
                 })
                     .addTo(this.map);
 
-                this.featureGroup = L.featureGroup()
+                this.markersFeatureGroup = L.featureGroup()
+                    .addTo(this.map);
+                this.routesFeatureGroup = L.featureGroup()
                     .addTo(this.map);
 
                 this.map.on('contextmenu', function(e) {
@@ -60,7 +65,7 @@ define(['backbonejs/js/backbone',
                 var previousLocation = null;
                 var previousMarkerView = null;
 
-                this.featureGroup.clearLayers();
+                this.markersFeatureGroup.clearLayers();
                 this.markerViews = this.model.locations.map(function(location) {
                     var locations = new Locations();
 
@@ -73,16 +78,61 @@ define(['backbonejs/js/backbone',
                     }
                     locations.add(location);
                     var markerView = new MarkerView({
+                        backend: thiz.backend,
+                        map: thiz.markersFeatureGroup,
                         model: {
-                            backend: thiz.model.backend,
                             locations: locations
-                        },
-                        map: thiz.featureGroup
+                        }
                     });
 
                     previousLocation = location;
                     previousMarkerView = markerView;
-                    return markerView.render();
+                    markerView.render();
+                    return markerView;
+                });
+
+                this.routeViews = [];
+                this.model.locations.forEach(function(fromLocation) {
+                    var fromPoint = L.latLng(fromLocation.get('lat'), fromLocation.get('lon'));
+                    fromLocation.get('relatedLocations')
+                        .forEach(function(toLocationId) {
+                            var toLocation = new Location({
+                                id: toLocationId
+                            });
+                            toLocation.fetch({
+                                success: function(model, response, options) {
+                                    var routeView;
+                                    var toPoint = L.latLng(toLocation.get('lat'), toLocation.get('lon'));
+
+                                    var isNew = true;
+                                    thiz.routeViews.forEach(function(_routeView) {
+                                        if (_routeView.fromPoint.equals(fromPoint) &&
+                                            _routeView.toPoint.equals(toPoint) ||
+                                            _routeView.fromPoint.equals(toPoint) &&
+                                            _routeView.toPoint.equals(fromPoint)) {
+
+                                            routeView = _routeView;
+                                            isNew = false;
+                                        }
+                                    });
+
+                                    if (isNew) {
+                                        routeView = new RouteView({
+                                            featureGroup: thiz.routesFeatureGroup,
+                                            backend: thiz.backend
+                                        });
+                                        thiz.routeViews.push(routeView);
+                                    }
+                                    routeView.fromLocations.push(fromLocation);
+                                    routeView.toLocations.push(toLocation);
+                                    routeView.render();
+                                },
+                                error: function(model, response, options) {
+                                    JL('iPED Toolkit.MapView')
+                                        .error(respone);
+                                }
+                            });
+                        });
                 });
             }
         });

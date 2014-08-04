@@ -15,7 +15,8 @@ define(['backbonejs/js/backbone',
          * The backbone.js view used for editing a location
          */
         LocationEditView = Backbone.View.extend({
-            initialize: function() {
+            initialize: function(opts) {
+                this.backend = opts.backend;
                 this.isFetched = false;
                 this.videos = null;
                 this.overlays = null;
@@ -120,9 +121,9 @@ define(['backbonejs/js/backbone',
             },
             _save: function() {
                 this._disableButtons();
-                this.model.backend.saveLocation({
+                this.backend.saveLocation({
                     location: this.model.location,
-                    attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
+                    attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
                     dialog: this
                 });
             },
@@ -142,7 +143,7 @@ define(['backbonejs/js/backbone',
                 var videoId = this.$el.find('.videos :selected')
                     .attr('value');
                 var video = this.videos.get(videoId);
-                this.model.backend.addOverlay({
+                this.backend.addOverlay({
                     video: video
                 });
             },
@@ -177,7 +178,7 @@ define(['backbonejs/js/backbone',
                 var overlayId = this.$el.find('.overlays :selected')
                     .attr('value');
                 var overlay = this.overlays.get(overlayId);
-                this.model.backend.editOverlay({
+                this.backend.editOverlay({
                     video: video,
                     overlay: overlay
                 });
@@ -198,7 +199,7 @@ define(['backbonejs/js/backbone',
                 var overlayId = this.$el.find('.overlays :selected')
                     .attr('value');
                 var overlay = this.overlays.get(overlayId);
-                this.model.backend.deleteOverlay({
+                this.backend.deleteOverlay({
                     overlay: overlay
                 });
             }

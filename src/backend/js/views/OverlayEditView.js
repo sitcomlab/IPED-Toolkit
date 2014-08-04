@@ -15,7 +15,8 @@ define(['backbonejs/js/backbone',
          * The backbone.js view used for editing an overlay
          */
         OverlayEditView = Backbone.View.extend({
-            initialize: function() {
+            initialize: function(opts) {
+                this.backend = opts.backend;
                 this.overlayPlugin = null;
                 this.render();
             },
@@ -50,7 +51,7 @@ define(['backbonejs/js/backbone',
                                 .css('width', '100%');
 
                             thiz.overlayPlugin = new OverlayPlugin({
-                                parent: thiz.model.backend,
+                                parent: thiz.backend,
                                 overlays: overlays,
                                 showUI: true
                             });
@@ -93,9 +94,9 @@ define(['backbonejs/js/backbone',
             _save: function() {
                 this.$el.find('button')
                     .attr('disabled', 'disabled');
-                this.model.backend.saveOverlay({
+                this.backend.saveOverlay({
                     overlay: this.model.overlay,
-                    attributes: this.model.backend.form2js(this.$el.find('form')[0], '.', true),
+                    attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
                     dialog: this
                 });
             }
