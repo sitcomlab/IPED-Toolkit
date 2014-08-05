@@ -103,8 +103,8 @@ console.log('Neo4J-Database-Server started at PORT: ' + NEO4J_PORT);
 // Morin: webRTC's screen sharing requires a SSL connection
 // Morin: The default password for the server.key file is: morin
 var options = {
-    key : fs.readFileSync('server.key'),
-    cert : fs.readFileSync('server.crt'),
+    key : fs.readFileSync('./config/server.key'),
+    cert : fs.readFileSync('./config/server.crt'),
     passphrase : 'morin'
 };
 
@@ -699,7 +699,6 @@ app.post('/api/locations', function(req, res) {
                             async.forEach(validLocationIDs, function(ID_temp, callback) {
 
                                 // Query - SET relationships between Locations and the new Location
-                                // Morin
                                 // var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
                                 var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2)";
                                 //console.log(query);
@@ -812,12 +811,8 @@ app.post('/api/locations', function(req, res) {
                             newLocation.videos = validVideoIDs;
                             newLocation.overlays = validOverlayIDs;
                             
-                            //var finalResult = JSON.stringify(newLocation);
-                            //console.log(finalResult);
-                            
                             console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                
-                            // Send final Result
+
                             res.writeHead(201, {
                                 'Content-Type' : 'application/json'
                             });
@@ -2225,15 +2220,12 @@ app.get('/api/videos', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var finalResult = JSON.stringify(result.data);
-            //console.log("================================ Result ================================");
-            //console.log(finalResult);
             console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(finalResult.replace(/_id/g, 'id'));
+            res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
             return;
         }
     });
@@ -2433,17 +2425,12 @@ app.post('/api/videos', function(req, res) {
                 var newVideoID = node._id;
                 console.log("--- Finished Creating new Video, new ID = " + newVideoID + " ---");
                 
-                // Result
-                var finalResult = JSON.stringify(newVideo);
-                console.log("================================ Result ================================");
-                console.log(finalResult);
-                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        
-                // Send final Result
+                console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
                 res.writeHead(201, {
                     'Content-Type' : 'application/json'
                 });
-                res.end(finalResult.replace(/_id/g, 'id'));
+                res.end(JSON.stringify(newVideo).replace(/_id/g, 'id'));
                 return;
             }    
         });
@@ -2537,15 +2524,12 @@ app.get('/api/videos/:id', function(req, res) {
                     //console.log(result.columns);
                     // delivers an array of names of objects getting returned
 
-                    var finalResult = JSON.stringify(result.data[0]);
-                    console.log("================================ Result ================================");
-                    console.log(finalResult);
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                     res.writeHead(200, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult.replace(/_id/g, 'id'));
+                    res.end(JSON.stringify(result.data[0]).replace(/_id/g, 'id'));
                     return;
                 }
             });
