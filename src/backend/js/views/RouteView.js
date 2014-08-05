@@ -17,23 +17,18 @@ define(['backbonejs/js/backbone',
             initialize: function(opts) {
                 this.featureGroup = opts.featureGroup;
                 this.backend = opts.backend;
-                this.fromLocations = [];
-                this.toLocations = [];
-                this.fromPoint = null;
-                this.toPoint = null;
+                this.polyline = null;
+                this.routes = [];
+                this.fromPoint = opts.fromPoint;
+                this.toPoint = opts.toPoint;
             },
             render: function() {
                 var thiz = this;
 
-                if (this.fromLocations == null ||
-                    this.fromLocations.length == 0 ||
-                    this.toLocations == null ||
-                    this.toLocations.length == 0) {
+                if (this.routes == null ||
+                    this.routes.length == 0) {
                     return;
                 }
-
-                this.fromPoint = L.latLng(this.fromLocations[0].get('lat'), this.fromLocations[0].get('lon'));
-                this.toPoint = L.latLng(this.toLocations[0].get('lat'), this.toLocations[0].get('lon'));
 
                 JL('iPED Toolkit.RouteView')
                     .debug('Draw/Update route: ' + JSON.stringify(this.fromPoint) + ' <-> ' + JSON.stringify(this.toPoint));
@@ -46,17 +41,13 @@ define(['backbonejs/js/backbone',
                     index: 1,
                     separator: true
                 }];
-                this.fromLocations.forEach(function(fromLocation) {
-                    thiz.toLocations.forEach(function(toLocation) {
-                        if (fromLocation.get('name') != toLocation.get('name')) {
-                            contextMenuItems.push({
-                                text: '<span class="glyphicon glyphicon-trash"></span> ' + fromLocation.get('name') + ' -> ' + toLocation.get('name'),
-                                callback: function(event) {
-                                    thiz.backend.deleteRoute({
-                                        fromLocation: fromLocation,
-                                        toLocation: toLocation
-                                    });
-                                }
+                this.routes.forEach(function(route) {
+                    contextMenuItems.push({
+                        text: '<span class="glyphicon glyphicon-trash"></span> ' + route[0].get('name') + ' -> ' + route[1].get('name'),
+                        callback: function(event) {
+                            thiz.backend.deleteRoute({
+                                fromLocation: route[0],
+                                toLocation: route[1]
                             });
                         }
                     });
@@ -69,7 +60,7 @@ define(['backbonejs/js/backbone',
                     contextmenuInheritItems: false,
                     contextmenuItems: contextMenuItems
                 })
-                    .addTo(thiz.featureGroup);
+                    .addTo(this.featureGroup);
             }
         });
 

@@ -20,6 +20,9 @@ define(['backbonejs/js/backbone',
             id: 'map',
             initialize: function(opts) {
                 var thiz = this;
+
+                _.bindAll(this, 'render', 'renderMarkers', 'renderRoutes');
+
                 this.backend = opts.backend;
 
                 var options = {
@@ -36,7 +39,8 @@ define(['backbonejs/js/backbone',
 
                 this.map = L.map(this.$el.attr('id'), options)
                     .setView(muenster, zoom);
-                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                //'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
+                L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
                     maxZoom: 18
                 })
@@ -58,9 +62,18 @@ define(['backbonejs/js/backbone',
                     locationMarkerView.fetch();
                 });
 
-                this.listenTo(this.model.locations, 'all', this.render);
+                this.listenTo(this.model.locations, 'add', this.render);
+                this.listenTo(this.model.locations, 'remove', this.render);
+
+                this.render();
             },
             render: function() {
+                JL('iPED Toolkit.Backend')
+                    .debug('Rendering map')
+                this.renderMarkers();
+                this.renderRoutes();
+            },
+            renderMarkers: function() {
                 var thiz = this;
                 var previousLocation = null;
                 var previousMarkerView = null;
@@ -90,8 +103,11 @@ define(['backbonejs/js/backbone',
                     markerView.render();
                     return markerView;
                 });
-
+            },
+            renderRoutes: function() {
+                var thiz = this;
                 this.routeViews = [];
+                this.routesFeatureGroup.clearLayers();
                 this.model.locations.forEach(function(fromLocation) {
                     var fromPoint = L.latLng(fromLocation.get('lat'), fromLocation.get('lon'));
                     fromLocation.get('relatedLocations')
@@ -118,13 +134,17 @@ define(['backbonejs/js/backbone',
 
                                     if (isNew) {
                                         routeView = new RouteView({
-                                            featureGroup: thiz.routesFeatureGroup,
-                                            backend: thiz.backend
+                                            featureGroup: L.featureGroup()
+                                                .addTo(thiz.routesFeatureGroup),
+                                            backend: thiz.backend,
+                                            fromPoint: fromPoint,
+                                            toPoint: toPoint
                                         });
                                         thiz.routeViews.push(routeView);
                                     }
-                                    routeView.fromLocations.push(fromLocation);
-                                    routeView.toLocations.push(toLocation);
+                                    if (_.contains(routeView.routes, [fromLocation, toLocation]) == false) {
+                                        routeView.routes.push([fromLocation, toLocation]);
+                                    }
                                     routeView.render();
                                 },
                                 error: function(model, response, options) {

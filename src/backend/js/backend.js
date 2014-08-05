@@ -133,7 +133,12 @@ require(['jsnlog/js/jsnlog.min',
             this.locations = new Locations();
             this.locations.fetch({
                 success: function(model, response, options) {
-                    opts.callback(opts.params);
+                    JL('iPED Toolkit.Backend')
+                        .debug('Done fetching locations');
+                    if (opts && opts.callback) {
+                        opts.callback(opts.params);
+                    }
+
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -152,8 +157,10 @@ require(['jsnlog/js/jsnlog.min',
             this.videos.fetch({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
-                        .debug(thiz.videos);
-                    opts.callback(opts.params);
+                        .debug('Done fetching videos');
+                    if (opts && opts.callback) {
+                        opts.callback(opts.params);
+                    }
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -172,8 +179,10 @@ require(['jsnlog/js/jsnlog.min',
             this.overlays.fetch({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
-                        .debug(thiz.overlays);
-                    opts.callback(opts.params);
+                        .debug('Done fetching overlays');
+                    if (opts && opts.callback) {
+                        opts.callback(opts.params);
+                    }
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -252,13 +261,15 @@ require(['jsnlog/js/jsnlog.min',
          */
         Backend.prototype.saveLocation = function(opts) {
             JL('iPED Toolkit.Backend')
-                .debug('Save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+                .debug('About to save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
             var thiz = this;
 
             opts.location.save(opts.attributes, {
                 success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Location saved');
                     opts.dialog._close();
-                    thiz.locations.fetch(); // Refresh collection (alternative: thiz.locations.add(model);)
+                    thiz.locations.add(model);
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
@@ -281,8 +292,9 @@ require(['jsnlog/js/jsnlog.min',
             opts.location.destroy({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
-                        .debug('Location ' + opts.location.get('id') + ' deleted');
+                        .debug('Location deleted');
                     thiz.mapView.map.closePopup();
+                    thiz.locations.remove(model);
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -357,9 +369,11 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
 
             JL('iPED Toolkit.Backend')
-                .debug('Save overlay: ' + JSON.stringify(opts.overlay) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+                .debug('About to save overlay: ' + JSON.stringify(opts.overlay) + ', with new attributes: ' + JSON.stringify(opts.attributes));
             opts.overlay.save(opts.attributes, {
                 success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Overlay saved');
                     opts.dialog._close();
                     thiz.locationEditViews.forEach(function(locationEditView) {
                         locationEditView.update();
@@ -386,7 +400,7 @@ require(['jsnlog/js/jsnlog.min',
             opts.overlay.destroy({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
-                        .debug('Overlay ' + opts.overlay.get('id') + ' deleted');
+                        .debug('Overlay deleted');
                     thiz.locationEditViews.forEach(function(locationEditView) {
                         locationEditView.update();
                     });
@@ -503,7 +517,7 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
 
             JL('iPED Toolkit.Backend')
-                .debug('Save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+                .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
 
             var relatedLocations = this.createRouteFromLocation.get('relatedLocations');
             relatedLocations.push(this.createRouteToLocation.get('id'));
@@ -511,7 +525,9 @@ require(['jsnlog/js/jsnlog.min',
                 relatedLocations: relatedLocations
             }, {
                 success: function(model, response, options) {
-                    thiz.locations.fetch();
+                    JL('iPED Toolkit.Backend')
+                        .debug('Route saved');
+                    thiz.mapView.render();
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -525,7 +541,7 @@ require(['jsnlog/js/jsnlog.min',
          */
         Backend.prototype.deleteRoute = function(opts) {
             var thiz = this;
-            
+
             JL('iPED Toolkit.Backend')
                 .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + ' -> ' + JSON.stringify(opts.toLocation));
 
@@ -536,7 +552,7 @@ require(['jsnlog/js/jsnlog.min',
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .debug('Route deleted');
-                    thiz.locations.fetch();
+                    thiz.mapView.render();
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')

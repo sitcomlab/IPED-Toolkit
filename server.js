@@ -233,7 +233,7 @@ app.get('/api/locations', function(req, res) {
                     getRelatedLocations : function(callback) {
                         
                         // Query
-                        var query = "MATCH (l:Location) WHERE ID(l)="+ location._id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT ID(l2) AS relatedTo";
+                        var query = "MATCH (l:Location) WHERE ID(l)="+ location._id +" MATCH l-[:relatedTo]->l2 RETURN DISTINCT ID(l2) AS relatedTo";
                         //console.log(query);
 
                         // Database Query
@@ -695,7 +695,9 @@ app.post('/api/locations', function(req, res) {
                             async.forEach(validLocationIDs, function(ID_temp, callback) {
 
                                 // Query - SET relationships between Locations and the new Location
-                                var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
+                                // Morin
+                                // var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
+                                var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2)";
                                 //console.log(query);
 
                                 // Database Query
@@ -919,7 +921,7 @@ app.get('/api/locations/:id', function(req, res) {
                         getRelatedLocations : function(callback) {
                             
                             // Query
-                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT ID(l2) AS relatedTo";
+                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]->l2 RETURN DISTINCT ID(l2) AS relatedTo";
                             //console.log(query);
 
                             // Database Query
@@ -1352,7 +1354,7 @@ app.put('/api/locations/:id', function(req, res) {
                                             } else {
 
                                                 // Query - Delete all relationships between the current Location and related Locations (only when relationships alreday exist)
-                                                var query = "START l=node("+ req.params.id +") MATCH l-[r:relatedTo]-() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
+                                                var query = "START l=node("+ req.params.id +") MATCH l-[r:relatedTo]->() WITH r, COUNT(r) AS sum WHERE sum>0 DELETE r";
                                                 //console.log(query);
 
                                                 // Database Query
@@ -1386,7 +1388,9 @@ app.put('/api/locations/:id', function(req, res) {
                                                 async.forEach(validLocationIDs, function(ID_temp, callback_AFE2) {
 
                                                     // Query - Connect the submitted related Location to the current Location
-                                                    var query = "START l1=node(" + req.params.id + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
+                                                    // Morin
+                                                    // var query = "START l1=node(" + req.params.id + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
+                                                    var query = "START l1=node(" + req.params.id + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2)";
                                                     //console.log(query);
 
                                                     // Database Query
@@ -1767,7 +1771,7 @@ app.put('/api/locations/:id', function(req, res) {
                         loadLocations : function(callback_AP3) {
                             
                             // Query - Get all IDs of the "relatedLocations" of the current Location
-                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]-n RETURN DISTINCT ID(n) AS relatedTo";
+                            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]->n RETURN DISTINCT ID(n) AS relatedTo";
                             //console.log(query);
 
                             // Database Query
@@ -2145,7 +2149,7 @@ app.get ('/api/locations/:id/locations', function(req, res) {
         function(err, results) {
 
             // Query - Get all related Locations of the current Location
-            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]-l2 RETURN DISTINCT l2";
+            var query = "MATCH (l:Location) WHERE ID(l)="+ req.params.id +" MATCH l-[:relatedTo]->l2 RETURN DISTINCT l2";
             //console.log(query);
 
             // Database Query
