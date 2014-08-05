@@ -65,10 +65,14 @@ var nib = require('nib');
 var browserify = require('browserify');
 var async = require('async');
 
-// for validation of received data
+// Data-Validation
 var validator = require('validator');
 var JaySchema = require('jayschema');
-var schemas = require('./json-schemas.js');
+// Schemas for Data-Validation
+var locationSchema = require('./server/schemas/location');
+var videoSchema = require('./server/schemas/video');
+var overlaySchema = require('./server/schemas/overlay');
+
 
 /*********************************************************
  1. Server-Settings
@@ -372,7 +376,7 @@ app.post('/api/locations', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postLocationSchema'), function(errs) {
+            jayschema.validate(req.body, locationSchema.postLocation, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -1125,7 +1129,7 @@ app.put('/api/locations/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback_AS1) {
-                jayschema.validate(req.body, schemas.getSchema('putLocationSchema'), function(errs) {
+                jayschema.validate(req.body, locationSchema.putLocation, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
@@ -2262,7 +2266,7 @@ app.post('/api/videos', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postVideoSchema'), function(errs) {
+            jayschema.validate(req.body, videoSchema.postVideo, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -2640,7 +2644,7 @@ app.put('/api/videos/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, schemas.getSchema('putVideoSchema'), function(errs) {
+                jayschema.validate(req.body, videoSchema.putVideo, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
@@ -3200,7 +3204,7 @@ app.post('/api/overlays', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postOverlaySchema'), function(errs) {
+            jayschema.validate(req.body, overlaySchema.postOverlay, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -3554,7 +3558,7 @@ app.put('/api/overlays/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, schemas.getSchema('putOverlaySchema'), function(errs) {
+                jayschema.validate(req.body, overlaySchema.putOverlay, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
