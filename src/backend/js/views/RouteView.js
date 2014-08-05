@@ -54,9 +54,21 @@ define(['backbonejs/js/backbone',
                 });
 
                 this.featureGroup.clearLayers();
-                this.polyline = L.polyline([this.fromPoint, this.toPoint], {
+                var points = [this.fromPoint, this.toPoint];
+                if (this.fromPoint.equals(this.toPoint)) {
+                    // Create a small "loop" that is clickable
+                    points = [
+                        this.fromPoint,
+                        L.latLng(this.fromPoint.lat + 0.0001, this.fromPoint.lng),
+                        L.latLng(this.fromPoint.lat + 0.0001, this.fromPoint.lng + 0.0002),
+                        L.latLng(this.fromPoint.lat, this.fromPoint.lng + 0.0002),
+                        this.toPoint
+                    ];
+                }
+                this.polyline = L.polyline(points, {
                     color: 'blue',
                     contextmenu: true,
+                    contextmenuWidth: CONTEXTMENU_WIDTH,
                     contextmenuInheritItems: false,
                     contextmenuItems: contextMenuItems
                 })

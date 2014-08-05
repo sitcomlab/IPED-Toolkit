@@ -9,6 +9,7 @@
 require.config(requireConfig);
 
 var TPL_PATH = 'requirejs/js/text!../backend/templates/';
+var CONTEXTMENU_WIDTH = 300;
 
 require(['jsnlog/js/jsnlog.min',
         'jquery/js/jquery.min',

@@ -27,7 +27,7 @@ define(['backbonejs/js/backbone',
 
                 var options = {
                     contextmenu: true,
-                    contextmenuWidth: 180,
+                    contextmenuWidth: CONTEXTMENU_WIDTH,
                     contextmenuItems: [{
                         index: 0,
                         text: '<span class="glyphicon glyphicon-plus"></span> Add new location',

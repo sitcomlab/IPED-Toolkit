@@ -84,6 +84,7 @@ define(['backbonejs/js/backbone',
                 ], {
                     icon: this.normalMarkerIcon,
                     contextmenu: true,
+                    contextmenuWidth: CONTEXTMENU_WIDTH,
                     contextmenuInheritItems: false,
                     contextmenuItems: contextMenuItems
                 });
