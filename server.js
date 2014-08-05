@@ -65,10 +65,14 @@ var nib = require('nib');
 var browserify = require('browserify');
 var async = require('async');
 
-// for validation of received data
+// Data-Validation
 var validator = require('validator');
 var JaySchema = require('jayschema');
-var schemas = require('./json-schemas.js');
+// Schemas for Data-Validation
+var locationSchema = require('./server/schemas/location');
+var videoSchema = require('./server/schemas/video');
+var overlaySchema = require('./server/schemas/overlay');
+
 
 /*********************************************************
  1. Server-Settings
@@ -99,8 +103,8 @@ console.log('Neo4J-Database-Server started at PORT: ' + NEO4J_PORT);
 // Morin: webRTC's screen sharing requires a SSL connection
 // Morin: The default password for the server.key file is: morin
 var options = {
-    key : fs.readFileSync('server.key'),
-    cert : fs.readFileSync('server.crt'),
+    key : fs.readFileSync('./config/server.key'),
+    cert : fs.readFileSync('./config/server.crt'),
     passphrase : 'morin'
 };
 
@@ -361,7 +365,7 @@ app.post('/api/locations', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postLocationSchema'), function(errs) {
+            jayschema.validate(req.body, locationSchema.postLocation, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -684,7 +688,6 @@ app.post('/api/locations', function(req, res) {
                             async.forEach(validLocationIDs, function(ID_temp, callback) {
 
                                 // Query - SET relationships between Locations and the new Location
-                                // Morin
                                 // var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2) CREATE (l2)-[:relatedTo]->(l1)";
                                 var query = "START l1=node(" + newNodeID + "), l2=node(" + ID_temp + ") CREATE (l1)-[:relatedTo]->(l2)";
                                 //console.log(query);
@@ -797,12 +800,8 @@ app.post('/api/locations', function(req, res) {
                             newLocation.videos = validVideoIDs;
                             newLocation.overlays = validOverlayIDs;
                             
-                            //var finalResult = JSON.stringify(newLocation);
-                            //console.log(finalResult);
-                            
                             console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
-                
-                            // Send final Result
+
                             res.writeHead(201, {
                                 'Content-Type' : 'application/json'
                             });
@@ -1114,7 +1113,7 @@ app.put('/api/locations/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback_AS1) {
-                jayschema.validate(req.body, schemas.getSchema('putLocationSchema'), function(errs) {
+                jayschema.validate(req.body, locationSchema.putLocation, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
@@ -2210,15 +2209,12 @@ app.get('/api/videos', function(req, res) {
             //console.log(result.columns);
             // delivers an array of names of objects getting returned
 
-            var finalResult = JSON.stringify(result.data);
-            //console.log("================================ Result ================================");
-            //console.log(finalResult);
             console.log("+++ SUCCESS +++ 200 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
             res.writeHead(200, {
                 'Content-Type' : 'application/json'
             });
-            res.end(finalResult.replace(/_id/g, 'id'));
+            res.end(JSON.stringify(result.data).replace(/_id/g, 'id'));
             return;
         }
     });
@@ -2251,7 +2247,7 @@ app.post('/api/videos', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postVideoSchema'), function(errs) {
+            jayschema.validate(req.body, videoSchema.postVideo, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -2418,17 +2414,12 @@ app.post('/api/videos', function(req, res) {
                 var newVideoID = node._id;
                 console.log("--- Finished Creating new Video, new ID = " + newVideoID + " ---");
                 
-                // Result
-                var finalResult = JSON.stringify(newVideo);
-                console.log("================================ Result ================================");
-                console.log(finalResult);
-                console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-        
-                // Send final Result
+                console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
                 res.writeHead(201, {
                     'Content-Type' : 'application/json'
                 });
-                res.end(finalResult.replace(/_id/g, 'id'));
+                res.end(JSON.stringify(newVideo).replace(/_id/g, 'id'));
                 return;
             }    
         });
@@ -2522,15 +2513,12 @@ app.get('/api/videos/:id', function(req, res) {
                     //console.log(result.columns);
                     // delivers an array of names of objects getting returned
 
-                    var finalResult = JSON.stringify(result.data[0]);
-                    console.log("================================ Result ================================");
-                    console.log(finalResult);
-                    console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+                    console.log("+++ SUCCESS +++ 201 ++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
                     res.writeHead(200, {
                         'Content-Type' : 'application/json'
                     });
-                    res.end(finalResult.replace(/_id/g, 'id'));
+                    res.end(JSON.stringify(result.data[0]).replace(/_id/g, 'id'));
                     return;
                 }
             });
@@ -2629,7 +2617,7 @@ app.put('/api/videos/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, schemas.getSchema('putVideoSchema'), function(errs) {
+                jayschema.validate(req.body, videoSchema.putVideo, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
@@ -3189,7 +3177,7 @@ app.post('/api/overlays', function(req, res) {
             }
         },
         jsonvalidation_2 : function(callback) {
-            jayschema.validate(req.body, schemas.getSchema('postOverlaySchema'), function(errs) {
+            jayschema.validate(req.body, overlaySchema.postOverlay, function(errs) {
                 if (errs) {
 
                     for (var i=0; i < errs.length; i++) {
@@ -3543,7 +3531,7 @@ app.put('/api/overlays/:id', function(req, res) {
                 }
             },
             jsonvalidation_2 : function(callback) {
-                jayschema.validate(req.body, schemas.getSchema('putOverlaySchema'), function(errs) {
+                jayschema.validate(req.body, overlaySchema.putOverlay, function(errs) {
                     if (errs) {
 
                         for (var i=0; i < errs.length; i++) {
