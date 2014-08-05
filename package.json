@@ -21,7 +21,7 @@
     "rtc-media": "^1.6.0",
     "rtc-quickconnect": "^1.0.0",
     "rtc-switchboard": "~0.10.1",
-    "socket.io": "0.9.x",
+    "socket.io": "1.0.x",
     "validator": "3.16.1"
   },
   "devDependencies": {

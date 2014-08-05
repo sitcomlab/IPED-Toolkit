@@ -64,6 +64,7 @@ define(['backbonejs/js/backbone',
 
                 this.listenTo(this.model.locations, 'add', this.render);
                 this.listenTo(this.model.locations, 'remove', this.render);
+                this.listenTo(this.model.locations, 'change', this.render);
 
                 this.render();
             },

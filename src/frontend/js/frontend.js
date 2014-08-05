@@ -15,12 +15,20 @@ require(['jsnlog/js/jsnlog.min',
         'underscorejs/js/underscore',
         'backbonejs/js/backbone',
 
+        // Models
+        'backend/models/Location',
+        'backend/models/Locations',
+        'backend/models/Video',
+        'backend/models/Videos',
+
         // Additional iPED Toolkit Plugins, e.g., Overlays
         'frontend/overlayPlugin',
         'frontend/chromaKeyPlugin'
     ],
 
-    function(JSNLog, JQuery, Socket, getUrlParameters, Underscore, Backbone, OverlayPlugin, ChromaKeyPlugin) {
+    function(JSNLog, JQuery, io, getUrlParameters, Underscore, Backbone,
+        Location, Locations, Video, Videos,
+        OverlayPlugin, ChromaKeyPlugin) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -35,29 +43,6 @@ require(['jsnlog/js/jsnlog.min',
              JL('iPED Toolkit.Frontend').fatal('Something very bad happened!');
              */
         })();
-
-        /**
-         * The Backbone.js model of a location
-         */
-        Location = Backbone.Model.extend({
-            urlRoot: '/api/locations',
-            initialize: function() {}
-        });
-
-        /**
-         * The Backbone.js model of a video
-         */
-        Video = Backbone.Model.extend({
-            urlRoot: '/api/videos',
-            initialize: function() {}
-        });
-
-        /**
-         * The Backbone.js collection of videos
-         */
-        Videos = Backbone.Collection.extend({
-            model: Video
-        });
 
         /**
          * The frontend of the iPED Toolkit.
@@ -82,11 +67,12 @@ require(['jsnlog/js/jsnlog.min',
          * Activates the web sockets that are used by the remote control.
          */
         Frontend.prototype.activateWebSockets = function() {
-            this.socket = io.connect(window.location.origin);
-            this.socket.on('goToLocation', function(data) {
+            var thiz = this;
+            this.socket = io();
+            this.socket.on('setLocationId', function(data) {
                 JL('iPED Toolkit.Frontend')
                     .debug(data);
-                this.goToLocation(data.locationId);
+                thiz.setLocationId(data);
             });
             JL('iPED Toolkit.Frontend')
                 .debug('Web sockets activated');
@@ -101,12 +87,15 @@ require(['jsnlog/js/jsnlog.min',
 
             if (!locationId) {
                 JL('iPED Toolkit.Frontend')
-                    .error('Please sepcify URL parameter "locationId"!');
+                    .error('Please sepcify "locationId", e.g., via URL parameter or websocket.');
                 return;
             }
 
+            $('.spinner')
+                .remove();
+
             JL('iPED Toolkit.Frontend')
-                .info('Set Location ID to: ' + locationId);
+                .info('Set location ID to: ' + locationId);
             this.location = new Location({
                 id: locationId
             });
@@ -141,6 +130,7 @@ require(['jsnlog/js/jsnlog.min',
                     JL('iPED Toolkit.Frontend')
                         .debug('Loading video id ' + thiz.video.get('id') + ' for current location');
                     // Remove current video
+                    $('#iPED-Video')[0].pause();
                     $('#iPED-Video')
                         .empty();
 
@@ -149,6 +139,8 @@ require(['jsnlog/js/jsnlog.min',
                         .append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
                     $('#iPED-Video')
                         .append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
+                    $('#iPED-Video')[0].load();
+                    $('#iPED-Video')[0].play();
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Frontend')
@@ -166,7 +158,7 @@ require(['jsnlog/js/jsnlog.min',
                     .width(), $(window)
                     .height());
             }, this);
-        }
+        };
 
         $(document)
             .ready(function() {

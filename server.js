@@ -133,34 +133,23 @@ app.set("view options", {
 
 // Socket.io packages
 var io = socketio.listen(httpServer);
-io.sockets.on('connection', function(socket) {
-    io.sockets.emit('news', {
-        Info : 'New Connection'
-    });
-    socket.on('message', function(data) {
-        console.log(data);
-
-    });
-    socket.on('remote', function(data) {
-        io.sockets.emit('command', data);
-        console.log(data);
+io.on('connection', function(socket) {
+    console.log('socket.io[connection]: New connection');
+    socket.on('setLocationId', function(data) {
+        console.log('socket.io[setLocationId]: ' + JSON.stringify(data));
+        io.emit('setLocationId', data); 
     });
 });
 
 var ios = socketio.listen(httpsServer);
-ios.sockets.on('connection', function(socket) {
-    io.sockets.emit('news', {
-        Info : 'New Connection'
-    });
-    socket.on('message', function(data) {
-        console.log(data);
-
-    });
-    socket.on('remote', function(data) {
-        io.sockets.emit('command', data);
-        console.log(data);
+ios.on('connection', function(socket) {
+    console.log('socket.io[connection]: New connection');
+    socket.on('setLocationId', function(data) {
+        console.log('socket.io[setLocationId]: ' + JSON.stringify(data));
+        ios.emit('setLocationId', data); 
     });
 });
+
 
 /*********************************************************
  2. webRTC

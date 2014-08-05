@@ -71,7 +71,7 @@ define(['threejs/js/three.min',
             this.showUI = false;
             this.controls = new Array();
 
-            _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'updateOverlay');
+            _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'updateOverlay', 'setLocationId');
 
             this.init();
             if (this.parent.location && this.parent.location.get) {

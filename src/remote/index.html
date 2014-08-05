@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script>
+    /*!
+     * The iPED Toolkit
+     * Remote
+     *
+     * (c) 2014 Morin Ostkamp
+     * Institute for Geoinformatics (ifgi), University of Münster
+     */
+    </script>
+
+    <!-- iPED Remote -->
+    <!--(if target master)><!-->
+    <title>iPED Toolkit (Master)</title>
+    <!--<!(endif)-->
+
+    <!--(if target develop)><!-->
+    <title>iPED Toolkit (Develop)</title>
+    <!--<!(endif)-->
+
+    <!--(if target developOnServer)><!-->
+    <title>iPED Toolkit (Develop)</title>
+    <!--<!(endif)-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="css/remote.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>iPED Toolkit Remote</h1>
+
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#startLocation">Select start location</a>
+                    </h3>
+                </div>
+                <div id="startLocation" class="panel-collapse collapse in">
+                    <div id="startLocationBody" class="panel-body">
+                        <img class="spinner" src="images/spinner_text.gif" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#relatedLocations">Select a related location</a>
+                    </h3>
+                </div>
+                <div id="relatedLocations" class="panel-collapse collapse">
+                    <div id="relatedLocationsBody" class="panel-body">
+                        <img class="spinner" src="images/spinner_text.gif" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../lib/requirejs/js/config.js"></script>
+    <script data-main="js/remote" data-baseUrl="../lib/requirejs/js" src="../lib/requirejs/js/require.js"></script>
+</body>
+
+</html>
+

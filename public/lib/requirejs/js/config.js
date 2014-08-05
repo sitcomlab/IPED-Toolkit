@@ -3,6 +3,7 @@ var requireConfig = {
   paths: {
     'frontend'  : '../frontend/js',
     'backend'   : '../backend/js',
+    'remote'    : '../remote/js'
   },
   shim: {
     'leaflet/js/leaflet.contextmenu': {
