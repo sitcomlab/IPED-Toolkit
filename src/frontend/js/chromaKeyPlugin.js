@@ -25,7 +25,6 @@ define(['underscorejs/js/underscore',
         }
 
         ChromaKeyPlugin.prototype.onKeyDown = function(event) {
-            //console.log(event.which);
             switch (event.keyCode) {
                 case 75: // k
                     this.enable(!this.isEnabled);

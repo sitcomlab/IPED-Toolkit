@@ -91,8 +91,8 @@ require(['jsnlog/js/jsnlog.min',
                 return;
             }
 
-            $('.spinner')
-                .remove();
+            $('.messages')
+                .empty();
 
             JL('iPED Toolkit.Frontend')
                 .info('Set location ID to: ' + locationId);
@@ -126,13 +126,21 @@ require(['jsnlog/js/jsnlog.min',
             this.videos.url = '/api/locations/' + this.location.get('id') + '/videos';
             this.videos.fetch({
                 success: function(model, response, options) {
-                    thiz.video = thiz.videos.at(0);
-                    JL('iPED Toolkit.Frontend')
-                        .debug('Loading video id ' + thiz.video.get('id') + ' for current location');
                     // Remove current video
                     $('#iPED-Video')[0].pause();
                     $('#iPED-Video')
                         .empty();
+
+                    if (thiz.videos.length == 0) {
+                        JL('iPED Toolkit.Frontend')
+                            .info('No video defined for this location');
+                        thiz.showMessage('No video defined for this location');
+                        return;
+                    }
+
+                    thiz.video = thiz.videos.at(0);
+                    JL('iPED Toolkit.Frontend')
+                        .debug('Loading video id ' + thiz.video.get('id') + ' for current location');
 
                     // Fill video tag with the new source
                     $('#iPED-Video')
@@ -158,6 +166,16 @@ require(['jsnlog/js/jsnlog.min',
                     .width(), $(window)
                     .height());
             }, this);
+        };
+
+        /**
+         * Shows messages in a dedicated div container
+         * @param message - The message as a string
+         */
+        Frontend.prototype.showMessage = function(message) {
+            $('.messages')
+                .html($('.messages')
+                    .html() + '<h3>' + message + '</h3>');
         };
 
         $(document)

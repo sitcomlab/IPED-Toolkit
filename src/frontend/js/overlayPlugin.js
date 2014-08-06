@@ -316,7 +316,6 @@ define(['threejs/js/three.min',
          * Handles key events, e.g., "toggle interactive mode (i)" or "disable chroma keying (k)".
          */
         OverlayPlugin.prototype.onKeyDown = function(event) {
-            //console.log(event.which);
             if (!this.controls) {
                 return;
             }

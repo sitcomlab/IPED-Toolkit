@@ -62,9 +62,9 @@ define(['backbonejs/js/backbone',
                     locationMarkerView.fetch();
                 });
 
-                this.listenTo(this.model.locations, 'add', this.render);
-                this.listenTo(this.model.locations, 'remove', this.render);
-                this.listenTo(this.model.locations, 'change', this.render);
+                this.listenTo(this.model, 'add', this.render);
+                this.listenTo(this.model, 'remove', this.render);
+                this.listenTo(this.model, 'change', this.render);
 
                 this.render();
             },
@@ -73,6 +73,7 @@ define(['backbonejs/js/backbone',
                     .debug('Rendering map')
                 this.renderMarkers();
                 this.renderRoutes();
+                return this;
             },
             renderMarkers: function() {
                 var thiz = this;
@@ -80,7 +81,7 @@ define(['backbonejs/js/backbone',
                 var previousMarkerView = null;
 
                 this.markersFeatureGroup.clearLayers();
-                this.markerViews = this.model.locations.map(function(location) {
+                this.markerViews = this.model.map(function(location) {
                     var locations = new Locations();
 
                     if (previousLocation &&
@@ -88,15 +89,13 @@ define(['backbonejs/js/backbone',
                         // There are two markers on top of each other (e.g., one location in two 'states').
                         // Clear the previous one and apply special treatment to the new one
                         previousMarkerView.removeMarker();
-                        locations = previousMarkerView.model.locations;
+                        locations = previousMarkerView.model;
                     }
                     locations.add(location);
                     var markerView = new MarkerView({
                         backend: thiz.backend,
                         map: thiz.markersFeatureGroup,
-                        model: {
-                            locations: locations
-                        }
+                        model: locations
                     });
 
                     previousLocation = location;
@@ -109,7 +108,7 @@ define(['backbonejs/js/backbone',
                 var thiz = this;
                 this.routeViews = [];
                 this.routesFeatureGroup.clearLayers();
-                this.model.locations.forEach(function(fromLocation) {
+                this.model.forEach(function(fromLocation) {
                     var fromPoint = L.latLng(fromLocation.get('lat'), fromLocation.get('lon'));
                     fromLocation.get('relatedLocations')
                         .forEach(function(toLocationId) {

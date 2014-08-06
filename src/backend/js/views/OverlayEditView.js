@@ -17,6 +17,7 @@ define(['backbonejs/js/backbone',
         OverlayEditView = Backbone.View.extend({
             initialize: function(opts) {
                 this.backend = opts.backend;
+                this.title = opts.title;
                 this.overlayPlugin = null;
                 this.render();
             },
@@ -35,7 +36,7 @@ define(['backbonejs/js/backbone',
                             var template = _.template(html, {
                                 video: model,
                                 overlay: thiz.model.overlay,
-                                title: thiz.model.title
+                                title: thiz.title
                             });
                             thiz.$el.html(template);
                             thiz.$el.find('select[data-role=tagsinput]')

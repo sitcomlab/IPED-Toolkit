@@ -17,6 +17,7 @@ define(['backbonejs/js/backbone',
         LocationEditView = Backbone.View.extend({
             initialize: function(opts) {
                 this.backend = opts.backend;
+                this.title = opts.title;
                 this.isFetched = false;
                 this.videos = null;
                 this.overlays = null;
@@ -26,8 +27,8 @@ define(['backbonejs/js/backbone',
                 var thiz = this;
                 require([TPL_PATH + 'locationEditView.tpl'], function(html) {
                     var template = _.template(html, {
-                        location: thiz.model.location,
-                        title: thiz.model.title
+                        location: thiz.model,
+                        title: thiz.title
                     });
                     thiz.$el.html(template);
                     thiz.$el.find('select[data-role=tagsinput]')
@@ -36,7 +37,7 @@ define(['backbonejs/js/backbone',
                                 return 'label label-primary';
                             }
                         });
-                    thiz.model.location.get('tags')
+                    thiz.model.get('tags')
                         .forEach(function(tag) {
                             thiz.$el.find('select[data-role=tagsinput]')
                                 .tagsinput('add', tag);
@@ -65,7 +66,7 @@ define(['backbonejs/js/backbone',
                             .empty();
                         model.forEach(function(video) {
                             var selected = '';
-                            if (_.contains(thiz.model.location.get('videos'), video.get('id'))) {
+                            if (_.contains(thiz.model.get('videos'), video.get('id'))) {
                                 selected = 'selected';
                             }
                             thiz.$el.find('.videos')
@@ -85,7 +86,7 @@ define(['backbonejs/js/backbone',
                             .empty();
                         model.forEach(function(overlay) {
                             var selected = '';
-                            if (_.contains(thiz.model.location.get('overlays'), overlay.get('id'))) {
+                            if (_.contains(thiz.model.get('overlays'), overlay.get('id'))) {
                                 selected = 'selected';
                             }
                             thiz.$el.find('.overlays')
@@ -122,7 +123,7 @@ define(['backbonejs/js/backbone',
             _save: function() {
                 this._disableButtons();
                 this.backend.saveLocation({
-                    location: this.model.location,
+                    location: this.model,
                     attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
                     dialog: this
                 });

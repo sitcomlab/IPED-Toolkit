@@ -26,7 +26,7 @@ define(['backbonejs/js/backbone',
 
                 require([TPL_PATH + 'locationMarkerView.tpl'], function(html) {
                     var template = _.template(html, {
-                        locations: thiz.model.locations
+                        locations: thiz.model
                     });
                     thiz.$el.html(template);
                     thiz.$el.find('input[data-role=tagsinput]')
@@ -39,7 +39,7 @@ define(['backbonejs/js/backbone',
                         .succinct({
                             size: 100
                         });
-                    thiz.model.locations.forEach(function(location) {
+                    thiz.model.forEach(function(location) {
                         location.get('tags')
                             .forEach(function(tag) {
                                 thiz.$el.find('input[data-role=tagsinput][data-location=' + location.get('id') + ']')
@@ -58,7 +58,7 @@ define(['backbonejs/js/backbone',
 
                 JL('iPED Toolkit.Backend')
                     .debug('Updating the LocationMarkerView');
-                this.model.locations.forEach(function(location) {
+                this.model.forEach(function(location) {
                     if (location.get('videos')
                         .length == 0) {
                         thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
@@ -122,21 +122,21 @@ define(['backbonejs/js/backbone',
                 var locationId = $(event.currentTarget)
                     .data('location');
                 this.backend.addLocation({
-                    location: this.model.locations.get(locationId)
+                    location: this.model.get(locationId)
                 });
             },
             _edit: function(event) {
                 var locationId = $(event.currentTarget)
                     .data('location');
                 this.backend.editLocation({
-                    location: this.model.locations.get(locationId)
+                    location: this.model.get(locationId)
                 });
             },
             _delete: function(event) {
                 var locationId = $(event.currentTarget)
                     .data('location');
                 this.backend.deleteLocation({
-                    location: this.model.locations.get(locationId)
+                    location: this.model.get(locationId)
                 });
             }
         });

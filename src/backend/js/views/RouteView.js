@@ -73,6 +73,7 @@ define(['backbonejs/js/backbone',
                     contextmenuItems: contextMenuItems
                 })
                     .addTo(this.featureGroup);
+                return this;
             }
         });
 

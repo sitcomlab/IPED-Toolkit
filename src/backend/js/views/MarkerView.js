@@ -47,7 +47,7 @@ define(['backbonejs/js/backbone',
                     text: '… from …',
                     disabled: true
                 }];
-                this.model.locations.forEach(function(location) {
+                this.model.forEach(function(location) {
                     contextMenuItems.push({
                         text: '<span class="glyphicon glyphicon-arrow-up"></span> ' + location.get('name'),
                         callback: function(event) {
@@ -65,7 +65,7 @@ define(['backbonejs/js/backbone',
                     text: '… to …',
                     disabled: true
                 });
-                this.model.locations.forEach(function(location) {
+                this.model.forEach(function(location) {
                     contextMenuItems.push({
                         text: '<span class="glyphicon glyphicon-arrow-down"></span> ' + location.get('name'),
                         callback: function(event) {
@@ -78,8 +78,8 @@ define(['backbonejs/js/backbone',
                 });
 
                 // All locations are at the very same location, so just use the lat/lon of the first element
-                this.marker = L.marker([this.model.locations.at(0)
-                    .get('lat'), this.model.locations.at(0)
+                this.marker = L.marker([this.model.at(0)
+                    .get('lat'), this.model.at(0)
                     .get('lon')
                 ], {
                     icon: this.normalMarkerIcon,
@@ -91,9 +91,7 @@ define(['backbonejs/js/backbone',
                 this.marker.markerView = this;
                 this.locationMarkerView = new LocationMarkerView({
                     backend: this.backend,
-                    model: {
-                        locations: this.model.locations
-                    }
+                    model: this.model
                 });
                 this.featureGroup = L.featureGroup()
                     .addTo(this.map);
@@ -103,6 +101,7 @@ define(['backbonejs/js/backbone',
                     .bindPopup(this.locationMarkerView.el, {
                         minWidth: 300
                     });
+                return this;
             },
             removeMarker: function() {
                 this.featureGroup.clearLayers();

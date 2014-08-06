@@ -59,20 +59,20 @@ require(['jsnlog/js/jsnlog.min',
             this.locations = new Locations();
             this.relatedLocations = new Locations();
 
-            this.locationsListView = new LocationsListView({
-                model: thiz.locations,
-                el: $('#startLocationBody'),
-                remote: thiz
-            });
-
-            this.relatedLocationsListView = new LocationsListView({
-                model: thiz.relatedLocations,
-                el: $('#relatedLocationsBody'),
-                remote: thiz
-            });
-
             this.locations.fetch({
-                success: function(model, repsonse, options) {},
+                success: function(model, repsonse, options) {
+                    thiz.locationsListView = new LocationsListView({
+                        model: thiz.locations,
+                        el: $('#startLocationBody'),
+                        remote: thiz
+                    });
+
+                    thiz.relatedLocationsListView = new LocationsListView({
+                        model: thiz.relatedLocations,
+                        el: $('#relatedLocationsBody'),
+                        remote: thiz
+                    });
+                },
                 error: function(model, repsonse, options) {
                     JL('iPED Toolkit.Remote')
                         .error(repsonse);

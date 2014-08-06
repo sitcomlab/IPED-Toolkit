@@ -18,20 +18,22 @@ define(['backbonejs/js/backbone',
             initialize: function(opts) {
                 var thiz = this;
                 this.remote = opts.remote;
-
-                this.listenTo(this.model, 'add', this.render);
-                this.listenTo(this.model, 'remove', this.render);
-
+                this.listenTo(this.model, 'sync', this.render);
                 this.render();
             },
             render: function() {
                 var thiz = this;
-                require([TPL_PATH + 'locationsListView.tpl'], function(html) {
-                    var template = _.template(html, {
-                        locations: thiz.model
+
+                if (this.model.length == 0) {
+                    this.$el.html('<p>There are no routes from this location or no start location has been selected.</p>');
+                } else {
+                    require([TPL_PATH + 'locationsListView.tpl'], function(html) {
+                        var template = _.template(html, {
+                            locations: thiz.model
+                        });
+                        thiz.$el.html(template);
                     });
-                    thiz.$el.html(template);
-                });
+                }
 
                 return this;
             },

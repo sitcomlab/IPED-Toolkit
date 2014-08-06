@@ -65,6 +65,11 @@ require(['jsnlog/js/jsnlog.min',
             _.bindAll(this, 'addLocation');
 
             this.mapView = null;
+
+            this.locations = null;
+            this.videos = null;
+            this.overlays = null;
+
             this.createRouteFromLocation = null;
             this.createRouteFromMarker = null;
             this.createRouteToLocation = null;
@@ -94,34 +99,7 @@ require(['jsnlog/js/jsnlog.min',
                 .debug('Init map with locations: ' + JSON.stringify(this.locations));
             this.mapView = new MapView({
                 backend: this,
-                model: {
-                    locations: this.locations
-                }
-            });
-        };
-
-        /**
-         * Fetches all collections from the server and prepares them for use in the backend
-         */
-        Backend.prototype.fetchAll = function(opts) {
-            var thiz = this;
-
-            thiz.fetchLocations({
-                callback: function() {
-                    thiz.fetchVideos({
-                        callback: function() {
-                            thiz.fetchOverlays({
-                                callback: function() {
-                                    if (opts && opts.callback) {
-                                        opts.callback(opts.params);
-                                    }
-                                    JL('iPED Toolkit.Backend')
-                                        .debug('Done fetching all collections');
-                                }
-                            });
-                        }
-                    });
-                }
+                model: this.locations
             });
         };
 
@@ -131,7 +109,9 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchLocations = function(opts) {
             var thiz = this;
 
-            this.locations = new Locations();
+            if (this.locations == null) {
+                this.locations = new Locations();
+            }
             this.locations.fetch({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -154,7 +134,9 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchVideos = function(opts) {
             var thiz = this;
 
-            this.videos = new Videos();
+            if (this.videos == null) {
+                this.videos = new Videos();
+            }
             this.videos.fetch({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -176,7 +158,9 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchOverlays = function(opts) {
             var thiz = this;
 
-            this.overlays = new Overlays();
+            if (this.overlays == null) {
+                this.overlays = new Overlays();
+            }
             this.overlays.fetch({
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
@@ -205,10 +189,8 @@ require(['jsnlog/js/jsnlog.min',
                 newLocation.unset('id');
                 var locationEditView = new LocationEditView({
                     backend: this,
-                    model: {
-                        location: newLocation,
-                        title: 'Add state'
-                    }
+                    title: 'Add state',
+                    model: newLocation
                 });
                 this.locationEditViews.push(locationEditView);
                 this.showEditLocationDialog({
@@ -222,10 +204,8 @@ require(['jsnlog/js/jsnlog.min',
                 newLocation.set('lon', opts.latlng.lng);
                 var locationEditView = new LocationEditView({
                     backend: this,
-                    model: {
-                        location: newLocation,
-                        title: 'Add new location'
-                    }
+                    title: 'Add new location',
+                    model: newLocation
                 });
                 this.locationEditViews.push(locationEditView);
                 this.showEditLocationDialog({
@@ -244,10 +224,8 @@ require(['jsnlog/js/jsnlog.min',
             this.mapView.map.closePopup();
             var locationEditView = new LocationEditView({
                 backend: this,
-                model: {
-                    location: opts.location,
-                    title: 'Edit location'
-                }
+                title: 'Edit location',
+                model: opts.location
             });
             this.locationEditViews.push(locationEditView);
             this.showEditLocationDialog({
@@ -270,13 +248,17 @@ require(['jsnlog/js/jsnlog.min',
                     JL('iPED Toolkit.Backend')
                         .debug('Location saved');
                     opts.dialog._close();
-                    thiz.locations.add(model);
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
                     JL('iPED Toolkit.Backend')
                         .error(response);
-                    alert(JSON.stringify(response));
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 }
             });
         };
@@ -295,12 +277,16 @@ require(['jsnlog/js/jsnlog.min',
                     JL('iPED Toolkit.Backend')
                         .debug('Location deleted');
                     thiz.mapView.map.closePopup();
-                    thiz.locations.remove(model);
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .error(response);
-                    alert(JSON.stringify(response));
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 }
             })
         };
@@ -331,10 +317,10 @@ require(['jsnlog/js/jsnlog.min',
             });
             var overlayEditView = new OverlayEditView({
                 backend: this,
+                title: 'Add overlay',
                 model: {
                     video: opts.video,
-                    overlay: newOverlay,
-                    title: 'Add overlay'
+                    overlay: newOverlay
                 }
             });
             this.showEditOverlayDialog({
@@ -352,10 +338,10 @@ require(['jsnlog/js/jsnlog.min',
                 .debug('Edit overlay: ' + JSON.stringify(opts.overlay));
             var overlayEditView = new OverlayEditView({
                 backend: this,
+                title: 'Edit overlay',
                 model: {
                     video: opts.video,
-                    overlay: opts.overlay,
-                    title: 'Edit overlay'
+                    overlay: opts.overlay
                 }
             });
             this.showEditOverlayDialog({
@@ -384,7 +370,6 @@ require(['jsnlog/js/jsnlog.min',
                     opts.dialog._enableButtons();
                     JL('iPED Toolkit.Backend')
                         .error(response);
-                    alert(JSON.stringify(response));
                 }
             });
         };
@@ -409,7 +394,6 @@ require(['jsnlog/js/jsnlog.min',
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .error(response);
-                    alert(JSON.stringify(response));
                 }
             })
         };
@@ -517,10 +501,21 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.saveRoute = function(opts) {
             var thiz = this;
 
+            // Morin: Important note about Backbone.js, arrays, and events: http://stackoverflow.com/questions/9909799/backbone-js-change-not-firing-on-model-change
+            var relatedLocations = _.clone(this.createRouteFromLocation.get('relatedLocations'));
+            if (_.indexOf(relatedLocations, this.createRouteToLocation.get('id')) != -1) {
+                JL('iPED Toolkit.Backend')
+                    .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+
+                thiz.fetchLocations({
+                    //callback: thiz.mapView.render
+                });
+                return;
+            }
+
             JL('iPED Toolkit.Backend')
                 .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
 
-            var relatedLocations = this.createRouteFromLocation.get('relatedLocations');
             relatedLocations.push(this.createRouteToLocation.get('id'));
             this.createRouteFromLocation.save({
                 relatedLocations: relatedLocations
@@ -528,11 +523,16 @@ require(['jsnlog/js/jsnlog.min',
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .debug('Route saved');
-                    thiz.mapView.render();
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .error(response);
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 }
             });
         };
@@ -553,11 +553,16 @@ require(['jsnlog/js/jsnlog.min',
                 success: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .debug('Route deleted');
-                    thiz.mapView.render();
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 },
                 error: function(model, response, options) {
                     JL('iPED Toolkit.Backend')
                         .error(response);
+                    thiz.fetchLocations({
+                        //callback: thiz.mapView.render
+                    });
                 }
             })
 
