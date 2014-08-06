@@ -1,5 +1,8 @@
 module.exports = function(app, db) {
     var async = require('async');
+    var JaySchema = require('jayschema');
+    var validator = require('validator');
+    var locationSchema = require('../schemas/location');
     
     // 3.1.1 List all Locations (Developer: Nicho)
     app.get('/api/locations', function(req, res) {

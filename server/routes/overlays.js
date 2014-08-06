@@ -1,5 +1,8 @@
 module.exports = function(app, db) {
     var async = require('async');
+    var JaySchema = require('jayschema');
+    var validator = require('validator');
+    var overlaySchema = require('../schemas/overlay');
     
 // 3.3.1 List all Overlays (Developer: Nicho)
 app.get('/api/overlays', function(req, res) {

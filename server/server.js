@@ -61,15 +61,7 @@ var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
-var async = require('async');
 
-// Data-Validation
-var validator = require('validator');
-var JaySchema = require('jayschema');
-// Schemas for Data-Validation
-var locationSchema = require('./schemas/location');
-var videoSchema = require('./schemas/video');
-var overlaySchema = require('./schemas/overlay');
 
 
 /*********************************************************

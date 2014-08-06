@@ -1,5 +1,8 @@
 module.exports = function(app, db) {
     var async = require('async');
+    var JaySchema = require('jayschema');
+    var validator = require('validator');
+    var videoSchema = require('../schemas/video');
     
     // 3.2.1 List all Videos (Developer: Nicho)
     app.get('/api/videos', function(req, res) {
