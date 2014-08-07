@@ -10,7 +10,6 @@
  Table of content
  *********************************************************************************************
  1. Server-Settings
- 2. webRTC
  3. API
     3.1 Locations:
          3.1.1 List all Locations
@@ -55,21 +54,21 @@ var fs = require('fs');
 var path = require('path');
 var util = require('util');
 
-var neo4j = require('node-neo4j');
 var express = require('express');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
 
+var log = require('./global/log');
 
 
 /*********************************************************
  1. Server-Settings
  *********************************************************/
+var VERSION = '0.0.2';
 var HTTP_PORT = 8080;
 var HTTPS_PORT = 8443;
-var NEO4J_PORT = 7474;
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function(val, index, array) {
@@ -79,14 +78,7 @@ process.argv.forEach(function(val, index, array) {
     if (val.indexOf('https=') != -1) {
         HTTPS_PORT = val.split('=')[1];
     }
-    if (val.indexOf('neo4j=') != -1) {
-        NEO4J_PORT = val.split('=')[1];
-    }
 });
-
-// Connection to the Neo4j-Database
-var db = new neo4j('http://giv-sitcomlab.uni-muenster.de:' + NEO4J_PORT);
-console.log('Neo4J-Database-Server started at PORT: ' + NEO4J_PORT);
 
 // Loading package "Express" for creating a webserver
 // Morin: webRTC's screen sharing requires a SSL connection
@@ -97,55 +89,57 @@ var options = {
     passphrase : 'morin'
 };
 
+log.info('iPED Toolkit Server %s', VERSION);
+
+
+/****************************
+ Express.js
+ ****************************/
 var app = express();
-
-// Loading package "body-parser" for making POST and PUT requests
 app.use(bodyParser());
-
-var httpsServer = require('https').Server(options, app);
-httpsServer.listen(HTTPS_PORT, function(err) {
-    if (err) {
-        return console.log('Encountered error starting server: ', err);
-    } else {
-        console.log('HTTPS-Server started, listen to PORT: ' + HTTPS_PORT);
-    }
-});
-var httpServer = require('http').Server(app);
-httpServer.listen(HTTP_PORT, function(err) {
-    if (err) {
-        return console.log('Encountered error starting server: ', err);
-    } else {
-        console.log('HTTP-Server started, listen to PORT: ' + HTTP_PORT);
-    }
-});
-
-// Public-folder to upload media, like videos
 app.set("view options", {
     layout : false
 });
+app.use(function(req, res, next) {
+  req.log = log.child({POST: req.body, GET: req.query});
+  next();
+});
 
-// Socket.io packages
-var io = socketio.listen(httpServer);
-io.on('connection', function(socket) {
-    console.log('socket.io[connection]: New connection');
+var httpsServer = require('https').Server(options, app);
+httpsServer.on('error', function(error) {
+    log.error({error: error}, 'Error starting HTTPS server:');
+});
+httpsServer.listen(HTTPS_PORT, function() {
+    log.info('HTTPS server started on port %d', HTTPS_PORT);
+});
+
+var httpServer = require('http').Server(app);
+httpServer.on('error', function(error) {
+    log.error({error: error}, 'Error starting HTTP server:');
+});
+httpServer.listen(HTTP_PORT, function() {
+    log.info('HTTP server started on port %d', HTTP_PORT);
+});
+
+
+/****************************
+ Socket.io (websockets)
+ ****************************/
+var socketHandler = function(socket) {
+    log.debug({socket: socket}, 'New connection:');
     socket.on('setLocationId', function(data) {
-        console.log('socket.io[setLocationId]: ' + JSON.stringify(data));
+        log.debug({data: data}, 'Received data:');
         io.emit('setLocationId', data); 
     });
-});
-
+};
+var io = socketio.listen(httpServer);
+io.on('connection', socketHandler);
 var ios = socketio.listen(httpsServer);
-ios.on('connection', function(socket) {
-    console.log('socket.io[connection]: New connection');
-    socket.on('setLocationId', function(data) {
-        console.log('socket.io[setLocationId]: ' + JSON.stringify(data));
-        ios.emit('setLocationId', data); 
-    });
-});
+ios.on('connection', socketHandler);
 
 
 /*********************************************************
- 2. webRTC
+ webRTC
  *********************************************************/
 // create the webRTC switchboard
 var switchboard = require('rtc-switchboard')(httpsServer);
@@ -166,9 +160,12 @@ app.get('/lib/webRTC/js/webRTC.js', function(req, res, next) {
     b.bundle().pipe(res);
 });
 
-// Serve static content
+
+/****************************
+ Express.js
+ ****************************/
+// Finally, serve static content
 app.use(express.static(__dirname + '/public'));
-//console.log("App listens on " + os.hostname() + ":{" + httpServer.address().port + "|" + httpsServer.address().port + "}");
 
 
 /*********************************************************
@@ -178,14 +175,14 @@ app.use(express.static(__dirname + '/public'));
 /****************************
  3.1 Locations
  ****************************/
-var locations = require('./routes/locations')(app, db);
+var locations = require('./routes/locations')(app);
 
 /****************************
  3.2 Videos
  ****************************/
-var videos = require('./routes/videos')(app, db);
+//var videos = require('./routes/videos')(app, db);
 
 /****************************
  3.3 Overlays
  ****************************/
-var overlays = require('./routes/overlays')(app, db);
+//var overlays = require('./routes/overlays')(app, db);
