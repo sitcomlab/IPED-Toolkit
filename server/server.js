@@ -97,12 +97,12 @@ log.info('iPED Toolkit Server %s', VERSION);
  ****************************/
 var app = express();
 app.use(bodyParser());
-app.set("view options", {
-    layout : false
+app.use(function(err, req, res, next) {
+    res.end('There is a syntax error in your request: ' + err.toString());
 });
 app.use(function(req, res, next) {
-  req.log = log.child({POST: req.body, GET: req.query});
-  next();
+    req.log = log.child({BODY: req.body, QUERY: req.query});
+    next();
 });
 
 var httpsServer = require('https').Server(options, app);

@@ -15,6 +15,7 @@
     "express": "^4.0.0",
     "fdom": "^0.8.0",
     "jayschema": "0.2.7",
+    "jayschema-error-messages": "~1.0.1",
     "neo4j": "1.1.x",
     "nib": "~1.0.1",
     "rtc-captureconfig": "~0.4.0",
