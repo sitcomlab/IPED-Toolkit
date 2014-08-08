@@ -55,24 +55,17 @@ Location.prototype.toJSON = function() {
 */
 Location.prototype.load = function() {
     var thiz = this;
-    this.getRelatedLocations(function(err) {
-        if (!err) {
-            thiz.getVideos(function(err) {
-                if (!err) {
-                    thiz.getOverlays(function(err) {
-                        if (!err) {
-                            thiz.emit('loaded');   
-                        } else {
-                            log.error({error: err}, 'Error while loading overlays');
-                        }
-                    });   
-                } else {
-                    log.error({error: err}, 'Error while loading videos');
-                }
-            });   
-        } else {
-            log.error({error: err}, 'Error while loading related locations');
+    
+    async.parallel([
+        function(callback) { thiz.getRelatedLocations(callback); },
+        function(callback) { thiz.getVideos(callback); },
+        function(callback) { thiz.getOverlays(callback); },
+    ], function(err, result) {
+        if (err) {
+            log.error({error: err}, 'Error while loading location');
+            return;
         }
+        thiz.emit('loaded');
     });
 };
 
@@ -263,11 +256,14 @@ Location.create = function(data, callback) {
            var videos = new Location({data: data}).videos;
            var overlays = new Location({data: data}).overlays;
            
-           location.setRelatedLocations(relatedLocations, function(err) {
+           async.parallel([
+               function(callback) { location.setRelatedLocations(relatedLocations, callback); },
+               function(callback) { location.setVideos(videos, callback); },
+               function(callback) { location.setOverlays(overlays, callback); }
+           ], function(err, result) {
                if (err) return callback(err);
                nodeLoader.load(location, callback); 
            });
-           // CONTINUE WITH VIDEOS AND OVERLAYS, use async?
         }); 
     });
 };
