@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 
         'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
         'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
-        'public/backend/templates/addOverlay.tpl'         : 'src/backend/templates/addOverlay.tpl',
+        'public/backend/templates/overlayEdit.tpl'        : 'src/backend/templates/overlayEdit.tpl',
         'public/backend/templates/aboutView.tpl'          : 'src/backend/templates/aboutView.tpl',
 
         'public/backend/js/models/Location.js'            : 'src/backend/js/models/Location.js',

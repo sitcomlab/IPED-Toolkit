@@ -20,10 +20,10 @@
       </div>
       <div class="col-sm-1 form-group">
         <label class="sr-only" for="type">Type</label>
-        <select class="form-control">
-          <option value="image">Image</option>
-          <option value="video">Video</option>
-          <option value="html">HTML</option>
+        <select class="form-control" name="type">
+          <option value="image" <% if (overlay.get('type') == 'image') print('selected="selected"') %>>Image</option>
+          <option value="video" <% if (overlay.get('type') == 'video') print('selected="selected"') %>>Video</option>
+          <option value="html"  <% if (overlay.get('type') == 'html') print('selected="selected"') %>>HTML</option>
         </select>
       </div>
       <div class="col-sm-3 form-group">
