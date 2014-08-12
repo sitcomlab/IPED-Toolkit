@@ -50,6 +50,7 @@ define(['threejs/js/three.min',
             this.parent = opts.parent;
             this.overlays = opts.overlays || null;
 
+            this.jqueryElement = null;
             this.isRunning = true;
             this.video = null;
             this.top = 0;
@@ -112,9 +113,12 @@ define(['threejs/js/three.min',
          */
         OverlayPlugin.prototype.init = function() {
             this.video = $('#iPED-Video');
-            this.video.on('resize', this.onResize);
+            this.video.on('loadeddata', this.onResize); // Give browsers time to recalculate dimensions
 
             // Create DOM element: <div id="iPED-Overlay"></div>
+            if (this.jqueryElement) {
+                this.jqueryElement.remove();
+            }
             this.video.after('<div id="iPED-Overlay"></div>');
             this.jqueryElement = $('#iPED-Overlay');
             this.jqueryElement.css('position', 'absolute');
@@ -184,6 +188,7 @@ define(['threejs/js/three.min',
         OverlayPlugin.prototype.setLocationId = function(locationId) {
             JL('iPED Toolkit.OverlayPlugin')
                 .info('Set Location ID to: ' + locationId);
+            this.init();
             this.location = new Location({
                 id: locationId
             });
@@ -229,8 +234,8 @@ define(['threejs/js/three.min',
                         case 'html':
                             var element = document.createElement('iframe');
                             element.src = overlay.get('url');
-                            element.style.width = overlay.get('w') + 'px';
-                            element.style.height = overlay.get('h') + 'px';
+                            element.style.width = parseInt(overlay.get('w'), 10) + 'px';
+                            element.style.height = parseInt(overlay.get('h'), 10) + 'px';
                             element.style.border = '0px';
 
                             object = new THREE.CSS3DObject(element);
@@ -264,7 +269,7 @@ define(['threejs/js/three.min',
                                 thiz.videos[n].play(); // Make sure the video plays
                             }
 
-                            var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
@@ -277,7 +282,7 @@ define(['threejs/js/three.min',
                                 map: texture
                             });
 
-                            var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
@@ -288,19 +293,19 @@ define(['threejs/js/three.min',
                                 color: 0xff0000,
                                 side: THREE.DoubleSide
                             });
-                            var geometry = new THREE.BoxGeometry(overlay.get('w'), overlay.get('h'), overlay.get('d'));
+                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
                     }
 
                     object._overlay = overlay;
-                    object.position.x = overlay.get('x');
-                    object.position.y = overlay.get('y');
-                    object.position.z = overlay.get('z');
-                    object.rotation.x = overlay.get('rx');
-                    object.rotation.y = overlay.get('ry');
-                    object.rotation.z = overlay.get('rz');
+                    object.position.x = parseInt(overlay.get('x'), 10);
+                    object.position.y = parseInt(overlay.get('y'), 10);
+                    object.position.z = parseInt(overlay.get('z'), 10);
+                    object.rotation.x = parseInt(overlay.get('rx'), 10);
+                    object.rotation.y = parseInt(overlay.get('ry'), 10);
+                    object.rotation.z = parseInt(overlay.get('rz'), 10);
                     object.scale.x = 0.25; //FIXME: This is a magic number without meaning
                     object.scale.y = 0.25; //FIXME: This is a magic number without meaning
 
@@ -420,13 +425,16 @@ define(['threejs/js/three.min',
          */
         OverlayPlugin.prototype.updateOverlay = function(event) {
             var overlay = event.target.object._overlay;
-            overlay.set('x', event.target.object.position.x);
-            overlay.set('y', event.target.object.position.y);
-            overlay.set('z', event.target.object.position.z);
+            var position = event.target.object.position;
+            var rotation = event.target.object.rotation;
 
-            overlay.set('rx', event.target.object.rotation.x);
-            overlay.set('ry', event.target.object.rotation.y);
-            overlay.set('rz', event.target.object.rotation.z);
+            overlay.set('x', position.x);
+            overlay.set('y', position.y);
+            overlay.set('z', position.z);
+
+            overlay.set('rx', rotation.x);
+            overlay.set('ry', rotation.y);
+            overlay.set('rz', rotation.z);
 
             this.render();
         }
