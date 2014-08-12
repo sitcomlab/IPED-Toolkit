@@ -75,12 +75,24 @@ define(['threejs/js/three.min',
             _.bindAll(this, 'render', 'onKeyDown', 'onResize', 'updateOverlay', 'setLocationId');
 
             this.init();
+
+            // Hooks the Overlay plugin to the frontend's functions
+            // Morin: This could also be done by using Backbone.js's on change listener
+            if (this.parent.myHooks) {
+                if (this.parent.myHooks['setLocationId']) {
+                    this.parent.myHooks['setLocationId'].push(this.setLocationId);
+                }
+            }
+            
+            this.enableEventListeners(true);
+
             if (this.parent.location && this.parent.location.get) {
                 this.setLocationId(this.parent.location.get('id'));
             }
             if (this.overlays) {
                 this.createOverlays();
             }
+
             this.render();
 
             if (opts.showUI && opts.showUI == true) {
@@ -159,15 +171,6 @@ define(['threejs/js/three.min',
             var light = new THREE.AmbientLight(0xffffff);
             light.position.set(1, 1, 1);
             this.scene.add(light);
-
-            // Hooks the Overlay plugin to the frontend's functions
-            // Morin: This could also be done by using Backbone.js's on change listener
-            if (this.parent.myHooks) {
-                if (this.parent.myHooks['setLocationId']) {
-                    this.parent.myHooks['setLocationId'].push(this.setLocationId);
-                }
-            }
-            this.enableEventListeners(true);
         };
 
         /**
