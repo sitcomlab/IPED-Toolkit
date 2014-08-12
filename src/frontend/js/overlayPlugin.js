@@ -28,10 +28,7 @@ define(['threejs/js/three.min',
          */
         Overlay = Backbone.Model.extend({
             urlRoot: '/api/overlays',
-            initialize: function() {},
-            validate: function(attributes, options) {
-                console.log(attributes);
-            }
+            initialize: function() {}
         });
 
         /**
