@@ -303,9 +303,9 @@ define(['threejs/js/three.min',
                     object.position.x = parseInt(overlay.get('x'), 10);
                     object.position.y = parseInt(overlay.get('y'), 10);
                     object.position.z = parseInt(overlay.get('z'), 10);
-                    object.rotation.x = parseInt(overlay.get('rx'), 10);
-                    object.rotation.y = parseInt(overlay.get('ry'), 10);
-                    object.rotation.z = parseInt(overlay.get('rz'), 10);
+                    object.rotation.x = parseFloat(overlay.get('rx'));
+                    object.rotation.y = parseFloat(overlay.get('ry'));
+                    object.rotation.z = parseFloat(overlay.get('rz'));
                     object.scale.x = 0.25; //FIXME: This is a magic number without meaning
                     object.scale.y = 0.25; //FIXME: This is a magic number without meaning
 
