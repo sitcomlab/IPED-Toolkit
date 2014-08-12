@@ -68,7 +68,6 @@ define(['underscorejs/js/underscore',
                     thiz.seriouslySource = thiz.seriously.source(thiz.sourceVideo[0]);
                     thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas[0]);
                     thiz.seriouslyChroma = thiz.seriously.effect('chroma');
-                    thiz.seriouslyChroma.balance = 0.5;
                     thiz.seriouslyChroma.source = thiz.seriouslySource;
                     thiz.seriouslyTarget.source = thiz.seriouslyChroma;
 
