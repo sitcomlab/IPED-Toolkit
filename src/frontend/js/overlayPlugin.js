@@ -83,7 +83,7 @@ define(['threejs/js/three.min',
                     this.parent.myHooks['setLocationId'].push(this.setLocationId);
                 }
             }
-            
+
             this.enableEventListeners(true);
 
             if (this.parent.location && this.parent.location.get) {

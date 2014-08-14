@@ -4,6 +4,8 @@ var log = require('./log');
 * Turns "shallow" nodes into "deep" nodes by calling their .load method.
 */
 exports.loadAll = function(nodes, callback) {
+    if (nodes.length == 0) return callback(null, nodes);
+    
     var nodesNumber = nodes.length;
     var nodesLoaded = 0;
     nodes.forEach(function(node) {
