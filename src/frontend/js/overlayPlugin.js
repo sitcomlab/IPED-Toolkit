@@ -282,7 +282,8 @@ define(['threejs/js/three.min',
                             var texture = THREE.ImageUtils.loadTexture(overlay.get('url'), new THREE.UVMapping(), thiz.render);
                             texture.anisotropy = thiz.renderer.getMaxAnisotropy();
                             var material = new THREE.MeshLambertMaterial({
-                                map: texture
+                                map: texture,
+                                transparent: true
                             });
 
                             var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
