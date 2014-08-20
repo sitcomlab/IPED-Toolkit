@@ -146,7 +146,7 @@ require(['jsnlog/js/jsnlog.min',
                     $('#iPED-Video')
                         .append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
                     $('#iPED-Video')
-                        .append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogv" type="video/ogg" />');
+                        .append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogg" type="video/ogg" />');
                     $('#iPED-Video')[0].load();
                     $('#iPED-Video')[0].play();
                 },
