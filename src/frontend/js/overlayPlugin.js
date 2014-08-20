@@ -256,8 +256,8 @@ define(['threejs/js/three.min',
                             thiz.videos[n].appendChild(mp4Source);
 
                             var ogvSource = document.createElement('source');
-                            ogvSource.src = overlay.get('url') + '.ogv';
-                            ogvSource.type = 'video/ogv';
+                            ogvSource.src = overlay.get('url') + '.ogg';
+                            ogvSource.type = 'video/ogg';
                             thiz.videos[n].appendChild(ogvSource);
 
                             thiz.videos[n].autoplay = 'autoplay';
