@@ -180,7 +180,7 @@ var locations = require('./routes/locations')(app);
 /****************************
  3.2 Videos
  ****************************/
-//var videos = require('./routes/videos')(app, db);
+var videos = require('./routes/videos')(app);
 
 /****************************
  3.3 Overlays
