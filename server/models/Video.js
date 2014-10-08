@@ -4,11 +4,19 @@ var events = require('events');
 
 var db = require('../global/db');
 var log = require('../global/log');
+var nodeLoader = require('../global/nodeLoader');
+
+var JaySchema = require('jayschema');
+var prettifyJaySchema = require('jayschema-error-messages');
+var validator = require('validator');
+var videoSchema = require('../schemas/video');
+
+
 
 // The model for a video
 function Video(video) {
     events.EventEmitter.call(this);
-    
+
     this.id = video.id;
     this.name = video.data.name;
     this.description = video.data.description;
@@ -17,6 +25,7 @@ function Video(video) {
     this.tags = _.clone(video.data.tags);
 }
 util.inherits(Video, events.EventEmitter);
+
 
 Video.prototype.toJSON = function() {
     return JSON.parse(JSON.stringify({
@@ -29,26 +38,139 @@ Video.prototype.toJSON = function() {
     })); 
 };
 
-// Static functions
-Video.get = function(opts) {
-    db.getNodeById(opts.id, function(err, node) {
-       if (err) return opts.callback(err);
-       opts.callback(null, new Video(node)); 
+
+Video.get = function(id, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+    
+    var query = [
+        'MATCH (video:Video)',
+        'WHERE id(video)=' + id,
+        'AND video:Video',
+        'RETURN video'
+    ].join('\n');
+    
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+        if (result.length == 0) {
+            return callback(new Error('No video found with that ID'));
+        } else {
+            var video = new Video(result[0]['video']);
+            callback(null, video);
+        }
     });
 };
 
-Video.getAll = function(opts) {
+
+Video.getAll = function(callback) {
     var query = [
-    'MATCH (video:Video)',
-    'RETURN video'
+        'MATCH (video:Video)',
+        'RETURN video'
     ].join('\n');
     
     db.query(query, null, function(err, results) {
-        if (err) return opts.callback(err);
+        if (err) return callback(err);
         var videos = results.map(function(result) {
+
+            console.log(result);
             return new Video(result['video']);
         });
-        opts.callback(null, videos);   
+        callback(null, videos);
+    });
+};
+
+
+Video.create = function(data, callback) {
+    js = new JaySchema();
+    js.validate(data, videoSchema.postVideo, function(err) {
+        if (err) {
+            return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
+        }
+        
+        var query = [
+            'CREATE (video:Video {data})',
+            'RETURN video'
+        ].join('\n');
+        var params = {
+            data: {
+                name: data.name,
+                description: data.description,
+                tags: data.tags,
+                date: data.date,
+                url: data.url
+            }
+        };
+    
+        db.query(query, params, function(err, result) {
+           if (err) return callback(err);
+           Video.update(result, data, callback);
+        }); 
+    });
+};
+
+Video.save = function(id, data, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+    
+    js = new JaySchema();
+    js.validate(data, videoSchema.putVideo, function(err) {
+        if (err) {
+            return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
+        }
+        
+        Video.get(id, function(err, location) {
+            if (err) return callback(err);
+            var query = [
+                'MATCH (video:Video)',
+                'WHERE id(video)=' + id,
+                'AND video:Video',
+                'SET video += {data}',
+                'RETURN video'
+            ].join('\n');
+            var params = {
+                data: {
+                    name: data.name,
+                    description: data.description,
+                    tags: data.tags,
+                    date: data.date,
+                    url: data.url
+                }
+            };
+    
+            db.query(query, params, function(err, result) {
+               if (err) return callback(err);
+               Video.update(result, data, callback);
+            });
+        });
+    });
+};
+
+
+Video.update = function(result, data, callback) {
+    var video = new Video(result[0]['video']);
+
+    callback(null, video);
+};
+
+
+Video.delete = function(id, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+    
+    var query = [
+        'MATCH (me:Video)',
+        'WHERE id(me)=' + id,
+        'AND me:Video',
+        'OPTIONAL MATCH (me)-[r]-()',
+        'DELETE r, me'
+    ].join('\n');
+        
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+        callback(null, null);
     });
 };
 
