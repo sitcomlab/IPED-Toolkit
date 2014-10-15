@@ -185,4 +185,4 @@ var locations = require('./routes/locations')(app);
 /****************************
  3.3 Overlays
  ****************************/
-//var overlays = require('./routes/overlays')(app, db);
+var overlays = require('./routes/overlays')(app);
