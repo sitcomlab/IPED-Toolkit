@@ -38,7 +38,12 @@ Video.prototype.toJSON = function() {
     })); 
 };
 
-
+/**
+ * [get description]
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.get = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
@@ -62,7 +67,11 @@ Video.get = function(id, callback) {
     });
 };
 
-
+/**
+ * [getAll description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.getAll = function(callback) {
     var query = [
         'MATCH (video:Video)',
@@ -80,7 +89,12 @@ Video.getAll = function(callback) {
     });
 };
 
-
+/**
+ * [create description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.create = function(data, callback) {
     js = new JaySchema();
     js.validate(data, videoSchema.postVideo, function(err) {
@@ -109,6 +123,13 @@ Video.create = function(data, callback) {
     });
 };
 
+/**
+ * [save description]
+ * @param  {[type]}   id       [description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.save = function(id, data, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
@@ -147,14 +168,25 @@ Video.save = function(id, data, callback) {
     });
 };
 
-
+/**
+ * [update description]
+ * @param  {[type]}   result   [description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.update = function(result, data, callback) {
     var video = new Video(result[0]['video']);
 
     callback(null, video);
 };
 
-
+/**
+ * [delete description]
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Video.delete = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));

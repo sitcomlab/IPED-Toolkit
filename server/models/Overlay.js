@@ -13,7 +13,6 @@ var overlaySchema = require('../schemas/overlay');
 
 
 
-
 // The model for a overlay
 function Overlay(overlay) {
 	events.EventEmitter.call(this);
@@ -38,6 +37,7 @@ function Overlay(overlay) {
 util.inherits(Overlay, events.EventEmitter);
 
 Overlay.prototype.toJSON = function() {
+
 	return JSON.parse(JSON.stringify({
 		id : this.id,
 		name : this.name,
@@ -58,17 +58,22 @@ Overlay.prototype.toJSON = function() {
 };
 
 
-// Static functions
+/**
+ * [get description]
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Overlay.get = function(id, callback) {
 	if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
     
     var query = [
-    'MATCH (overlay:Overlay)',
-    'WHERE id(overlay)=' + id,
-    'AND overlay:Overlay',
-    'RETURN overlay'
+	    'MATCH (overlay:Overlay)',
+	    'WHERE id(overlay)=' + id,
+	    'AND overlay:Overlay',
+	    'RETURN overlay'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
@@ -77,20 +82,20 @@ Overlay.get = function(id, callback) {
             return callback(new Error('No overlay found with that ID'));
         } else {
             var overlay = new Overlay(result[0]['overlay']);
-            nodeLoader.load(overlay, callback);
+            callback(null, overlay);
         }
     });
-	/*db.getNodeById(opts.id, function(err, node) {
-		if (err)
-			return opts.callback(err);
-		opts.callback(null, new Overlay(node));
-	});*/
 };
 
+/**
+ * [getAll description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Overlay.getAll = function(callback) {
 	var query = [
-    'MATCH (overlay:Overlay)',
-    'RETURN overlay'
+    	'MATCH (overlay:Overlay)',
+    	'RETURN overlay'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
@@ -98,7 +103,6 @@ Overlay.getAll = function(callback) {
         var overlays = result.map(function(result) {
             return new Overlay(result['overlay']);
         });
-        //nodeLoader.loadAll(overlays);
         callback(null, overlays);
       });
 };
@@ -115,7 +119,10 @@ Overlay.create = function(data, callback) {
 			return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
 		}
 
-		var query = ['CREATE (overlay:Overlay {data})', 'RETURN overlay'].join('\n');
+		var query = [
+			'CREATE (overlay:Overlay {data})', 
+			'RETURN overlay'
+		].join('\n');
 		var params = {
 			data : {
 				name : data.name,
@@ -163,7 +170,13 @@ Overlay.save = function(id, data, callback) {
 		Overlay.get(id, function(err, overlay) {
 			if (err)
 				return callback(err);
-			var query = ['MATCH (overlay:Overlay)', 'WHERE id(overlay)=' + id, 'AND overlay:Overlay', 'SET overlay += {data}', 'RETURN overlay'].join('\n');
+			var query = [
+				'MATCH (overlay:Overlay)', 
+				'WHERE id(overlay)=' + id, 
+				'AND overlay:Overlay', 
+				'SET overlay += {data}', 
+				'RETURN overlay'
+			].join('\n');
 			var params = {
 				data : {
 					name : data.name,
@@ -193,6 +206,19 @@ Overlay.save = function(id, data, callback) {
 };
 
 /**
+ * [update description]
+ * @param  {[type]}   result   [description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+Overlay.update = function(result, data, callback) {
+    var overlay = new Overlay(result[0]['overlay']);
+
+    callback(null, overlay);
+};
+
+/**
 * Deletes an overlay from the DB
 * @param id - The ID of the overlay to be deleted
 */
@@ -202,11 +228,11 @@ Overlay.delete = function(id, callback) {
     }
     
     var query = [
-    'MATCH (me:Overlay)',
-    'WHERE id(me)=' + id,
-    'AND me:Overlay',
-    'OPTIONAL MATCH (me)-[r]-()',
-    'DELETE r, me'
+	    'MATCH (me:Overlay)',
+	    'WHERE id(me)=' + id,
+	    'AND me:Overlay',
+	    'OPTIONAL MATCH (me)-[r]-()',
+	    'DELETE r, me'
     ].join('\n');
         
     db.query(query, null, function(err, result) {
