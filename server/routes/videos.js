@@ -29,7 +29,7 @@ module.exports = function(app) {
 
     // 3.2.3 Retrieve a Video (Developer: Nicho)
     app.get('/api/videos/:id', function(req, res) {
-        req.log.info({PARAMS: req.params}, '[GET] /api/video/:id');
+        req.log.info({PARAMS: req.params}, '[GET] /api/videos/:id');
         Video.get(req.params.id, function(err, video) {
             if (!err) {
                 send.data(res, JSON.stringify(video));
