@@ -38,12 +38,12 @@ util.inherits(Location, events.EventEmitter);
 */
 Location.prototype.toJSON = function() {
     return JSON.parse(JSON.stringify({
-        id: this.id,
+        id: new Number(this.id),
         name: this.name,
         description: this.description,
         tags: this.tags,
-        lat: this.lat,
-        lon: this.lon,
+        lat: new Number(this.lat),
+        lon: new Number(this.lon),
         relatedLocations: this.relatedLocations,
         videos: this.videos,
         overlays: this.overlays

@@ -39,21 +39,21 @@ util.inherits(Overlay, events.EventEmitter);
 Overlay.prototype.toJSON = function() {
 
 	return JSON.parse(JSON.stringify({
-		id : this.id,
+		id : new Number(this.id),
 		name : this.name,
 		description : this.description,
 		tags : this.tags,
 		type : this.type,
 		url : this.url,
-		w : this.w,
-		h : this.h,
-		x : this.x,
-		y : this.y,
-		z : this.z,
-		d : this.d,
-		rx : this.rx,
-		ry : this.ry,
-		rz : this.rz
+		w : new Number(this.w),
+		h : new Number(this.h),
+		x : new Number(this.x),
+		y : new Number(this.y),
+		z : new Number(this.z),
+		d : new Number(this.d),
+		rx : new Number(this.rx),
+		ry : new Number(this.ry),
+		rz : new Number(this.rz)
 	}));
 };
 

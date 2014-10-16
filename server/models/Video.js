@@ -29,7 +29,7 @@ util.inherits(Video, events.EventEmitter);
 
 Video.prototype.toJSON = function() {
     return JSON.parse(JSON.stringify({
-        id: this.id,
+        id: new Number(this.id),
         name: this.name,
         description: this.description,
         date: this.date,
