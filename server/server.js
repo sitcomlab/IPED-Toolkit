@@ -126,7 +126,8 @@ httpServer.listen(HTTP_PORT, function() {
  Socket.io (websockets)
  ****************************/
 var socketHandler = function(socket) {
-    log.debug({socket: socket}, 'New connection:');
+    //log.debug({socket: socket}, 'New connection:');
+    log.info('New connection');
     socket.on('setLocationId', function(data) {
         log.debug({data: data}, 'Received data:');
         io.emit('setLocationId', data); 

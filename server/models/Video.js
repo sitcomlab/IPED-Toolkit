@@ -13,7 +13,10 @@ var videoSchema = require('../schemas/video');
 
 
 
-// The model for a video
+/**
+ * [Video description]
+ * @param {[type]} video [description]
+ */
 function Video(video) {
     events.EventEmitter.call(this);
 
@@ -24,9 +27,13 @@ function Video(video) {
     this.url = video.data.url;
     this.tags = _.clone(video.data.tags);
 }
+
 util.inherits(Video, events.EventEmitter);
 
-
+/**
+ * [toJSON description]
+ * @return {[type]} [description]
+ */
 Video.prototype.toJSON = function() {
     return JSON.parse(JSON.stringify({
         id: new Number(this.id),
@@ -81,8 +88,6 @@ Video.getAll = function(callback) {
     db.query(query, null, function(err, results) {
         if (err) return callback(err);
         var videos = results.map(function(result) {
-
-            console.log(result);
             return new Video(result['video']);
         });
         callback(null, videos);
@@ -205,5 +210,34 @@ Video.delete = function(id, callback) {
         callback(null, null);
     });
 };
+
+/**
+ * getAllRelatedVideos of a Location
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+Video.getAllRelatedVideos = function(id, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+
+    var query = [
+    'MATCH (location:Location)',
+    '<-[r:wasRecordedAt]-',
+    '(video:Video)',
+    'WHERE id(location)=' + id,
+    'RETURN video'
+    ].join('\n');
+    
+    db.query(query, null, function(err, results) {
+        if (err) return callback(err);
+        var videos = results.map(function(result) {
+            return new Video(result['video']);
+        });
+        callback(null, videos);
+    });
+};
+
 
 module.exports = Video;

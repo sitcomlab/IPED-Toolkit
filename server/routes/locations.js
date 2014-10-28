@@ -41,7 +41,7 @@ module.exports = function(app) {
 
     // 3.1.4 Edit a Location (Developer: Morin)
     app.put('/api/locations/:id', function(req, res) {
-        req.log.info('[PUT] /api/locations/:id');
+        req.log.info({PARAMS: req.params}, '[PUT] /api/locations/:id');
         Location.save(req.params.id, req.body, function(err, location) {
             if (!err) {
                 send.data(res, JSON.stringify(location));
@@ -53,7 +53,7 @@ module.exports = function(app) {
 
     // 3.1.5 Remove a Location (Developer: Morin)
     app.delete('/api/locations/:id', function(req, res) {
-        req.log.info('[DELETE] /api/locations/:id');
+        req.log.info({PARAMS: req.params}, '[DELETE] /api/locations/:id');
         Location.delete(req.params.id, function(err, location) {
             if (!err) {
                 send.data(res, JSON.stringify(location));
@@ -65,7 +65,7 @@ module.exports = function(app) {
 
     // 3.1.6 Retrieve all related Locations of a Location (Developer: Morin)
     app.get('/api/locations/:id/locations', function(req, res) {
-        req.log.info('[GET] /api/locations/:id/locations');
+        req.log.info({PARAMS: req.params}, '[GET] /api/locations/:id/locations');
         Location.get(req.params.id, function(err, location) {
             if (!err) {
                 var relatedLocations = [];
@@ -88,4 +88,5 @@ module.exports = function(app) {
             }
         });
     });
+    
 }

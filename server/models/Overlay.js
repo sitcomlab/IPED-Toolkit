@@ -13,7 +13,10 @@ var overlaySchema = require('../schemas/overlay');
 
 
 
-// The model for a overlay
+/**
+ * [Overlay description]
+ * @param {[type]} overlay [description]
+ */
 function Overlay(overlay) {
 	events.EventEmitter.call(this);
 
@@ -36,6 +39,10 @@ function Overlay(overlay) {
 
 util.inherits(Overlay, events.EventEmitter);
 
+/**
+ * [toJSON description]
+ * @return {[type]} [description]
+ */
 Overlay.prototype.toJSON = function() {
 
 	return JSON.parse(JSON.stringify({
@@ -108,9 +115,10 @@ Overlay.getAll = function(callback) {
 };
 
 /**
- * Creates a new overlay object and saves it in the database
- * @param data - The data to populate the new overlay
- * @param callback - The function to call once the new overlay has been saved to the database
+ * [create description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
 Overlay.create = function(data, callback) {
 	js = new JaySchema();
@@ -151,10 +159,11 @@ Overlay.create = function(data, callback) {
 };
 
 /**
- * Saves changes to an existing overlay object to the database
- * @param id - The ID of the overlay to save
- * @param data - The data for the overlay
- * @param callback - The function to call once the overlay has been saved to the database
+ * [save description]
+ * @param  {[type]}   id       [description]
+ * @param  {[type]}   data     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
  */
 Overlay.save = function(id, data, callback) {
 	if (!validator.isInt(id)) {
@@ -219,9 +228,11 @@ Overlay.update = function(result, data, callback) {
 };
 
 /**
-* Deletes an overlay from the DB
-* @param id - The ID of the overlay to be deleted
-*/
+ * [delete description]
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
 Overlay.delete = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
@@ -238,6 +249,34 @@ Overlay.delete = function(id, callback) {
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback(null, null);
+    });
+};
+
+/**
+ * getAllRelatedVideos of a Location
+ * @param  {[type]}   id       [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+Overlay.getAllRelatedOverlays = function(id, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+
+    var query = [
+    'MATCH (location:Location)',
+    '<-[r:locatedAt]-',
+    '(overlay:Overlay)',
+    'WHERE id(location)=' + id,
+    'RETURN overlay'
+    ].join('\n');
+    
+    db.query(query, null, function(err, results) {
+        if (err) return callback(err);
+        var overlays = results.map(function(result) {
+            return new Overlay(result['overlay']);
+        });
+        callback(null, overlays);
     });
 };
 
