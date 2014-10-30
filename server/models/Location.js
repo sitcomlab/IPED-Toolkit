@@ -94,9 +94,9 @@ Location.prototype.setRelatedLocations = function(relatedLocations, callback) {
     if (!relatedLocations) return callback();
     var query = [
     'MATCH (me:Location), (location:Location)',
-    'WHERE id(me)=' + this.id,
-    'AND id(location) IN [' + relatedLocations.toString() + ']',
-    'CREATE UNIQUE (me)-[:relatedTo]->(location)'
+    ' WHERE id(me)=' + this.id,
+    ' AND id(location) IN [' + relatedLocations.toString() + ']',
+    ' CREATE UNIQUE (me)-[:relatedTo]->(location)'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
@@ -165,7 +165,7 @@ Location.prototype.getOverlays = function(callback) {
 Location.prototype.setOverlays = function(overlays, callback) {
     if (!overlays) return callback();
     var query = [
-    'MATCH (me:Location), (overlay:Overlays)',
+    'MATCH (me:Location), (overlay:Overlay)',
     'WHERE id(me)=' + this.id,
     'AND id(overlay) IN [' + overlays.toString() + ']',
     'CREATE UNIQUE (me)<-[:locatedAt]-(overlay)'
