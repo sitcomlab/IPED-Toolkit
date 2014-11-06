@@ -45,7 +45,7 @@ define(['backbonejs/js/backbone',
                                         return 'label label-primary';
                                     }
                                 });
-                            thiz.model.get('tags')
+                            thiz.model.overlay.get('tags')
                                 .forEach(function(tag) {
                                     thiz.$el.find('select[data-role=tagsinput]')
                                         .tagsinput('add', tag);
