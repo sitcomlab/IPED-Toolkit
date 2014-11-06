@@ -45,6 +45,11 @@ define(['backbonejs/js/backbone',
                                         return 'label label-primary';
                                     }
                                 });
+                            thiz.model.get('tags')
+                                .forEach(function(tag) {
+                                    thiz.$el.find('select[data-role=tagsinput]')
+                                        .tagsinput('add', tag);
+                                });
                             thiz.$el.find('.bootstrap-tagsinput')
                                 .addClass('form-group')
                                 .css('padding-top', '5px')
