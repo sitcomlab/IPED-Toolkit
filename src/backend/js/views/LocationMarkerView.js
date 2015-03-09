@@ -74,7 +74,7 @@ define(['backbonejs/js/backbone',
                                     thiz.$el.find('.videos[data-location=' + location.get('id') + '] .spinner')
                                         .remove();
                                     thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
-                                        .html(thiz.$el.find('.videos')
+                                        .html(thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
                                             .html() +
                                             '<span>' + model.get('name') + ' (' + model.get('description') + ')' + '</span>');
                                 },
