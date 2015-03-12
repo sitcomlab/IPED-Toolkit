@@ -345,11 +345,9 @@ define(['threejs/js/three.min',
                     }, this);
                     break;
                 case 82: // R
-                    /*
-          			this.controls.forEach(function(control) {
-          				control.setMode("scale");
-          			}, this);
-              */
+          	     this.controls.forEach(function(control) {
+          		control.setMode("scale");
+          		}, this);
                     break;
                 case 187:
                 case 107: // +,=,num+
