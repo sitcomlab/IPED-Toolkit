@@ -100,6 +100,8 @@ define(['threejs/js/three.min',
                 setTimeout(function() {
                     thiz.toggleUI();
                 }, 1000);
+            } else {
+                this.cssRenderer.domElement.style.zIndex = '9999';
             }
         }
 
