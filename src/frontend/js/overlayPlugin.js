@@ -101,7 +101,11 @@ define(['threejs/js/three.min',
                     thiz.toggleUI();
                 }, 1000);
             } else {
-                this.cssRenderer.domElement.style.zIndex = '9999';
+                var thiz = this;
+                setTimeout(function() {
+                    thiz.toggleUI();
+                    thiz.toggleUI();
+                }, 1000);
             }
         }
 
