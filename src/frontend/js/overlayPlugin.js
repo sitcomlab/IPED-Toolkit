@@ -100,12 +100,6 @@ define(['threejs/js/three.min',
                 setTimeout(function() {
                     thiz.toggleUI();
                 }, 1000);
-            } else {
-                var thiz = this;
-                setTimeout(function() {
-                    thiz.toggleUI();
-                    thiz.toggleUI();
-                }, 1000);
             }
         }
 
@@ -150,6 +144,7 @@ define(['threejs/js/three.min',
             });
             this.cssRenderer.setSize(this.width, this.height);
             this.cssRenderer.domElement.style.position = 'absolute';
+            this.cssRenderer.domElement.style.zIndex = '9999';
             this.jqueryElement.append(this.cssRenderer.domElement);
 
             if (Detector.webgl) {
