@@ -2,7 +2,11 @@
  * The iPED Toolkit
  * Remote
  *
- * (c) 2014 Morin Ostkamp
+ * (c) 2014 (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
+ * Institute for Geoinformatics (ifgi), University of Münster
+ *
+ * Voice control
+ * (c) 2015 Nicholas Schiestel
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
@@ -24,12 +28,11 @@ require(['jsnlog/js/jsnlog.min',
         'backend/models/Videos',
 
         // Views
-        'remote/views/LocationsListView'
+        'remote/views/LocationsListView',
+
     ],
 
-    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap,
-        Location, Locations, Video, Videos,
-        LocationsListView) {
+    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap, Location, Locations, Video, Videos, LocationsListView) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -46,15 +49,107 @@ require(['jsnlog/js/jsnlog.min',
         })();
 
         /**
+         * Global variable for Logger
+         */
+        var counter = 0;
+
+        /**
+         * Global variables for micPermission in frontend and selected language
+         * @type {Number}
+         */
+        var micPermission = 0;
+        var language = null;
+
+        /**
          * The remote of the iPED Toolkit.
          * @constructor
          */
         function Remote() {
             var thiz = this;
 
+            // variables for voice control
+            this.micstatus = 0;
+
             _.bindAll(this, 'setLocationId', 'fetchRelatedLocations');
 
             this.socket = io();
+
+
+            this.socket.on('setMicPermission', function(data) {
+                micPermission = data;
+                JL('iPED Toolkit.Remote - setMicPermission')
+                    .debug(data);
+            });
+
+
+            this.socket.on('setRemoteSelectedLanguage', function(data) {
+                language = data;
+                JL('iPED Toolkit.Remote - setRemoteSelectedLanguage')
+                    .debug(data);
+
+                // Select radio button if language was already defined
+                if (language != null) {
+                    $('input[name="languages"][value=' + language + ']')
+                        .prop('checked', true);
+                }
+            });
+
+
+            /*
+                Logger
+                for log all neccessary timeintervals in milliseconds
+                (1) user input / recording invertval
+                (2) from stop recording to wit.ai response
+                (3) from stop recording to wit.ai response and server recieved wit results
+                (4) from stop recording to neo4j response
+                (5) from step recording to frontend recieved result
+                (6) from start recording to frontend recieved result (complete interval)
+             */
+            this.socket.on('logger', function(data) {
+                JL('iPED Toolkit.Remote - Logger')
+                    .debug(data);
+
+                counter = counter + 1;
+
+                if (data.success) {
+                    var _status = '<td style="color:green; font-weight: bold;">' + data.success + "</td>";
+                } else {
+                    var _status = '<td style="color:red; font-weight: bold;">' + data.errMsg + "</td>";
+                }
+
+                // Preparing Logger
+                var lengthMicrophoneInput = data.micStop - data.micStart;
+                var lengthMicStopWitOnResult = data.witOnResult - data.micStop;
+                var lengthMicStopWitOnResponse = data.witOnResponse - data.micStop;
+                var lengthMicStopNeo4jOnResponse = data.neo4jOnResponse - data.micStop;
+                var lengthMicStopFrontendRecieved = data.frontendRecieved - data.micStop;
+                var lengthMicStartFrontendRecieved = data.frontendRecieved - data.micStart;
+
+                var now = new Date(data.currTimestamp);
+
+                // Preparing current timestamp when microphone was started
+                var curr_date = now.getDate();
+                var curr_month = now.getMonth();
+                var curr_year = now.getFullYear();
+                var curr_hours = now.getHours();
+                var curr_minutes = now.getMinutes();
+                var curr_seconds = now.getSeconds();
+
+                if (curr_minutes < 10) {
+                    curr_minutes = "0" + curr_minutes;
+                }
+                if (curr_seconds < 10) {
+                    curr_seconds = "0" + curr_seconds;
+                }
+                var strTimestamp = curr_hours + ":" + curr_minutes + ":" + curr_seconds;
+
+                $('#logger')
+                    .append(
+                        '<table class="table"><tr><b>[ ' + counter + ' ]<b></tr><tr></tr>' +
+                        "<tr><td><b>Timestamp</b></td><td>" + curr_year + '-' + curr_month + '-' + curr_date + ' ' + strTimestamp + "</td></tr>" + "<tr><td><b>MessageID</b></td><td>" + data.msg_id + "</td></tr>" + "<tr><td><b>MessageBody</b></td><td>" + data.msg_body + "</td></tr>" + '<tr><td><b>Intent</b></td><td style="color:blue; font-weight: bold;">' + data.outcome.intent + "</td></tr>" + "<tr><td><b>Confidence</b></td><td>" + data.outcome.confidence + "</td></tr>" + "<tr><td><b>Current LocationID</b></td><td>" + data.locationID + "</td></tr>" + "<tr><td><b>Previous LocationID </b></td><td>" + data.previousLocationID + "</td></tr>" + "<tr><td><b>Status</b></td>" + _status + "</tr>" + "<tr><td><b>Times</b></td><td>(1) " + lengthMicrophoneInput + "<br>(2) " + lengthMicStopWitOnResult + "<br>(3) " + lengthMicStopWitOnResponse + "<br>(4) " + lengthMicStopNeo4jOnResponse + "<br>(5) " + lengthMicStopFrontendRecieved + "<br>(6) " + lengthMicStartFrontendRecieved + "</td></tr>" + "</table><hr><br>"
+                    );
+            });
+
 
             this.locations = new Locations();
             this.relatedLocations = new Locations();
@@ -78,6 +173,9 @@ require(['jsnlog/js/jsnlog.min',
                         .error(repsonse);
                 }
             });
+
+            // By relouding the Remote Control App or Initialising check if micPermission in Frontend was already set
+            this.askForMicPermission();
         }
 
         /**
@@ -118,9 +216,110 @@ require(['jsnlog/js/jsnlog.min',
             });
         };
 
+        /**
+         * Activates/Deactivates over Websockets for Frontend with real Microphone access over Google Chromes RTC
+         * @param status - Boolean (true) for activating the Microphone over RTC
+         */
+        Remote.prototype.activateMicrophone = function(language) {
+
+            this.socket.emit('activateMic', language);
+        };
+
+        /**
+         * [listen description]
+         * @return {[type]} [description]
+         */
+        Remote.prototype.listen = function() {
+
+            if (this.micstatus == 0) {
+
+                this.micstatus = 1;
+                JL('iPED Toolkit.Remote')
+                    .debug('Listen: ' + this.micstatus);
+                $('.mic-icon')
+                    .css('border-color', 'red');
+                this.micStart = new Date()
+                    .getTime();
+                this.socket.emit('listen', this.micstatus);
+
+            } else {
+
+                var micEnd = new Date()
+                    .getTime();
+
+                // Wait for delay in Frontend: setTimeout(500, because of sound playing, when activating mic and recording, so that no overlapping occurs)
+                if (this.micstatus == 1 && micEnd - this.micStart < 500) {
+                    //console.log("Wait for delay in Frontend");
+                } else {
+
+                    this.micstatus = 0;
+                    JL('iPED Toolkit.Remote')
+                        .debug('Stop listening ' + this.micstatus);
+                    $('.mic-icon')
+                        .css('border-color', 'black');
+                    this.socket.emit('listen', this.micstatus);
+                }
+            }
+        };
+
+        /*
+            Check Frontend if micPersmission was already setup with a language
+         */
+        Remote.prototype.askForMicPermission = function() {
+            var data = null;
+            this.socket.emit('getFrontendMicPermission', function(data) {
+                JL('iPED Toolkit.Remote - getFrontendMicPermission:')
+                    .debug(data);
+            });
+        }
+
         $(document)
             .ready(function() {
                 var remote = new Remote();
+
+                /**
+                 * Voice Control: Select a language before you can connect to Wit.Ai
+                 * It activates the microphone in the Browser, after user accept the permission in Frontend
+                 */
+                $('#language')
+                    .click(function() {
+
+                        if ($("input[name='languages']:checked")
+                            .length === 0) {
+                            alert("Bitte zuerst eine Sprache wählen und dann im Frontend das Mikrofon freigeben! \n\n" +
+                                "Falls Sie Probleme haben, probieren Sie einen Neustart des Frontends, sowie der Remote Control App!");
+                        } else {
+                            var lang = $("input[name='languages']:checked")
+                                .val();
+                            JL('iPED Toolkit.Remote')
+                                .debug('Activate microphone using language: ' + lang);
+
+                            // setup Microphone and access to Wit.Ai with selected Language in Frontend
+                            remote.activateMicrophone(lang);
+                        }
+                    });
+
+                /**
+                 * Voice Control: Start and stop recording by using the microphone button
+                 * Frontend will be listening, if you have permission to the microphone in the Frontend
+                 * and you have setup a connection to Wit.Ai with a selected language
+                 * It is not possible at the moment to switch from an language to another, whitout restarting the Frontend
+                 * and Remote Control App. It depends on the connection to Wit.Ai
+                 */
+                $('#microphone')
+                    .click(function() {
+
+                        JL('iPED Toolkit.Remote')
+                            .debug("remoteMicPermission: " + micPermission);
+
+                        if (micPermission == 1) {
+                            remote.listen();
+                        } else {
+                            alert("Bitte geben Sie erst im Frontend das Mikrofon frei! \n\n" +
+                                "Falls Sie Probleme haben, probieren Sie einen Neustart des Frontends, sowie der Remote Control App!");
+                        }
+                    });
             });
+
     }
 );

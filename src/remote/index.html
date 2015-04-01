@@ -9,10 +9,15 @@
      *
      * (c) 2014 Morin Ostkamp
      * Institute for Geoinformatics (ifgi), University of Münster
+     *
+     * Voice control
+     * (c) 2015 Nicholas Schiestel
+     * Institute for Geoinformatics (ifgi), University of Münster
      */
     </script>
 
     <!-- iPED Remote -->
+
     <!--(if target master)><!-->
     <title>iPED Toolkit (Master)</title>
     <!--<!(endif)-->
@@ -27,15 +32,40 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <link rel="stylesheet" href="css/remote.css" />
 </head>
 
 <body>
     <div class="container">
-        <h1>iPED Toolkit Remote</h1>
-
+        <!--<h1>iPED Toolkit Remote</h1>-->
+        <br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Voice Control</h3>
+            </div>
+            <div class="panel-body">
+                <center>
+                    <br>
+                    <a href="#" id="microphone" type="btn btn-default" class="mic-link">
+                        <img src="images/mic.svg" class="mic-icon">
+                    </a>
+                    <br>
+                    <hr>
+                    <div class="radio">
+                        <label class="radio-inline">
+                            <input type="radio" name="languages" value="de"> German (Deutsch)
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="languages" value="en" disabled="disabled"> English (Englisch)
+                        </label>
+                        <a href="#" class="btn btn-primary btn-sm" id="language" role="button">OK</a>
+                    </div>
+                </center>
+            </div>
+        </div>
+        <br>
         <div class="panel-group" id="accordion">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -49,7 +79,7 @@
                     </div>
                 </div>
             </div>
-
+            <br>
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -61,6 +91,17 @@
                         <img class="spinner" src="images/spinner_text.gif" />
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Logger</h3>
+            </div>
+            <div class="panel-body">
+                <div id="logger" class="table-responsive">
+                    <!-- logged data -->
+                </div>
+                <br>
             </div>
         </div>
     </div>
