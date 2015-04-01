@@ -41,9 +41,9 @@ define(['backbonejs/js/backbone',
                     .setView(muenster, zoom);
                 //'http://{s}.tile.osm.org/{z}/{x}/{y}.png'
                 L.tileLayer('http://otile1.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-                    attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-                    maxZoom: 18
-                })
+                        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+                        maxZoom: 18
+                    })
                     .addTo(this.map);
 
                 this.markersFeatureGroup = L.featureGroup()

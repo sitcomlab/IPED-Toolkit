@@ -126,7 +126,11 @@ define(['threejs/js/three.min',
         OverlayPlugin.prototype.init = function() {
             this.video = $('#iPED-Video');
             this.video.on('loadeddata', this.onResize); // Give browsers time to recalculate dimensions
-			$( window ).resize(function() {this.render();  console.log("Resize event recognized -> rendering initiated");}); // Recalculate dimensions when browser window is resized
+            $(window)
+                .resize(function() {
+                    this.render();
+                    console.log("Resize event recognized -> rendering initiated");
+                }); // Recalculate dimensions when browser window is resized
             // Create DOM element: <div id="iPED-Overlay"></div>
             if (this.jqueryElement) {
                 this.jqueryElement.remove();
@@ -163,7 +167,7 @@ define(['threejs/js/three.min',
             this.scene = new THREE.Scene();
             this.gridhelper = new THREE.GridHelper(500, 100);
             this.gridhelper.setColors('#00ff00', '#00ff00')
-            //this.scene.add(this.gridhelper);
+                //this.scene.add(this.gridhelper);
 
             this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 1, 3000);
             this.camera.position.set(0, 101, 300);
@@ -346,9 +350,9 @@ define(['threejs/js/three.min',
                     }, this);
                     break;
                 case 82: // R
-          	     this.controls.forEach(function(control) {
-          		control.setMode("scale");
-          		}, this);
+                    this.controls.forEach(function(control) {
+                        control.setMode("scale");
+                    }, this);
                     break;
                 case 187:
                 case 107: // +,=,num+
