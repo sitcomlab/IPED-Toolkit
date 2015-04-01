@@ -14,7 +14,9 @@ module.exports = function(grunt) {
         'public/frontend/js/webRTC.js'                    : 'src/frontend/js/webRTC.js',
         'public/frontend/js/chromaKeyPlugin.js'           : 'src/frontend/js/chromaKeyPlugin.js',
         'public/frontend/css/frontend.css'                : 'src/frontend/css/frontend.css',
-        
+        'public/frontend/css/microphone.css'              : 'src/frontend/css/microphone.css',
+        'public/frontend/js/ion.sound.js'                 : 'src/frontend/js/ion.sound.js',
+
         // Remote
         'public/remote/index.html'                        : 'src/remote/index.html',
         'public/remote/js/remote.js'                      : 'src/remote/js/remote.js',
@@ -47,13 +49,15 @@ module.exports = function(grunt) {
         'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js',
         'public/backend/js/views/RouteView.js'            : 'src/backend/js/views/RouteView.js'
     };
-  
+
     copyFiles = [
         {expand: true, flatten: true, src: ['src/backend/images/**'], dest: 'public/backend/images/', filter: 'isFile'},
         {expand: true, flatten: true, src: ['src/frontend/images/**'], dest: 'public/frontend/images/', filter: 'isFile'},
+        {expand: true, flatten: true, src: ['src/frontend/sounds/**'], dest: 'public/frontend/sounds/', filter: 'isFile'},
+        {expand: true, flatten: true, src: ['src/frontend/css/fonts**'], dest: 'public/frontend/css/fonts/', filter: 'isFile'},
         {expand: true, flatten: true, src: ['src/remote/images/**'], dest: 'public/remote/images/', filter: 'isFile'}
     ];
-	
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
