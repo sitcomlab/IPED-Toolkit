@@ -72,8 +72,8 @@ var log = require('./global/log');
  1. Server-Settings
  *********************************************************/
 var VERSION = '0.0.2';
-var HTTP_PORT = 7070;
-var HTTPS_PORT = 7443;
+var HTTP_PORT = 8080;
+var HTTPS_PORT = 8443;
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function(val, index, array) {

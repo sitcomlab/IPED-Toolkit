@@ -1,8 +1,11 @@
 var neo4j = require('neo4j');
 var log = require('./log');
 
-var NEO4J_PORT = 7474;
-var NEO4J_HOST = 'http://localhost';
+
+//var NEO4J_PORT = 7474;
+var NEO4J_PORT = 7575;
+//var NEO4J_HOST = 'http://localhost';
+var NEO4J_HOST = 'http://giv-sitcomlab.uni-muenster.de';
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function(val, index, array) {
