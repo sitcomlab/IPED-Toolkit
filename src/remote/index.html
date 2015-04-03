@@ -39,33 +39,44 @@
 
 <body>
     <div class="container">
-        <!--<h1>iPED Toolkit Remote</h1>-->
-        <br>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Voice Control</h3>
-            </div>
-            <div class="panel-body">
-                <center>
-                    <br>
-                    <a href="#" id="microphone" type="btn btn-default" class="mic-link">
-                        <img src="images/mic.svg" class="mic-icon">
-                    </a>
-                    <br>
-                    <hr>
-                    <div class="radio">
-                        <label class="radio-inline">
-                            <input type="radio" name="languages" value="de"> German (Deutsch)
-                        </label>
-                        <label class="radio-inline">
-                            <input type="radio" name="languages" value="en" disabled="disabled"> English (Englisch)
-                        </label>
-                        <a href="#" class="btn btn-primary btn-sm" id="language" role="button">OK</a>
-                    </div>
-                </center>
-            </div>
+        <div id="remoteControlTitle">
+            <h1>iPED Toolkit Remote</h1>
         </div>
         <br>
+        <div id="errorMessages"></div>
+        <div class="panel-group">
+            <div class="panel panel-primary" id="voiceControlPanel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#useVoiceControl" id="voiceControlTitle">Voice Control</a>
+                    </h3>
+                </div>
+                <div id="useVoiceControl" class="panel-collapse collapse">
+                    <div id="vc" class="panel-body">
+
+                        <center>
+                            <br>
+                            <a href="#" id="microphone" type="btn btn-default" class="mic-link">
+                                <img src="images/mic.svg" class="mic-icon">
+                            </a>
+                            <br>
+                            <hr>
+                            <div class="radio">
+                                <label class="radio-inline">
+                                    <input type="radio" name="languages" value="de"> German (Deutsch)
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="languages" value="en" disabled="disabled"> English (Englisch)
+                                </label>
+                                <a href="#" class="btn btn-primary btn-sm" id="language" role="button">OK</a>
+                            </div>
+                        </center>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="panel-group" id="accordion">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -93,17 +104,34 @@
                 </div>
             </div>
         </div>
+        <!-- Old BA-Code
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Logger</h3>
             </div>
             <div class="panel-body">
-                <div id="logger" class="table-responsive">
-                    <!-- logged data -->
+                <div id="logger" class="table-responsive"> -->
+        <!-- logged data -->
+        <!--</div>
+        <br>
+        </div>
+        </div>-->
+
+        <!-- new Logger Panel -->
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#loggerContent">Logger</a>
+                    </h3>
                 </div>
-                <br>
+                <div id="loggerContent" class="panel-collapse collapse">
+                    <div id="logger" class="panel-body"></div>
+                </div>
             </div>
         </div>
+
+
     </div>
 
     <script src="../lib/requirejs/js/config.js"></script>

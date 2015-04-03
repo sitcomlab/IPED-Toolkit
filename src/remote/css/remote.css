@@ -31,3 +31,15 @@ html {}
     color: #428bca;
     text-decoration: none;
 }
+/**
+ * Logger
+ */
+
+.logger {
+    border-collapse: collapse;
+}
+
+.logger td,
+th {
+    padding: 3px;
+}

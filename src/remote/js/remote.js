@@ -79,6 +79,23 @@ require(['jsnlog/js/jsnlog.min',
                 micPermission = data;
                 JL('iPED Toolkit.Remote - setMicPermission')
                     .debug(data);
+
+                if (micPermission == 1) {
+                    $('#voiceControlPanel')
+                        .removeClass("panel-primary");
+                    $('#voiceControlPanel')
+                        .addClass("panel-success");
+                    $('#voiceControlTitle')
+                        .html("Voice Control (ready to use)");
+                } else {
+                    $('#voiceControlPanel')
+                        .removeClass("panel-success");
+                    $('#voiceControlPanel')
+                        .addClass("panel-primary");
+                    $('#voiceControlTitle')
+                        .html("Voice Control");
+                }
+
             });
 
 
@@ -92,6 +109,8 @@ require(['jsnlog/js/jsnlog.min',
                     $('input[name="languages"][value=' + language + ']')
                         .prop('checked', true);
                 }
+
+
             });
 
 
@@ -111,11 +130,34 @@ require(['jsnlog/js/jsnlog.min',
 
                 counter = counter + 1;
 
+
                 if (data.success) {
-                    var _status = '<td style="color:green; font-weight: bold;">' + data.success + "</td>";
+                    $('#logger')
+                        .prepend(
+
+                            '<div class="alert alert-success" role="alert"><div class="table-responsive"><table class="logger"><tr><th><u>' + counter + '. Command</u></th><th></th></tr><tr><td><b>Current LocationID: </b>' + data.locationID + '</td><td>' + '<b>Previous LocationID: </b>' + data.previousLocationID + '</td></tr><tr><th>MessageBody:</th><td>' + data.msg_body + '</td></tr><tr><th>Intent:</th><td>' + data.outcome.intent + '</td></tr><tr><th>Confidence:</th><td>' + data.outcome.confidence + '</td></tr></div></div>'
+
+                        );
+
+                    // Clean old ErrorMessages
+                    $('#errorMessages')
+                        .html();
+
                 } else {
-                    var _status = '<td style="color:red; font-weight: bold;">' + data.errMsg + "</td>";
+                    $('#logger')
+                        .prepend(
+
+                            '<div class="alert alert-danger" role="alert"><div class="table-responsive"><table class="logger"><tr><th><u>' + counter + '. Command</u></th><th>' + data.errMsg + '</th></tr><tr><td><b>Current LocationID: </b>' + data.locationID + '</td><td>' + '<b>Previous LocationID: </b>' + data.previousLocationID + '</td></tr><tr><th>MessageBody:</th><td>' + data.msg_body + '</td></tr><tr><th>Intent:</th><td>' + data.outcome.intent + '</td></tr><tr><th>Confidence:</th><td>' + data.outcome.confidence + '</td></tr></div></div>'
+
+                        );
+
+                    $('#errorMessages')
+                        .html(
+                            '<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>' + data.errMsg + '</strong></div>');
                 }
+
+
+                /* OLD VERSION IN Bsc-theses:
 
                 // Preparing Logger
                 var lengthMicrophoneInput = data.micStop - data.micStart;
@@ -143,11 +185,21 @@ require(['jsnlog/js/jsnlog.min',
                 }
                 var strTimestamp = curr_hours + ":" + curr_minutes + ":" + curr_seconds;
 
+
+                if (data.success) {
+                    var _status = '<td style="color:green; font-weight: bold;">' + data.success + "</td>";
+                } else {
+                    var _status = '<td style="color:red; font-weight: bold;">' + data.errMsg + "</td>";
+                }
+
+
                 $('#logger')
-                    .append(
-                        '<table class="table"><tr><b>[ ' + counter + ' ]<b></tr><tr></tr>' +
+                            .append(
+
+                        '<table class="table"><tr></tr><tr></tr>' +
                         "<tr><td><b>Timestamp</b></td><td>" + curr_year + '-' + curr_month + '-' + curr_date + ' ' + strTimestamp + "</td></tr>" + "<tr><td><b>MessageID</b></td><td>" + data.msg_id + "</td></tr>" + "<tr><td><b>MessageBody</b></td><td>" + data.msg_body + "</td></tr>" + '<tr><td><b>Intent</b></td><td style="color:blue; font-weight: bold;">' + data.outcome.intent + "</td></tr>" + "<tr><td><b>Confidence</b></td><td>" + data.outcome.confidence + "</td></tr>" + "<tr><td><b>Current LocationID</b></td><td>" + data.locationID + "</td></tr>" + "<tr><td><b>Previous LocationID </b></td><td>" + data.previousLocationID + "</td></tr>" + "<tr><td><b>Status</b></td>" + _status + "</tr>" + "<tr><td><b>Times</b></td><td>(1) " + lengthMicrophoneInput + "<br>(2) " + lengthMicStopWitOnResult + "<br>(3) " + lengthMicStopWitOnResponse + "<br>(4) " + lengthMicStopNeo4jOnResponse + "<br>(5) " + lengthMicStopFrontendRecieved + "<br>(6) " + lengthMicStartFrontendRecieved + "</td></tr>" + "</table><hr><br>"
                     );
+                */
             });
 
 
@@ -277,6 +329,8 @@ require(['jsnlog/js/jsnlog.min',
             .ready(function() {
                 var remote = new Remote();
 
+                var collapsed = false;
+
                 /**
                  * Voice Control: Select a language before you can connect to Wit.Ai
                  * It activates the microphone in the Browser, after user accept the permission in Frontend
@@ -319,6 +373,24 @@ require(['jsnlog/js/jsnlog.min',
                                 "Falls Sie Probleme haben, probieren Sie einen Neustart des Frontends, sowie der Remote Control App!");
                         }
                     });
+
+                /**
+                 * Hide Header if Voice Control is in use
+                 */
+                $('#voiceControlTitle')
+                    .click(function() {
+
+                        if (!collapsed) {
+                            $('#remoteControlTitle')
+                                .hide();
+                            collapsed = true;
+                        } else {
+                            $('#remoteControlTitle')
+                                .show();
+                            collapsed = false;
+                        }
+                    });
+
             });
 
     }
