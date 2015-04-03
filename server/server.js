@@ -246,6 +246,28 @@ var socketHandler = function(socket) {
 
     });
 
+
+    /*
+
+     */
+    socket.on('showHideOverlays', function(data) {
+
+        log.debug({data: data}, 'showHideOverlays:');
+
+        io.emit('setShowHideOverlays', data);
+
+    });
+
+
+    /*
+
+     */
+    socket.on('changeOverlayStatus', function(data) {
+
+        io.emit('changeShowHideOverlays', data);
+
+    });
+
 };
 var io = socketio.listen(httpServer);
 io.on('connection', socketHandler);

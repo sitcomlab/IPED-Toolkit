@@ -18,7 +18,7 @@ var locationSchema = require('../schemas/location');
 // The model for a location
 function Location(location) {
     events.EventEmitter.call(this);
-    
+
     this.id = location.id;
     this.name = location.data.name;
     this.description = location.data.description;
@@ -47,7 +47,7 @@ Location.prototype.toJSON = function() {
         relatedLocations: this.relatedLocations,
         videos: this.videos,
         overlays: this.overlays
-    })); 
+    }));
 };
 
 /**
@@ -55,7 +55,7 @@ Location.prototype.toJSON = function() {
 */
 Location.prototype.load = function() {
     var thiz = this;
-    
+
     async.parallel([
         function(callback) { thiz.getRelatedLocations(callback); },
         function(callback) { thiz.getVideos(callback); },
@@ -78,7 +78,7 @@ Location.prototype.getRelatedLocations = function(callback) {
     'WHERE id(me)=' + this.id,
     'RETURN location'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         thiz.relatedLocations = [];
@@ -98,7 +98,7 @@ Location.prototype.setRelatedLocations = function(relatedLocations, callback) {
     ' AND id(location) IN [' + relatedLocations.toString() + ']',
     ' CREATE UNIQUE (me)-[:relatedTo]->(location)'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback();
@@ -114,7 +114,7 @@ Location.prototype.getVideos = function(callback) {
     'WHERE id(location)=' + this.id,
     'RETURN video'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         thiz.videos = [];
@@ -134,7 +134,7 @@ Location.prototype.setVideos = function(videos, callback) {
     'AND id(video) IN [' + videos.toString() + ']',
     'CREATE UNIQUE (me)<-[:wasRecordedAt]-(video)'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback();
@@ -150,7 +150,7 @@ Location.prototype.getOverlays = function(callback) {
     'WHERE id(location)=' + this.id,
     'RETURN overlay'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         thiz.overlays = [];
@@ -170,7 +170,7 @@ Location.prototype.setOverlays = function(overlays, callback) {
     'AND id(overlay) IN [' + overlays.toString() + ']',
     'CREATE UNIQUE (me)<-[:locatedAt]-(overlay)'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback();
@@ -186,14 +186,14 @@ Location.get = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
     'MATCH (location:Location)',
     'WHERE id(location)=' + id,
     'AND location:Location',
     'RETURN location'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         if (result.length == 0) {
@@ -214,9 +214,10 @@ Location.getAll = function(callback) {
     'MATCH (location:Location)',
     'RETURN location'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
+
         var locations = result.map(function(result) {
             return new Location(result['location']);
         });
@@ -235,7 +236,7 @@ Location.create = function(data, callback) {
         if (err) {
             return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
         }
-        
+
         var query = [
         'CREATE (location:Location {data})',
         'RETURN location'
@@ -249,11 +250,11 @@ Location.create = function(data, callback) {
                 lon: data.lon
             }
         };
-    
+
         db.query(query, params, function(err, result) {
            if (err) return callback(err);
            Location.update(result, data, callback);
-        }); 
+        });
     });
 };
 
@@ -267,13 +268,13 @@ Location.save = function(id, data, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     js = new JaySchema();
     js.validate(data, locationSchema.putLocation, function(err) {
         if (err) {
             return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
         }
-        
+
         Location.get(id, function(err, location) {
             if (err) return callback(err);
             var query = [
@@ -292,7 +293,7 @@ Location.save = function(id, data, callback) {
                     lon: data.lon
                 }
             };
-    
+
             db.query(query, params, function(err, result) {
                if (err) return callback(err);
                Location.update(result, data, callback);
@@ -312,14 +313,14 @@ Location.update = function(result, data, callback) {
     var relatedLocations = new Location({data: data}).relatedLocations;
     var videos = new Location({data: data}).videos;
     var overlays = new Location({data: data}).overlays;
-           
+
     async.parallel([
         function(callback) { location.setRelatedLocations(relatedLocations, callback); },
         function(callback) { location.setVideos(videos, callback); },
         function(callback) { location.setOverlays(overlays, callback); }
         ], function(err, result) {
             if (err) return callback(err);
-            nodeLoader.load(location, callback); 
+            nodeLoader.load(location, callback);
         });
 };
 
@@ -331,7 +332,7 @@ Location.delete = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
     'MATCH (me:Location)',
     'WHERE id(me)=' + id,
@@ -339,7 +340,7 @@ Location.delete = function(id, callback) {
     'OPTIONAL MATCH (me)-[r]-()',
     'DELETE r, me'
     ].join('\n');
-        
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback(null, null);

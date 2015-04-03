@@ -67,12 +67,44 @@ require(['jsnlog/js/jsnlog.min',
         function Remote() {
             var thiz = this;
 
+            // variable for show/hide Overlays
+            var overlayStatus = true;
+
             // variables for voice control
             this.micstatus = 0;
 
             _.bindAll(this, 'setLocationId', 'fetchRelatedLocations');
 
             this.socket = io();
+
+
+            this.socket.on('changeShowHideOverlays', function(data) {
+
+                overlayStatus = data;
+
+                JL('iPED Toolkit.Remote - showHideOverlays')
+                    .debug(data);
+
+                if (!remote.overlayStatus) {
+                    $('#overlayControl')
+                        .removeClass("panel-default");
+                    $('#overlayControl')
+                        .addClass("panel-success");
+                    $('#showHideOverlays')
+                        .html("Overlays (enabled)");
+
+                } else {
+                    $('#overlayControl')
+                        .removeClass("panel-success");
+                    $('#overlayControl')
+                        .addClass("panel-default");
+                    $('#showHideOverlays')
+                        .html("Overlays (disabled)");
+
+                }
+
+            });
+
 
 
             this.socket.on('setMicPermission', function(data) {
@@ -230,6 +262,10 @@ require(['jsnlog/js/jsnlog.min',
             this.askForMicPermission();
         }
 
+
+
+
+
         /**
          * Emits the socket.io command to load the specified location and fetches corresponding related locations
          * @param locationId - The ID of the location to load
@@ -325,6 +361,20 @@ require(['jsnlog/js/jsnlog.min',
             });
         }
 
+
+        /*
+            Show/Hide Overlays in Frontend
+         */
+        Remote.prototype.showHideOverlays = function() {
+
+            this.socket.emit('showHideOverlays', this.overlayStatus);
+
+            JL('iPED Toolkit.Remote - showHideOverlays:')
+                .debug(this.overlayStatus);
+        };
+
+
+
         $(document)
             .ready(function() {
                 var remote = new Remote();
@@ -389,6 +439,36 @@ require(['jsnlog/js/jsnlog.min',
                                 .show();
                             collapsed = false;
                         }
+                    });
+
+                /**
+                 * Show/Hide Overlay
+                 */
+                $('#overlayControl')
+                    .click(function() {
+
+                        if (remote.overlayStatus) {
+                            $('#overlayControl')
+                                .removeClass("panel-success");
+                            $('#overlayControl')
+                                .addClass("panel-default");
+                            $('#showHideOverlays')
+                                .html("Overlays (disabled)");
+                            remote.overlayStatus = false;
+                            remote.showHideOverlays();
+
+                        } else {
+                            $('#overlayControl')
+                                .removeClass("panel-default");
+                            $('#overlayControl')
+                                .addClass("panel-success");
+                            $('#showHideOverlays')
+                                .html("Overlays (enabled)");
+                            remote.overlayStatus = true;
+                            remote.showHideOverlays();
+
+                        }
+
                     });
 
             });

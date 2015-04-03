@@ -3,11 +3,10 @@ html {}
  * Microphone Button
  */
 
-.mic-link {
-    text-decoration: none;
-}
-
-.mic-link:hover {
+.mic-link:link,
+.mic-link:hover,
+.mic-link:active,
+.mic-link:active:visited {
     text-decoration: none;
 }
 

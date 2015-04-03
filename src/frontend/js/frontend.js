@@ -301,6 +301,25 @@ require(['jsnlog/js/jsnlog.min',
                 ion.sound.play("voice_command_failed");
             });
 
+
+
+            /*
+                Show/Hide Overlays from Remote or VoiceControl-Command
+             */
+            this.socket.on('setShowHideOverlays', function(data) {
+                JL('iPED Toolkit.Remote - setShowHideOverlays')
+                    .debug(data);
+
+                if (!data) {
+                    $('#iPED-Overlay')
+                        .hide();
+                } else {
+                    $('#iPED-Overlay')
+                        .show();
+                }
+            });
+
+
         };
 
         /**
