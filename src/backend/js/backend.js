@@ -308,16 +308,21 @@ require(['jsnlog/js/jsnlog.min',
                 description: '',
                 tags: [],
                 type: 'image',
-                url: window.location.origin + window.location.pathname + 'images/testimage.jpg',
-                w: 800,
-                h: 600,
+                //url: window.location.origin + window.location.pathname + 'images/testimage.jpg',
+                url: window.location.origin + '/media/image/',
+                w: 150,
+                h: 150,
                 x: 100,
                 y: 0,
                 z: 0,
                 d: 0,
                 rx: 0,
                 ry: 0,
-                rz: 0
+                rz: 0,
+                sx: 1,
+                sy: 1,
+                sz: 1
+
             });
             var overlayEditView = new OverlayEditView({
                 backend: this,

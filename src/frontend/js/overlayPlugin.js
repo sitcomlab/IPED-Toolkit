@@ -274,7 +274,7 @@ define(['threejs/js/three.min',
                                 var material = new THREE.MeshLambertMaterial({
                                     map: thiz.videoTextures[m]
                                 });
-                                thiz.videos[n].play(); // Make sure the video plays
+                                //thiz.videos[n].play(); // Make sure the video plays
                             }
 
                             var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
@@ -291,7 +291,9 @@ define(['threejs/js/three.min',
                                 transparent: true
                             });
 
-                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
+
+
+                            var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
@@ -302,21 +304,22 @@ define(['threejs/js/three.min',
                                 color: 0xff0000,
                                 side: THREE.DoubleSide
                             });
-                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
+                            var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
                     }
 
                     object._overlay = overlay;
-                    object.position.x = parseInt(overlay.get('x'), 10);
-                    object.position.y = parseInt(overlay.get('y'), 10);
-                    object.position.z = parseInt(overlay.get('z'), 10);
+                    object.position.x = parseFloat(overlay.get('x'));
+                    object.position.y = parseFloat(overlay.get('y'));
+                    object.position.z = parseFloat(overlay.get('z'));
                     object.rotation.x = parseFloat(overlay.get('rx'));
                     object.rotation.y = parseFloat(overlay.get('ry'));
                     object.rotation.z = parseFloat(overlay.get('rz'));
-                    object.scale.x = 0.25; //FIXME: This is a magic number without meaning
-                    object.scale.y = 0.25; //FIXME: This is a magic number without meaning
+                    object.scale.x = parseFloat(overlay.get('sx')); //FIX-ME: This is a magic number without meaning
+                    object.scale.y = parseFloat(overlay.get('sy')); //FIX-ME: This is a magic number without meaning
+                    object.scale.z = parseFloat(overlay.get('sz')); //FIX-ME: This is a magic number without meaning
 
                     var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
                     thiz.controls[n].addEventListener('change', thiz.updateOverlay);
@@ -434,6 +437,7 @@ define(['threejs/js/three.min',
             var overlay = event.target.object._overlay;
             var position = event.target.object.position;
             var rotation = event.target.object.rotation;
+            var scale = event.target.object.scale;
 
             overlay.set('x', position.x);
             overlay.set('y', position.y);
@@ -442,6 +446,10 @@ define(['threejs/js/three.min',
             overlay.set('rx', rotation.x);
             overlay.set('ry', rotation.y);
             overlay.set('rz', rotation.z);
+
+            overlay.set('sx', scale.x);
+            overlay.set('sy', scale.y);
+            overlay.set('sz', scale.z);
 
             this.render();
         }

@@ -35,6 +35,9 @@ function Overlay(overlay) {
 	this.rx = overlay.data.rx;
 	this.ry = overlay.data.ry;
 	this.rz = overlay.data.rz;
+	this.sx = overlay.data.sx;
+	this.sy = overlay.data.sy;
+	this.sz = overlay.data.sz;
 }
 
 util.inherits(Overlay, events.EventEmitter);
@@ -60,7 +63,10 @@ Overlay.prototype.toJSON = function() {
 		d : new Number(this.d),
 		rx : new Number(this.rx),
 		ry : new Number(this.ry),
-		rz : new Number(this.rz)
+		rz : new Number(this.rz),
+		sx : new Number(this.sx),
+		sy : new Number(this.sy),
+		sz : new Number(this.sz)
 	}));
 };
 
@@ -75,14 +81,14 @@ Overlay.get = function(id, callback) {
 	if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
 	    'MATCH (overlay:Overlay)',
 	    'WHERE id(overlay)=' + id,
 	    'AND overlay:Overlay',
 	    'RETURN overlay'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         if (result.length == 0) {
@@ -104,7 +110,7 @@ Overlay.getAll = function(callback) {
     	'MATCH (overlay:Overlay)',
     	'RETURN overlay'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         var overlays = result.map(function(result) {
@@ -128,7 +134,7 @@ Overlay.create = function(data, callback) {
 		}
 
 		var query = [
-			'CREATE (overlay:Overlay {data})', 
+			'CREATE (overlay:Overlay {data})',
 			'RETURN overlay'
 		].join('\n');
 		var params = {
@@ -146,7 +152,10 @@ Overlay.create = function(data, callback) {
 				d : data.d,
 				rx : data.rx,
 				ry : data.ry,
-				rz : data.rz
+				rz : data.rz,
+				sx : data.sx,
+				sy : data.sy,
+				sz : data.sz
 			}
 		};
 
@@ -180,10 +189,10 @@ Overlay.save = function(id, data, callback) {
 			if (err)
 				return callback(err);
 			var query = [
-				'MATCH (overlay:Overlay)', 
-				'WHERE id(overlay)=' + id, 
-				'AND overlay:Overlay', 
-				'SET overlay += {data}', 
+				'MATCH (overlay:Overlay)',
+				'WHERE id(overlay)=' + id,
+				'AND overlay:Overlay',
+				'SET overlay += {data}',
 				'RETURN overlay'
 			].join('\n');
 			var params = {
@@ -201,7 +210,10 @@ Overlay.save = function(id, data, callback) {
 					d : data.d,
 					rx : data.rx,
 					ry : data.ry,
-					rz : data.rz
+					rz : data.rz,
+					sx : data.sx,
+					sy : data.sy,
+					sz : data.sz
 				}
 			};
 
@@ -237,7 +249,7 @@ Overlay.delete = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
 	    'MATCH (me:Overlay)',
 	    'WHERE id(me)=' + id,
@@ -245,7 +257,7 @@ Overlay.delete = function(id, callback) {
 	    'OPTIONAL MATCH (me)-[r]-()',
 	    'DELETE r, me'
     ].join('\n');
-        
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback(null, null);
@@ -270,7 +282,7 @@ Overlay.getAllRelatedOverlays = function(id, callback) {
     'WHERE id(location)=' + id,
     'RETURN overlay'
     ].join('\n');
-    
+
     db.query(query, null, function(err, results) {
         if (err) return callback(err);
         var overlays = results.map(function(result) {
