@@ -128,14 +128,6 @@ httpServer.listen(HTTP_PORT, function() {
 
 
 /****************************
- Logger for Voice Control
- ****************************/
-var timestamp_1 = null;
-var timestamp_2 = null;
-var timestamp_3 = null;
-
-
-/****************************
  Socket.io (websockets)
  ****************************/
 var socketHandler = function(socket) {
@@ -208,19 +200,14 @@ var socketHandler = function(socket) {
      */
     socket.on('witResponse', function(data) {
 
-        // Logger
-        data.witOnResponse = new Date().getTime();
 
         log.debug({data: data}, 'witResponse:');
 
         vc.checkVoiceCommand(data, function(err, res) {
 
-            // Logger
-            data.neo4jOnResponse = new Date().getTime();
-
             if(!err && typeof res == "number") {
 
-                data.success = "Success";
+                data.success = true;
                 console.log("relatedLocationID for emit: " + res);
 
                 data.id = res;
@@ -228,6 +215,7 @@ var socketHandler = function(socket) {
 
             } else {
 
+                data.success = false;
                 data.errMsg = res;
 
                 io.emit('failed', data);

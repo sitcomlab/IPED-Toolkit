@@ -59,7 +59,6 @@ require(['jsnlog/js/jsnlog.min',
          */
         var currentLocation = null;
         var previousLocation = null;
-        var currTimestamp = null;
         var micStart = null;
         var micStop = null;
 
@@ -115,9 +114,6 @@ require(['jsnlog/js/jsnlog.min',
             };
             this.mic.onresult = function(intent, entities, res) {
 
-                var witOnResult = new Date()
-                    .getTime();
-
                 // add LocationID for Neo4J checking
                 if (currentLocation == null) {
                     res.locationID = null;
@@ -127,10 +123,8 @@ require(['jsnlog/js/jsnlog.min',
                 }
 
                 // add logging times
-                res.currTimestamp = currTimestamp;
                 res.micStart = micStart;
                 res.micStop = micStop;
-                res.witOnResult = witOnResult;
 
                 this.socket = io();
                 this.socket.emit('witResponse', res);
@@ -178,9 +172,6 @@ require(['jsnlog/js/jsnlog.min',
                 if (typeof data != "number") {
                     thiz.setLocationId(data.id);
 
-                    // Logger
-                    data.frontendRecieved = new Date()
-                        .getTime();
                     socket.emit('beforeMainLogger', data);
                 } else {
                     thiz.setLocationId(data);
@@ -188,7 +179,6 @@ require(['jsnlog/js/jsnlog.min',
 
                 JL('iPED Toolkit.Frontend')
                     .debug(data);
-
 
             });
 
@@ -262,7 +252,6 @@ require(['jsnlog/js/jsnlog.min',
                         thiz.mic.start();
 
                         // Logger
-                        currTimestamp = new Date();
                         micStart = new Date()
                             .getTime();
 

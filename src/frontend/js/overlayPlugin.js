@@ -242,8 +242,8 @@ define(['threejs/js/three.min',
                         case 'html':
                             var element = document.createElement('iframe');
                             element.src = overlay.get('url');
-                            element.style.width = parseInt(overlay.get('w'), 10) + 'px';
-                            element.style.height = parseInt(overlay.get('h'), 10) + 'px';
+                            element.style.width = parseFloat(overlay.get('w')) + 'px';
+                            element.style.height = parseFloat(overlay.get('h')) + 'px';
                             element.style.border = '0px';
 
                             object = new THREE.CSS3DObject(element);
@@ -277,7 +277,7 @@ define(['threejs/js/three.min',
                                 //thiz.videos[n].play(); // Make sure the video plays
                             }
 
-                            var geometry = new THREE.BoxGeometry(parseInt(overlay.get('w'), 10), parseInt(overlay.get('h'), 10), parseInt(overlay.get('d'), 10));
+                            var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
                             break;
@@ -317,9 +317,9 @@ define(['threejs/js/three.min',
                     object.rotation.x = parseFloat(overlay.get('rx'));
                     object.rotation.y = parseFloat(overlay.get('ry'));
                     object.rotation.z = parseFloat(overlay.get('rz'));
-                    object.scale.x = parseFloat(overlay.get('sx')); //FIX-ME: This is a magic number without meaning
-                    object.scale.y = parseFloat(overlay.get('sy')); //FIX-ME: This is a magic number without meaning
-                    object.scale.z = parseFloat(overlay.get('sz')); //FIX-ME: This is a magic number without meaning
+                    object.scale.x = parseFloat(overlay.get('sx'));
+                    object.scale.y = parseFloat(overlay.get('sy'));
+                    object.scale.z = parseFloat(overlay.get('sz'));
 
                     var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
                     thiz.controls[n].addEventListener('change', thiz.updateOverlay);
