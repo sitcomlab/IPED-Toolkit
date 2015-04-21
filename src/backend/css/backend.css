@@ -46,3 +46,17 @@
 .overlays span {
     display: block;
 }
+
+.rightSide {
+    float: right;
+}
+
+#textNone {
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.clear {
+    clear: both;
+}
