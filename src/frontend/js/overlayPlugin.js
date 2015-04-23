@@ -144,6 +144,7 @@ define(['threejs/js/three.min',
             });
             this.cssRenderer.setSize(this.width, this.height);
             this.cssRenderer.domElement.style.position = 'absolute';
+            this.cssRenderer.domElement.style.zIndex = '9999';
             this.jqueryElement.append(this.cssRenderer.domElement);
 
             if (Detector.webgl) {
@@ -345,11 +346,9 @@ define(['threejs/js/three.min',
                     }, this);
                     break;
                 case 82: // R
-                    /*
-          			this.controls.forEach(function(control) {
-          				control.setMode("scale");
-          			}, this);
-              */
+          	     this.controls.forEach(function(control) {
+          		control.setMode("scale");
+          		}, this);
                     break;
                 case 187:
                 case 107: // +,=,num+
