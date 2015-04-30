@@ -92,11 +92,24 @@ Location.prototype.getRelatedLocations = function(callback) {
 
 Location.prototype.setRelatedLocations = function(relatedLocations, callback) {
     if (!relatedLocations) return callback();
+    
+    // Delete old relations
+    var query = [
+    'MATCH (me:Location)-[r]->(location:Location)',
+    'WHERE id(me)=' + this.id,
+    'DELETE r;'
+    ].join('\n');
+    
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+    });
+    
+    // Create new relations
     var query = [
     'MATCH (me:Location), (location:Location)',
-    ' WHERE id(me)=' + this.id,
-    ' AND id(location) IN [' + relatedLocations.toString() + ']',
-    ' CREATE UNIQUE (me)-[:relatedTo]->(location)'
+    'WHERE id(me)=' + this.id,
+    'AND id(location) IN [' + relatedLocations.toString() + ']',
+    'CREATE UNIQUE (me)-[:relatedTo]->(location)'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
@@ -128,6 +141,19 @@ Location.prototype.getVideos = function(callback) {
 
 Location.prototype.setVideos = function(videos, callback) {
     if (!videos) return callback();
+    
+    // Delete old relations
+    var query = [
+    'MATCH (me:Location)<-[r]-(video:Video)',
+    'WHERE id(me)=' + this.id,
+    'DELETE r'
+    ].join('\n');
+    
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+    });
+    
+    // Set new relations
     var query = [
     'MATCH (me:Location), (video:Video)',
     'WHERE id(me)=' + this.id,
@@ -164,6 +190,19 @@ Location.prototype.getOverlays = function(callback) {
 
 Location.prototype.setOverlays = function(overlays, callback) {
     if (!overlays) return callback();
+
+    // Delete old relations
+    var query = [
+    'MATCH (me:Location)<-[r]-(overlay:Overlay)',
+    'WHERE id(me)=' + this.id,
+    'DELETE r;'
+    ].join('\n');
+    
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+    });
+    
+    // Create new relations
     var query = [
     'MATCH (me:Location), (overlay:Overlay)',
     'WHERE id(me)=' + this.id,
