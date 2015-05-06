@@ -60,3 +60,14 @@
 .clear {
     clear: both;
 }
+
+.editViewTable {
+    font-size: 10pt;
+}
+
+.row2 {
+    margin-top: 15px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}

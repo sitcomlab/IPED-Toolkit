@@ -31,6 +31,7 @@ module.exports = function(grunt) {
 
         'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
         'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
+        'public/backend/templates/videoEdit.tpl'          : 'src/backend/templates/videoEdit.tpl',
         'public/backend/templates/overlayEdit.tpl'        : 'src/backend/templates/overlayEdit.tpl',
         'public/backend/templates/aboutView.tpl'          : 'src/backend/templates/aboutView.tpl',
 
@@ -45,6 +46,7 @@ module.exports = function(grunt) {
         'public/backend/js/views/LocationMarkerView.js'   : 'src/backend/js/views/LocationMarkerView.js',
         'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
         'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
+        'public/backend/js/views/VideoEditView.js'        : 'src/backend/js/views/VideoEditView.js',
         'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js',
         'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js',
         'public/backend/js/views/RouteView.js'            : 'src/backend/js/views/RouteView.js'
