@@ -91,30 +91,32 @@ Location.prototype.getRelatedLocations = function(callback) {
 };
 
 Location.prototype.setRelatedLocations = function(relatedLocations, callback) {
+    var thiz = this;
+
     if (!relatedLocations) return callback();
-    
+
     // Delete old relations
     var query = [
-    'MATCH (me:Location)-[r]->(location:Location)',
+    'MATCH (me:Location)-[r:relatedTo]->(location:Location)',
     'WHERE id(me)=' + this.id,
     'DELETE r;'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
-    });
-    
-    // Create new relations
-    var query = [
-    'MATCH (me:Location), (location:Location)',
-    'WHERE id(me)=' + this.id,
-    'AND id(location) IN [' + relatedLocations.toString() + ']',
-    'CREATE UNIQUE (me)-[:relatedTo]->(location)'
-    ].join('\n');
-    
-    db.query(query, null, function(err, result) {
-        if (err) return callback(err);
-        callback();
+
+        // Create new relations
+        var query = [
+        'MATCH (me:Location), (location:Location)',
+        'WHERE id(me)=' + thiz.id,
+        'AND id(location) IN [' + relatedLocations.toString() + ']',
+        'CREATE UNIQUE (me)-[:relatedTo]->(location)'
+        ].join('\n');
+
+        db.query(query, null, function(err, result) {
+            if (err) return callback(err);
+            callback();
+        });
     });
 };
 
