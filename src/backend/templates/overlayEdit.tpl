@@ -45,12 +45,12 @@
         <select multiple data-role="tagsinput" class="form-control" name="tags" placeholder="Tags"></select>
       </div>
       <div class="col-sm-2">
-        <button type="button" class="btn btn-primary save" style="display: block; width: 100%;">Save</button>
+        <button type="button" class="btn btn-success save" style="display: block; width: 100%;">Save</button>
       </div>
     </div>
   </form>
   <hr />
-  <video id="iPED-Video"> <!--autoplay="autoplay" loop="loop"--> 
+  <video id="iPED-Video"> <!--autoplay="autoplay" loop="loop"-->
     <source src="<%= video.get('url') + '.mp4' %>" type="video/mp4">
     <source src="<%= video.get('url') + '.ogg' %>" type="video/ogg">
   </video>

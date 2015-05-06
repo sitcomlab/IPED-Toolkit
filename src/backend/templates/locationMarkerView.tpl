@@ -16,6 +16,8 @@
             <br>
             <form class="form-horizontal" role="form">
                 <div class="panel-group" id="<% index %>">
+
+                    <!-- General data panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
 
@@ -48,7 +50,7 @@
                         </div>
                     </div>
 
-
+                    <!-- Related Locations panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
 
@@ -64,7 +66,7 @@
                         </div>
                     </div>
 
-
+                    <!-- Video panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
 
@@ -81,8 +83,7 @@
 
                     </div>
 
-
-
+                    <!-- Overlays panel -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
 
@@ -103,12 +104,12 @@
 
 
                 <div class="form-group form-group-sm">
-                    <div class="col-xs-6">
-                        <button type="button" class="btn btn-primary btn-sm add" data-location="<%= location.get('id') %>">Add state</button>
-                        <button type="button" class="btn btn-primary btn-sm edit" data-location="<%= location.get('id') %>">Edit</button>
+                    <div class="col-xs-8">
+                        <button type="button" class="btn btn-primary btn-sm add" data-location="<%= location.get('id') %>"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add state</button>
+                        <button type="button" class="btn btn-primary btn-sm edit" data-location="<%= location.get('id') %>"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</button>
                     </div>
-                    <div class="col-xs-6">
-                        <button type="button" class="btn btn-danger btn-sm delete pull-right" data-location="<%= location.get('id') %>">Delete</button>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-danger btn-sm delete pull-right" data-location="<%= location.get('id') %>"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>
                     </div>
                 </div>
 
