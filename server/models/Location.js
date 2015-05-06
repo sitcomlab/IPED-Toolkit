@@ -142,30 +142,32 @@ Location.prototype.getVideos = function(callback) {
 };
 
 Location.prototype.setVideos = function(videos, callback) {
+    var thiz = this;
+    
     if (!videos) return callback();
     
     // Delete old relations
     var query = [
-    'MATCH (me:Location)<-[r]-(video:Video)',
+    'MATCH (me:Location)<-[r:wasRecordedAt]-(video:Video)',
     'WHERE id(me)=' + this.id,
     'DELETE r'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
-    });
+        
+        // Set new relations
+        var query = [
+        'MATCH (me:Location), (video:Video)',
+        'WHERE id(me)=' + thiz.id,
+        'AND id(video) IN [' + videos.toString() + ']',
+        'CREATE UNIQUE (me)<-[:wasRecordedAt]-(video)'
+        ].join('\n');
     
-    // Set new relations
-    var query = [
-    'MATCH (me:Location), (video:Video)',
-    'WHERE id(me)=' + this.id,
-    'AND id(video) IN [' + videos.toString() + ']',
-    'CREATE UNIQUE (me)<-[:wasRecordedAt]-(video)'
-    ].join('\n');
-    
-    db.query(query, null, function(err, result) {
-        if (err) return callback(err);
-        callback();
+        db.query(query, null, function(err, result) {
+            if (err) return callback(err);
+            callback();
+        });
     });
 };
 
@@ -191,30 +193,32 @@ Location.prototype.getOverlays = function(callback) {
 };
 
 Location.prototype.setOverlays = function(overlays, callback) {
+    var thiz = this;
+    
     if (!overlays) return callback();
 
     // Delete old relations
     var query = [
-    'MATCH (me:Location)<-[r]-(overlay:Overlay)',
+    'MATCH (me:Location)<-[r:locatedAt]-(overlay:Overlay)',
     'WHERE id(me)=' + this.id,
     'DELETE r;'
     ].join('\n');
     
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
-    });
+        
+        // Create new relations
+        var query = [
+        'MATCH (me:Location), (overlay:Overlay)',
+        'WHERE id(me)=' + thiz.id,
+        'AND id(overlay) IN [' + overlays.toString() + ']',
+        'CREATE UNIQUE (me)<-[:locatedAt]-(overlay)'
+        ].join('\n');
     
-    // Create new relations
-    var query = [
-    'MATCH (me:Location), (overlay:Overlay)',
-    'WHERE id(me)=' + this.id,
-    'AND id(overlay) IN [' + overlays.toString() + ']',
-    'CREATE UNIQUE (me)<-[:locatedAt]-(overlay)'
-    ].join('\n');
-    
-    db.query(query, null, function(err, result) {
-        if (err) return callback(err);
-        callback();
+        db.query(query, null, function(err, result) {
+            if (err) return callback(err);
+            callback();
+        });
     });
 };
 
