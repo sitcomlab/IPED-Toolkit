@@ -9,9 +9,10 @@
 define(['backbonejs/js/backbone',
         'backend/models/Overlay',
         'backend/models/Video',
-        'succinct/js/succinct.min'
+        'succinct/js/succinct.min',
+        'bootbox/js/bootbox.min'
     ],
-    function(Backbone, Overlay, Video, Succinct) {
+    function(Backbone, Overlay, Video, Succinct, bootbox) {
         /**
          * The backbone.js view for a leaflet marker
          */
@@ -184,11 +185,39 @@ define(['backbonejs/js/backbone',
                 });
             },
             _delete: function(event) {
+
+                var thiz = this;
+
                 var locationId = $(event.currentTarget)
                     .data('location');
-                this.backend.deleteLocation({
-                    location: this.model.get(locationId)
+
+                var currentLocation = this.model.get(locationId);
+
+                // Confirmation before deleting
+                var question = 'Are you sure you want to delete this location: <b>' + currentLocation.attributes.name + '</b>?';
+                bootbox.dialog({
+                    title: "Attention",
+                    message: question,
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default",
+                            callback: function() {}
+                        },
+                        delete: {
+                            label: "OK",
+                            className: "btn-primary",
+                            callback: function() {
+                                thiz.backend.deleteLocation({
+                                    location: currentLocation
+                                });
+
+                            }
+                        }
+                    }
                 });
+
+
             }
         });
 
