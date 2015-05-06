@@ -12,7 +12,8 @@
     </div>
 </div>
 <div class="row2">
-    <form class="form-horizontal" role="form">
+
+    <form>
 
         <!-- General data panel -->
         <div class="panel panel-default editViewTable">
@@ -47,7 +48,7 @@
                     <tr>
                         <th>Description</th>
                         <td>
-                            <textarea class="form-control" rows="3" name="description" placeholder="Description">
+                            <textarea class="form-control" rows="3" name="description" placeholder="Description" style="white-space:nowrap;  word-wrap: normal; overflow:scroll;">
                                 <%=location.get('description') %>
                             </textarea>
                         </td>

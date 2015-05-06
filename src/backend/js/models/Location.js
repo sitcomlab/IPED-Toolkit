@@ -15,7 +15,6 @@ define(['backbonejs/js/backbone'],
             urlRoot: '/api/locations',
             initialize: function() {},
             defaults: {
-                // According to API specification 25.07.2014
                 name: '',
                 description: '',
                 tags: [],

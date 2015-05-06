@@ -13,50 +13,50 @@
         </div>
     </div>
     <hr />
-    <form role="form">
+    <form>
+        <table class="table borderless">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <td>
+                        <input type="text" class="form-control" value="<%= video.get('name') %>" name="name">
+                    </td>
+                </tr>
+                <tr>
+                    <th>URL</th>
+                    <td>
+                        <input type="text" class="form-control" value="<%=video.get( 'url') %>" name="url">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <td>
+                        <input type="text" class="form-control" value="<%=video.get( 'date') %>" name="date">
+                    </td>
+                </tr>
+                <tr>
+                    <th>Description</th>
+                    <td>
+                        <textarea class="form-control" rows="3" name="description" placeholder="Description" style="white-space:nowrap;  word-wrap: normal; overflow:scroll;">
+                            <%=video.get('description') %>
+                        </textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Tags</th>
+                    <td>
+                        <select multiple data-role="tagsinput" name="tags"></select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
         <div class="row">
-            <div class="col-xs-6">
-                <label class="sr-only" for="name">Name</label>
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-default cancel" style="display: block; width: 100%;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
             </div>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" name="name" placeholder="Name" value="<%= video.get('name') %>">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <label class="sr-only" for="description">Description</label>
-            </div>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" name="description" placeholder="Description" value="<%= video.get('description') %>">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <label class="sr-only" for="url">URL</label>
-            </div>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" name="url" placeholder="URL" value="<%= video.get('url') %>">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <label class="sr-only" for="w">Date</label>
-            </div>
-            <div class="col-xs-6">
-                <input type="text" class="form-control" name="w" placeholder="Date" value="<%= video.get('date') %>">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <label class="sr-only" for="tags">Tags</label>
-            </div>
-            <div class="col-xs-6">
-                <select multiple data-role="tagsinput" class="form-control" name="tags" placeholder="Tags"></select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">
-                <button type="button" class="btn btn-success save" style="display: block; width: 100%;">Save</button>
+            <div class="col-sm-6">
+                <button type="button" class="btn btn-success save" style="display: block; width: 100%;"><span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save</button>
             </div>
         </div>
     </form>

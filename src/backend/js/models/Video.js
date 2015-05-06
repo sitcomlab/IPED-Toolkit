@@ -14,15 +14,6 @@ define(['backbonejs/js/backbone'],
         Video = Backbone.Model.extend({
             urlRoot: '/api/videos',
             initialize: function() {}
-                /*,
-                            defaults: {
-                                // According to API specification 24.04.2015
-                                name: '',
-                                description: '',
-                                tags: [],
-                                url: '',
-                                date: ''
-                            }*/
         });
 
         return Video;

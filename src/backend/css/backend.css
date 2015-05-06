@@ -71,3 +71,9 @@
     margin-right: 5px;
     margin-bottom: 5px;
 }
+
+.borderless tbody tr td,
+.borderless tbody tr th,
+.borderless thead tr th {
+    border: none;
+}

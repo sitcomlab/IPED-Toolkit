@@ -248,9 +248,6 @@ require(['jsnlog/js/jsnlog.min',
             JL('iPED Toolkit.Backend')
                 .debug('About to save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
 
-            opts.attributes.description = opts.attributes.description.replace(/\n/g, '');
-            console.error(JSON.stringify(opts.attributes));
-
             var thiz = this;
 
             opts.location.save(opts.attributes, {
@@ -711,10 +708,15 @@ require(['jsnlog/js/jsnlog.min',
          */
         Backend.prototype.form2js = function(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName) {
             var json = JSON.stringify(form2js(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName));
+
             json = json.replace(/"[-0-9]*"/g, function(match, capture) {
                 return parseInt(match.replace(/"/g, ''), 10);
             });
             json = json.replace('null', '');
+
+            // Replace automatically added "\n" in description-fields
+            json = json.replace("\\n", '');
+
             return JSON.parse(json);
         };
 

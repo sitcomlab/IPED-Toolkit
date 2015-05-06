@@ -65,6 +65,7 @@ define(['backbonejs/js/backbone',
             },
             events: {
                 'click button.close': '_close',
+                'click button.cancel': '_close',
                 'click button.save': '_save'
             },
             _disableButtons: function() {
