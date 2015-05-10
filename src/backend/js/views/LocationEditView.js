@@ -21,6 +21,7 @@ define(['backbonejs/js/backbone',
                 this.backend = opts.backend;
                 this.title = opts.title;
                 this.isFetched = false;
+                this.relatedLocations = null;
                 this.videos = null;
                 this.overlays = null;
                 this.render();
@@ -55,7 +56,7 @@ define(['backbonejs/js/backbone',
             fetch: function() {
                 var thiz = this;
 
-                if (this.isFetched == true) {
+                if (this.isFetched === true) {
                     return;
                 }
 
@@ -76,9 +77,15 @@ define(['backbonejs/js/backbone',
                             var selected = '';
                             if (_.contains(thiz.model.get('videos'), video.get('id'))) {
                                 selected = 'selected';
+                            } else {
+
+                                var option = '<option value="' + video.get('id') + '" ' + selected + '>' + video.get('name') + '</option>';
+
+                                //console.info(option);
+
+                                thiz.$el.find('.videos')
+                                    .append(option);
                             }
-                            thiz.$el.find('.videos')
-                                .append('<option value="' + video.get('id') + '" ' + selected + '>' + video.get('name') + '</option>');
                         });
                     },
                     error: function(model, response, options) {
@@ -121,26 +128,23 @@ define(['backbonejs/js/backbone',
                     - these objects can have a name, which can represented in the view
                 **/
 
-                /*JL('iPED Toolkit.Backend')
+
+                JL('iPED Toolkit.Backend')
                     .debug('Fetch relatedLocations in LocationEditView');
 
-                for (var i=0; i<thiz.model.attributes.relatedLocations.length; i++ {
-                    thiz.model.attributes.relatedLocations.fetch
-                    this.relatedLocations = new Location()
-                }*/
 
-
-                /*this.relatedLocations = new Locations();
+                /*
+                this.relatedLocations = new Locations();
                 this.relatedLocations.fetch({
                     success: function(model, response, options) {
 
                         thiz.$el.find('.relatedLocations')
                             .empty();
                         thiz.$el.find('.relatedLocations')
-                            .html('<table class="table" id="relatedLocationsTable' + relatedLocation.get('id') + '><tbody><tr><th>Name</th><th>Edit</th><th>Delete</th></tr></tbody></table>');
+                            .html('<table class="table" id="relatedLocationsTable' + relatedLocation.get('id') + '><tbody><tr><th>ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></tbody></table>');
                         model.forEach(function(relatedLocation) {
                             thiz.$el.find('#relatedLocationsTable ' + relatedLocation.get('id') + ' > tbody:last')
-                                .append('<tr><td>' + relatedLocation.get('name') + '</td><td><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-pencil" aria-hidden="true></span></button></td><td><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true></span></button></td></tr>');
+                                .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-pencil" aria-hidden="true></span></button></td><td><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true></span></button></td></tr>');
                         });
                     },
                     error: function(model, response, options) {
@@ -155,6 +159,8 @@ define(['backbonejs/js/backbone',
                 'click button.close': '_close',
                 'click button.cancel': '_close',
                 'click button.save': '_save',
+                //'click button.edit-relationship': '_editRelationship',
+                //'click button.delete-relationship': '_deleteRelationship',
                 'click button.add-video': '_addVideo',
                 'click button.edit-video': '_editVideo',
                 'click button.delete-video': '_deleteVideo',
@@ -176,6 +182,7 @@ define(['backbonejs/js/backbone',
             },
             _save: function() {
                 this._disableButtons();
+
                 this.backend.saveLocation({
                     location: this.model,
                     attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
@@ -197,6 +204,7 @@ define(['backbonejs/js/backbone',
 
                 var videoId = this.$el.find('.videos :selected')
                     .attr('value');
+
                 var video = this.videos.get(videoId);
                 this.backend.editVideo({
                     video: video
