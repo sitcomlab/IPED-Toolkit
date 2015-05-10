@@ -91,7 +91,7 @@ Overlay.get = function(id, callback) {
 
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
-        if (result.length == 0) {
+        if (result.length === 0) {
             return callback(new Error('No overlay found with that ID'));
         } else {
             var overlay = new Overlay(result[0]['overlay']);
