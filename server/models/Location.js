@@ -123,9 +123,14 @@ Location.prototype.setRelatedLocations = function(relatedLocations, callback) {
                 'CREATE UNIQUE (me)-[:relatedTo]->(location)'
             ].join('\n');
 
+            log.warn(query);
+
             db.query(query, null, function(err, result) {
-                if (err) return callback(err);
-                callback();
+                if (err) {
+                    return callback(err);
+                } else {
+                    callback();
+                }
             });
         }
     });
@@ -177,9 +182,14 @@ Location.prototype.setVideos = function(videos, callback) {
                 'CREATE UNIQUE (me)<-[:wasRecordedAt]-(video)'
             ].join('\n');
 
+            log.warn(query);
+
             db.query(query, null, function(err, result) {
-                if (err) return callback(err);
-                callback();
+                if (err) {
+                    return callback(err);
+                } else {
+                    callback();
+                }
             });
         }
     });
@@ -224,6 +234,7 @@ Location.prototype.setOverlays = function(overlays, callback) {
             } else {
 
                 // Create new relations
+
                 var query = [
                     'MATCH (me:Location), (overlay:Overlay)',
                     'WHERE id(me)=' + thiz.id,
@@ -231,9 +242,14 @@ Location.prototype.setOverlays = function(overlays, callback) {
                     'CREATE UNIQUE (me)<-[:locatedAt]-(overlay)'
                 ].join('\n');
 
+                log.warn(query);
+
                 db.query(query, null, function(err, result) {
-                    if (err) return callback(err);
-                    callback();
+                    if (err) {
+                        return callback(err);
+                    } else {
+                        callback();
+                    }
                 });
             }
     });
@@ -384,7 +400,7 @@ Location.update = function(result, data, callback) {
     }).overlays;
 
 
-    async.parallel([
+    async.series([
         function(callback) {
             location.setRelatedLocations(relatedLocations, callback);
         },
