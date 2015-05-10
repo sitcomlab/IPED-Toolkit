@@ -14,7 +14,7 @@ module.exports = function(app) {
             }
         });
     });
-    
+
     // 3.2.2 Create a Video (Developer: Nicho)
     app.post('/api/videos', function(req, res) {
         req.log.info('[POST] /api/video');
@@ -22,8 +22,8 @@ module.exports = function(app) {
            if (!err) {
                send.data(res, JSON.stringify(video));
            } else {
-               send.error(res, err);  
-           };
+               send.error(res, err);
+           }
         });
     });
 
@@ -46,9 +46,9 @@ module.exports = function(app) {
             if (!err) {
                 send.data(res, JSON.stringify(video));
             } else {
-                send.error(res, err);  
-            };
-        });        
+                send.error(res, err);
+            }
+        });
     });
 
     // 3.2.5 Remove a Video (Developer: Nicho)
@@ -60,7 +60,7 @@ module.exports = function(app) {
             } else {
                 send.error(res, err);
             }
-        })
+        });
     });
 
     // 3.2.6 Retrieve all Videos of a Location (Developer: Nicho)
@@ -74,5 +74,5 @@ module.exports = function(app) {
             }
         });
     });
-    
-}
+
+};
