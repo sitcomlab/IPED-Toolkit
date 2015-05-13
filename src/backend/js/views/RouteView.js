@@ -25,8 +25,8 @@ define(['backbonejs/js/backbone',
             render: function() {
                 var thiz = this;
 
-                if (this.routes == null ||
-                    this.routes.length == 0) {
+                if (this.routes === null ||
+                    this.routes.length === 0) {
                     return;
                 }
 

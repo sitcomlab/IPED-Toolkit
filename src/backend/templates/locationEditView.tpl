@@ -11,8 +11,8 @@
         </button>
     </div>
 </div>
-<div class="row2">
 
+<br>
     <form class="form-horizontal" role="form">
 
         <!-- General data panel -->
@@ -27,7 +27,7 @@
                     <label class="col-sm-3 control-label">ID</label>
                     <div class="col-sm-9">
                         <% if(typeof location.get( 'id') !=='undefined' ) { %>
-                            <input type="text" class="form-control" disabled value="<%=location.get( 'id') %>" name="id">
+                            <input type="text" class="form-control" disabled style="cursor:default;" value="<%=location.get( 'id') %>" name="id">
                                 <% } %>
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="form-group">
                     <label for="name" class="col-sm-3 control-label">Name</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" value="<%= location.get('name') %>" name="name">
+                        <input type="text" class="form-control" value="<%= location.get('name') %>" name="name" placeholder="Name">
                     </div>
                 </div>
 
@@ -51,32 +51,44 @@
                 <div class="form-group">
                     <label for="tags" class="col-sm-3 control-label">Tags</label>
                     <div class="col-sm-9">
-                        <select multiple data-role="tagsinput" name="tags"></select>
+                        <select multiple data-role="tagsinput" name="tags" placeholder="Tags"></select>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="description" class="col-sm-3 control-label">Description</label>
                     <div class="col-sm-9">
-                        <!--<textarea class="form-control" rows="3" name="description" placeholder="Description" style="white-space:nowrap;  word-wrap: normal; overflow:scroll;">
-                            <%=location.get( 'description') %>
-                        </textarea>-->
-
-                        <textarea class="form-control" rows="3" name="description" placeholder="Description">
-                            <%=location.get( 'description') %>
-                        </textarea>
+                        <textarea class="form-control" rows="3" name="description" placeholder="Description"><%=location.get( 'description') %></textarea>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Related Locations panel -->
-        <div class="panel panel-default editViewTable">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Related locations</h3>
             </div>
 
             <div class="relatedLocations"></div>
+
+            <div class="panel-body">
+                <div class="form-group form-group-sm">
+                    <div class="col-xs-4">
+                        <!--<button type="button" class="btn btn-primary btn-sm add-relatedLocations">
+                            <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</button>-->
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-sm edit-relatedLocations">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</button>
+                    </div>
+                    <div class="col-xs-4">
+                        <!--<button type="button" class="btn btn-danger btn-sm delete-relatedLocations">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>-->
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- Video panel -->
@@ -86,12 +98,14 @@
             </div>
 
             <div class="panel-body">
-                <div class="form-group col-xs-12">
+                <div class="form-group">
 
-                    <select class="form-control videos" name="videos[0]"></select>
+                    <div class="col-sm-12">
+                        <select class="form-control videos" name="videos[0]"></select>
+                    </div>
 
                 </div>
-                <br>
+
                 <div class="form-group form-group-sm">
                     <div class="col-xs-4">
                         <button type="button" class="btn btn-primary btn-sm add-video">
@@ -116,8 +130,13 @@
             </div>
 
             <div class="panel-body">
-                <select multiple class="form-control overlays" name="overlays"></select>
-                <br>
+
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <select multiple class="form-control overlays" name="overlays"></select>
+                    </div>
+                </div>
+
                 <div class="form-group form-group-sm">
                     <div class="col-xs-4">
                         <button type="button" class="btn btn-primary btn-sm add-overlay">
@@ -135,14 +154,14 @@
             </div>
         </div>
 
-</div>
-<div class="form-group form-group-sm">
-    <div class="col-xs-8">
-        <button type="button" class="btn btn-default btn-sm cancel">
+
+<div class="row">
+    <div class="col-sm-6">
+        <button type="button" class="btn btn-default cancel" style="display: block; width: 100%;">
             <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</button>
     </div>
-    <div class="col-xs-4">
-        <button type="button" class="btn btn-success btn-sm save">
+    <div class="col-sm-6">
+        <button type="button" class="btn btn-success save" style="display: block; width: 100%;">
             <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Save</button>
     </div>
 </div>

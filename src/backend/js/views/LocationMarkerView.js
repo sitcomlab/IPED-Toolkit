@@ -10,7 +10,7 @@ define(['backbonejs/js/backbone',
         'backend/models/Overlay',
         'backend/models/Video',
         'succinct/js/succinct.min',
-        'bootbox/js/bootbox.min'
+        'bootstrap-bootbox/js/bootbox.min'
     ],
     function(Backbone, Overlay, Video, Succinct, bootbox) {
         /**
@@ -53,7 +53,7 @@ define(['backbonejs/js/backbone',
             fetch: function() {
                 var thiz = this;
 
-                if (this.isFetched == true) {
+                if (this.isFetched === true) {
                     return;
                 }
 
@@ -63,7 +63,7 @@ define(['backbonejs/js/backbone',
 
                     /* Add videos to popup */
                     if (location.get('videos')
-                        .length == 0) {
+                        .length === 0) {
                         thiz.$el.find('#_videos' + location.get('id') + '[data-location=' + location.get('id') + ']')
                             .html('<div id="textNone">None</div>');
                     } else {
@@ -96,7 +96,7 @@ define(['backbonejs/js/backbone',
 
                     /* Add overlays to popup */
                     if (location.get('overlays')
-                        .length == 0) {
+                        .length === 0) {
                         thiz.$el.find('#_overlays' + location.get('id') + '[data-location=' + location.get('id') + ']')
                             .html('<div id="textNone">None</div>');
                     } else {
@@ -130,7 +130,7 @@ define(['backbonejs/js/backbone',
 
                     /* Add relatedLocations to popup */
                     if (location.get('relatedLocations')
-                        .length == 0) {
+                        .length === 0) {
                         thiz.$el.find('#_relatedLocations' + location.get('id') + '[data-location=' + location.get('id') + ']')
                             .html('<div id="textNone">None</div>');
                     } else {

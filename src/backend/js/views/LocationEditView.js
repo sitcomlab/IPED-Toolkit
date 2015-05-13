@@ -10,7 +10,7 @@ define(['backbonejs/js/backbone',
         'backend/models/Locations',
         'backend/models/Videos',
         'backend/models/Overlays',
-        'bootbox/js/bootbox.min'
+        'bootstrap-bootbox/js/bootbox.min'
     ],
     function(Backbone, Locations, Videos, Overlays, bootbox) {
         /**
@@ -121,37 +121,39 @@ define(['backbonejs/js/backbone',
                 });
 
 
-                /** WORKING NOTES FROM NICHO:
-
-                    - can't use fetch, because it fetchs all Locations
-                    - have to use IDs in "thiz.model.attributes.relatedLocations" to get every Location
-                    - these objects can have a name, which can represented in the view
-                **/
-
 
                 JL('iPED Toolkit.Backend')
                     .debug('Fetch relatedLocations in LocationEditView');
-
-
-                /*
                 this.relatedLocations = new Locations();
+                this.relatedLocations.url = '/api/locations/' + thiz.model.get('id') + '/locations';
                 this.relatedLocations.fetch({
                     success: function(model, response, options) {
 
-                        thiz.$el.find('.relatedLocations')
-                            .empty();
-                        thiz.$el.find('.relatedLocations')
-                            .html('<table class="table" id="relatedLocationsTable' + relatedLocation.get('id') + '><tbody><tr><th>ID</th><th>Name</th><th>Edit</th><th>Delete</th></tr></tbody></table>');
-                        model.forEach(function(relatedLocation) {
-                            thiz.$el.find('#relatedLocationsTable ' + relatedLocation.get('id') + ' > tbody:last')
-                                .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td><button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-pencil" aria-hidden="true></span></button></td><td><button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true></span></button></td></tr>');
-                        });
+                        /*JL('iPED Toolkit.Backend')
+                            .debug(response);*/
+
+                        if (response.length !== 0) {
+                            thiz.$el.find('.relatedLocations')
+                                .empty();
+                            thiz.$el.find('.relatedLocations')
+                                .html('<table class="table" id="relatedLocationsTable' + thiz.model.get('id') + '"><tbody><tr><th>ID</th><th>Name</th></tr></tbody></table>');
+                            model.forEach(function(relatedLocation) {
+                                thiz.$el.find('#relatedLocationsTable' + thiz.model.get('id') + ' > tbody:last')
+                                    .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td></tr>');
+                            });
+                        } else {
+                            thiz.$el.find('.relatedLocations')
+                                .empty();
+                            thiz.$el.find('.relatedLocations')
+                                .html('<div id="textNone">None</div>');
+                        }
+
                     },
                     error: function(model, response, options) {
                         JL('iPED Toolkit.Backend')
                             .error(response);
                     }
-                });*/
+                });
 
                 this.isFetched = true;
             },
@@ -159,8 +161,7 @@ define(['backbonejs/js/backbone',
                 'click button.close': '_close',
                 'click button.cancel': '_close',
                 'click button.save': '_save',
-                //'click button.edit-relationship': '_editRelationship',
-                //'click button.delete-relationship': '_deleteRelationship',
+                //'click button.edit-relatedLocations': '_editRelatedLocations',
                 'click button.add-video': '_addVideo',
                 'click button.edit-video': '_editVideo',
                 'click button.delete-video': '_deleteVideo',

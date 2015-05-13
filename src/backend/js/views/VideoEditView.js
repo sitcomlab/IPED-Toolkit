@@ -49,7 +49,7 @@ define(['backbonejs/js/backbone',
                                         .tagsinput('add', tag);
                                 });
                             thiz.$el.find('.bootstrap-tagsinput')
-                                .addClass('form-group')
+                                .addClass('form-control')
                                 .css('padding-top', '5px')
                                 .css('padding-bottom', '5px')
                                 .css('width', '100%');

@@ -19,41 +19,38 @@
         <div class="form-group">
             <label for="name" class="col-sm-3 control-label">Name</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control" value="<%= video.get('name') %>" name="name">
+                <input type="text" class="form-control" value="<%= video.get('name') %>" name="name" placeholder="Name">
             </div>
         </div>
 
         <div class="form-group">
             <label for="url" class="col-sm-3 control-label">URL</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control" value="<%=video.get( 'url') %>" name="url">
+                <input type="text" class="form-control" value="<%=video.get( 'url') %>" name="url" placeholder="URL">
             </div>
         </div>
 
         <div class="form-group">
             <label for="date" class="col-sm-3 control-label">Date</label>
             <div class="col-sm-9">
-                <input type="text" class="form-control" value="<%=video.get( 'date') %>" name="date">
+                <input type="text" class="form-control" value="<%=video.get( 'date') %>" name="date" placeholder="dd/mm/jjjj">
             </div>
+
         </div>
 
         <div class="form-group">
             <label for="tags" class="col-sm-3 control-label">Tags</label>
             <div class="col-sm-9">
-                <select multiple data-role="tagsinput" name="tags"></select>
+                <select multiple data-role="tagsinput" name="tags" placeholder="Tags"></select>
             </div>
         </div>
 
         <div class="form-group">
             <label for="description" class="col-sm-3 control-label">Description</label>
             <div class="col-sm-9">
-                <textarea class="form-control" rows="3" placeholder="Description" name="description">
-                    <%=video.get( 'description') %>
-                </textarea>
+                <textarea class="form-control" rows="3" placeholder="Description" name="description"><%=video.get( 'description') %></textarea>
             </div>
         </div>
-
-        <hr>
 
         <div class="row">
             <div class="col-sm-6">

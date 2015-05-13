@@ -25,7 +25,7 @@ require(['jsnlog/js/jsnlog.min',
         'leaflet/js/leaflet',
         'leaflet/js/leaflet.contextmenu',
         'form2js/js/form2js',
-        'bootbox/js/bootbox.min',
+        'bootstrap-bootbox/js/bootbox.min',
         // Models
         'backend/models/Location',
         'backend/models/Locations',
@@ -101,8 +101,8 @@ require(['jsnlog/js/jsnlog.min',
          * Initializes the leaflet map
          */
         Backend.prototype.initMap = function() {
-            /*JL('iPED Toolkit.Backend')
-                .debug('Init map with locations: ' + JSON.stringify(this.locations));*/
+            JL('iPED Toolkit.Backend')
+                .debug('Init map with locations: ' + JSON.stringify(this.locations));
             this.mapView = new MapView({
                 backend: this,
                 model: this.locations
@@ -120,8 +120,8 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.locations.fetch({
                 success: function(model, response, options) {
-                    /*JL('iPED Toolkit.Backend')
-                        .debug('Done fetching locations');*/
+                    JL('iPED Toolkit.Backend')
+                        .debug('Done fetching locations');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
                     }
@@ -145,8 +145,8 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.videos.fetch({
                 success: function(model, response, options) {
-                    /*JL('iPED Toolkit.Backend')
-                        .debug('Done fetching videos');*/
+                    JL('iPED Toolkit.Backend')
+                        .debug('Done fetching videos');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
                     }
@@ -169,8 +169,8 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.overlays.fetch({
                 success: function(model, response, options) {
-                    /*JL('iPED Toolkit.Backend')
-                        .debug('Done fetching overlays');*/
+                    JL('iPED Toolkit.Backend')
+                        .debug('Done fetching overlays');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
                     }
@@ -517,7 +517,7 @@ require(['jsnlog/js/jsnlog.min',
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
                     height: 600,
-                    width: 360,
+                    width: 500,
                     draggable: false,
                     position: {
                         my: 'right-20 top+20',
@@ -537,8 +537,8 @@ require(['jsnlog/js/jsnlog.min',
             $(opts.content)
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
-                    height: 500,
-                    width: 360,
+                    height: 420,
+                    width: 500,
                     draggable: false,
                     position: {
                         my: 'center',

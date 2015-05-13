@@ -61,11 +61,8 @@
     clear: both;
 }
 
-.row2 {
-    margin-top: 15px;
-    margin-left: 5px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+.videos {
+    width: 90%;
 }
 
 .borderless tbody tr td,

@@ -52,7 +52,7 @@ var requireConfig = {
       deps: ['bootstrap/js/bootstrap.min'],
       exports: 'LeafletAwesomeMarker'
     },
-    'bootbox/js/bootbox.min': {
+    'bootstrap-bootbox/js/bootbox.min': {
         deps: ['bootstrap/js/bootstrap.min',
             'jquery/js/jquery.min'],
         exports: 'bootbox'
