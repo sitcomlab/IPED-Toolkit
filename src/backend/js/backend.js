@@ -714,9 +714,6 @@ require(['jsnlog/js/jsnlog.min',
             });
             json = json.replace('null', '');
 
-            // Replace automatically added "\n" in description-fields
-            json = json.replace("\\n", '');
-
             return JSON.parse(json);
         };
 

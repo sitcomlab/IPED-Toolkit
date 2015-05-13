@@ -16,7 +16,7 @@
     <form class="form-horizontal" role="form">
 
         <!-- General data panel -->
-        <div class="panel panel-default editViewTable">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">General data</h3>
             </div>
@@ -80,7 +80,7 @@
         </div>
 
         <!-- Video panel -->
-        <div class="panel panel-default editViewTable">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Video footage</h3>
             </div>
@@ -110,7 +110,7 @@
         </div>
 
         <!-- Overlay panel -->
-        <div class="panel panel-default editViewTable">
+        <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Overlays</h3>
             </div>

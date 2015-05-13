@@ -183,6 +183,8 @@ define(['backbonejs/js/backbone',
             _save: function() {
                 this._disableButtons();
 
+                console.warn(this.$el.find('form'));
+
                 this.backend.saveLocation({
                     location: this.model,
                     attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
