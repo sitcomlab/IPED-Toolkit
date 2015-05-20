@@ -31,7 +31,7 @@ define(['backbonejs/js/backbone',
                 }
 
                 JL('iPED Toolkit.RouteView')
-                    .debug('Draw/Update route: ' + JSON.stringify(this.fromPoint) + ' <-> ' + JSON.stringify(this.toPoint));
+                    .debug('Draw/Update route: ' + JSON.stringify(this.fromPoint) + ' ' + String.fromCharCode(0x2194) + ' ' + JSON.stringify(this.toPoint));
 
                 var contextMenuItems = [{
                     index: 0,
@@ -43,7 +43,7 @@ define(['backbonejs/js/backbone',
                 }];
                 this.routes.forEach(function(route) {
                     contextMenuItems.push({
-                        text: '<span class="glyphicon glyphicon-trash"></span> ' + route[0].get('name') + ' -> ' + route[1].get('name'),
+                        text: '<span class="glyphicon glyphicon-trash"></span> ' + route[0].get('name') + ' &rarr; ' + route[1].get('name'),
                         callback: function(event) {
                             thiz.backend.deleteRoute({
                                 fromLocation: route[0],

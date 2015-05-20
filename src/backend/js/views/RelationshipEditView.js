@@ -2,73 +2,58 @@
  * The iPED Toolkit
  * Backend
  *
- * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
+ * (c) 2015 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
 define(['backbonejs/js/backbone',
-        'backend/models/Overlays',
-        'backend/models/Video'
+        'backend/models/Relationship'
     ],
-    function(Backbone, Overlays, Video) {
+    function(Backbone, Location, Relationship) {
         /**
-         * The backbone.js view used for editing an overlay
+         * The backbone.js view used for editing a video
          */
-        OverlayEditView = Backbone.View.extend({
+        RelationshipEditView = Backbone.View.extend({
             initialize: function(opts) {
                 this.backend = opts.backend;
                 this.title = opts.title;
-                this.overlayPlugin = null;
+
                 this.render();
             },
             render: function() {
                 var thiz = this;
 
-                var video = new Video({
-                    id: this.model.video.get('id')
+                var relationship = new Relationship({
+                    id: thiz.model.relationship.attributes.id,
+                    intents: thiz.model.relationship.attributes.intents
                 });
-                video.fetch({
+
+                relationship.fetch({
                     success: function(model, response, options) {
-                        require([TPL_PATH + 'overlayEditView.tpl', '../frontend/js/overlayPlugin'], function(html, OverlayPlugin) {
-                            var overlays = new Overlays();
-                            overlays.add(thiz.model.overlay);
+                        require([TPL_PATH + 'relationshipEditView.tpl'], function(html) {
 
                             var template = _.template(html, {
-                                video: model,
-                                overlay: thiz.model.overlay,
+                                relationship: model,
                                 title: thiz.title
                             });
                             thiz.$el.html(template);
+
                             thiz.$el.find('select[data-role=tagsinput]')
                                 .tagsinput({
                                     tagClass: function(item) {
                                         return 'label label-primary';
                                     }
                                 });
-                            thiz.model.overlay.get('tags')
+                            thiz.model.relationship.get('intents')
                                 .forEach(function(tag) {
                                     thiz.$el.find('select[data-role=tagsinput]')
                                         .tagsinput('add', tag);
                                 });
                             thiz.$el.find('.bootstrap-tagsinput')
-                                .addClass('form-group')
+                                .addClass('form-control')
                                 .css('padding-top', '5px')
                                 .css('padding-bottom', '5px')
                                 .css('width', '100%');
-
-                            thiz.overlayPlugin = new OverlayPlugin({
-                                parent: thiz.backend,
-                                overlays: overlays,
-                                showUI: true
-                            });
-                            thiz.$el.find('form')
-                                .on('focusin', function() {
-                                    thiz.overlayPlugin.enableEventListeners(false);
-                                });
-                            thiz.$el.find('form')
-                                .on('focusout', function() {
-                                    thiz.overlayPlugin.enableEventListeners(true);
-                                });
                         });
                     },
                     error: function(model, response, options) {
@@ -81,6 +66,7 @@ define(['backbonejs/js/backbone',
             },
             events: {
                 'click button.close': '_close',
+                'click button.cancel': '_close',
                 'click button.save': '_save'
             },
             _disableButtons: function() {
@@ -94,20 +80,18 @@ define(['backbonejs/js/backbone',
             _close: function() {
                 $(this.el)
                     .dialog('destroy');
-                this.overlayPlugin.stop();
-                this.overlayPlugin = null;
             },
             _save: function() {
                 this.$el.find('button')
                     .attr('disabled', 'disabled');
-                this.backend.saveOverlay({
-                    overlay: this.model.overlay,
+                this.backend.saveRelationship({
+                    relationship: this.model.relationship,
                     attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
                     dialog: this
                 });
             }
         });
 
-        return OverlayEditView;
+        return RelationshipEditView;
     }
 );
