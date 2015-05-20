@@ -33,6 +33,7 @@ require(['jsnlog/js/jsnlog.min',
         'backend/models/Videos',
         'backend/models/Overlay',
         'backend/models/Overlays',
+        'backend/models/Relationship',
         // Views
         'backend/views/AboutView',
         'backend/views/MapView',
@@ -40,12 +41,13 @@ require(['jsnlog/js/jsnlog.min',
         'backend/views/LocationMarkerView',
         'backend/views/LocationEditView',
         'backend/views/OverlayEditView',
-        'backend/views/VideoEditView'
+        'backend/views/VideoEditView',
+        'backend/views/RelationshipEditView'
     ],
 
     function(JSNLog, JQuery, JQueryUI, Bootstrap, BootstrapTagsinput, Underscore, Backbone, Leaflet, LeafletContextmenu, form2js, bootbox,
-        Location, Locations, Video, Videos, Overlay, Overlays,
-        AboutView, MapView, MarkerView, LocationMarkerView, LocationEditView, OverlayEditView, VideoEditView) {
+        Location, Locations, Video, Videos, Overlay, Overlays, Relationship,
+        AboutView, MapView, MarkerView, LocationMarkerView, LocationEditView, OverlayEditView, VideoEditView, RelationshipEditView) {
 
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
@@ -298,6 +300,26 @@ require(['jsnlog/js/jsnlog.min',
             });
         };
 
+        /**
+         * Edit an existing location
+         * @param location - The location to be edited
+         */
+        Backend.prototype.editRelationship = function(opts) {
+            JL('iPED Toolkit.Backend')
+                .debug('Edit relationship: ' + JSON.stringify(opts.relationship));
+            var relationshipEditView = new RelationshipEditView({
+                backend: this,
+                title: 'Edit relationship',
+                model: {
+                    relationship: opts.relationship
+                }
+            });
+            this.showEditRelationshipDialog({
+                content: relationshipEditView.el
+            });
+        };
+
+
 
         /**
          * Opens a new view/frame that lets the user position a new video
@@ -517,11 +539,32 @@ require(['jsnlog/js/jsnlog.min',
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
                     height: 600,
-                    width: 500,
+                    width: 400,
                     draggable: false,
                     position: {
                         my: 'right-20 top+20',
                         at: 'right top',
+                        of: $('.container')[0]
+                    }
+                })
+                .dialog('open')
+                .parent()
+                .draggable();
+        };
+
+        /**
+         * Shows a customized JQuery dialog to add/edit relationships between a location and a related Location
+         */
+        Backend.prototype.showEditRelationshipsDialog = function(opts) {
+            $(opts.content)
+                .dialog({
+                    dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
+                    height: 420,
+                    width: 400,
+                    draggable: false,
+                    position: {
+                        my: 'center',
+                        at: 'center',
                         of: $('.container')[0]
                     }
                 })
@@ -537,8 +580,8 @@ require(['jsnlog/js/jsnlog.min',
             $(opts.content)
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
-                    height: 420,
-                    width: 500,
+                    height: 430,
+                    width: 400,
                     draggable: false,
                     position: {
                         my: 'center',

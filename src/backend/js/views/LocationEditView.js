@@ -10,6 +10,7 @@ define(['backbonejs/js/backbone',
         'backend/models/Locations',
         'backend/models/Videos',
         'backend/models/Overlays',
+        'backend/models/Relationship',
         'bootstrap-bootbox/js/bootbox.min'
     ],
     function(Backbone, Locations, Videos, Overlays, bootbox) {
@@ -45,6 +46,11 @@ define(['backbonejs/js/backbone',
                             thiz.$el.find('select[data-role=tagsinput]')
                                 .tagsinput('add', tag);
                         });
+                    thiz.$el.find('.bootstrap-tagsinput')
+                        .addClass('form-control')
+                        .css({
+                            height: "auto"
+                        });
                     thiz.fetch();
                 });
                 return this;
@@ -77,15 +83,11 @@ define(['backbonejs/js/backbone',
                             var selected = '';
                             if (_.contains(thiz.model.get('videos'), video.get('id'))) {
                                 selected = 'selected';
-                            } else {
-
-                                var option = '<option value="' + video.get('id') + '" ' + selected + '>' + video.get('name') + '</option>';
-
-                                //console.info(option);
-
-                                thiz.$el.find('.videos')
-                                    .append(option);
                             }
+                            var option = '<option value="' + video.get('id') + '" ' + selected + '>' + video.get('name') + '</option>';
+
+                            thiz.$el.find('.videos')
+                                .append(option);
                         });
                     },
                     error: function(model, response, options) {
@@ -124,36 +126,60 @@ define(['backbonejs/js/backbone',
 
                 JL('iPED Toolkit.Backend')
                     .debug('Fetch relatedLocations in LocationEditView');
-                this.relatedLocations = new Locations();
-                this.relatedLocations.url = '/api/locations/' + thiz.model.get('id') + '/locations';
-                this.relatedLocations.fetch({
-                    success: function(model, response, options) {
 
-                        /*JL('iPED Toolkit.Backend')
-                            .debug(response);*/
+                if (thiz.model.get('id') === undefined) {
+                    thiz.$el.find('.relatedLocations')
+                        .empty();
+                    thiz.$el.find('.relatedLocations')
+                        .html('<div id="textNone">None</div>');
+                } else {
+                    this.relatedLocations = new Locations();
+                    this.relatedLocations.url = '/api/locations/' + thiz.model.get('id') + '/locations';
+                    this.relatedLocations.fetch({
+                        success: function(model, response, options) {
 
-                        if (response.length !== 0) {
-                            thiz.$el.find('.relatedLocations')
-                                .empty();
-                            thiz.$el.find('.relatedLocations')
-                                .html('<table class="table" id="relatedLocationsTable' + thiz.model.get('id') + '"><tbody><tr><th>ID</th><th>Name</th></tr></tbody></table>');
-                            model.forEach(function(relatedLocation) {
-                                thiz.$el.find('#relatedLocationsTable' + thiz.model.get('id') + ' > tbody:last')
-                                    .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td></tr>');
-                            });
-                        } else {
-                            thiz.$el.find('.relatedLocations')
-                                .empty();
-                            thiz.$el.find('.relatedLocations')
-                                .html('<div id="textNone">None</div>');
+                            /*JL('iPED Toolkit.Backend')
+                                .debug(response);*/
+
+                            if (response.length === 0) {
+                                thiz.$el.find('.relatedLocations')
+                                    .empty();
+                                thiz.$el.find('.relatedLocations')
+                                    .html('<div id="textNone">None</div>');
+                            } else {
+
+                                thiz.$el.find('.relatedLocations')
+                                    .empty();
+                                thiz.$el.find('.relatedLocations')
+                                    .html('<table class="table" id="relatedLocationsTable' + thiz.model.get('id') + '"><tbody><tr><th>ID</th><th>Name</th><th>RealtionshipID</th><th>Edit</th></tr></tbody></table>');
+                                model.forEach(function(relatedLocation) {
+
+                                    relatedLocation.relationship = new Relationship();
+                                    relatedLocation.relationship.url = '/api/locations/' + thiz.model.get('id') + '/locations/' + relatedLocation.get('id');
+
+                                    relatedLocation.relationship.fetch({
+                                        success: function(model, response, options) {
+
+                                            thiz.$el.find('#relatedLocationsTable' + thiz.model.get('id') + ' > tbody:last')
+                                                .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td>' + relatedLocation.relationship.id + '</td><td><input type="radio" value="' + relatedLocation.relationship.id + '" name="relationship" class="_relationship"></td></tr>');
+                                        },
+                                        error: function(model, response, options) {
+                                            JL('iPED Toolkit.Backend')
+                                                .error(response);
+                                        }
+                                    });
+
+                                });
+
+                            }
+                        },
+                        error: function(model, response, options) {
+                            JL('iPED Toolkit.Backend')
+                                .error(response);
                         }
+                    });
+                }
 
-                    },
-                    error: function(model, response, options) {
-                        JL('iPED Toolkit.Backend')
-                            .error(response);
-                    }
-                });
 
                 this.isFetched = true;
             },
@@ -161,7 +187,8 @@ define(['backbonejs/js/backbone',
                 'click button.close': '_close',
                 'click button.cancel': '_close',
                 'click button.save': '_save',
-                //'click button.edit-relatedLocations': '_editRelatedLocations',
+                'click button.edit-relationship': '_editRelationship',
+                'click button.delete-relatedLocation': '_deleteRelatedLocation',
                 'click button.add-video': '_addVideo',
                 'click button.edit-video': '_editVideo',
                 'click button.delete-video': '_deleteVideo',
@@ -184,19 +211,67 @@ define(['backbonejs/js/backbone',
             _save: function() {
                 this._disableButtons();
 
-                console.warn(this.$el.find('form'));
-
                 this.backend.saveLocation({
                     location: this.model,
                     attributes: this.backend.form2js(this.$el.find('form')[0], '.', true),
                     dialog: this
                 });
             },
+            _editRelationship: function() {
+
+                var relationshipId = this.$el.find('._relationship:radio:checked')
+                    .attr('value');
+
+                if (relationshipId !== undefined) {
+
+                    var relationship = null;
+
+                    for (var i = 0; i < this.relatedLocations.models.length; i++) {
+
+                        if (this.relatedLocations.models[i].relationship.id == relationshipId) {
+                            relationship = this.relatedLocations.models[i].relationship;
+
+                            this.backend.editRelationship({
+                                relationship: relationship
+                            });
+                        }
+                    }
+                }
+            },
+            _deleteRelationship: function() {
+
+                var thiz = this;
+
+                var relationshipId = this.$el.find('._relationship:radio:checked')
+                    .attr('value');
+
+                var question = 'Are you sure you want to delete this delete the relationship: <b>' + /* relationshipID+*/ '</b>?';
+                bootbox.dialog({
+                    title: "Attention",
+                    message: question,
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default",
+                            callback: function() {}
+                        },
+                        delete: {
+                            label: "OK",
+                            className: "btn-primary",
+                            callback: function() {
+                                /*this.backend.deleteRelatedLocations({
+                                    location: overlay
+                                });*/
+                            }
+                        }
+                    }
+                });
+            },
             _addVideo: function() {
                 this.backend.addVideo();
             },
             _editVideo: function() {
-                if (this.$el.find('.videos :selected')
+                if (this.$el.find('.videos option:selected')
                     .attr('value') == -1) {
                     this.$el.find('.videos')
                         .parentsUntil('div.form-group')
@@ -205,7 +280,7 @@ define(['backbonejs/js/backbone',
                     return;
                 }
 
-                var videoId = this.$el.find('.videos :selected')
+                var videoId = this.$el.find('.videos option:selected')
                     .attr('value');
 
                 var video = this.videos.get(videoId);
@@ -217,7 +292,7 @@ define(['backbonejs/js/backbone',
 
                 var thiz = this;
 
-                var videoId = this.$el.find('.videos :selected')
+                var videoId = this.$el.find('.videos option:selected')
                     .attr('value');
                 var video = this.videos.get(videoId);
 
@@ -246,7 +321,7 @@ define(['backbonejs/js/backbone',
 
             },
             _addOverlay: function() {
-                if (this.$el.find('.videos :selected')
+                if (this.$el.find('.videos option:selected')
                     .attr('value') == -1) {
                     this.$el.find('.videos')
                         .parentsUntil('div.form-group')
@@ -258,7 +333,7 @@ define(['backbonejs/js/backbone',
                     .parentsUntil('div.form-group')
                     .removeClass('has-error');
 
-                var videoId = this.$el.find('.videos :selected')
+                var videoId = this.$el.find('.videos option:selected')
                     .attr('value');
                 var video = this.videos.get(videoId);
                 this.backend.addOverlay({
@@ -266,7 +341,7 @@ define(['backbonejs/js/backbone',
                 });
             },
             _editOverlay: function() {
-                if (this.$el.find('.videos :selected')
+                if (this.$el.find('.videos option:selected')
                     .attr('value') == -1) {
                     this.$el.find('.videos')
                         .parentsUntil('div.form-group')
@@ -278,7 +353,7 @@ define(['backbonejs/js/backbone',
                     .parentsUntil('div.form-group')
                     .removeClass('has-error');
 
-                if (this.$el.find('.overlays :selected')
+                if (this.$el.find('.overlays option:selected')
                     .length === 0) {
                     this.$el.find('.overlays')
                         .parentsUntil('div.form-group')
@@ -290,10 +365,10 @@ define(['backbonejs/js/backbone',
                     .parentsUntil('div.form-group')
                     .removeClass('has-error');
 
-                var videoId = this.$el.find('.videos :selected')
+                var videoId = this.$el.find('.videos option:selected')
                     .attr('value');
                 var video = this.videos.get(videoId);
-                var overlayId = this.$el.find('.overlays :selected')
+                var overlayId = this.$el.find('.overlays option:selected')
                     .attr('value');
                 var overlay = this.overlays.get(overlayId);
                 this.backend.editOverlay({
@@ -305,7 +380,7 @@ define(['backbonejs/js/backbone',
 
                 var thiz = this;
 
-                if (this.$el.find('.overlays :selected')
+                if (this.$el.find('.overlays option:selected')
                     .length === 0) {
                     this.$el.find('.overlays')
                         .parentsUntil('div.form-group')
@@ -317,7 +392,7 @@ define(['backbonejs/js/backbone',
                     .parentsUntil('div.form-group')
                     .removeClass('has-error');
 
-                var overlayId = this.$el.find('.overlays :selected')
+                var overlayId = this.$el.find('.overlays option:selected')
                     .attr('value');
                 var overlay = this.overlays.get(overlayId);
 

@@ -29,7 +29,7 @@ define(['backbonejs/js/backbone',
 
                 video.fetch({
                     success: function(model, response, options) {
-                        require([TPL_PATH + 'videoEdit.tpl'], function(html) {
+                        require([TPL_PATH + 'videoEditView.tpl'], function(html) {
 
                             var template = _.template(html, {
                                 video: model,
@@ -50,9 +50,9 @@ define(['backbonejs/js/backbone',
                                 });
                             thiz.$el.find('.bootstrap-tagsinput')
                                 .addClass('form-control')
-                                .css('padding-top', '5px')
-                                .css('padding-bottom', '5px')
-                                .css('width', '100%');
+                                .css({
+                                    height: "auto"
+                                });
                         });
                     },
                     error: function(model, response, options) {

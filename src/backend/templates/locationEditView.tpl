@@ -24,8 +24,8 @@
             <div class="panel-body">
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">ID</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-5 control-label">ID</label>
+                    <div class="col-sm-7">
                         <% if(typeof location.get( 'id') !=='undefined' ) { %>
                             <input type="text" class="form-control" disabled style="cursor:default;" value="<%=location.get( 'id') %>" name="id">
                                 <% } %>
@@ -33,31 +33,37 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="name" class="col-sm-3 control-label">Name</label>
-                    <div class="col-sm-9">
+                    <label for="name" class="col-sm-5 control-label">Name</label>
+                    <div class="col-sm-7">
                         <input type="text" class="form-control" value="<%= location.get('name') %>" name="name" placeholder="Name">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">Location</label>
-                    <div class="col-sm-9">
-                        (
-                        <%=location.get( 'lat') %>,
-                            <%=location.get( 'lon') %>)
+                    <label class="col-sm-5 control-label">Latitude</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" disabled style="cursor:default;" value="<%=location.get( 'lat') %>" name="lat">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="tags" class="col-sm-3 control-label">Tags</label>
-                    <div class="col-sm-9">
+                    <label class="col-sm-5 control-label">Longitude</label>
+                    <div class="col-sm-7">
+                        <input type="text" class="form-control" disabled style="cursor:default;" value="<%=location.get( 'lon') %>" name="lon">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="tags" class="col-sm-5 control-label">Tags</label>
+                    <div class="col-sm-7">
                         <select multiple data-role="tagsinput" name="tags" placeholder="Tags"></select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="description" class="col-sm-3 control-label">Description</label>
-                    <div class="col-sm-9">
+                    <label for="description" class="col-sm-5 control-label">Description</label>
+                    <div class="col-sm-7">
                         <textarea class="form-control" rows="3" name="description" placeholder="Description"><%=location.get( 'description') %></textarea>
                     </div>
                 </div>
@@ -75,16 +81,16 @@
             <div class="panel-body">
                 <div class="form-group form-group-sm">
                     <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-sm edit-relationship">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</button>
+                    </div>
+                    <div class="col-xs-4">
                         <!--<button type="button" class="btn btn-primary btn-sm add-relatedLocations">
                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</button>-->
                     </div>
                     <div class="col-xs-4">
-                        <button type="button" class="btn btn-primary btn-sm edit-relatedLocations">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</button>
-                    </div>
-                    <div class="col-xs-4">
-                        <!--<button type="button" class="btn btn-danger btn-sm delete-relatedLocations">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>-->
+                        <button type="button" class="btn btn-danger btn-sm delete-relationship">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</button>
                     </div>
                 </div>
             </div>
@@ -133,7 +139,7 @@
 
                 <div class="form-group">
                     <div class="col-sm-12">
-                        <select multiple class="form-control overlays" name="overlays"></select>
+                        <select class="form-control overlays" name="overlays" multiple="multiple" ></select>
                     </div>
                 </div>
 
