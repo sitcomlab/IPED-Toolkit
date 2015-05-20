@@ -22,26 +22,31 @@
          3.1.4 Edit a Location
          3.1.5 Remove a Location
          3.1.6 Retrieve all related Locations of a Location
-    3.2 Videos:
-         3.2.1 List all Videos
-         3.2.2 Create a Video
-         3.2.3 Retrieve a Video
-         3.2.4 Edit a Video
-         3.2.5 Remove a Video
-         3.2.6 Retrieve all Videos of a Location
-    3.3 Overlays
-         3.3.1 List all Overlays
-         3.3.2 Create an Overlay
-         3.3.3 Retrieve an Overlay
-         3.3.4 Edit an Overlay
-         3.3.5 Remove an Overlay
-         3.3.6 Retrieve all Overlays of a Location
-    3.4 Scenarios [!]
-         3.4.1 List all Scenarios [!]
-         3.4.2 Create a Scenario [!]
-         3.4.3 Retrieve a Scenario [!]
-         3.4.4 Edit a Scenario [!]
-         3.4.5 Remove a Scenario [!]
+    3.2 Relationships:
+         3.2.1 Create a Relationship
+         3.2.2 Retrieve a Relationship
+         3.2.3 Edit a Relationship
+         3.2.4 Remove a Relationship
+    3.3 Videos:
+         3.3.1 List all Videos
+         3.3.2 Create a Video
+         3.3.3 Retrieve a Video
+         3.3.4 Edit a Video
+         3.3.5 Remove a Video
+         3.3.6 Retrieve all Videos of a Location
+    3.4 Overlays
+         3.4.1 List all Overlays
+         3.4.2 Create an Overlay
+         3.4.3 Retrieve an Overlay
+         3.4.4 Edit an Overlay
+         3.4.5 Remove an Overlay
+         3.4.6 Retrieve all Overlays of a Location
+    3.5 Scenarios [!]
+         3.5.1 List all Scenarios [!]
+         3.5.2 Create a Scenario [!]
+         3.5.3 Retrieve a Scenario [!]
+         3.5.4 Edit a Scenario [!]
+         3.5.5 Remove a Scenario [!]
 
  [*] = not yet implemented
  [x] = in progress
@@ -303,14 +308,23 @@ app.use(express.static(__dirname + '/public'));
 var locations = require('./routes/locations')(app);
 
 /****************************
- 3.2 Videos
+ 3.2 Relationships
+ ****************************/
+var relationships = require('./routes/relationships')(app);
+
+/****************************
+ 3.3 Videos
  ****************************/
 var videos = require('./routes/videos')(app);
 
 /****************************
- 3.3 Overlays
+ 3.4 Overlays
  ****************************/
 var overlays = require('./routes/overlays')(app);
+
+/****************************
+ 3.5 Scenarios
+ ****************************/
 
 
 /*********************************************************

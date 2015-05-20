@@ -3,7 +3,7 @@ module.exports = function(app) {
     var send = require('../global/send');
     var Overlay = require('../models/Overlay');
 
-    // 3.3.1 List all Overlays (Developer: Tobi)
+    // 3.4.1 List all Overlays (Developer: Tobi)
     app.get('/api/overlays', function(req, res) {
         req.log.info('[GET] /api/overlays');
         Overlay.getAll(function(err, overlays) {
@@ -15,7 +15,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.3.2 Create an Overlay (Developer: Tobi)
+    // 3.4.2 Create an Overlay (Developer: Tobi)
     app.post('/api/overlays', function(req, res) {
         req.log.info('[POST] /api/overlays');
         Overlay.create(req.body, function(err, overlay) {
@@ -27,7 +27,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.3.3 Retrieve an Overlay (Developer: Tobi)
+    // 3.4.3 Retrieve an Overlay (Developer: Tobi)
     app.get('/api/overlays/:id', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -41,7 +41,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.3.4 Edit an Overlay (Developer: Tobi)
+    // 3.4.4 Edit an Overlay (Developer: Tobi)
     app.put('/api/overlays/:id', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -55,7 +55,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.3.5 Remove an Overlay (Developer: Tobi)
+    // 3.4.5 Remove an Overlay (Developer: Tobi)
     app.delete('/api/overlays/:id', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -69,7 +69,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.3.6 Retrieve all Overlays of a Location (Developer: Nicho)
+    // 3.4.6 Retrieve all Overlays of a Location (Developer: Nicho)
     app.get('/api/locations/:id/overlays', function(req, res) {
         req.log.info({
             PARAMS: req.params
