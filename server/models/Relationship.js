@@ -67,6 +67,34 @@ util.inherits(Relationship, events.EventEmitter);
 
 
 /**
+ * Static function to get a single location instance.
+ * @param id - The ID of the location to be fetched
+ * @param callback - The function to call once the fetch is done
+ */
+ Relationship.getById = function(id, callback) {
+    if (!validator.isInt(id)) {
+        return callback(new Error('Invalid ID'));
+    }
+
+    var query = [
+        'MATCH (locationStart:Location)-[relationship:relatedTo]->(locationEnd:Location)',
+        'WHERE id(relationship)=' + id,
+        'RETURN relationship'
+    ].join('\n');
+
+    db.query(query, null, function(err, result) {
+        if (err) return callback(err);
+        if (result.length === 0) {
+            return callback(new Error('No relationship found with this ID'));
+        } else {
+            var relationship = new Relationship(result[0]['relationship']);
+            callback(null, relationship);
+        }
+    });
+};
+
+
+/**
  * Creates a new location object and saves it in the database
  * @param data - The data to populate the new location
  * @param callback - The function to call once the new location has been saved to the database
@@ -146,6 +174,46 @@ util.inherits(Relationship, events.EventEmitter);
             });
     });
 };
+
+
+/**
+ * Saves changes to an existing location object to the database
+ * @param id - The ID of the location to save
+ * @param data - The data for the location
+ * @param callback - The function to call once the location has been saved to the database
+ */
+ Relationship.saveById = function(id, data, callback) {
+     if (!validator.isInt(id)) {
+         return callback(new Error('Invalid ID'));
+     }
+
+    js = new JaySchema();
+    js.validate(data, relationshipSchema.putRelationship, function(err) {
+        if (err) {
+            return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
+        }
+
+    var query = [
+                'MATCH (locationStart:Location)-[relationship:relatedTo]->(locationEnd:Location)',
+                'WHERE id(relationship)=' + id,
+                'SET relationship += {data}',
+                'RETURN relationship'
+            ].join('\n');
+            var params = {
+                data: {
+
+                    intents: data.intents
+                }
+            };
+
+            db.query(query, params, function(err, result) {
+                if (err) return callback(err);
+                Relationship.update(result, data, callback);
+            });
+    });
+};
+
+
 
 /**
  * Creates a location object from a DB query result and updates its attributes
