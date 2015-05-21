@@ -13,7 +13,7 @@ define(['backbonejs/js/backbone',
         'backend/models/Relationship',
         'bootstrap-bootbox/js/bootbox.min'
     ],
-    function(Backbone, Locations, Videos, Overlays, bootbox) {
+    function(Backbone, Locations, Videos, Overlays, Relationship, bootbox) {
         /**
          * The backbone.js view used for editing a location
          */
@@ -151,7 +151,7 @@ define(['backbonejs/js/backbone',
                                 thiz.$el.find('.relatedLocations')
                                     .empty();
                                 thiz.$el.find('.relatedLocations')
-                                    .html('<table class="table" id="relatedLocationsTable' + thiz.model.get('id') + '"><tbody><tr><th>ID</th><th>Name</th><th>RealtionshipID</th><th>Edit</th></tr></tbody></table>');
+                                    .html('<table class="table" id="relatedLocationsTable' + thiz.model.get('id') + '"><tbody><tr><th></th><th>ID</th><th>Name</th><th>Relationship</th></tr></tbody></table>');
                                 model.forEach(function(relatedLocation) {
 
                                     relatedLocation.relationship = new Relationship();
@@ -163,7 +163,7 @@ define(['backbonejs/js/backbone',
                                             relatedLocation.relationship.url = '/api/relationships/' + relatedLocation.relationship.id;
 
                                             thiz.$el.find('#relatedLocationsTable' + thiz.model.get('id') + ' > tbody:last')
-                                                .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td>' + relatedLocation.relationship.id + '</td><td><input type="radio" value="' + relatedLocation.relationship.id + '" name="relationship" class="_relationship"></td></tr>');
+                                                .append('<tr><td><input type="radio" value="' + relatedLocation.relationship.id + '" name="relationship" class="_relationship"></td><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td>' + relatedLocation.relationship.id + '</td></tr>');
                                         },
                                         error: function(model, response, options) {
                                             JL('iPED Toolkit.Backend')
@@ -190,7 +190,7 @@ define(['backbonejs/js/backbone',
                 'click button.cancel': '_close',
                 'click button.save': '_save',
                 'click button.edit-relationship': '_editRelationship',
-                'click button.delete-relatedLocation': '_deleteRelatedLocation',
+                'click button.delete-relationship': '_deleteRelationship',
                 'click button.add-video': '_addVideo',
                 'click button.edit-video': '_editVideo',
                 'click button.delete-video': '_deleteVideo',
@@ -233,8 +233,6 @@ define(['backbonejs/js/backbone',
                         if (this.relatedLocations.models[i].relationship.id == relationshipId) {
                             relationship = this.relatedLocations.models[i].relationship;
 
-                            //console.warn(relationship);
-
                             this.backend.editRelationship({
                                 relationship: relationship
                             });
@@ -249,27 +247,28 @@ define(['backbonejs/js/backbone',
                 var relationshipId = this.$el.find('._relationship:radio:checked')
                     .attr('value');
 
-                var question = 'Are you sure you want to delete this delete the relationship: <b>' + /* relationshipID+*/ '</b>?';
-                bootbox.dialog({
-                    title: "Attention",
-                    message: question,
-                    buttons: {
-                        cancel: {
-                            label: "Cancel",
-                            className: "btn-default",
-                            callback: function() {}
-                        },
-                        delete: {
-                            label: "OK",
-                            className: "btn-primary",
-                            callback: function() {
-                                /*this.backend.deleteRelatedLocations({
-                                    location: overlay
-                                });*/
+                if (relationshipId !== undefined) {
+
+                    var question = 'Are you sure you want to delete this relationship: <b>' + relationshipId + '</b>?';
+                    bootbox.dialog({
+                        title: "Attention",
+                        message: question,
+                        buttons: {
+                            cancel: {
+                                label: "Cancel",
+                                className: "btn-default",
+                                callback: function() {}
+                            },
+                            delete: {
+                                label: "OK",
+                                className: "btn-primary",
+                                callback: function() {
+
+                                }
                             }
                         }
-                    }
-                });
+                    });
+                }
             },
             _addVideo: function() {
                 this.backend.addVideo();

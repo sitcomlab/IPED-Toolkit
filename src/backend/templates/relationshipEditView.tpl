@@ -17,7 +17,7 @@
     <form class="form-horizontal" role="form">
 
         <div class="form-group">
-            <label for="tags" class="col-sm-3 control-label">Intents</label>
+            <label for="intents" class="col-sm-3 control-label">Intents</label>
             <div class="col-sm-9">
                 <select multiple data-role="tagsinput" name="intents" placeholder="Intents"></select>
             </div>

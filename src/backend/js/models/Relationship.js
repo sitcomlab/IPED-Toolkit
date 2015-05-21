@@ -14,6 +14,9 @@ define(['backbonejs/js/backbone'],
         Relationship = Backbone.Model.extend({
             urlRoot: '/api/relationships',
             initialize: function() {},
+            defaults: {
+                intents: []
+            }
         });
 
         return Relationship;

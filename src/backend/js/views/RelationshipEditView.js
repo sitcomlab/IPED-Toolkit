@@ -22,16 +22,10 @@ define(['backbonejs/js/backbone',
             },
             render: function() {
 
-                var intents = null;
-                if (this.model.relationship.attributes.intents !== undefined) {
-                    this.model.relationship.attributes.intents = [];
-                }
-
                 var thiz = this;
 
                 var relationship = new Relationship({
-                    id: this.model.relationship.get('id'),
-                    intents: this.model.relationship.attributes.intents
+                    id: this.model.relationship.get('id')
                 });
 
                 relationship.fetch({
@@ -50,7 +44,8 @@ define(['backbonejs/js/backbone',
                                         return 'label label-primary';
                                     }
                                 });
-                            thiz.model.relationship.attributes.intents
+
+                            thiz.model.relationship.get('intents')
                                 .forEach(function(intent) {
                                     thiz.$el.find('select[data-role=tagsinput]')
                                         .tagsinput('add', intent);
@@ -59,7 +54,8 @@ define(['backbonejs/js/backbone',
                                 .addClass('form-control')
                                 .css('padding-top', '5px')
                                 .css('padding-bottom', '5px')
-                                .css('width', '100%');
+                                .css('width', '100%')
+                                .css('height', 'auto');
                         });
                     },
                     error: function(model, response, options) {

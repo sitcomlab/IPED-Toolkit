@@ -142,7 +142,7 @@ define(['backbonejs/js/backbone',
                                         });
                                         thiz.routeViews.push(routeView);
                                     }
-                                    if (_.contains(routeView.routes, [fromLocation, toLocation]) == false) {
+                                    if (_.contains(routeView.routes, [fromLocation, toLocation]) === false) {
                                         routeView.routes.push([fromLocation, toLocation]);
                                     }
                                     routeView.render();

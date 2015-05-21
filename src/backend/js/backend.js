@@ -249,6 +249,13 @@ require(['jsnlog/js/jsnlog.min',
          * @param attributes - The set of (changed) attributes
          */
         Backend.prototype.saveLocation = function(opts) {
+
+            // Remove relationship extension
+            if (opts.attributes.relationship !== undefined) {
+                delete opts.attributes.relationship;
+            }
+
+
             JL('iPED Toolkit.Backend')
                 .debug('About to save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
 
@@ -752,7 +759,7 @@ require(['jsnlog/js/jsnlog.min',
                 .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + String.fromCharCode(0x2192) + JSON.stringify(opts.toLocation));
 
             // Confirmation before deleting
-            var question = 'Are you sure you want to delete this route: <b>' + opts.fromLocation.name + ' &rarr; ' + opts.toLocation.name + '</b>?';
+            var question = 'Are you sure you want to delete this route: <b>' + opts.fromLocation.get('name') + ' &rarr; ' + opts.toLocation.get('name') + '</b>?';
             bootbox.dialog({
                 title: "Attention",
                 message: question,
