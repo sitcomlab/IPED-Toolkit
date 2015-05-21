@@ -214,17 +214,19 @@ require(['jsnlog/js/jsnlog.min',
                 if (data == 'en') {
                     CLIENT_ACCESS_TOKEN = "RSVCNOQAOK4YZAAJXUK7LJYRVRGIU7LU";
                 } else if ('de') {
-                    CLIENT_ACCESS_TOKEN = "LBR7ZCQBU7Y5TAW5QR4GRWLF6KDQZSQD";
+                    // FINAL VERSION
+                    //CLIENT_ACCESS_TOKEN = "LBR7ZCQBU7Y5TAW5QR4GRWLF6KDQZSQD";
+
+                    // DEVELOPER VERSION
+                    CLIENT_ACCESS_TOKEN = "QII3ORWRCP2M7GIPT7TXQKZ2BGU3UXMH";
                 }
 
-                if (CLIENT_ACCESS_TOKEN != null || CLIENT_ACCESS_TOKEN != undefined) {
+                if (CLIENT_ACCESS_TOKEN !== null || CLIENT_ACCESS_TOKEN !== undefined) {
                     thiz.mic.connect(CLIENT_ACCESS_TOKEN);
 
                 } else {
                     alert("Could not access to Wit.Ai!");
                 }
-
-
 
             });
 
@@ -258,7 +260,7 @@ require(['jsnlog/js/jsnlog.min',
                     }, 460);
 
 
-                } else if (data == 0) {
+                } else if (data === 0) {
                     JL('iPED Toolkit.Frontend')
                         .debug('deactivate Microphone and stop recording');
 

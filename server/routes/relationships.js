@@ -1,26 +1,10 @@
 module.exports = function(app) {
     var log = require('../global/log');
     var send = require('../global/send');
-    //var Location = require('../models/Location');
     var Relationship = require('../models/Relationship');
 
 
-
-    // 3.1.3 Edit a Relationship between two Locations (Developer: Nicho)
-    app.put('/api/relationships/:id', function(req, res) {
-        req.log.info({
-            PARAMS: req.params
-        }, '[PUT] /api/relationships/:id');
-        Relationship.saveById(req.params.id, req.body, function(err, relationship) {
-            if (!err) {
-                send.data(res, JSON.stringify(relationship));
-            } else {
-                send.error(res, err);
-            }
-        });
-    });
-
-    // 3.1.2 Retrieve a Relationship between two Locations with all information (Developer: Nicho)
+    // 3.2.1 Retrieve a Relationship by its Id (Developer: Nicho)
     app.get('/api/relationships/:id', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -34,8 +18,21 @@ module.exports = function(app) {
         });
     });
 
+    // 3.2.2 Edit a Relationship by its Id (Developer: Nicho)
+    app.put('/api/relationships/:id', function(req, res) {
+        req.log.info({
+            PARAMS: req.params
+        }, '[PUT] /api/relationships/:id');
+        Relationship.saveById(req.params.id, req.body, function(err, relationship) {
+            if (!err) {
+                send.data(res, JSON.stringify(relationship));
+            } else {
+                send.error(res, err);
+            }
+        });
+    });
 
-    // 3.1.1 Create a Relationship between two Locations with information (Developer: Nicho)
+    // 3.2.3 Create a Relationship between two Locations with information (Developer: Nicho)
     app.post('/api/locations/:id_start/locations/:id_end', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -49,7 +46,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.1.2 Retrieve a Relationship between two Locations with all information (Developer: Nicho)
+    // 3.2.4 Retrieve a Relationship between two Locations (Developer: Nicho)
     app.get('/api/locations/:id_start/locations/:id_end', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -63,7 +60,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.1.3 Edit a Relationship between two Locations (Developer: Nicho)
+    // 3.2.5 Edit a Relationship between two Locations (Developer: Nicho)
     app.put('/api/locations/:id_start/locations/:id_end', function(req, res) {
         req.log.info({
             PARAMS: req.params
@@ -77,7 +74,7 @@ module.exports = function(app) {
         });
     });
 
-    // 3.1.4 Remove a Relationship between two Locations (Developer: Nicho)
+    // 3.2.6 Remove a Relationship by its Id (Developer: Nicho)
     app.delete('/api/relationship/:id', function(req, res) {
         req.log.info({
             PARAMS: req.params

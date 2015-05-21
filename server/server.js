@@ -23,10 +23,12 @@
          3.1.5 Remove a Location
          3.1.6 Retrieve all related Locations of a Location
     3.2 Relationships:
-         3.2.1 Create a Relationship
-         3.2.2 Retrieve a Relationship
-         3.2.3 Edit a Relationship
-         3.2.4 Remove a Relationship
+         3.2.1 Retrieve a Relationship by its Id
+         3.2.2 Edit a Relationship by its Id
+         3.2.3 Create a Relationship between two Locations
+         3.2.4 Retrieve a Relationship between two Locations
+         3.2.5 Edit a Relationship between two Locations
+         3.2.6 Remove a Relationship by its Id
     3.3 Videos:
          3.3.1 List all Videos
          3.3.2 Create a Video
@@ -148,14 +150,20 @@ var socketHandler = function(socket) {
     });
 
 
+    /*
+        Reset Socket-Function for microphonePermission in Frontend
+     */
     socket.on('resetFrontendMicPermission', function(data) {
         log.debug({data: data}, 'resetFrontendMicPermission:');
         io.emit('setMicPermission', data);
     });
 
 
+    /*
+        Getter Socket-Function for microphonePermission in Frontend
+     */
     socket.on('getFrontendMicPermission', function() {
-        log.info('getFrontendMicPermission');
+        log.debug('getFrontendMicPermission');
         var data = null;
         io.emit('getMicPermission', data);
         io.emit('getSelectedLanguage', data);
@@ -205,7 +213,6 @@ var socketHandler = function(socket) {
      */
     socket.on('witResponse', function(data) {
 
-
         log.debug({data: data}, 'witResponse:');
 
         vc.checkVoiceCommand(data, function(err, res) {
@@ -213,25 +220,34 @@ var socketHandler = function(socket) {
             if(!err && typeof res == "number") {
 
                 data.success = true;
-                console.log("relatedLocationID for emit: " + res);
+                log.debug({data: res}, "relatedLocationID for emit:");
 
                 data.id = res;
                 io.emit('setLocationId', data);
 
-            } else {
+            } else if (!err && typeof res == "string"){
 
-                data.success = false;
-                data.errMsg = res;
+                if(res == "sys_show_overlays") {
+                    io.emit('changeShowHideOverlays', true);
+                    io.emit('setShowHideOverlays', true);
+                } else if(res == "sys_hide_overlays") {
+                    io.emit('changeShowHideOverlays', false);
+                    io.emit('setShowHideOverlays', false);
+                } else {
 
-                io.emit('failed', data);
-                io.emit('logger', data);
+                    data.success = false;
+                    data.errMsg = res;
 
+                    io.emit('failed', data);
+                    io.emit('logger', data);
+
+                }
             }
         });
     });
 
     /*
-        Helper Socketfunction for Logging in Frontend
+        Helper Socket-function for Logging (used in Frontend)
      */
     socket.on('beforeMainLogger', function(data) {
 
@@ -241,7 +257,7 @@ var socketHandler = function(socket) {
 
 
     /*
-
+        Helper Socket-function for Show/Hide Overlays (used in Remote)
      */
     socket.on('showHideOverlays', function(data) {
 

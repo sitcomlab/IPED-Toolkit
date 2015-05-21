@@ -6,68 +6,91 @@ var socketio = require('socket.io');
 
 exports.checkVoiceCommand = function(data, callback) {
 
-    if (data.msg_body == "" || data.msg_body == null) {
+    var errMsg = "";
 
-        var errMsg = "Voice command failed: Wit.Ai couldn't recognize an input!";
+    if (data.msg_body === "" || data.msg_body === null) {
+
+        errMsg = "Voice command failed: Wit.Ai couldn't recognize an input!";
         log.error(errMsg);
         callback(null, errMsg);
-        return
+        return;
 
-    }  else if (data.outcome.intent == undefined || data.outcome.intent == null || data.outcome.intent=='{}') {
-        
-        var errMsg = "Voice command failed: Wit.Ai couldn't recognize an intent!";
+    }  else if (data.outcome.intent === undefined || data.outcome.intent === null || data.outcome.intent =='{}') {
+
+        errMsg = "Voice command failed: Wit.Ai couldn't recognize an intent!";
         log.error(errMsg);
         callback(null, errMsg);
-        return
+        return;
 
-    } else if (data.locationID == null) {
-        
-        var errMsg = "Voice command failed: No Start Location selected!";
+    } else if (data.locationID === null) {
+
+        errMsg = "Voice command failed: No Start Location selected!";
         log.error(errMsg);
         callback(null, errMsg);
-        return
+        return;
 
     } else {
 
         // Check Confidence of wit.ai Results
         if(data.outcome.confidence) {
-            
+
             if(data.outcome.confidence < 0.05) {
                 //var errMsg = "Voice command failed: Could not interpret user input. Confidence is under 50%!";
-                var errMsg = "Voice command failed: Could not interpret user input. Confidence is under 5%!";
+                errMsg = "Voice command failed: Could not interpret user input. Confidence is under 5%!";
                 log.error(errMsg);
                 callback(null, errMsg);
-                return
+                return;
             } else {
-                log.info("Confidence accepted!");
+                log.debug({data: data.outcome.confidence}, "Confidence accepted: " );
             }
         }
+
+        /**
+         *  Check if System-function
+         */
 
         // Check if the submitted intend was a previoud step command, else continue procedure
         if(data.outcome.intent == "sys_previous_location") {
-            if(data.previousLocationID==null){
-                var errMsg = "Could not load previous Location because it doesn't exist at the moment!";
+            if(data.previousLocationID === null){
+                errMsg = "Could not load previous Location because it doesn't exist at the moment!";
                 log.error(errMsg);
                 callback(null, errMsg);
-                return
+                return;
             } else {
-                log.info("Load previous Location: " + data.previousLocationID);
+                log.debug({data: data.previousLocationID}, "Load previous Location:");
                 var relatedLocationID = data.previousLocationID;
                 callback(null, data.previousLocationID);
-                return
+                return;
             }
         }
 
+        // sys_show_overlays
+        if(data.outcome.intent == "sys_show_overlays") {
+
+            log.debug("Intent recognized: sys_show_overlays");
+            callback(null, "sys_show_overlays");
+            return;
+        }
+
+        // sys_hide_overlays
+        if(data.outcome.intent == "sys_hide_overlays") {
+
+            log.debug("Intent recognized: sys_hide_overlays");
+            callback(null, "sys_hide_overlays");
+            return;
+        }
+
+
         // If Confidence is high enough for an understood intent continue with searching this intent in the relationships
         // of the current LocationID in the Database
-        
+
         // Database-Query-Preparation
         var query = [
             'START n=node(' + data.locationID + ')',
             'MATCH n-[r:relatedTo]->m',
             'RETURN ID(m) AS relatedLocationID,r.intents AS intents'
         ].join('\n');
-        
+
         // Database-Query-Executing
         db.query(query, null, function(err, result) {
 
@@ -79,19 +102,19 @@ exports.checkVoiceCommand = function(data, callback) {
                 // for each result in result
                 for(var i=0; i<result.length; i++) {
                     // if no intents foundn in current relationship, continue with next relationship
-                    if (result[i].intents == null) {
+                    if (result[i].intents === null) {
                     // else check for each intent in current relationship, if an intent was in the wit.ai Results
                     } else {
                         for(var j=0; j<result[i].intents.length; j++) {
                             if(result[i].intents[j] == data.outcome.intent){
-                                log.info("Intent found in Location: " + result[i].relatedLocationID + 
+                                log.info("Intent found in Location: " + result[i].relatedLocationID +
                                     "; " + result[i].intents[j] + " = " + data.outcome.intent );
                                 callback(null, result[i].relatedLocationID);
-                                return
+                                return;
                             } else {
                                 log.info("No intent found in Database: " + result[i].intents[j] + " != " + data.outcome.intent);
                             }
-                        }   
+                        }
                     }
                 }
             }
@@ -99,5 +122,5 @@ exports.checkVoiceCommand = function(data, callback) {
             callback(null, errMsg);
         });
 
-    }  
-}
+    }
+};

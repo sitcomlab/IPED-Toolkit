@@ -192,6 +192,25 @@ require(['jsnlog/js/jsnlog.min',
 
             });
 
+            // Show/Hide Overalys by voice command
+            this.socket.on('changeShowHideOverlays', function(data) {
+
+                JL('iPED Toolkit.Remote - changeShowHideOverlays')
+                    .debug(data);
+
+                if (data === true) {
+                    this.overlayStatus = true;
+
+                    $("#switchOverlay")
+                        .bootstrapSwitch('state', true, true);
+                } else  {
+                    this.overlayStatus = false;
+                    $("#switchOverlay")
+                        .bootstrapSwitch('state', false, false);
+                }
+
+            });
+
 
             this.locations = new Locations();
             this.relatedLocations = new Locations();
@@ -391,23 +410,6 @@ require(['jsnlog/js/jsnlog.min',
                     });
 
                 /**
-                 * Hide Header if Voice Control is in use
-                 */
-                $('#voiceControlTitle')
-                    .click(function() {
-
-                        if (!collapsed) {
-                            $('#remoteControlTitle')
-                                .hide();
-                            collapsed = true;
-                        } else {
-                            $('#remoteControlTitle')
-                                .show();
-                            collapsed = false;
-                        }
-                    });
-
-                /**
                  * Show/Hide Overlays
                  */
                 if (remote.overlayStatus === true) {
@@ -461,12 +463,43 @@ require(['jsnlog/js/jsnlog.min',
                                 .show();
                             $("#loggerPanel")
                                 .show();
+
+                            if (!collapsed) {
+                                $('#remoteControlTitle')
+                                    .hide();
+                                collapsed = true;
+                                $('#useVoiceControl')
+                                    .collapse();
+                            } else {
+                                $('#remoteControlTitle')
+                                    .show();
+                                collapsed = false;
+                                $('#useVoiceControl')
+                                    .collapse();
+                            }
+
                         } else {
                             remote.voiceControlStatus = false;
                             $("#mainVoiceControlPanel")
                                 .hide();
                             $("#loggerPanel")
                                 .hide();
+
+                            if (!collapsed) {
+                                $('#remoteControlTitle')
+                                    .hide();
+                                collapsed = true;
+                                $('#useVoiceControl')
+                                    .collapse();
+                            } else {
+                                $('#remoteControlTitle')
+                                    .show();
+                                collapsed = false;
+                                $('#useVoiceControl')
+                                    .collapse();
+                            }
+
+
                         }
                     });
 
