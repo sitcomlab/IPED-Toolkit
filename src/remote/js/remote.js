@@ -427,35 +427,8 @@ require(['jsnlog/js/jsnlog.min',
                     });
 
                 /**
-                 * Show/Hide Overlay
+                 * Show/Hide Overlays
                  */
-                $('#overlayControl')
-                    .click(function() {
-
-                        if (remote.overlayStatus) {
-                            $('#overlayControl')
-                                .removeClass("panel-success");
-                            $('#overlayControl')
-                                .addClass("panel-default");
-                            $('#showHideOverlays')
-                                .html("Overlays (disabled)");
-                            remote.overlayStatus = false;
-                            remote.showHideOverlays();
-
-                        } else {
-                            $('#overlayControl')
-                                .removeClass("panel-default");
-                            $('#overlayControl')
-                                .addClass("panel-success");
-                            $('#showHideOverlays')
-                                .html("Overlays (enabled)");
-                            remote.overlayStatus = true;
-                            remote.showHideOverlays();
-
-                        }
-
-                    });
-
                 if (remote.overlayStatus === true) {
                     $("#switchOverlay")
                         .bootstrapSwitch()
@@ -475,6 +448,10 @@ require(['jsnlog/js/jsnlog.min',
                         }
                     });
 
+
+                /**
+                 * Show/Hide Setup-Panel & Logger-Panel of Voice-Control-System
+                 */
                 if (remote.voiceControlStatus === true) {
                     $("#switchVoiceControl")
                         .bootstrapSwitch()
