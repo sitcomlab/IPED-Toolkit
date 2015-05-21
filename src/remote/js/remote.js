@@ -33,7 +33,7 @@ require(['jsnlog/js/jsnlog.min',
 
     ],
 
-    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap, Location, Locations, Video, Videos, LocationsListView, Switch) {
+    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap, Switch, Location, Locations, Video, Videos, LocationsListView) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -93,25 +93,6 @@ require(['jsnlog/js/jsnlog.min',
 
                 JL('iPED Toolkit.Remote - showHideOverlays')
                     .debug(data);
-
-                if (!remote.overlayStatus) {
-                    $('#overlayControl')
-                        .removeClass("panel-default");
-                    $('#overlayControl')
-                        .addClass("panel-success");
-                    $('#showHideOverlays')
-                        .html("Overlays (enabled)");
-
-                } else {
-                    $('#overlayControl')
-                        .removeClass("panel-success");
-                    $('#overlayControl')
-                        .addClass("panel-default");
-                    $('#showHideOverlays')
-                        .html("Overlays (disabled)");
-
-                }
-
             });
 
 
@@ -461,6 +442,9 @@ require(['jsnlog/js/jsnlog.min',
                     $("#loggerPanel")
                         .show();
                 } else {
+                    $("#switchVoiceControl")
+                        .bootstrapSwitch()
+                        .state = false;
                     $("#mainVoiceControlPanel")
                         .hide();
                     $("#loggerPanel")
