@@ -9,9 +9,9 @@
 define(['backbonejs/js/backbone',
         'backend/models/Relationship'
     ],
-    function(Backbone, Location, Relationship) {
+    function(Backbone, Relationship) {
         /**
-         * The backbone.js view used for editing a video
+         * The backbone.js view used for editing a relationship
          */
         RelationshipEditView = Backbone.View.extend({
             initialize: function(opts) {
@@ -21,11 +21,17 @@ define(['backbonejs/js/backbone',
                 this.render();
             },
             render: function() {
+
+                var intents = null;
+                if (this.model.relationship.attributes.intents !== undefined) {
+                    this.model.relationship.attributes.intents = [];
+                }
+
                 var thiz = this;
 
                 var relationship = new Relationship({
-                    id: thiz.model.relationship.attributes.id,
-                    intents: thiz.model.relationship.attributes.intents
+                    id: this.model.relationship.get('id'),
+                    intents: this.model.relationship.attributes.intents
                 });
 
                 relationship.fetch({
@@ -44,10 +50,10 @@ define(['backbonejs/js/backbone',
                                         return 'label label-primary';
                                     }
                                 });
-                            thiz.model.relationship.get('intents')
-                                .forEach(function(tag) {
+                            thiz.model.relationship.attributes.intents
+                                .forEach(function(intent) {
                                     thiz.$el.find('select[data-role=tagsinput]')
-                                        .tagsinput('add', tag);
+                                        .tagsinput('add', intent);
                                 });
                             thiz.$el.find('.bootstrap-tagsinput')
                                 .addClass('form-control')

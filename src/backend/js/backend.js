@@ -83,6 +83,8 @@ require(['jsnlog/js/jsnlog.min',
             this.createRouteToLocation = null;
             this.createRouteToMarker = null;
             this.locationEditViews = [];
+            this.relationshipEditViews = [];
+            this.videoEditViews = [];
 
             this.fetchLocations({
                 callback: function() {
@@ -320,6 +322,32 @@ require(['jsnlog/js/jsnlog.min',
         };
 
 
+        /**
+         * Saves relationship to the database
+         */
+        Backend.prototype.saveRelationship = function(opts) {
+            var thiz = this;
+
+            JL('iPED Toolkit.Backend')
+                .debug('About to save relationship: ' + JSON.stringify(opts.relationship) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+            opts.relationship.save(opts.attributes, {
+                success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Relationship saved');
+                    opts.dialog._close();
+                    thiz.relationshipEditViews.forEach(function(relationshipEditView) {
+                        relationshipEditView.update();
+                    });
+                },
+                error: function(model, response, options) {
+                    opts.dialog._enableButtons();
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            });
+        };
+
+
 
         /**
          * Opens a new view/frame that lets the user position a new video
@@ -393,6 +421,7 @@ require(['jsnlog/js/jsnlog.min',
                 }
             });
         };
+
 
         /**
          * Delete a video
@@ -555,11 +584,11 @@ require(['jsnlog/js/jsnlog.min',
         /**
          * Shows a customized JQuery dialog to add/edit relationships between a location and a related Location
          */
-        Backend.prototype.showEditRelationshipsDialog = function(opts) {
+        Backend.prototype.showEditRelationshipDialog = function(opts) {
             $(opts.content)
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
-                    height: 420,
+                    height: 440,
                     width: 400,
                     draggable: false,
                     position: {
@@ -580,7 +609,7 @@ require(['jsnlog/js/jsnlog.min',
             $(opts.content)
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
-                    height: 430,
+                    height: 440,
                     width: 400,
                     draggable: false,
                     position: {
@@ -681,7 +710,7 @@ require(['jsnlog/js/jsnlog.min',
             var relatedLocations = _.clone(this.createRouteFromLocation.get('relatedLocations'));
             if (_.indexOf(relatedLocations, this.createRouteToLocation.get('id')) != -1) {
                 JL('iPED Toolkit.Backend')
-                    .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+                    .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
                 thiz.fetchLocations({
                     //callback: thiz.mapView.render
@@ -690,7 +719,7 @@ require(['jsnlog/js/jsnlog.min',
             }
 
             JL('iPED Toolkit.Backend')
-                .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+                .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
             relatedLocations.push(this.createRouteToLocation.get('id'));
             this.createRouteFromLocation.save({
@@ -720,28 +749,48 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
 
             JL('iPED Toolkit.Backend')
-                .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + ' -> ' + JSON.stringify(opts.toLocation));
+                .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + String.fromCharCode(0x2192) + JSON.stringify(opts.toLocation));
 
-            var relatedLocations = _.without(opts.fromLocation.get('relatedLocations'), opts.toLocation.get('id'));
-            opts.fromLocation.save({
-                relatedLocations: relatedLocations
-            }, {
-                success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
-                        .debug('Route deleted');
-                    thiz.fetchLocations({
-                        //callback: thiz.mapView.render
-                    });
-                },
-                error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
-                        .error(response);
-                    thiz.fetchLocations({
-                        //callback: thiz.mapView.render
-                    });
+            // Confirmation before deleting
+            var question = 'Are you sure you want to delete this route: <b>' + opts.fromLocation.name + ' &rarr; ' + opts.toLocation.name + '</b>?';
+            bootbox.dialog({
+                title: "Attention",
+                message: question,
+                buttons: {
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default",
+                        callback: function() {}
+                    },
+                    delete: {
+                        label: "OK",
+                        className: "btn-primary",
+                        callback: function() {
+
+                            var relatedLocations = _.without(opts.fromLocation.get('relatedLocations'), opts.toLocation.get('id'));
+                            opts.fromLocation.save({
+                                relatedLocations: relatedLocations
+                            }, {
+                                success: function(model, response, options) {
+                                    JL('iPED Toolkit.Backend')
+                                        .debug('Route deleted');
+                                    thiz.fetchLocations({
+                                        //callback: thiz.mapView.render
+                                    });
+                                },
+                                error: function(model, response, options) {
+                                    JL('iPED Toolkit.Backend')
+                                        .error(response);
+                                    thiz.fetchLocations({
+                                        //callback: thiz.mapView.render
+                                    });
+                                }
+                            });
+
+                        }
+                    }
                 }
             });
-
         };
 
         /**

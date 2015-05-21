@@ -12,6 +12,7 @@ define(['backbonejs/js/backbone'],
          * The Backbone.js model of a Relationship between a location and a related location
          */
         Relationship = Backbone.Model.extend({
+            urlRoot: '/api/relationships',
             initialize: function() {},
         });
 

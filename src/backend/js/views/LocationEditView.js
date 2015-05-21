@@ -160,6 +160,8 @@ define(['backbonejs/js/backbone',
                                     relatedLocation.relationship.fetch({
                                         success: function(model, response, options) {
 
+                                            relatedLocation.relationship.url = '/api/relationships/' + relatedLocation.relationship.id;
+
                                             thiz.$el.find('#relatedLocationsTable' + thiz.model.get('id') + ' > tbody:last')
                                                 .append('<tr><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td>' + relatedLocation.relationship.id + '</td><td><input type="radio" value="' + relatedLocation.relationship.id + '" name="relationship" class="_relationship"></td></tr>');
                                         },
@@ -231,6 +233,8 @@ define(['backbonejs/js/backbone',
                         if (this.relatedLocations.models[i].relationship.id == relationshipId) {
                             relationship = this.relatedLocations.models[i].relationship;
 
+                            //console.warn(relationship);
+
                             this.backend.editRelationship({
                                 relationship: relationship
                             });
@@ -284,6 +288,9 @@ define(['backbonejs/js/backbone',
                     .attr('value');
 
                 var video = this.videos.get(videoId);
+
+                console.warn(video);
+
                 this.backend.editVideo({
                     video: video
                 });
