@@ -56,6 +56,11 @@ var requireConfig = {
         deps: ['bootstrap/js/bootstrap.min',
             'jquery/js/jquery.min'],
         exports: 'bootbox'
+    },
+    'bootstrap-switch/dist/js/bootstrap-switch.min': {
+        deps: ['bootstrap/js/bootstrap.min',
+            'jquery/js/jquery.min'],
+        exports: 'Switch'
     }
   }
 };

@@ -20,6 +20,7 @@ require(['jsnlog/js/jsnlog.min',
         'underscorejs/js/underscore',
         'backbonejs/js/backbone',
         'bootstrap/js/bootstrap.min',
+        'bootstrap-switch/dist/js/bootstrap-switch.min',
 
         // Models
         'backend/models/Location',
@@ -32,7 +33,7 @@ require(['jsnlog/js/jsnlog.min',
 
     ],
 
-    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap, Location, Locations, Video, Videos, LocationsListView) {
+    function(JSNLog, JQuery, io, Underscore, Backbone, Bootstrap, Location, Locations, Video, Videos, LocationsListView, Switch) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -72,6 +73,9 @@ require(['jsnlog/js/jsnlog.min',
 
             // variable for show/hide Overlays
             var overlayStatus = true;
+
+            // variable for show/hide Overlays
+            var voiceControlStatus = false;
 
             // variables for voice control
             this.micstatus = 0;
@@ -155,7 +159,7 @@ require(['jsnlog/js/jsnlog.min',
                     .debug(data);
 
                 // Select radio button if language was already defined
-                if (language != null) {
+                if (language !== null) {
                     $('input[name="languages"][value=' + language + ']')
                         .prop('checked', true);
                 }
@@ -265,7 +269,7 @@ require(['jsnlog/js/jsnlog.min',
             this.relatedLocations.fetch({
                 success: function(model, repsonse, options) {
                     if ($('#relatedLocations')
-                        .hasClass('in') == false) {
+                        .hasClass('in') === false) {
                         $('a[href="#relatedLocations"]')
                             .click();
                     }
@@ -292,7 +296,7 @@ require(['jsnlog/js/jsnlog.min',
          */
         Remote.prototype.listen = function() {
 
-            if (this.micstatus == 0) {
+            if (this.micstatus === 0) {
 
                 this.micstatus = 1;
                 JL('iPED Toolkit.Remote')
@@ -340,7 +344,7 @@ require(['jsnlog/js/jsnlog.min',
                 JL('iPED Toolkit.Remote - getFrontendMicPermission:')
                     .debug(data);
             });
-        }
+        };
 
 
         /*
@@ -450,6 +454,59 @@ require(['jsnlog/js/jsnlog.min',
 
                         }
 
+                    });
+
+                if (remote.overlayStatus === true) {
+                    $("#switchOverlay")
+                        .bootstrapSwitch()
+                        .state = true;
+                }
+
+                $("#switchOverlay")
+                    .bootstrapSwitch()
+                    .on('switchChange.bootstrapSwitch', function(event, state) {
+
+                        if (state === true) {
+                            remote.overlayStatus = true;
+                            remote.showHideOverlays();
+                        } else {
+                            remote.overlayStatus = false;
+                            remote.showHideOverlays();
+                        }
+                    });
+
+                if (remote.voiceControlStatus === true) {
+                    $("#switchVoiceControl")
+                        .bootstrapSwitch()
+                        .state = true;
+                    $("#mainVoiceControlPanel")
+                        .show();
+                    $("#loggerPanel")
+                        .show();
+                } else {
+                    $("#mainVoiceControlPanel")
+                        .hide();
+                    $("#loggerPanel")
+                        .hide();
+                }
+
+                $("#switchVoiceControl")
+                    .bootstrapSwitch()
+                    .on('switchChange.bootstrapSwitch', function(event, state) {
+
+                        if (state === true) {
+                            remote.voiceControlStatus = true;
+                            $("#mainVoiceControlPanel")
+                                .show();
+                            $("#loggerPanel")
+                                .show();
+                        } else {
+                            remote.voiceControlStatus = false;
+                            $("#mainVoiceControlPanel")
+                                .hide();
+                            $("#loggerPanel")
+                                .hide();
+                        }
                     });
 
             });

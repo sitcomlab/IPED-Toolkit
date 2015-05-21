@@ -35,6 +35,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <link rel="stylesheet" href="css/remote.css" />
+    <link rel="stylesheet" href="../lib/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" />
+
 </head>
 
 <body>
@@ -44,7 +46,7 @@
         </div>
         <br>
         <div id="errorMessages"></div>
-        <div class="panel-group">
+        <div class="panel-group" id="mainVoiceControlPanel">
             <div class="panel panel-default" id="voiceControlPanel">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -105,6 +107,7 @@
             </div>
         </div>
 
+        <!-- OLD Version
         <div class="panel-group">
             <div class="panel panel-success" id="overlayControl">
                 <div class="panel-heading">
@@ -113,23 +116,38 @@
                     </h3>
                 </div>
             </div>
-        </div>
-
-        <!-- Old BA-Code
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Logger</h3>
-            </div>
-            <div class="panel-body">
-                <div id="logger" class="table-responsive"> -->
-        <!-- logged data -->
-        <!--</div>
-        <br>
-        </div>
         </div>-->
 
-        <!-- new Logger Panel -->
         <div class="panel-group">
+            <div class="panel panel-default" id="voiceControl">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Settings
+                    </h3>
+                </div>
+                <div class="panel-content">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="switchOverlay" class="col-xs-6 control-label">Show Overlays</label>
+                            <div class="col-xs-6">
+                                <input type="checkbox" id="switchOverlay" checked name="switchOverlay">
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="form-group">
+                            <label for="switchVoiceControl" class="col-xs-6 control-label">Voice Control System</label>
+                            <div class="col-xs-6">
+                                <input type="checkbox" id="switchVoiceControl" name="switchVoiceControl">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logger Panel -->
+        <div class="panel-group" id="loggerPanel">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
