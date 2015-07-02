@@ -9,10 +9,15 @@
      *
      * (c) 2014 Morin Ostkamp
      * Institute for Geoinformatics (ifgi), University of Münster
+     *
+     * Voice control
+     * (c) 2015 Nicholas Schiestel
+     * Institute for Geoinformatics (ifgi), University of Münster
      */
     </script>
 
     <!-- iPED Remote -->
+
     <!--(if target master)><!-->
     <title>iPED Toolkit (Master)</title>
     <!--<!(endif)-->
@@ -27,14 +32,52 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <link rel="stylesheet" href="css/remote.css" />
+    <link rel="stylesheet" href="../lib/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.min.css" />
+
 </head>
 
 <body>
     <div class="container">
-        <h1>iPED Toolkit Remote</h1>
+        <div id="remoteControlTitle">
+            <h1>iPED Toolkit Remote</h1>
+        </div>
+        <br>
+        <div id="errorMessages"></div>
+        <div class="panel-group" id="mainVoiceControlPanel">
+            <div class="panel panel-default" id="voiceControlPanel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <span id="voiceControlTitle">Voice Control (Setup)</span>
+                    </h3>
+                </div>
+                <div id="useVoiceControl" class="panel-collapse collapse">
+                    <div id="vc" class="panel-body">
+
+                        <center>
+                            <br>
+                            <a href="#" id="microphone" type="btn btn-default" class="mic-link">
+                                <img src="images/mic.svg" class="mic-icon">
+                            </a>
+                            <br>
+                            <hr>
+                            <div class="radio">
+                                <label class="radio-inline">
+                                    <input type="radio" name="languages" value="de"> German (Deutsch)
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="languages" value="en" disabled="disabled"> English (Englisch)
+                                </label>
+                                <a href="#" class="btn btn-primary btn-sm" id="language" role="button">OK</a>
+                            </div>
+                        </center>
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="panel-group" id="accordion">
             <div class="panel panel-primary">
@@ -49,7 +92,7 @@
                     </div>
                 </div>
             </div>
-
+            <br>
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">
@@ -63,6 +106,50 @@
                 </div>
             </div>
         </div>
+
+        <div class="panel-group">
+            <div class="panel panel-default" id="voiceControl">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Settings
+                    </h3>
+                </div>
+                <div class="panel-content">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="switchOverlay" class="col-xs-6 control-label">Show Overlays</label>
+                            <div class="col-xs-6">
+                                <input type="checkbox" id="switchOverlay" checked name="switchOverlay">
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="form-group">
+                            <label for="switchVoiceControl" class="col-xs-6 control-label">Voice Control System</label>
+                            <div class="col-xs-6">
+                                <input type="checkbox" id="switchVoiceControl" name="switchVoiceControl">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logger Panel -->
+        <div class="panel-group" id="loggerPanel">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        <a data-toggle="collapse" href="#loggerContent">Logger</a>
+                    </h3>
+                </div>
+                <div id="loggerContent" class="panel-collapse collapse">
+                    <div id="logger" class="panel-body"></div>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
     <script src="../lib/requirejs/js/config.js"></script>
@@ -70,4 +157,3 @@
 </body>
 
 </html>
-

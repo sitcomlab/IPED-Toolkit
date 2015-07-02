@@ -2,7 +2,11 @@
  * The iPED Toolkit
  * Backend
  *
- * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
+ * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
+ * Institute for Geoinformatics (ifgi), University of Münster
+ *
+ * Voice control
+ * (c) 2015 Nicholas Schiestel
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
@@ -21,6 +25,7 @@ require(['jsnlog/js/jsnlog.min',
         'leaflet/js/leaflet',
         'leaflet/js/leaflet.contextmenu',
         'form2js/js/form2js',
+        'bootstrap-bootbox/js/bootbox.min',
         // Models
         'backend/models/Location',
         'backend/models/Locations',
@@ -28,18 +33,21 @@ require(['jsnlog/js/jsnlog.min',
         'backend/models/Videos',
         'backend/models/Overlay',
         'backend/models/Overlays',
+        'backend/models/Relationship',
         // Views
         'backend/views/AboutView',
         'backend/views/MapView',
         'backend/views/MarkerView',
         'backend/views/LocationMarkerView',
         'backend/views/LocationEditView',
-        'backend/views/OverlayEditView'
+        'backend/views/OverlayEditView',
+        'backend/views/VideoEditView',
+        'backend/views/RelationshipEditView'
     ],
 
-    function(JSNLog, JQuery, JQueryUI, Bootstrap, BootstrapTagsinput, Underscore, Backbone, Leaflet, LeafletContextmenu, form2js,
-        Location, Locations, Video, Videos, Overlay, Overlays,
-        AboutView, MapView, MarkerView, LocationMarkerView, LocationEditView, OverlayEditView) {
+    function(JSNLog, JQuery, JQueryUI, Bootstrap, BootstrapTagsinput, Underscore, Backbone, Leaflet, LeafletContextmenu, form2js, bootbox,
+        Location, Locations, Video, Videos, Overlay, Overlays, Relationship,
+        AboutView, MapView, MarkerView, LocationMarkerView, LocationEditView, OverlayEditView, VideoEditView, RelationshipEditView) {
 
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
@@ -48,7 +56,7 @@ require(['jsnlog/js/jsnlog.min',
                     'appenders': [consoleAppender],
                     //'level': JL.getOffLevel()
                     'level': JL.getDebugLevel()
-                    //'level': JL.getErrorLevel()
+                        //'level': JL.getErrorLevel()
                 });
 
             /* This is an example log output:
@@ -75,6 +83,8 @@ require(['jsnlog/js/jsnlog.min',
             this.createRouteToLocation = null;
             this.createRouteToMarker = null;
             this.locationEditViews = [];
+            this.relationshipEditViews = [];
+            this.videoEditViews = [];
 
             this.fetchLocations({
                 callback: function() {
@@ -109,7 +119,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchLocations = function(opts) {
             var thiz = this;
 
-            if (this.locations == null) {
+            if (this.locations === null) {
                 this.locations = new Locations();
             }
             this.locations.fetch({
@@ -134,7 +144,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchVideos = function(opts) {
             var thiz = this;
 
-            if (this.videos == null) {
+            if (this.videos === null) {
                 this.videos = new Videos();
             }
             this.videos.fetch({
@@ -158,7 +168,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.fetchOverlays = function(opts) {
             var thiz = this;
 
-            if (this.overlays == null) {
+            if (this.overlays === null) {
                 this.overlays = new Overlays();
             }
             this.overlays.fetch({
@@ -239,8 +249,16 @@ require(['jsnlog/js/jsnlog.min',
          * @param attributes - The set of (changed) attributes
          */
         Backend.prototype.saveLocation = function(opts) {
+
+            // Remove relationship extension
+            if (opts.attributes.relationship !== undefined) {
+                delete opts.attributes.relationship;
+            }
+
+
             JL('iPED Toolkit.Backend')
                 .debug('About to save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+
             var thiz = this;
 
             opts.location.save(opts.attributes, {
@@ -288,8 +306,154 @@ require(['jsnlog/js/jsnlog.min',
                         //callback: thiz.mapView.render
                     });
                 }
-            })
+            });
         };
+
+        /**
+         * Edit an existing location
+         * @param location - The location to be edited
+         */
+        Backend.prototype.editRelationship = function(opts) {
+            JL('iPED Toolkit.Backend')
+                .debug('Edit relationship: ' + JSON.stringify(opts.relationship));
+            var relationshipEditView = new RelationshipEditView({
+                backend: this,
+                title: 'Edit relationship',
+                model: {
+                    relationship: opts.relationship
+                }
+            });
+            this.showEditRelationshipDialog({
+                content: relationshipEditView.el
+            });
+        };
+
+
+        /**
+         * Saves relationship to the database
+         */
+        Backend.prototype.saveRelationship = function(opts) {
+            var thiz = this;
+
+            JL('iPED Toolkit.Backend')
+                .debug('About to save relationship: ' + JSON.stringify(opts.relationship) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+            opts.relationship.save(opts.attributes, {
+                success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Relationship saved');
+                    opts.dialog._close();
+                    thiz.relationshipEditViews.forEach(function(relationshipEditView) {
+                        relationshipEditView.update();
+                    });
+                },
+                error: function(model, response, options) {
+                    opts.dialog._enableButtons();
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            });
+        };
+
+
+
+        /**
+         * Opens a new view/frame that lets the user position a new video
+         */
+        Backend.prototype.addVideo = function(opts) {
+            var thiz = this;
+
+            JL('iPED Toolkit.Backend')
+                .debug('Add new video');
+            var newVideo = new Video({
+                name: '',
+                description: '',
+                tags: [],
+                date: '',
+                url: window.location.origin + '/media/video/'
+            });
+            var videoEditView = new VideoEditView({
+                backend: this,
+                title: 'Add video',
+                model: {
+                    video: newVideo
+                }
+            });
+            this.showEditVideoDialog({
+                content: videoEditView.el
+            });
+        };
+
+
+        /**
+         * Edit an existing video
+         * @param video - The video to be edited
+         */
+        Backend.prototype.editVideo = function(opts) {
+            JL('iPED Toolkit.Backend')
+                .debug('Edit video: ' + JSON.stringify(opts.video));
+            var videoEditView = new VideoEditView({
+                backend: this,
+                title: 'Edit video',
+                model: {
+                    video: opts.video
+                }
+            });
+            this.showEditVideoDialog({
+                content: videoEditView.el
+            });
+        };
+
+
+        /**
+         * Saves video created by addVideo to the database
+         */
+        Backend.prototype.saveVideo = function(opts) {
+            var thiz = this;
+
+            JL('iPED Toolkit.Backend')
+                .debug('About to save video: ' + JSON.stringify(opts.video) + ', with new attributes: ' + JSON.stringify(opts.attributes));
+            opts.video.save(opts.attributes, {
+                success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Video saved');
+                    opts.dialog._close();
+                    thiz.locationEditViews.forEach(function(locationEditView) {
+                        locationEditView.update();
+                    });
+                },
+                error: function(model, response, options) {
+                    opts.dialog._enableButtons();
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            });
+        };
+
+
+        /**
+         * Delete a video
+         * @param video - The video to be deleted
+         */
+        Backend.prototype.deleteVideo = function(opts) {
+            JL('iPED Toolkit.Backend')
+                .debug('About to delete video: ' + JSON.stringify(opts.video));
+            var thiz = this;
+
+            opts.video.destroy({
+                success: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .debug('Video deleted');
+                    thiz.locationEditViews.forEach(function(locationEditView) {
+                        locationEditView.update();
+                    });
+                },
+                error: function(model, response, options) {
+                    JL('iPED Toolkit.Backend')
+                        .error(response);
+                }
+            });
+        };
+
 
         /**
          * Opens a new view/frame that lets the user position a new overlay on top the video
@@ -304,16 +468,21 @@ require(['jsnlog/js/jsnlog.min',
                 description: '',
                 tags: [],
                 type: 'image',
-                url: window.location.origin + window.location.pathname + 'images/testimage.jpg',
-                w: 800,
-                h: 600,
+                //url: window.location.origin + window.location.pathname + 'images/testimage.jpg',
+                url: window.location.origin + '/media/image/',
+                w: 150,
+                h: 150,
                 x: 100,
                 y: 0,
                 z: 0,
-                d: 0,
+                d: 1,
                 rx: 0,
                 ry: 0,
-                rz: 0
+                rz: 0,
+                sx: 1,
+                sy: 1,
+                sz: 1
+
             });
             var overlayEditView = new OverlayEditView({
                 backend: this,
@@ -395,7 +564,7 @@ require(['jsnlog/js/jsnlog.min',
                     JL('iPED Toolkit.Backend')
                         .error(response);
                 }
-            })
+            });
         };
 
         /**
@@ -406,6 +575,7 @@ require(['jsnlog/js/jsnlog.min',
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
                     height: 600,
+                    width: 400,
                     draggable: false,
                     position: {
                         my: 'right-20 top+20',
@@ -419,7 +589,49 @@ require(['jsnlog/js/jsnlog.min',
         };
 
         /**
-         * Shows a customized JQuery dialog to add/edit locations
+         * Shows a customized JQuery dialog to add/edit relationships between a location and a related Location
+         */
+        Backend.prototype.showEditRelationshipDialog = function(opts) {
+            $(opts.content)
+                .dialog({
+                    dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
+                    height: 440,
+                    width: 400,
+                    draggable: false,
+                    position: {
+                        my: 'center',
+                        at: 'center',
+                        of: $('.container')[0]
+                    }
+                })
+                .dialog('open')
+                .parent()
+                .draggable();
+        };
+
+        /**
+         * Shows a customized JQuery dialog to add/edit videos
+         */
+        Backend.prototype.showEditVideoDialog = function(opts) {
+            $(opts.content)
+                .dialog({
+                    dialogClass: 'ui-dialog-titlebar-hidden overflow-y',
+                    height: 440,
+                    width: 400,
+                    draggable: false,
+                    position: {
+                        my: 'center',
+                        at: 'center',
+                        of: $('.container')[0]
+                    }
+                })
+                .dialog('open')
+                .parent()
+                .draggable();
+        };
+
+        /**
+         * Shows a customized JQuery dialog to add/edit overlays
          */
         Backend.prototype.showEditOverlayDialog = function(opts) {
             $(opts.content)
@@ -446,7 +658,7 @@ require(['jsnlog/js/jsnlog.min',
             $(opts.content)
                 .dialog({
                     dialogClass: 'ui-dialog-titlebar-hidden overflow-hidden',
-                    width: '500px',
+                    width: 500,
                     draggable: false,
                     position: {
                         my: 'center',
@@ -505,7 +717,7 @@ require(['jsnlog/js/jsnlog.min',
             var relatedLocations = _.clone(this.createRouteFromLocation.get('relatedLocations'));
             if (_.indexOf(relatedLocations, this.createRouteToLocation.get('id')) != -1) {
                 JL('iPED Toolkit.Backend')
-                    .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+                    .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
                 thiz.fetchLocations({
                     //callback: thiz.mapView.render
@@ -514,7 +726,7 @@ require(['jsnlog/js/jsnlog.min',
             }
 
             JL('iPED Toolkit.Backend')
-                .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + ' -> ' + JSON.stringify(this.createRouteToLocation));
+                .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
             relatedLocations.push(this.createRouteToLocation.get('id'));
             this.createRouteFromLocation.save({
@@ -544,28 +756,48 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
 
             JL('iPED Toolkit.Backend')
-                .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + ' -> ' + JSON.stringify(opts.toLocation));
+                .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + String.fromCharCode(0x2192) + JSON.stringify(opts.toLocation));
 
-            var relatedLocations = _.without(opts.fromLocation.get('relatedLocations'), opts.toLocation.get('id'));
-            opts.fromLocation.save({
-                relatedLocations: relatedLocations
-            }, {
-                success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
-                        .debug('Route deleted');
-                    thiz.fetchLocations({
-                        //callback: thiz.mapView.render
-                    });
-                },
-                error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
-                        .error(response);
-                    thiz.fetchLocations({
-                        //callback: thiz.mapView.render
-                    });
+            // Confirmation before deleting
+            var question = 'Are you sure you want to delete this route: <b>' + opts.fromLocation.get('name') + ' &rarr; ' + opts.toLocation.get('name') + '</b>?';
+            bootbox.dialog({
+                title: "Attention",
+                message: question,
+                buttons: {
+                    cancel: {
+                        label: "Cancel",
+                        className: "btn-default",
+                        callback: function() {}
+                    },
+                    delete: {
+                        label: "OK",
+                        className: "btn-primary",
+                        callback: function() {
+
+                            var relatedLocations = _.without(opts.fromLocation.get('relatedLocations'), opts.toLocation.get('id'));
+                            opts.fromLocation.save({
+                                relatedLocations: relatedLocations
+                            }, {
+                                success: function(model, response, options) {
+                                    JL('iPED Toolkit.Backend')
+                                        .debug('Route deleted');
+                                    thiz.fetchLocations({
+                                        //callback: thiz.mapView.render
+                                    });
+                                },
+                                error: function(model, response, options) {
+                                    JL('iPED Toolkit.Backend')
+                                        .error(response);
+                                    thiz.fetchLocations({
+                                        //callback: thiz.mapView.render
+                                    });
+                                }
+                            });
+
+                        }
+                    }
                 }
-            })
-
+            });
         };
 
         /**
@@ -575,10 +807,12 @@ require(['jsnlog/js/jsnlog.min',
          */
         Backend.prototype.form2js = function(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName) {
             var json = JSON.stringify(form2js(rootNode, delimiter, skipEmpty, nodeCallback, useIdIfEmptyName));
+
             json = json.replace(/"[-0-9]*"/g, function(match, capture) {
                 return parseInt(match.replace(/"/g, ''), 10);
             });
             json = json.replace('null', '');
+
             return JSON.parse(json);
         };
 

@@ -29,7 +29,7 @@ define(['backbonejs/js/backbone',
                 });
                 video.fetch({
                     success: function(model, response, options) {
-                        require([TPL_PATH + 'overlayEdit.tpl', '../frontend/js/overlayPlugin'], function(html, OverlayPlugin) {
+                        require([TPL_PATH + 'overlayEditView.tpl', '../frontend/js/overlayPlugin'], function(html, OverlayPlugin) {
                             var overlays = new Overlays();
                             overlays.add(thiz.model.overlay);
 

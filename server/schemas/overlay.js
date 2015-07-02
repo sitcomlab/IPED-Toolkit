@@ -1,30 +1,30 @@
 /*********************************************************************************************
  JSON-Schemas for validating received data
  *********************************************************************************************/
- 
+
  var postOverlaySchema = {
             "title": "postOverlaySchema",
             "description": "A JSON-Schema to validate recieving Overlays for POST-request",
-            "type": "object", 
+            "type": "object",
             "properties" : {
-                    "name" :        { 
+                    "name" :        {
                                         "type": "string",
                                         "minLength":1
                                     },
-                    "description" : { 
-                                        "type": "string" 
+                    "description" : {
+                                        "type": "string"
                                     },
-                    "url" :         { 
-                                        "type": "string", 
+                    "url" :         {
+                                        "type": "string",
                                         "format": "uri",
                                         "minLength":1
                                     },
-                    "type" :        { 
-                                        "enum": [ "html", "video", "image" ] 
+                    "type" :        {
+                                        "enum": [ "html", "video", "image" ]
                                     },
-                    "tags" :        { 
-                                        "type": "array", 
-                                        "items": { 
+                    "tags" :        {
+                                        "type": "array",
+                                        "items": {
                                             "type": "string",
                                             "minLength":1
                                         },
@@ -74,7 +74,23 @@
                                         "type": "number",
                                         "minLength":1,
                                         "default": 0
+                                    },
+                    "sx" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
+                                    },
+                    "sy" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
+                                    },
+                    "sz" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
                                     }
+
             },
             "required": ["name", "description", "url", "type", "tags", "w", "h", "x", "y", "z", "d", "rx", "ry", "rz"],
             "additionalProperties": false
@@ -83,30 +99,30 @@
 var putOverlaySchema = {
             "title": "putOverlaySchema",
             "description": "A JSON-Schema to validate recieving Overlays for PUT-request",
-            "type": "object", 
+            "type": "object",
             "properties" : {
                     "id" :          {
                                         "type": "integer",
                                         "minLength":1
                                     },
-                    "name" :        { 
+                    "name" :        {
                                         "type": "string",
                                         "minLength":1
                                     },
-                    "description" : { 
-                                        "type": "string" 
+                    "description" : {
+                                        "type": "string"
                                     },
-                    "url" :         { 
-                                        "type": "string", 
+                    "url" :         {
+                                        "type": "string",
                                         "format": "uri",
                                         "minLength":1
                                     },
-                    "type" :        { 
-                                        "enum": [ "html", "video", "image" ] 
+                    "type" :        {
+                                        "enum": [ "html", "video", "image" ]
                                     },
-                    "tags" :        { 
-                                        "type": "array", 
-                                        "items": { 
+                    "tags" :        {
+                                        "type": "array",
+                                        "items": {
                                             "type": "string",
                                             "minLength":1
                                         },
@@ -153,6 +169,21 @@ var putOverlaySchema = {
                                         "default": 0
                                     },
                     "rz" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
+                                    },
+                    "sx" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
+                                    },
+                    "sy" :           {
+                                        "type": "number",
+                                        "minLength":1,
+                                        "default": 0
+                                    },
+                    "sz" :           {
                                         "type": "number",
                                         "minLength":1,
                                         "default": 0

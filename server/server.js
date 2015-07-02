@@ -4,6 +4,10 @@
 *
 * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
 * Institute for Geoinformatics (ifgi), University of Münster
+*
+* Voice control
+* (c) 2015 Nicholas Schiestel
+* Institute for Geoinformatics (ifgi), University of Münster
 */
 
 /*********************************************************************************************
@@ -18,26 +22,33 @@
          3.1.4 Edit a Location
          3.1.5 Remove a Location
          3.1.6 Retrieve all related Locations of a Location
-    3.2 Videos:
-         3.2.1 List all Videos
-         3.2.2 Create a Video
-         3.2.3 Retrieve a Video
-         3.2.4 Edit a Video
-         3.2.5 Remove a Video
-         3.2.6 Retrieve all Videos of a Location 
-    3.3 Overlays
-         3.3.1 List all Overlays
-         3.3.2 Create an Overlay
-         3.3.3 Retrieve an Overlay
-         3.3.4 Edit an Overlay
-         3.3.5 Remove an Overlay
-         3.3.6 Retrieve all Overlays of a Location 
-    3.4 Scenarios [!]
-         3.4.1 List all Scenarios [!]
-         3.4.2 Create a Scenario [!]
-         3.4.3 Retrieve a Scenario [!]
-         3.4.4 Edit a Scenario [!]
-         3.4.5 Remove a Scenario [!]
+    3.2 Relationships:
+         3.2.1 Retrieve a Relationship by its Id
+         3.2.2 Edit a Relationship by its Id
+         3.2.3 Create a Relationship between two Locations
+         3.2.4 Retrieve a Relationship between two Locations
+         3.2.5 Edit a Relationship between two Locations
+         3.2.6 Remove a Relationship by its Id
+    3.3 Videos:
+         3.3.1 List all Videos
+         3.3.2 Create a Video
+         3.3.3 Retrieve a Video
+         3.3.4 Edit a Video
+         3.3.5 Remove a Video
+         3.3.6 Retrieve all Videos of a Location
+    3.4 Overlays
+         3.4.1 List all Overlays
+         3.4.2 Create an Overlay
+         3.4.3 Retrieve an Overlay
+         3.4.4 Edit an Overlay
+         3.4.5 Remove an Overlay
+         3.4.6 Retrieve all Overlays of a Location
+    3.5 Scenarios [!]
+         3.5.1 List all Scenarios [!]
+         3.5.2 Create a Scenario [!]
+         3.5.3 Retrieve a Scenario [!]
+         3.5.4 Edit a Scenario [!]
+         3.5.5 Remove a Scenario [!]
 
  [*] = not yet implemented
  [x] = in progress
@@ -61,6 +72,7 @@ var nib = require('nib');
 var browserify = require('browserify');
 
 var log = require('./global/log');
+
 
 
 /*********************************************************
@@ -128,10 +140,143 @@ httpServer.listen(HTTP_PORT, function() {
 var socketHandler = function(socket) {
     //log.debug({socket: socket}, 'New connection:');
     log.info('New connection');
+
+    /*
+        Emits newLoactionID for loading a new Video
+     */
     socket.on('setLocationId', function(data) {
         log.debug({data: data}, 'Received data:');
-        io.emit('setLocationId', data); 
+        io.emit('setLocationId', data);
     });
+
+
+    /*
+        Reset Socket-Function for microphonePermission in Frontend
+     */
+    socket.on('resetFrontendMicPermission', function(data) {
+        log.debug({data: data}, 'resetFrontendMicPermission:');
+        io.emit('setMicPermission', data);
+    });
+
+
+    /*
+        Getter Socket-Function for microphonePermission in Frontend
+     */
+    socket.on('getFrontendMicPermission', function() {
+        log.debug('getFrontendMicPermission');
+        var data = null;
+        io.emit('getMicPermission', data);
+        io.emit('getSelectedLanguage', data);
+    });
+
+
+    /*
+        Recieves activating microphone command in Remote Control App
+        Emits setup with corresponding language for Frontend
+     */
+    socket.on('activateMic', function(data) {
+        log.debug({data: data}, 'Setup Microphone using language:');
+        io.emit('setupMic', data);
+    });
+
+    /*
+        Recieves microphone permission command from Frontend
+        Emits setup with corresponding language for Remote Control App
+        After microphone permission, the user can start recording voice commands by the Remote Control App
+     */
+    socket.on('setRemoteMicPermission', function(data) {
+        log.debug({data: data}, 'setRemoteMicPermission to:');
+        io.emit('setMicPermission', data);
+    });
+
+    /*
+        Recieves microphone language from Frontend
+     */
+    socket.on('setSeletedLanguage', function(data) {
+        log.debug({data: data}, 'setRemoteSelectedLanguage to:');
+        io.emit('setRemoteSelectedLanguage', data);
+    });
+
+    /*
+        Recieves microphone listening-status from Remote Control App
+        Emits listening-status for Frontend (1 = start recording; 0 = stop recording)
+     */
+    socket.on('listen', function(data) {
+        log.debug({data: data}, 'Microphone listening:');
+        io.emit('listenMic', data);
+    });
+
+    /*
+        Recieves witAi response from Frontend
+        The understood intent will be compare with neo4J-intents for the current LocationID
+        Special cases are empty LocationID, an empty Wit.Ai intent or an empty voice to text processing
+     */
+    socket.on('witResponse', function(data) {
+
+        log.debug({data: data}, 'witResponse:');
+
+        vc.checkVoiceCommand(data, function(err, res) {
+
+            if(!err && typeof res == "number") {
+
+                data.success = true;
+                log.debug({data: res}, "relatedLocationID for emit:");
+
+                data.id = res;
+                io.emit('setLocationId', data);
+
+            } else if (!err && typeof res == "string"){
+
+                if(res == "sys_show_overlays") {
+                    io.emit('changeShowHideOverlays', true);
+                    io.emit('setShowHideOverlays', true);
+                } else if(res == "sys_hide_overlays") {
+                    io.emit('changeShowHideOverlays', false);
+                    io.emit('setShowHideOverlays', false);
+                } else {
+
+                    data.success = false;
+                    data.errMsg = res;
+
+                    io.emit('failed', data);
+                    io.emit('logger', data);
+
+                }
+            }
+        });
+    });
+
+    /*
+        Helper Socket-function for Logging (used in Frontend)
+     */
+    socket.on('beforeMainLogger', function(data) {
+
+        io.emit('logger', data);
+
+    });
+
+
+    /*
+        Helper Socket-function for Show/Hide Overlays (used in Remote)
+     */
+    socket.on('showHideOverlays', function(data) {
+
+        log.debug({data: data}, 'showHideOverlays:');
+
+        io.emit('setShowHideOverlays', data);
+
+    });
+
+
+    /*
+
+     */
+    socket.on('changeOverlayStatus', function(data) {
+
+        io.emit('changeShowHideOverlays', data);
+
+    });
+
 };
 var io = socketio.listen(httpServer);
 io.on('connection', socketHandler);
@@ -179,11 +324,26 @@ app.use(express.static(__dirname + '/public'));
 var locations = require('./routes/locations')(app);
 
 /****************************
- 3.2 Videos
+ 3.2 Relationships
+ ****************************/
+var relationships = require('./routes/relationships')(app);
+
+/****************************
+ 3.3 Videos
  ****************************/
 var videos = require('./routes/videos')(app);
 
 /****************************
- 3.3 Overlays
+ 3.4 Overlays
  ****************************/
 var overlays = require('./routes/overlays')(app);
+
+/****************************
+ 3.5 Scenarios
+ ****************************/
+
+
+/*********************************************************
+ 4. Voice Control
+ *********************************************************/
+var vc = require('./voiceControl/voiceCommands');

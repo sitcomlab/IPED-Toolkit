@@ -2,16 +2,17 @@
  * The iPED Toolkit
  * Backend
  *
- * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
+ * (c) 2015 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
 define(['backbonejs/js/backbone',
         'backend/models/Overlay',
         'backend/models/Video',
-        'succinct/js/succinct.min'
+        'succinct/js/succinct.min',
+        'bootstrap-bootbox/js/bootbox.min'
     ],
-    function(Backbone, Overlay, Video, Succinct) {
+    function(Backbone, Overlay, Video, Succinct, bootbox) {
         /**
          * The backbone.js view for a leaflet marker
          */
@@ -52,18 +53,26 @@ define(['backbonejs/js/backbone',
             fetch: function() {
                 var thiz = this;
 
-                if (this.isFetched == true) {
+                if (this.isFetched === true) {
                     return;
                 }
 
                 JL('iPED Toolkit.Backend')
                     .debug('Updating the LocationMarkerView');
                 this.model.forEach(function(location) {
+
+                    /* Add videos to popup */
                     if (location.get('videos')
-                        .length == 0) {
-                        thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
-                            .html('None');
+                        .length === 0) {
+                        thiz.$el.find('#_videos' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<div id="textNone">None</div>');
+                    } else {
+                        thiz.$el.find('#_videos' + location.get('id') + '[data-location=' + location.get('id') + '] .spinner')
+                            .remove();
+                        thiz.$el.find('#_videos' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<table class="table" id="videoTable' + location.get('id') + '"><tr><th>Name</th><th>Description</th></tr></table>');
                     }
+
                     location.get('videos')
                         .forEach(function(videoId) {
                             var video = new Video({
@@ -71,12 +80,12 @@ define(['backbonejs/js/backbone',
                             });
                             video.fetch({
                                 success: function(model, response, options) {
-                                    thiz.$el.find('.videos[data-location=' + location.get('id') + '] .spinner')
-                                        .remove();
-                                    thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
-                                        .html(thiz.$el.find('.videos[data-location=' + location.get('id') + ']')
-                                            .html() +
-                                            '<span>' + model.get('name') + ' (' + model.get('description') + ')' + '</span>');
+
+                                    thiz.$el.find('#videoTable' + location.get('id') + '> tbody:last')
+                                        .append(
+                                            "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
+                                        );
+
                                 },
                                 error: function(model, response, options) {
                                     JL('iPED Toolkit.Backend')
@@ -85,11 +94,18 @@ define(['backbonejs/js/backbone',
                             });
                         });
 
+                    /* Add overlays to popup */
                     if (location.get('overlays')
-                        .length == 0) {
-                        thiz.$el.find('.overlays[data-location=' + location.get('id') + ']')
-                            .html('None');
+                        .length === 0) {
+                        thiz.$el.find('#_overlays' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<div id="textNone">None</div>');
+                    } else {
+                        thiz.$el.find('#_overlays' + location.get('id') + '[data-location=' + location.get('id') + '] .spinner')
+                            .remove();
+                        thiz.$el.find('#_overlays' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<table class="table" id="overlayTable' + location.get('id') + '"><tr><th>Name</th><th>Description</th></tr></table>');
                     }
+
                     location.get('overlays')
                         .forEach(function(overlayId) {
                             var overlay = new Overlay({
@@ -97,12 +113,12 @@ define(['backbonejs/js/backbone',
                             });
                             overlay.fetch({
                                 success: function(model, response, options) {
-                                    thiz.$el.find('.overlays[data-location=' + location.get('id') + '] .spinner')
-                                        .remove();
-                                    thiz.$el.find('.overlays[data-location=' + location.get('id') + ']')
-                                        .html(thiz.$el.find('.overlays')
-                                            .html() +
-                                            '<span>' + model.get('name') + ' (' + model.get('description') + ')' + '</span>');
+
+                                    thiz.$el.find('#overlayTable' + location.get('id') + '> tbody:last')
+                                        .append(
+                                            "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
+                                        );
+
                                 },
                                 error: function(model, response, options) {
                                     JL('iPED Toolkit.Backend')
@@ -110,6 +126,42 @@ define(['backbonejs/js/backbone',
                                 }
                             });
                         });
+
+
+                    /* Add relatedLocations to popup */
+                    if (location.get('relatedLocations')
+                        .length === 0) {
+                        thiz.$el.find('#_relatedLocations' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<div id="textNone">None</div>');
+                    } else {
+                        thiz.$el.find('#_relatedLocations' + location.get('id') + '[data-location=' + location.get('id') + '] .spinner')
+                            .remove();
+                        thiz.$el.find('#_relatedLocations' + location.get('id') + '[data-location=' + location.get('id') + ']')
+                            .html('<table class="table" id="relLocationTable' + location.get('id') + '"><tr><th>Name</th><th>Description</th></tr></table>');
+                    }
+
+                    location.get('relatedLocations')
+                        .forEach(function(locationId) {
+
+                            var relatedLocation = new Location({
+                                id: locationId
+                            });
+                            relatedLocation.fetch({
+                                success: function(model, response, options) {
+
+                                    thiz.$el.find('#relLocationTable' + location.get('id') + '> tbody:last')
+                                        .append(
+                                            "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
+                                        );
+
+                                },
+                                error: function(model, response, options) {
+                                    JL('iPED Toolkit.Backend')
+                                        .error(response);
+                                }
+                            });
+                        });
+
                 });
                 this.isFetched = true;
             },
@@ -133,11 +185,39 @@ define(['backbonejs/js/backbone',
                 });
             },
             _delete: function(event) {
+
+                var thiz = this;
+
                 var locationId = $(event.currentTarget)
                     .data('location');
-                this.backend.deleteLocation({
-                    location: this.model.get(locationId)
+
+                var currentLocation = this.model.get(locationId);
+
+                // Confirmation before deleting
+                var question = 'Are you sure you want to delete this location: <b>' + currentLocation.attributes.name + '</b>?';
+                bootbox.dialog({
+                    title: "Attention",
+                    message: question,
+                    buttons: {
+                        cancel: {
+                            label: "Cancel",
+                            className: "btn-default",
+                            callback: function() {}
+                        },
+                        delete: {
+                            label: "OK",
+                            className: "btn-primary",
+                            callback: function() {
+                                thiz.backend.deleteLocation({
+                                    location: currentLocation
+                                });
+
+                            }
+                        }
+                    }
                 });
+
+
             }
         });
 

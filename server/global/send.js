@@ -1,7 +1,7 @@
 var log = require('./log');
 
 exports.data = function(res, data) {
-    log.info({data: data}, 'Sending data');
+    log.debug({data: data}, 'Sending data');
     res.writeHead(200, {
         'Content-Type' : 'application/json'
     });

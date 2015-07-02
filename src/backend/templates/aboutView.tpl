@@ -13,7 +13,7 @@
     Version 0.0.2
   </p>
   <p>
-    &copy; 2014 Institut für Geoinformatik, Universität Münster <br />
+    &copy; 2015 Institut für Geoinformatik, Universität Münster <br />
     Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
   </p>
 </div>

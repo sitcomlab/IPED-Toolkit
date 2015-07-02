@@ -1,1 +1,44 @@
 html {}
+/**
+ * Microphone Button
+ */
+
+.mic-link:link,
+.mic-link:hover,
+.mic-link:active,
+.mic-link:active:visited {
+    text-decoration: none;
+}
+
+.mic-icon {
+    border: 4px solid black;
+    height: 230px;
+    padding: 20px 55px 20px 55px;
+    border-radius: 200px;
+    -moz-border-radius: 200px;
+    -webkit-border-radius: 200px;
+    text-decoration: none;
+}
+
+.mic-icon:hover {
+    border: 4px solid #428bca;
+    height: 230px;
+    padding: 20px 55px 20px 55px;
+    border-radius: 200px;
+    -moz-border-radius: 200px;
+    -webkit-border-radius: 200px;
+    color: #428bca;
+    text-decoration: none;
+}
+/**
+ * Logger
+ */
+
+.logger {
+    border-collapse: collapse;
+}
+
+.logger td,
+th {
+    padding: 3px;
+}

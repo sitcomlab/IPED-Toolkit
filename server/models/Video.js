@@ -42,7 +42,7 @@ Video.prototype.toJSON = function() {
         date: this.date,
         url: this.url,
         tags: this.tags
-    })); 
+    }));
 };
 
 /**
@@ -55,17 +55,17 @@ Video.get = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
         'MATCH (video:Video)',
         'WHERE id(video)=' + id,
         'AND video:Video',
         'RETURN video'
     ].join('\n');
-    
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
-        if (result.length == 0) {
+        if (result.length === 0) {
             return callback(new Error('No video found with that ID'));
         } else {
             var video = new Video(result[0]['video']);
@@ -84,7 +84,7 @@ Video.getAll = function(callback) {
         'MATCH (video:Video)',
         'RETURN video'
     ].join('\n');
-    
+
     db.query(query, null, function(err, results) {
         if (err) return callback(err);
         var videos = results.map(function(result) {
@@ -106,7 +106,7 @@ Video.create = function(data, callback) {
         if (err) {
             return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
         }
-        
+
         var query = [
             'CREATE (video:Video {data})',
             'RETURN video'
@@ -120,11 +120,11 @@ Video.create = function(data, callback) {
                 url: data.url
             }
         };
-    
+
         db.query(query, params, function(err, result) {
            if (err) return callback(err);
            Video.update(result, data, callback);
-        }); 
+        });
     });
 };
 
@@ -139,13 +139,13 @@ Video.save = function(id, data, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     js = new JaySchema();
     js.validate(data, videoSchema.putVideo, function(err) {
         if (err) {
             return callback(new Error(JSON.stringify(prettifyJaySchema(err))));
         }
-        
+
         Video.get(id, function(err, location) {
             if (err) return callback(err);
             var query = [
@@ -164,7 +164,7 @@ Video.save = function(id, data, callback) {
                     url: data.url
                 }
             };
-    
+
             db.query(query, params, function(err, result) {
                if (err) return callback(err);
                Video.update(result, data, callback);
@@ -196,7 +196,7 @@ Video.delete = function(id, callback) {
     if (!validator.isInt(id)) {
         return callback(new Error('Invalid ID'));
     }
-    
+
     var query = [
         'MATCH (me:Video)',
         'WHERE id(me)=' + id,
@@ -204,7 +204,7 @@ Video.delete = function(id, callback) {
         'OPTIONAL MATCH (me)-[r]-()',
         'DELETE r, me'
     ].join('\n');
-        
+
     db.query(query, null, function(err, result) {
         if (err) return callback(err);
         callback(null, null);
@@ -229,7 +229,7 @@ Video.getAllRelatedVideos = function(id, callback) {
     'WHERE id(location)=' + id,
     'RETURN video'
     ].join('\n');
-    
+
     db.query(query, null, function(err, results) {
         if (err) return callback(err);
         var videos = results.map(function(result) {

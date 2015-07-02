@@ -2,7 +2,7 @@
  * The iPED Toolkit
  * Backend
  *
- * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
+ * (c) 2014 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 

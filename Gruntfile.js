@@ -14,7 +14,9 @@ module.exports = function(grunt) {
         'public/frontend/js/webRTC.js'                    : 'src/frontend/js/webRTC.js',
         'public/frontend/js/chromaKeyPlugin.js'           : 'src/frontend/js/chromaKeyPlugin.js',
         'public/frontend/css/frontend.css'                : 'src/frontend/css/frontend.css',
-        
+        'public/frontend/css/microphone.css'              : 'src/frontend/css/microphone.css',
+        'public/frontend/js/ion.sound.js'                 : 'src/frontend/js/ion.sound.js',
+
         // Remote
         'public/remote/index.html'                        : 'src/remote/index.html',
         'public/remote/js/remote.js'                      : 'src/remote/js/remote.js',
@@ -29,7 +31,9 @@ module.exports = function(grunt) {
 
         'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
         'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
-        'public/backend/templates/overlayEdit.tpl'        : 'src/backend/templates/overlayEdit.tpl',
+        'public/backend/templates/videoEditView.tpl'      : 'src/backend/templates/videoEditView.tpl',
+        'public/backend/templates/overlayEditView.tpl'    : 'src/backend/templates/overlayEditView.tpl',
+        'public/backend/templates/relationshipEditView.tpl': 'src/backend/templates/relationshipEditView.tpl',
         'public/backend/templates/aboutView.tpl'          : 'src/backend/templates/aboutView.tpl',
 
         'public/backend/js/models/Location.js'            : 'src/backend/js/models/Location.js',
@@ -38,22 +42,27 @@ module.exports = function(grunt) {
         'public/backend/js/models/Overlays.js'            : 'src/backend/js/models/Overlays.js',
         'public/backend/js/models/Video.js'               : 'src/backend/js/models/Video.js',
         'public/backend/js/models/Videos.js'              : 'src/backend/js/models/Videos.js',
+        'public/backend/js/models/Relationship.js'        : 'src/backend/js/models/Relationship.js',
 
         'public/backend/js/views/LocationEditView.js'     : 'src/backend/js/views/LocationEditView.js',
         'public/backend/js/views/LocationMarkerView.js'   : 'src/backend/js/views/LocationMarkerView.js',
         'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
         'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
+        'public/backend/js/views/VideoEditView.js'        : 'src/backend/js/views/VideoEditView.js',
         'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js',
+        'public/backend/js/views/RelationshipEditView.js' : 'src/backend/js/views/RelationshipEditView.js',
         'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js',
         'public/backend/js/views/RouteView.js'            : 'src/backend/js/views/RouteView.js'
     };
-  
+
     copyFiles = [
         {expand: true, flatten: true, src: ['src/backend/images/**'], dest: 'public/backend/images/', filter: 'isFile'},
         {expand: true, flatten: true, src: ['src/frontend/images/**'], dest: 'public/frontend/images/', filter: 'isFile'},
+        {expand: true, flatten: true, src: ['src/frontend/sounds/**'], dest: 'public/frontend/sounds/', filter: 'isFile'},
+        {expand: true, flatten: true, src: ['src/frontend/css/fonts**'], dest: 'public/frontend/css/fonts/', filter: 'isFile'},
         {expand: true, flatten: true, src: ['src/remote/images/**'], dest: 'public/remote/images/', filter: 'isFile'}
     ];
-	
+
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),

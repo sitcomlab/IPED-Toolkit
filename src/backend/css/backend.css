@@ -5,35 +5,68 @@
     bottom: 10px;
     right: 10px;
 }
+
 .ui-dialog {
     background: #ffffff;
     border: 2px solid #e7e7e7;
 }
+
 .ui-dialog-titlebar-hidden .ui-dialog-titlebar {
     display: none;
 }
+
 .ui-dialog.overflow-hidden .ui-dialog-content {
     overflow: hidden;
 }
+
 .ui-dialog.overflow-y .ui-dialog-content {
     overflow: hidden;
     overflow-y: scroll;
 }
+
 .ui-dialog p.lead {
     margin: 0;
 }
+
 .ui-dialog #iPED-Video {
     max-width: 100%;
 }
+
 .ui-front {
     z-index: 1001 !important;
     /* Make sure JQuery dialogs are on top of leaflet controls */
 }
+
 .leaflet-popup-content .bootstrap-tagsinput {
     border: 0 solid black;
     box-shadow: 0 0 0 0 #ffffff;
 }
+
 .videos span,
 .overlays span {
     display: block;
+}
+
+.rightSide {
+    float: right;
+}
+
+#textNone {
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.clear {
+    clear: both;
+}
+
+.videos {
+    width: 90%;
+}
+
+.borderless tbody tr td,
+.borderless tbody tr th,
+.borderless thead tr th {
+    border: none;
 }
