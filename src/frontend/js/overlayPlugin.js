@@ -95,7 +95,7 @@ define(['threejs/js/three.min',
 
             this.render();
 
-            if (opts.showUI && opts.showUI == true) {
+            if (opts.showUI && opts.showUI === true) {
                 var thiz = this;
                 setTimeout(function() {
                     thiz.toggleUI();
@@ -118,7 +118,7 @@ define(['threejs/js/three.min',
             this.videos = null;
             this.videoTextures = null;
             this.controls = null;
-        }
+        };
 
         /**
          * Initializes the Overlay plugin
@@ -166,7 +166,7 @@ define(['threejs/js/three.min',
             this.cssScene = new THREE.Scene();
             this.scene = new THREE.Scene();
             this.gridhelper = new THREE.GridHelper(500, 100);
-            this.gridhelper.setColors('#00ff00', '#00ff00')
+            this.gridhelper.setColors('#00ff00', '#00ff00');
                 //this.scene.add(this.gridhelper);
 
             this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 1, 3000);
@@ -201,7 +201,7 @@ define(['threejs/js/three.min',
                 id: locationId
             });
             this.fetchOverlays();
-        }
+        };
 
         /**
          * Fetch overlays
@@ -228,7 +228,7 @@ define(['threejs/js/three.min',
         OverlayPlugin.prototype.createOverlays = function() {
             thiz = this;
 
-            if (!thiz.overlays || thiz.overlays.length == 0) {
+            if (!thiz.overlays || thiz.overlays.length === 0) {
                 JL('iPED Toolkit.OverlayPlugin')
                     .info('There are no overlays at this location');
             } else {
@@ -380,7 +380,7 @@ define(['threejs/js/three.min',
          * Toggles the UI
          */
         OverlayPlugin.prototype.toggleUI = function() {
-            if (this.showUI == true) {
+            if (this.showUI === true) {
                 this.controls.forEach(function(control) {
                     this.scene.remove(control);
                 }, this);
@@ -395,7 +395,7 @@ define(['threejs/js/three.min',
                 this.cssRenderer.domElement.style.zIndex = '0';
                 this.showUI = true;
             }
-        }
+        };
 
         /**
          * Updates Three.js according to window resizing events.
@@ -452,7 +452,7 @@ define(['threejs/js/three.min',
             overlay.set('sz', scale.z);
 
             this.render();
-        }
+        };
 
         /**
          * Renders the Three.js scene. Is called by window.requestAnimationFrame().

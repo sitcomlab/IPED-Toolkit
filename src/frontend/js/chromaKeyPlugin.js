@@ -41,9 +41,9 @@ define(['underscorejs/js/underscore',
                     .contents()
                     .find('.remote video')[0] && $('#iPED-Overlay iframe')
                     .contents()
-                    .find('.remote video')[0].videoWidth != 0 && $('#iPED-Overlay iframe')
+                    .find('.remote video')[0].videoWidth !== 0 && $('#iPED-Overlay iframe')
                     .contents()
-                    .find('.remote video')[0].videoHeight != 0) {
+                    .find('.remote video')[0].videoHeight !== 0) {
                     thiz.sourceVideo = $('#iPED-Overlay iframe')
                         .contents()
                         .find('.remote video');

@@ -115,7 +115,7 @@ require(['jsnlog/js/jsnlog.min',
             this.mic.onresult = function(intent, entities, res) {
 
                 // add LocationID for Neo4J checking
-                if (currentLocation == null) {
+                if (currentLocation === null) {
                     res.locationID = null;
                 } else {
                     res.locationID = currentLocation;
@@ -215,10 +215,10 @@ require(['jsnlog/js/jsnlog.min',
                     CLIENT_ACCESS_TOKEN = "RSVCNOQAOK4YZAAJXUK7LJYRVRGIU7LU";
                 } else if ('de') {
                     // FINAL VERSION
-                    //CLIENT_ACCESS_TOKEN = "LBR7ZCQBU7Y5TAW5QR4GRWLF6KDQZSQD";
+                    CLIENT_ACCESS_TOKEN = "LBR7ZCQBU7Y5TAW5QR4GRWLF6KDQZSQD";
 
                     // DEVELOPER VERSION
-                    CLIENT_ACCESS_TOKEN = "QII3ORWRCP2M7GIPT7TXQKZ2BGU3UXMH";
+                    //CLIENT_ACCESS_TOKEN = "QII3ORWRCP2M7GIPT7TXQKZ2BGU3UXMH";
                 }
 
                 if (CLIENT_ACCESS_TOKEN !== null || CLIENT_ACCESS_TOKEN !== undefined) {
@@ -332,7 +332,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
             // Save previous and current LocationID global for Voice Control
-            if (previousLocation == null && currentLocation == null) {
+            if (previousLocation === null && currentLocation === null) {
                 currentLocation = locationId;
             } else {
                 previousLocation = currentLocation;
@@ -377,7 +377,7 @@ require(['jsnlog/js/jsnlog.min',
                     $('#iPED-Video')
                         .empty();
 
-                    if (thiz.videos.length == 0) {
+                    if (thiz.videos.length === 0) {
                         JL('iPED Toolkit.Frontend')
                             .info('No video defined for this location');
                         thiz.showMessage('No video defined for this location');
