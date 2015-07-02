@@ -133,6 +133,12 @@ httpServer.listen(HTTP_PORT, function() {
     log.info('HTTP server started on port %d', HTTP_PORT);
 });
 
+// Allow Access-Control-Allow-Origin
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 /****************************
  Socket.io (websockets)
