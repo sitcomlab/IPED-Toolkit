@@ -12,7 +12,7 @@ body {
     padding: 0;
     overflow: hidden;
     <!--(if target master)> background-color: #000000;
-    <!(endif)--> <!--(if target develop || developOnServer)> background-color: #ff0000;
+    <!(endif)--> <!--(if target develop || developOnServer)> background-color: #000000;
     <!(endif)-->
 }
 

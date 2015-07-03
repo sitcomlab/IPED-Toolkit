@@ -212,13 +212,10 @@ require(['jsnlog/js/jsnlog.min',
 
                 var CLIENT_ACCESS_TOKEN;
                 if (data == 'en') {
-                    CLIENT_ACCESS_TOKEN = "RSVCNOQAOK4YZAAJXUK7LJYRVRGIU7LU";
+                    CLIENT_ACCESS_TOKEN = "LPRCS56RLGDT5UKWR7VDLW5JJRGIOOI5";
                 } else if ('de') {
-                    // FINAL VERSION
-                    CLIENT_ACCESS_TOKEN = "LBR7ZCQBU7Y5TAW5QR4GRWLF6KDQZSQD";
-
                     // DEVELOPER VERSION
-                    //CLIENT_ACCESS_TOKEN = "QII3ORWRCP2M7GIPT7TXQKZ2BGU3UXMH";
+                    CLIENT_ACCESS_TOKEN = "ABD6CEWUD3YR3G2Y4SYP7JI4FSVQ2WDI";
                 }
 
                 if (CLIENT_ACCESS_TOKEN !== null || CLIENT_ACCESS_TOKEN !== undefined) {
