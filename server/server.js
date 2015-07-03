@@ -24,14 +24,14 @@
          3.2.3 Retrieve a Video
          3.2.4 Edit a Video
          3.2.5 Remove a Video
-         3.2.6 Retrieve all Videos of a Location 
+         3.2.6 Retrieve all Videos of a Location
     3.3 Overlays
          3.3.1 List all Overlays
          3.3.2 Create an Overlay
          3.3.3 Retrieve an Overlay
          3.3.4 Edit an Overlay
          3.3.5 Remove an Overlay
-         3.3.6 Retrieve all Overlays of a Location 
+         3.3.6 Retrieve all Overlays of a Location
     3.4 Scenarios [!]
          3.4.1 List all Scenarios [!]
          3.4.2 Create a Scenario [!]
@@ -55,6 +55,7 @@ var path = require('path');
 var util = require('util');
 
 var express = require('express');
+var basicAuth = require('basic-auth');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
@@ -123,6 +124,20 @@ httpServer.listen(HTTP_PORT, function() {
 
 
 /****************************
+ Server-Authentication
+ ****************************/
+ var auth = function(req, res, next){
+     var user = basicAuth(req);
+     if(user && user.name == "sitcomlab" && user.pass == "sitcomlab")
+         return next();
+     else{
+         res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+         return res.send(401);
+     }
+ };
+
+
+/****************************
  Socket.io (websockets)
  ****************************/
 var socketHandler = function(socket) {
@@ -130,7 +145,7 @@ var socketHandler = function(socket) {
     log.info('New connection');
     socket.on('setLocationId', function(data) {
         log.debug({data: data}, 'Received data:');
-        io.emit('setLocationId', data); 
+        io.emit('setLocationId', data);
     });
 };
 var io = socketio.listen(httpServer);
@@ -166,8 +181,8 @@ app.get('/lib/webRTC/js/webRTC.js', function(req, res, next) {
  Express.js
  ****************************/
 // Finally, serve static content
-app.use(express.static(__dirname + '/public'));
-
+app.use('/', auth);
+app.use('/', express.static(__dirname + '/public'));
 
 /*********************************************************
  3. API
