@@ -417,7 +417,7 @@ define(['backbonejs/js/backbone',
                             label: "OK",
                             className: "btn-primary",
                             callback: function() {
-                                this.backend.deleteOverlay({
+                                thiz.backend.deleteOverlay({
                                     overlay: overlay
                                 });
                             }

@@ -167,7 +167,7 @@ define(['threejs/js/three.min',
             this.scene = new THREE.Scene();
             this.gridhelper = new THREE.GridHelper(500, 100);
             this.gridhelper.setColors('#00ff00', '#00ff00');
-                //this.scene.add(this.gridhelper);
+            //this.scene.add(this.gridhelper);
 
             this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 1, 3000);
             this.camera.position.set(0, 101, 300);
