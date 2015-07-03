@@ -6,6 +6,7 @@
   "author": "Institut für Geoinformatik, Universität Münster",
   "dependencies": {
     "async": "0.9.0",
+    "basic-auth": "^1.0.3",
     "body-parser": "1.2.x",
     "browserify": "4.2.x",
     "browserify-middleware": "^2",

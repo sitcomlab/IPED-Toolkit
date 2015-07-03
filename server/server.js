@@ -66,6 +66,7 @@ var path = require('path');
 var util = require('util');
 
 var express = require('express');
+var basicAuth = require('basic-auth');
 var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
@@ -133,12 +134,19 @@ httpServer.listen(HTTP_PORT, function() {
     log.info('HTTP server started on port %d', HTTP_PORT);
 });
 
-// Allow Access-Control-Allow-Origin
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+
+/****************************
+ Server-Authentication
+ ****************************/
+ var auth = function(req, res, next){
+     var user = basicAuth(req);
+     if(user && user.name == "sitcomlab" && user.pass == "sitcomlab")
+         return next();
+     else{
+         res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+         return res.send(401);
+     }
+ };
 
 /****************************
  Socket.io (websockets)
@@ -317,8 +325,8 @@ app.get('/lib/webRTC/js/webRTC.js', function(req, res, next) {
  Express.js
  ****************************/
 // Finally, serve static content
-app.use(express.static(__dirname + '/public'));
-
+app.use('/', auth);
+app.use('/', express.static(__dirname + '/public'));
 
 /*********************************************************
  3. API
