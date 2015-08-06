@@ -217,7 +217,7 @@ require(['jsnlog/js/jsnlog.min',
                     // DEVELOPER VERSION
                     //CLIENT_ACCESS_TOKEN = "ABD6CEWUD3YR3G2Y4SYP7JI4FSVQ2WDI";
                     // DEVELOPER VERSION LUCIEN
-                    CLIENT_ACCESS_TOKEN = "JCJ5JOEJLLHBBHWIOZ6EBFRL7V7INDYC";
+                    CLIENT_ACCESS_TOKEN = "YNYUGOKUDD2BTQ2473IDGF4YYVVFIHCX";
                 }
 
                 if (CLIENT_ACCESS_TOKEN !== null || CLIENT_ACCESS_TOKEN !== undefined) {
