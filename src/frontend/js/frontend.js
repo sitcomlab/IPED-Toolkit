@@ -215,7 +215,9 @@ require(['jsnlog/js/jsnlog.min',
                     CLIENT_ACCESS_TOKEN = "LPRCS56RLGDT5UKWR7VDLW5JJRGIOOI5";
                 } else if ('de') {
                     // DEVELOPER VERSION
-                    CLIENT_ACCESS_TOKEN = "ABD6CEWUD3YR3G2Y4SYP7JI4FSVQ2WDI";
+                    //CLIENT_ACCESS_TOKEN = "ABD6CEWUD3YR3G2Y4SYP7JI4FSVQ2WDI";
+                    // DEVELOPER VERSION LUCIEN
+                    CLIENT_ACCESS_TOKEN = "JCJ5JOEJLLHBBHWIOZ6EBFRL7V7INDYC";
                 }
 
                 if (CLIENT_ACCESS_TOKEN !== null || CLIENT_ACCESS_TOKEN !== undefined) {
