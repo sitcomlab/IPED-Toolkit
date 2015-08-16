@@ -155,27 +155,28 @@ var socketHandler = function(socket) {
     //log.debug({socket: socket}, 'New connection:');
     log.info('New connection');
 
-    /*
-        Emits newLoactionID for loading a new Video
-     */
+    /**
+     * THE FOLLOWING COMMAND BELONGS TO GENERAL
+    **/
+
+    // EMIT NEW LOCATION-ID FOR LOADING A NEW VIDEO
     socket.on('setLocationId', function(data) {
         log.debug({data: data}, 'Received data:');
         io.emit('setLocationId', data);
     });
 
 
-    /*
-        Reset Socket-Function for microphonePermission in Frontend
-     */
+    /**
+     * THE FOLLOWING COMMANDS BELONGS TO VOICE-CONTROL
+    **/
+
+    // RESET FOR MICROPHONE-PERMISSION IN FRONDEND
     socket.on('resetFrontendMicPermission', function(data) {
         log.debug({data: data}, 'resetFrontendMicPermission:');
         io.emit('setMicPermission', data);
     });
 
-
-    /*
-        Getter Socket-Function for microphonePermission in Frontend
-     */
+    // GET MICROPHONE-PERMISSION IN FRONTEND
     socket.on('getFrontendMicPermission', function() {
         log.debug('getFrontendMicPermission');
         var data = null;
@@ -183,64 +184,40 @@ var socketHandler = function(socket) {
         io.emit('getSelectedLanguage', data);
     });
 
-
-    /*
-        Recieves activating microphone command in Remote Control App
-        Emits setup with corresponding language for Frontend
-     */
+    // SETUP-FUNCTION IN REMOTE-CONTROL-APP (ACTIVATES MIRCOPHONE IN FRONTEND WITH SELECTED LANGUAGE)
     socket.on('activateMic', function(data) {
         log.debug({data: data}, 'Setup Microphone using language:');
         io.emit('setupMic', data);
     });
 
-    /*
-        Recieves microphone permission command from Frontend
-        Emits setup with corresponding language for Remote Control App
-        After microphone permission, the user can start recording voice commands by the Remote Control App
-     */
+    // RECIEVES MICROPHONE-PERMISSION FROM FRONTEND FOR FINISHING SETUP-PROCESS IN REMOTE-CONTROL-APP
     socket.on('setRemoteMicPermission', function(data) {
         log.debug({data: data}, 'setRemoteMicPermission to:');
         io.emit('setMicPermission', data);
     });
 
-    /*
-        Recieves microphone language from Frontend
-     */
+    // RECIEVES SELECTED MICROPHONE-LANGUAGE FROM FRONTEND
     socket.on('setSeletedLanguage', function(data) {
         log.debug({data: data}, 'setRemoteSelectedLanguage to:');
         io.emit('setRemoteSelectedLanguage', data);
     });
 
-    /*
-        Recieves microphone listening-status from Remote Control App
-        Emits listening-status for Frontend (1 = start recording; 0 = stop recording)
-     */
+    // RECIEVES MICROPHONE-LISTENING-STATUS FROM REMOTE-CONTROL-APP (1=START RECORDING; 0=STOP RECORDING) TO RECORD VOICE-COMMAND IN FRONTEND
     socket.on('listen', function(data) {
         log.debug({data: data}, 'Microphone listening:');
         io.emit('listenMic', data);
     });
 
-    /*
-        Recieves witAi response from Frontend
-        The understood intent will be compare with neo4J-intents for the current LocationID
-        Special cases are empty LocationID, an empty Wit.Ai intent or an empty voice to text processing
-     */
+    //  RECIEVES WIT.AI RESPONSE WITH RECOGNIZED COMMAND (=INTENT) IN FRONTEND AND STARTS ALGORITHM TO FIND INTENT IN DATABASE
     socket.on('witResponse', function(data) {
-
         log.debug({data: data}, 'witResponse:');
-
         vc.checkVoiceCommand(data, function(err, res) {
-
             if(!err && typeof res == "number") {
-
                 data.success = true;
                 log.debug({data: res}, "relatedLocationID for emit:");
-
                 data.id = res;
                 io.emit('setLocationId', data);
-
             } else if (!err && typeof res == "string"){
-
                 if(res == "sys_show_overlays") {
                     io.emit('changeShowHideOverlays', true);
                     io.emit('setShowHideOverlays', true);
@@ -248,47 +225,82 @@ var socketHandler = function(socket) {
                     io.emit('changeShowHideOverlays', false);
                     io.emit('setShowHideOverlays', false);
                 } else {
-
                     data.success = false;
                     data.errMsg = res;
-
                     io.emit('failed', data);
                     io.emit('logger', data);
-
                 }
             }
         });
     });
 
-    /*
-        Helper Socket-function for Logging (used in Frontend)
-     */
+    // LOGGING (USED IN FRONTEND)
     socket.on('beforeMainLogger', function(data) {
-
         io.emit('logger', data);
-
     });
 
-
-    /*
-        Helper Socket-function for Show/Hide Overlays (used in Remote)
-     */
+    // SHOW/HIDE OVERLAYS (USED IN REMOTE-APP)
     socket.on('showHideOverlays', function(data) {
-
         log.debug({data: data}, 'showHideOverlays:');
-
         io.emit('setShowHideOverlays', data);
+    });
 
+    // SHOW HIDE OVERLAYS
+    socket.on('changeOverlayStatus', function(data) {
+        io.emit('changeShowHideOverlays', data);
     });
 
 
-    /*
+    /**
+     * THE FOLLOWING COMMANDS BELONGS TO MIA
+    **/
 
-     */
-    socket.on('changeOverlayStatus', function(data) {
+    // SHOW AVATAR
+    socket.on('show_avatar', function(data) {
+        log.debug({data: data}, 'show_avatar:');
+        io.emit('showAvatar', data);
+    });
 
-        io.emit('changeShowHideOverlays', data);
+    // HIDE AVATAR
+    socket.on('hide_avatar', function(data) {
+        log.debug({data: data}, 'hide_avatar:');
+        io.emit('hideAvatar', data);
+    });
 
+    // MOVE AVATAR UP
+    socket.on('move_up', function(data) {
+        log.debug({data: data}, 'move_up:');
+        io.emit('moveAvatarUp', data);
+    });
+
+    // MOVE AVATAR DOWN
+    socket.on('move_down', function(data) {
+        log.debug({data: data}, 'move_down:');
+        io.emit('moveAvatarDown', data);
+    });
+
+    // MOVE AVATAR TO THE LEFT
+    socket.on('move_left', function(data) {
+        log.debug({data: data}, 'move_left:');
+        io.emit('moveAvatarLeft', data);
+    });
+
+    // MOVE AVATAR TO THE RIGHT
+    socket.on('move_right', function(data) {
+        log.debug({data: data}, 'move_right:');
+        io.emit('moveAvatarRight', data);
+    });
+
+    // MOVE AVATAR FRONTWARD
+    socket.on('move_forward', function(data) {
+        log.debug({data: data}, 'move_forward:');
+        io.emit('moveAvatarForward', data);
+    });
+
+    // MOVE AVATAR BACKWARD
+    socket.on('move_backward', function(data) {
+        log.debug({data: data}, 'move_backward:');
+        io.emit('moveAvatarBackward', data);
     });
 
 };

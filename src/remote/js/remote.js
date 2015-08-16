@@ -88,9 +88,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
             this.socket.on('changeShowHideOverlays', function(data) {
-
                 overlayStatus = data;
-
                 JL('iPED Toolkit.Remote - showHideOverlays')
                     .debug(data);
             });
@@ -138,14 +136,11 @@ require(['jsnlog/js/jsnlog.min',
                 language = data;
                 JL('iPED Toolkit.Remote - setRemoteSelectedLanguage')
                     .debug(data);
-
                 // Select radio button if language was already defined
                 if (language !== null) {
                     $('input[name="languages"][value=' + language + ']')
                         .prop('checked', true);
                 }
-
-
             });
 
 
@@ -153,10 +148,7 @@ require(['jsnlog/js/jsnlog.min',
             this.socket.on('logger', function(data) {
                 JL('iPED Toolkit.Remote - Logger')
                     .debug(data);
-
                 counter = counter + 1;
-
-
                 if (data.success) {
                     $('#logger')
                         .prepend(
@@ -187,20 +179,15 @@ require(['jsnlog/js/jsnlog.min',
                         .html(
                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>' + data.errMsg + '</strong>'
                         );
-
                 }
-
             });
 
             // Show/Hide Overalys by voice command
             this.socket.on('changeShowHideOverlays', function(data) {
-
                 JL('iPED Toolkit.Remote - changeShowHideOverlays')
                     .debug(data);
-
                 if (data === true) {
                     this.overlayStatus = true;
-
                     $("#switchOverlay")
                         .bootstrapSwitch('state', true, true);
                 } else  {
@@ -208,7 +195,6 @@ require(['jsnlog/js/jsnlog.min',
                     $("#switchOverlay")
                         .bootstrapSwitch('state', false, false);
                 }
-
             });
 
 
@@ -286,7 +272,6 @@ require(['jsnlog/js/jsnlog.min',
          * @param status - Boolean (true) for activating the Microphone over RTC
          */
         Remote.prototype.activateMicrophone = function(language) {
-
             this.socket.emit('activateMic', language);
         };
 
@@ -351,15 +336,52 @@ require(['jsnlog/js/jsnlog.min',
             Show/Hide Overlays in Frontend
          */
         Remote.prototype.showHideOverlays = function() {
-
             this.socket.emit('showHideOverlays', this.overlayStatus);
-
             JL('iPED Toolkit.Remote - showHideOverlays:')
                 .debug(this.overlayStatus);
         };
 
 
+        /**
+         * THE FOLLOWING PROTOTYPES BELONG TO MIA
+         **/
+        Remote.prototype.moveUp = function() {
+            this.socket.emit('move_up', null);
+            JL('iPED Toolkit.Remote - move_up:')
+                .debug();
+        };
 
+        Remote.prototype.moveDown = function() {
+            this.socket.emit('move_down', null);
+            JL('iPED Toolkit.Remote - move_down:')
+                .debug();
+        };
+
+        Remote.prototype.moveLeft = function() {
+            this.socket.emit('move_left', null);
+            JL('iPED Toolkit.Remote - move_left:')
+                .debug();
+        };
+
+        Remote.prototype.moveRight = function() {
+            this.socket.emit('move_right', null);
+            JL('iPED Toolkit.Remote - move_right:')
+                .debug();
+        };
+
+        Remote.prototype.moveForward = function() {
+            this.socket.emit('move_forward', null);
+            JL('iPED Toolkit.Remote - move_forward:')
+                .debug();
+        };
+
+        Remote.prototype.moveBackward = function() {
+            this.socket.emit('move_backward', null);
+            JL('iPED Toolkit.Remote - move_backward:')
+                .debug();
+        };
+
+        // DOCUMENT-READAY
         $(document)
             .ready(function() {
                 var remote = new Remote();
@@ -498,11 +520,52 @@ require(['jsnlog/js/jsnlog.min',
                                 $('#useVoiceControl')
                                     .collapse();
                             }
-
-
                         }
                     });
 
+                // MIA
+                $("#switchGestureControl")
+                    .bootstrapSwitch()
+                    .on('switchChange.bootstrapSwitch', function(event, state) {
+                        if (state) {
+                            $('#gestureCommands')
+                                .show();
+                        } else {
+                            $('#gestureCommands')
+                                .hide();
+                        }
+                    });
+
+                // CLICK-EVENTS FOR BUTTONS
+                $('#button_up')
+                    .click(function() {
+                        remote.moveUp();
+                    });
+
+                $('#button_down')
+                    .click(function() {
+                        remote.moveDown();
+                    });
+
+                $('#button_left')
+                    .click(function() {
+                        remote.moveLeft();
+                    });
+
+                $('#button_right')
+                    .click(function() {
+                        remote.moveRight();
+                    });
+
+                $('#button_forward')
+                    .click(function() {
+                        remote.moveForward();
+                    });
+
+                $('#button_backward')
+                    .click(function() {
+                        remote.moveBackward();
+                    });
             });
 
     }

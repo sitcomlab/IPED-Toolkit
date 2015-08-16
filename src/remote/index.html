@@ -79,6 +79,63 @@
             </div>
         </div>
 
+        <div class="panel panel-default" id="gestureCommands" style="display: none">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gesture Commands</h3>
+            </div>
+            <div class="panel-body">
+                <center>
+                    <table>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_up" role="button">UP</a>
+                                </center>
+                            </td>
+                            <td></td>
+                            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_forward" role="button">FORWARD</a>
+                                </center>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_left" role="button">LEFT</a>
+                                </center>
+                            </td>
+                            <td></td>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_right" role="button">RIGHT</a>
+                                </center>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_down" role="button">DOWN</a>
+                                </center>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <center>
+                                    <a href="#" class="btn btn-primary btn-sm" id="button_backward" role="button">BACKWARD</a>
+                                </center>
+                            </td>
+                        </tr>
+                    </table>
+                </center>
+            </div>
+        </div>
+
         <div class="panel-group" id="accordion">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -108,7 +165,7 @@
         </div>
 
         <div class="panel-group">
-            <div class="panel panel-default" id="voiceControl">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
                         Settings
@@ -128,6 +185,14 @@
                             <label for="switchVoiceControl" class="col-xs-6 control-label">Voice Control System</label>
                             <div class="col-xs-6">
                                 <input type="checkbox" id="switchVoiceControl" name="switchVoiceControl">
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="form-group">
+                            <label for="switchGestureControl" class="col-xs-6 control-label">Gesture Control System</label>
+                            <div class="col-xs-6">
+                                <input type="checkbox" id="switchGestureControl" name="switchGestureControl">
                             </div>
                         </div>
                     </div>

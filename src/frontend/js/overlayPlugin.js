@@ -135,7 +135,7 @@ define(['threejs/js/three.min',
             if (this.jqueryElement) {
                 this.jqueryElement.remove();
             }
-            this.video.after('<div id="iPED-Overlay"></div>');
+            this.video.after('<div id="iPED-Overlay" style="z-index:2"></div>');
             this.jqueryElement = $('#iPED-Overlay');
             this.jqueryElement.css('position', 'absolute');
 

@@ -163,10 +163,11 @@ require(['jsnlog/js/jsnlog.min',
             JL('iPED Toolkit.Frontend resetFrontendMicPermission to')
                 .info(this.micPermission);
 
+            /**
+             * THE FOLLOWING COMMAND BELONGS TO GENERAL
+             **/
 
-            /*
-                Set new LocationID for changing a video
-             */
+            // Set new LocationID for changing a video
             this.socket.on('setLocationId', function(data) {
 
                 if (typeof data != "number") {
@@ -182,18 +183,19 @@ require(['jsnlog/js/jsnlog.min',
 
             });
 
-            /*
-                Set MicPermission for Remote Control App
-             */
+
+            /**
+             * THE FOLLOWING COMMANDS BELONG TO VOICE-CONTROL
+             **/
+
+            //Set MicPermission for Remote Control App
             this.socket.on('getMicPermission', function(data) {
                 socket.emit('setRemoteMicPermission', micPermission);
                 JL('iPED Toolkit.Frontend setRemoteMicPermission to')
                     .debug(micPermission);
             });
 
-            /*
-                Set selected language for Remote Control App
-             */
+            // Set selected language for Remote Control App
             this.socket.on('getSelectedLanguage', function(data) {
                 socket.emit('setSeletedLanguage', language);
                 JL('iPED Toolkit.Frontend setSeletedLanguage to')
@@ -201,9 +203,7 @@ require(['jsnlog/js/jsnlog.min',
             });
 
 
-            /*
-                Setup Microphone with selected language and its corresponing Wit.Ai instance (CLIENT_ACCESS_TOKEN)
-             */
+            // Setup Microphone with selected language and its corresponing Wit.Ai instance (CLIENT_ACCESS_TOKEN)
             this.socket.on('setupMic', function(data) {
                 JL('iPED Toolkit.Frontend')
                     .debug(data);
@@ -230,9 +230,7 @@ require(['jsnlog/js/jsnlog.min',
             });
 
 
-            /*
-                Start or Stop recording with the microphone, depends on the users input in the remote control app
-             */
+            // Start or Stop recording with the microphone, depends on the users input in the remote control app
             this.socket.on('listenMic', function(data) {
                 JL('iPED Toolkit.Frontend')
                     .debug(data);
@@ -280,9 +278,7 @@ require(['jsnlog/js/jsnlog.min',
                 }
             });
 
-            /*
-                Inform user, if system failed, e.g. nothing found in Database or if an empty user input occors
-             */
+            // Inform user, if system failed, e.g. nothing found in Database or if an empty user input occors
             this.socket.on('failed', function(data) {
                 JL('iPED Toolkit.Remote - Voice Command failed')
                     .error(data);
@@ -293,9 +289,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
 
-            /*
-                Show/Hide Overlays from Remote or VoiceControl-Command
-             */
+            // Show/Hide Overlays from Remote or VoiceControl-Command
             this.socket.on('setShowHideOverlays', function(data) {
                 JL('iPED Toolkit.Remote - setShowHideOverlays')
                     .debug(data);
@@ -309,6 +303,74 @@ require(['jsnlog/js/jsnlog.min',
                 }
             });
 
+
+            /**
+             * THE FOLLOWING COMMANDS BELONG TO MIA
+             **/
+
+            // SHOW AVATAR
+            this.socket.on('showAvatar', function(data) {
+                JL('iPED Toolkit.Remote - showAvatar')
+                    .debug(data);
+                $('#iPED-Avatar')
+                    .show();
+            });
+
+            // HIDE AVATAR
+            this.socket.on('hideAvatar', function(data) {
+                JL('iPED Toolkit.Remote - hideAvatar')
+                    .debug(data);
+                $('#iPED-Avatar')
+                    .hide();
+            });
+
+            // MOVE AVATAR UP
+            this.socket.on('moveAvatarUp', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarUp')
+                    .debug(data);
+                // To-Do
+
+            });
+
+            // MOVE AVATAR DOWN
+            this.socket.on('moveAvatarDown', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarDown')
+                    .debug(data);
+                // To-Do
+
+            });
+
+            // MOVE AVATAR TO THE LEFT
+            this.socket.on('moveAvatarLeft', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarLeft')
+                    .debug(data);
+                // To-Do
+
+            });
+
+            // MOVE AVATAR TO THR RIGHT
+            this.socket.on('moveAvatarRight', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarRight')
+                    .debug(data);
+                // To-Do
+
+            });
+
+            // MOVE AVATAR FORWARD
+            this.socket.on('moveAvatarForward', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarForward')
+                    .debug(data);
+                // To-Do
+
+            });
+
+            // MOVE AVATAR BACKWARD
+            this.socket.on('moveAvatarBackward', function(data) {
+                JL('iPED Toolkit.Remote - moveAvatarBackward')
+                    .debug(data);
+                // To-Do
+
+            });
 
         };
 
