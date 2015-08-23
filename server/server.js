@@ -68,6 +68,7 @@ var util = require('util');
 var express = require('express');
 var basicAuth = require('basic-auth');
 var socketio = require('socket.io');
+var dgram = require("dgram");
 var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
@@ -148,12 +149,16 @@ httpServer.listen(HTTP_PORT, function() {
      }
  };
 
+
 /****************************
  Socket.io (websockets)
  ****************************/
+var mysocket = 0;
 var socketHandler = function(socket) {
     //log.debug({socket: socket}, 'New connection:');
     log.info('New connection');
+
+    mysocket = socket;
 
     /**
      * THE FOLLOWING COMMAND BELONGS TO GENERAL
@@ -308,6 +313,43 @@ var io = socketio.listen(httpServer);
 io.on('connection', socketHandler);
 var ios = socketio.listen(httpsServer);
 ios.on('connection', socketHandler);
+
+
+/****************************
+ udp server on 41181
+ ****************************/
+
+var PORT = 33333;
+var HOST = '127.0.0.1';
+
+//var dgram = require('dgram');
+var UDPserver = dgram.createSocket('udp4');
+
+UDPserver.on('listening', function () {
+    var address = UDPserver.address();
+    console.log('UDP Server listening on ' + address.address + ":" + address.port);
+});
+
+UDPserver.on('message', function (message, remote) {
+    console.log(remote.address + ':' + remote.port +' - ' + message);
+    if (mysocket !== 0) {
+        if(message == "up"){
+            io.emit('moveAvatarUp', "");
+        } else if(message == "down"){
+            io.emit('moveAvatarDown', "");
+        } else if(message == "left"){
+            io.emit('moveAvatarLeft', "");
+        } else if(message == "right"){
+            io.emit('moveAvatarRight', "");
+        }
+
+        //socketHandler.emit('move_up', "" + msg);
+        //socketHandler.broadcast.emit('field', "" + msg);
+    }
+});
+
+UDPserver.bind(PORT);
+//UDPserver.bind(PORT, HOST);
 
 
 /*********************************************************
