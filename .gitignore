@@ -9,3 +9,5 @@ public/frontend
 public/remote
 public/media
 server/public
+
+server/npm-debug.log
