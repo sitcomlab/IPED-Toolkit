@@ -97,12 +97,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>
         public MainWindow()
         {
-            
             InitializeComponent();
-             String _data = "Hallo";
-            // Start Websockets
-            SendUDP("192.168.178.25", 33333, _data);
-            Debug.WriteLine("Sent: " + _data);
         }
 
         public static void SendUDP(string hostNameOrAddress, int destinationPort, string data)
@@ -415,29 +410,32 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private void ProcessGesture(Joint head, Joint handLeft, Joint handRight)
         {
+            String destinationServer = "192.168.178.25";
+            Int32 destinationServerPort = 33333;
+
             if (handRight.Position.Y > head.Position.Y)
             {
                 String gesture = "Position HandRigh over PositionHead";
                 Debug.WriteLine(gesture);
-                SendUDP("192.168.178.25", 33333, "up");
+                SendUDP(destinationServer, destinationServerPort, "up");
             }
             else if (handLeft.Position.Y > head.Position.Y)
             {
                 String gesture = "Position HandLeft over PositionHead";
                 Debug.WriteLine(gesture);
-                SendUDP("192.168.178.25", 33333, "up");
+                SendUDP(destinationServer, destinationServerPort, "up");
             }
             else if (handLeft.Position.Y < 0)
             {
                 String gesture = "Position HandLeft under your waist!";
                 Debug.WriteLine(gesture);
-                SendUDP("192.168.178.25", 33333, "down");
+                SendUDP(destinationServer, destinationServerPort, "down");
             } 
             else if (handRight.Position.Y < 0)
             {
                 String gesture = "Position handRight under your waist!";
                 Debug.WriteLine(gesture);
-                SendUDP("192.168.178.25", 33333, "down");
+                SendUDP(destinationServer, destinationServerPort, "down");
             } 
         }
 

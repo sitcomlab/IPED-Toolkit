@@ -12,3 +12,13 @@ C:\Users\Nicho\Desktop\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.exe
 C:\Users\Nicho\Desktop\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.pdb
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF.exe
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF.pdb
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\bin\Debug\SkeletonBasics-WPF.exe
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\bin\Debug\SkeletonBasics-WPF.pdb
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\MainWindow.baml
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\MainWindow.g.cs
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\App.g.cs
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF_MarkupCompile.cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF.g.resources
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\MIA\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
