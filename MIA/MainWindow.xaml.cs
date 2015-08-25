@@ -410,7 +410,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private void ProcessGesture(Joint head, Joint handLeft, Joint handRight)
         {
-            String destinationServer = "192.168.178.25";
+            String destinationServer = "128.176.146.126";
             Int32 destinationServerPort = 33333;
 
             if (handRight.Position.Y > head.Position.Y)
