@@ -15,12 +15,10 @@ body {
     <!(endif)--> <!--(if target develop || developOnServer)> background-color: #000000;
     <!(endif)-->
 }
-
 #iPED-Video {
     width: 100%;
     max-width: 100%;
 }
-
 .messages {
     width: 90%;
     display: block;
@@ -28,18 +26,15 @@ body {
     margin-right: auto;
     text-align: center;
 }
-
 .messages h3 {
     color: #ffffff;
 }
-
 .spinner {
     width: 256px;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
-
 .windows8 {
     position: relative;
     left: -120px;
@@ -47,7 +42,6 @@ body {
     height: 256px;
     padding: 100px;
 }
-
 .windows8 .wBall {
     position: absolute;
     width: 243px;
@@ -64,7 +58,6 @@ body {
     transform: rotate(225deg);
     animation: orbit 7.15s infinite;
 }
-
 .windows8 .wBall .wInnerBall {
     position: absolute;
     width: 32px;
@@ -78,7 +71,6 @@ body {
     -o-border-radius: 32px;
     border-radius: 32px;
 }
-
 .windows8 #wBall_1 {
     -moz-animation-delay: 1.56s;
     -webkit-animation-delay: 1.56s;
@@ -86,7 +78,6 @@ body {
     -o-animation-delay: 1.56s;
     animation-delay: 1.56s;
 }
-
 .windows8 #wBall_2 {
     -moz-animation-delay: 0.31s;
     -webkit-animation-delay: 0.31s;
@@ -94,7 +85,6 @@ body {
     -o-animation-delay: 0.31s;
     animation-delay: 0.31s;
 }
-
 .windows8 #wBall_3 {
     -moz-animation-delay: 0.62s;
     -webkit-animation-delay: 0.62s;
@@ -102,7 +92,6 @@ body {
     -o-animation-delay: 0.62s;
     animation-delay: 0.62s;
 }
-
 .windows8 #wBall_4 {
     -moz-animation-delay: 0.94s;
     -webkit-animation-delay: 0.94s;
@@ -110,7 +99,6 @@ body {
     -o-animation-delay: 0.94s;
     animation-delay: 0.94s;
 }
-
 .windows8 #wBall_5 {
     -moz-animation-delay: 1.25s;
     -webkit-animation-delay: 1.25s;
@@ -118,7 +106,6 @@ body {
     -o-animation-delay: 1.25s;
     animation-delay: 1.25s;
 }
-
 @-moz-keyframes orbit {
     0% {
         opacity: 1;
@@ -165,7 +152,6 @@ body {
         -moz-transform: rotate(900deg);
     }
 }
-
 @-webkit-keyframes orbit {
     0% {
         opacity: 1;
@@ -212,7 +198,6 @@ body {
         -webkit-transform: rotate(900deg);
     }
 }
-
 @-ms-keyframes orbit {
     0% {
         opacity: 1;
@@ -259,7 +244,6 @@ body {
         -ms-transform: rotate(900deg);
     }
 }
-
 @-o-keyframes orbit {
     0% {
         opacity: 1;
@@ -306,7 +290,6 @@ body {
         -o-transform: rotate(900deg);
     }
 }
-
 @keyframes orbit {
     0% {
         opacity: 1;

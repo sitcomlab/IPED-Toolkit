@@ -1,6 +1,6 @@
 /*!
-* The iPED Toolkit
-* webRTC component -- Projects screen contents of 3rd party systems into the iPED Toolkit
+* The IPED Toolkit
+* webRTC component -- Projects screen contents of 3rd party systems into the IPED Toolkit
 *
 * (c) 2014 Morin Ostkamp
 * Institute for Geoinformatics (ifgi), University of Münster

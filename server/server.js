@@ -1,5 +1,5 @@
 /*!
-* The iPED Toolkit
+* The IPED Toolkit
 * Node.js Webserver
 *
 * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
@@ -102,7 +102,7 @@ var options = {
     passphrase : 'morin'
 };
 
-log.info('iPED Toolkit Server %s', VERSION);
+log.info('IPED Toolkit Server %s', VERSION);
 
 
 /****************************
