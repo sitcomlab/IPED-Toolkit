@@ -357,16 +357,16 @@ require(['jsnlog/js/jsnlog.min',
             });
 
             // MOVE AVATAR FORWARD
-            this.socket.on('moveAvatarForward', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarForward')
+            this.socket.on('scaleAvatarUp', function(data) {
+                JL('iPED Toolkit.Remote - scaleAvatarUp')
                     .debug(data);
                 // To-Do
 
             });
 
             // MOVE AVATAR BACKWARD
-            this.socket.on('moveAvatarBackward', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarBackward')
+            this.socket.on('scaleAvatarDown', function(data) {
+                JL('iPED Toolkit.Remote - scaleAvatarDown')
                     .debug(data);
                 // To-Do
 

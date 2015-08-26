@@ -345,6 +345,18 @@ require(['jsnlog/js/jsnlog.min',
         /**
          * THE FOLLOWING PROTOTYPES BELONG TO MIA
          **/
+        Remote.prototype.showAvatar = function() {
+            this.socket.emit('show_avatar', null);
+            JL('iPED Toolkit.Remote - show_avatar:')
+                .debug();
+        };
+
+        Remote.prototype.hideAvatar = function() {
+            this.socket.emit('hide_avatar', null);
+            JL('iPED Toolkit.Remote - hide_avatar:')
+                .debug();
+        };
+
         Remote.prototype.moveUp = function() {
             this.socket.emit('move_up', null);
             JL('iPED Toolkit.Remote - move_up:')
@@ -369,15 +381,15 @@ require(['jsnlog/js/jsnlog.min',
                 .debug();
         };
 
-        Remote.prototype.moveForward = function() {
-            this.socket.emit('move_forward', null);
-            JL('iPED Toolkit.Remote - move_forward:')
+        Remote.prototype.scaleUp = function() {
+            this.socket.emit('scale_up', null);
+            JL('iPED Toolkit.Remote - scale_up:')
                 .debug();
         };
 
-        Remote.prototype.moveBackward = function() {
-            this.socket.emit('move_backward', null);
-            JL('iPED Toolkit.Remote - move_backward:')
+        Remote.prototype.scaleDown = function() {
+            this.socket.emit('scale_down', null);
+            JL('iPED Toolkit.Remote - scale_down:')
                 .debug();
         };
 
@@ -537,6 +549,16 @@ require(['jsnlog/js/jsnlog.min',
                     });
 
                 // CLICK-EVENTS FOR BUTTONS
+                $('#button_show')
+                    .click(function() {
+                        remote.showAvatar();
+                    });
+
+                $('#button_hide')
+                    .click(function() {
+                        remote.hideAvatar();
+                    });
+
                 $('#button_up')
                     .click(function() {
                         remote.moveUp();
@@ -557,14 +579,14 @@ require(['jsnlog/js/jsnlog.min',
                         remote.moveRight();
                     });
 
-                $('#button_forward')
+                $('#button_scale_up')
                     .click(function() {
-                        remote.moveForward();
+                        remote.scaleUp();
                     });
 
-                $('#button_backward')
+                $('#button_scale_down')
                     .click(function() {
-                        remote.moveBackward();
+                        remote.scaleDown();
                     });
             });
 

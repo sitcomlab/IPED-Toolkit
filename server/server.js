@@ -297,15 +297,15 @@ var socketHandler = function(socket) {
     });
 
     // MOVE AVATAR FRONTWARD
-    socket.on('move_forward', function(data) {
-        log.debug({data: data}, 'move_forward:');
-        io.emit('moveAvatarForward', data);
+    socket.on('scale_up', function(data) {
+        log.debug({data: data}, 'scale_up:');
+        io.emit('scaleAvatarUp', data);
     });
 
     // MOVE AVATAR BACKWARD
-    socket.on('move_backward', function(data) {
-        log.debug({data: data}, 'move_backward:');
-        io.emit('moveAvatarBackward', data);
+    socket.on('scale_down', function(data) {
+        log.debug({data: data}, 'scale_down:');
+        io.emit('scaleAvatarDown', data);
     });
 
 };
