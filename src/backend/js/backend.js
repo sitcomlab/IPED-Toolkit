@@ -56,7 +56,7 @@ require(['jsnlog/js/jsnlog.min',
                     'appenders': [consoleAppender],
                     //'level': JL.getOffLevel()
                     'level': JL.getDebugLevel()
-                        //'level': JL.getErrorLevel()
+                    //'level': JL.getErrorLevel()
                 });
 
             /* This is an example log output:

@@ -24,11 +24,11 @@ function getURLParameters(parameter) {
 
 		for (i = 0; i < arrURLParams.length; i++) {
 			if (arrParamNames[i] == parameter) {
-				JL('iPED Toolkit.Utils').debug('Parameter: ' + parameter + '=' + arrParamValues[i]);
+				JL('IPED Toolkit.Utils').debug('Parameter: ' + parameter + '=' + arrParamValues[i]);
 				return arrParamValues[i];
 			}
 		}
-		JL('iPED Toolkit.Utils').debug('No URL parameters found.');
+		JL('IPED Toolkit.Utils').debug('No URL parameters found.');
 		return;
 	}
 }

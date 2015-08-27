@@ -39,14 +39,14 @@ define(['underscorejs/js/underscore',
             var _enable = function(thiz) {
                 if ($('#iPED-Overlay iframe')
                     .contents()
-                    .find('.remote video')[0] && $('#iPED-Overlay iframe')
+                    .find('video')[0] && $('#iPED-Overlay iframe')
                     .contents()
-                    .find('.remote video')[0].videoWidth !== 0 && $('#iPED-Overlay iframe')
+                    .find('video')[0].videoWidth !== 0 && $('#iPED-Overlay iframe')
                     .contents()
-                    .find('.remote video')[0].videoHeight !== 0) {
+                    .find('video')[0].videoHeight !== 0) {
                     thiz.sourceVideo = $('#iPED-Overlay iframe')
                         .contents()
-                        .find('.remote video');
+                        .find('video');
                     thiz.sourceVideo.css('position', 'absolute');
                     thiz.sourceVideo.css('left', '-99999px');
 
@@ -58,18 +58,41 @@ define(['underscorejs/js/underscore',
                             .find('#chroma-key-canvas')
                             .remove();
                     }
-                    thiz.sourceVideo.before('<canvas id="chroma-key-canvas" width="' + thiz.sourceVideo[0].videoWidth + '" height="' + thiz.sourceVideo[0].videoHeight + '" style="max-width: 100%;"></canvas>');
-                    thiz.displayCanvas = $('#iPED-Overlay iframe')
-                        .contents()
-                        .find('#chroma-key-canvas');
+
+                    thiz.displayCanvas = document.createElement('canvas');
+                    $(thiz.displayCanvas)
+                        .attr('id', 'chroma-key-canvas');
+                    $(thiz.displayCanvas)
+                        .attr('width', thiz.sourceVideo[0].videoWidth);
+                    $(thiz.displayCanvas)
+                        .attr('height', thiz.sourceVideo[0].videoHeight);
+                    $(thiz.displayCanvas)
+                        .attr('style', 'max-width: 100%;');
+                    thiz.sourceVideo.before(thiz.displayCanvas);
 
                     this.seriously = null;
                     thiz.seriously = new Seriously();
-                    thiz.seriouslySource = thiz.seriously.source(thiz.sourceVideo[0]);
-                    thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas[0]);
+                    var foobar = document.createElement('video');
+                    var attributes = thiz.sourceVideo.prop("attributes");
+                    $.each(attributes, function() {
+                        $(foobar)
+                            .attr(this.name, this.value);
+                    });
+                    foobar.play();
+
+                    thiz.seriouslySource = thiz.seriously.source(foobar);
+
                     thiz.seriouslyChroma = thiz.seriously.effect('chroma');
+                    //thiz.seriouslyChroma.weight = 1;
+                    //thiz.seriouslyChroma.balance = 1;
+                    //thiz.seriouslyChroma.screen = 'rgb(77, 239, 41)';
+                    thiz.seriouslyChroma.clipWhite = 1.0;
+                    thiz.seriouslyChroma.clipBlack = 0.8;
                     thiz.seriouslyChroma.source = thiz.seriouslySource;
+
+                    thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas);
                     thiz.seriouslyTarget.source = thiz.seriouslyChroma;
+
 
                     thiz.seriously.go();
                 } else {

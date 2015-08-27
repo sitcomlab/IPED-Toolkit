@@ -1,45 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
+<head>
     <script>
-      /*!
-      * The iPED Toolkit
-      * webRTC component -- Projects screen contents of 3rd party systems into the iPED Toolkit
-      *
-      * (c) 2014 Morin Ostkamp
-      * Institute for Geoinformatics (ifgi), University of Münster
-      */
+    /*!
+    * The IPED Toolkit
+    * webRTC component -- Projects screen contents of 3rd party systems into the IPED Toolkit
+    *
+    * (c) 2014 Morin Ostkamp
+    * Institute for Geoinformatics (ifgi), University of Münster
+    */
     </script>
     
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-		<title>iPED Toolkit Remote Content</title>
-		<style>
-      html,
-      body {
+    <title>IPED Toolkit Remote Content</title>
+    <style>
+    html,
+    body {
         width: 100%;
         height: 100%;
         margin: 0;
         overflow: hidden;
-      }
-
-      .local {
-        display: none;
-      }
-
-      .remote, .remote video {
-        max-width: 100%;
-      }
+    }
     </style>
-	</head>
-	<body>
-		<div class="remote"></div>
-		<div class="local"></div>
+</head>
+<body>
+    <div class="remote"></div>
+    <div class="local"></div>
 	
     <script src="../../lib/jquery/js/jquery.min.js"></script>
-		<script src="../../rtc.io/primus.js"></script>
-		<script src="../../lib/webRTC/js/webRTC.js"></script>
-	</body>
+    <script src="../../rtc.io/primus.js"></script>
+    <script>
+    var source = 'null';
+    if (window.location.pathname.indexOf('camera') != -1) {
+        source = 'camera';
+    } else {
+        source = 'screen';
+    }    
+    </script>
+    <script src="../../lib/webRTC/js/webRTC.js"></script>
+    <script>
+    var source = 'null';
+    $(document).ready(function() {
+        if (window.location.pathname.indexOf('camera') != -1) {
+            source = 'camera';
+            $('.remote').css('display', 'none');
+            $('.local').css('max-width', '100%');
+            $('.local video').css('max-width', '100%');
+        } else {
+            source = 'screen';
+            $('.local').css('display', 'none');
+            $('.remote').css('max-width', '100%');
+            $('.remote video').css('max-width', '100%');
+        }    
+    });
+    </script>
+</body>
 </html>

@@ -1,6 +1,6 @@
 /*!
-* The iPED Toolkit
-* webRTC component -- Projects screen contents of 3rd party systems into the iPED Toolkit
+* The IPED Toolkit
+* webRTC component -- Projects screen contents of 3rd party systems into the IPED Toolkit
 *
 * (c) 2014 Morin Ostkamp
 * Institute for Geoinformatics (ifgi), University of Münster
@@ -41,20 +41,26 @@ var iceServers = [
 ];
 
 // capture local media
-var localMedia = media({
-  //constraints: captureConfig('camera min:1280x720').toConstraints()
-	constraints: { audio: false, 
-                        video: { 
-                          mandatory: { 
-                            chromeMediaSource: 'screen', 
-                            maxWidth: screen.width, 
-                            maxHeight: screen.height, 
-                            minFrameRate: 23, 
-                            maxFrameRate: 25
-                          } 
-                        } 
-                    }
-});
+// This needs to be set in HTML file according to URL parameter
+if (source == 'camera') {
+    var localMedia = media({
+        constraints: captureConfig('camera min:1280x720').toConstraints()
+    });
+} else if (source == 'screen') {
+    var localMedia = media({
+        constraints: { audio: false, 
+            video: { 
+                mandatory: { 
+                    chromeMediaSource: 'screen', 
+                    maxWidth: screen.width, 
+                    maxHeight: screen.height, 
+                    minFrameRate: 23, 
+                    maxFrameRate: 25
+                } 
+            } 
+        }
+    });
+}
 
 // render a remote video
 function renderRemote(id, stream) {
