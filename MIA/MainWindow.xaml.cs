@@ -108,7 +108,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socket.SendTo(buffer, endPoint);
             socket.Close();
-            Debug.WriteLine("Sent: " + data);
+            //Debug.WriteLine("Sent: " + data);
         }
 
 
@@ -239,8 +239,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     foreach (Skeleton skeleton in skeletons)
                     {
                         if (skeleton != null )
-                        {
-                            ProcessGesture(skeleton.Joints[JointType.Head], skeleton.Joints[JointType.HandLeft], skeleton.Joints[JointType.HandRight]);
+                        {   
+                            // Start Gesture Recognition
+                            ProcessGesture(skeleton);
                         }
                     }
                     
@@ -274,9 +275,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                     }
                 }
 
-                
-
-
+           
                 // prevent drawing outside of our render area
                 this.drawingGroup.ClipGeometry = new RectangleGeometry(new Rect(0.0, 0.0, RenderWidth, RenderHeight));
             }
@@ -408,38 +407,112 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
-        private void ProcessGesture(Joint head, Joint handLeft, Joint handRight)
-        {
-            String destinationServer = "128.176.146.126";
-            Int32 destinationServerPort = 33333;
+        // Gesture Recognition
+        private void ProcessGesture (Skeleton skeleton)
+        {   
+                        
+            // Torso
+            Joint head = skeleton.Joints[JointType.Head];
+            Joint shoulderCenter = skeleton.Joints[JointType.ShoulderCenter];
+            Joint spine = skeleton.Joints[JointType.Spine];
+            Joint hipCenter = skeleton.Joints[JointType.HipCenter];
 
-            if (handRight.Position.Y > head.Position.Y)
+            // Left Arm
+            Joint shoulderLeft = skeleton.Joints[JointType.ShoulderLeft];
+            Joint elbowLeft = skeleton.Joints[JointType.ElbowLeft];
+            Joint wristLeft = skeleton.Joints[JointType.WristLeft];
+            Joint handLeft = skeleton.Joints[JointType.HandLeft];
+
+            // Right Arm
+            Joint shoulderRight = skeleton.Joints[JointType.ShoulderRight];
+            Joint elbowRight = skeleton.Joints[JointType.ElbowRight];
+            Joint wristRight = skeleton.Joints[JointType.WristRight];
+            Joint handRight = skeleton.Joints[JointType.HandRight];
+
+            // Left Leg
+            Joint hipLeft = skeleton.Joints[JointType.HipLeft];
+            Joint kneeLeft = skeleton.Joints[JointType.KneeLeft];
+            Joint ankleLeft = skeleton.Joints[JointType.AnkleLeft];
+            Joint footLeft = skeleton.Joints[JointType.FootLeft];
+            
+            // Right Leg
+            Joint hipRight = skeleton.Joints[JointType.HipRight];
+            Joint kneeRight = skeleton.Joints[JointType.KneeRight];
+            Joint ankleRight = skeleton.Joints[JointType.AnkleRight];
+            Joint footRight = skeleton.Joints[JointType.FootRight];
+            
+
+            // SITCOM-Server
+            //String destinationServer = "128.176.146.126";
+            
+            // Development-Server
+            String destinationServer = "192.168.178.25";
+            Int32 destinationServerPort = 33333;
+            
+            
+            Boolean debugStatus = true;
+            Boolean debugStatus_2 = true;
+
+           
+
+            // Gestures
+            if (shoulderCenter.Position.Y > 0)
             {
-                String gesture = "Position HandRigh over PositionHead";
-                Debug.WriteLine(gesture);
-                SendUDP(destinationServer, destinationServerPort, "up");
-            }
-            else if (handLeft.Position.Y > head.Position.Y)
-            {
-                String gesture = "Position HandLeft over PositionHead";
-                Debug.WriteLine(gesture);
-                SendUDP(destinationServer, destinationServerPort, "up");
-            }
-            else if (handLeft.Position.Y < 0)
-            {
-                String gesture = "Position HandLeft under your waist!";
-                Debug.WriteLine(gesture);
-                SendUDP(destinationServer, destinationServerPort, "down");
-            } 
-            else if (handRight.Position.Y < 0)
-            {
-                String gesture = "Position handRight under your waist!";
-                Debug.WriteLine(gesture);
-                SendUDP(destinationServer, destinationServerPort, "down");
+                if (wristLeft.Position.Y <= kneeLeft.Position.Y || wristLeft.Position.Y <= kneeRight.Position.Y)
+                {
+                    if (debugStatus)
+                    {
+                        String gesture = "Down";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "down");
+                }
+                else if (wristRight.Position.Y <= kneeLeft.Position.Y || wristRight.Position.Y <= kneeRight.Position.Y)
+                {
+                    if (debugStatus)
+                    {
+                        String gesture = "Down";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "down");
+                } 
+                else if (elbowLeft.Position.Y <= shoulderCenter.Position.Y && elbowLeft.Position.Y > elbowRight.Position.Y)
+                {
+                    if (debugStatus_2)
+                    {
+                        String gesture = "Left";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "left");
+                }
+                else if (elbowRight.Position.Y <= shoulderCenter.Position.Y && elbowRight.Position.Y > elbowLeft.Position.Y)
+                {
+                    if (debugStatus_2)
+                    {
+                        String gesture = "Right";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "right");
+                }
+                else if (handRight.Position.Y > head.Position.Y)
+                {
+                    if (debugStatus)
+                    {
+                        String gesture = "Up";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "up");
+                }
+                else if (handLeft.Position.Y > head.Position.Y)
+                {
+                    if (debugStatus)
+                    {
+                        String gesture = "Up";
+                        Debug.WriteLine(gesture);
+                    }
+                    SendUDP(destinationServer, destinationServerPort, "up");
+                } 
             } 
         }
-
-
-        
     }
 }
