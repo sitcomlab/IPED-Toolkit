@@ -15,7 +15,6 @@ module.exports = function(grunt) {
         'public/frontend/js/chromaKeyPlugin.js'           : 'src/frontend/js/chromaKeyPlugin.js',
         'public/frontend/css/frontend.css'                : 'src/frontend/css/frontend.css',
         'public/frontend/css/microphone.css'              : 'src/frontend/css/microphone.css',
-        'public/frontend/js/ion.sound.js'                 : 'src/frontend/js/ion.sound.js',
 
         // Remote
         'public/remote/index.html'                        : 'src/remote/index.html',

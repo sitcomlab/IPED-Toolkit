@@ -8,7 +8,8 @@
 
 define(['underscorejs/js/underscore',
         'seriouslyjs/js/seriously',
-        'seriouslyjs/js/seriously.chroma'
+        'seriouslyjs/js/seriously.chroma',
+        'seriouslyjs/js/seriously.crop'
     ],
 
     function(Underscore) {
@@ -19,9 +20,34 @@ define(['underscorejs/js/underscore',
             this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'overlayPlugin'
             this.enable(true);
             this.sourceVideo = null;
+            this.seriously = new Seriously();
+            this.seriouslyCrop = this.seriously.effect('crop');
+            this.seriouslyChroma = this.seriously.effect('chroma');
 
             _.bindAll(this, 'onKeyDown');
             window.addEventListener('keydown', this.onKeyDown);
+
+            var backboneEvents = _.extend({}, Backbone.Events);
+            var thiz = this;
+            backboneEvents.listenTo(this.parent.overlays, 'add', function(overlay) {
+                if (thiz.seriouslyCrop) {
+                    overlay.get('tags')
+                        .forEach(function(element, index, array) {
+                            if (element.indexOf('cropTop') != -1) {
+                                thiz.seriouslyCrop.top = element.split('=')[1];
+                            }
+                            if (element.indexOf('cropBottom') != -1) {
+                                thiz.seriouslyCrop.bottom = element.split('=')[1];
+                            }
+                            if (element.indexOf('cropLeft') != -1) {
+                                thiz.seriouslyCrop.left = element.split('=')[1];
+                            }
+                            if (element.indexOf('cropRight') != -1) {
+                                thiz.seriouslyCrop.right = element.split('=')[1];
+                            }
+                        }, thiz);
+                }
+            });
         }
 
         ChromaKeyPlugin.prototype.onKeyDown = function(event) {
@@ -70,8 +96,6 @@ define(['underscorejs/js/underscore',
                         .attr('style', 'max-width: 100%;');
                     thiz.sourceVideo.before(thiz.displayCanvas);
 
-                    this.seriously = null;
-                    thiz.seriously = new Seriously();
                     var foobar = document.createElement('video');
                     var attributes = thiz.sourceVideo.prop("attributes");
                     $.each(attributes, function() {
@@ -81,15 +105,10 @@ define(['underscorejs/js/underscore',
                     foobar.play();
 
                     thiz.seriouslySource = thiz.seriously.source(foobar);
-
-                    thiz.seriouslyChroma = thiz.seriously.effect('chroma');
-                    //thiz.seriouslyChroma.weight = 1;
-                    //thiz.seriouslyChroma.balance = 1;
-                    //thiz.seriouslyChroma.screen = 'rgb(77, 239, 41)';
+                    thiz.seriouslyCrop.source = thiz.seriouslySource;
                     thiz.seriouslyChroma.clipWhite = 1.0;
                     thiz.seriouslyChroma.clipBlack = 0.8;
-                    thiz.seriouslyChroma.source = thiz.seriouslySource;
-
+                    thiz.seriouslyChroma.source = thiz.seriouslyCrop;
                     thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas);
                     thiz.seriouslyTarget.source = thiz.seriouslyChroma;
 
@@ -110,7 +129,6 @@ define(['underscorejs/js/underscore',
                 _enable(this);
             } else {
                 this.seriously.stop();
-                this.seriously = null;
 
                 this.displayCanvas.remove();
                 this.displayCanvas = null;

@@ -48,6 +48,10 @@ var requireConfig = {
       deps: ['seriouslyjs/js/seriously'],
       exports: 'SeriouslyChroma'
     },
+    'seriouslyjs/js/seriously.crop': {
+      deps: ['seriouslyjs/js/seriously'],
+      exports: 'SeriouslyCrop'
+    },
     'leaflet/js/leaflet.awesome-markers.min': {
       deps: ['bootstrap/js/bootstrap.min'],
       exports: 'LeafletAwesomeMarker'
