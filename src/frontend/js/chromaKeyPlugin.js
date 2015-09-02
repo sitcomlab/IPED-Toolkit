@@ -85,19 +85,27 @@ define(['underscorejs/js/underscore',
                             .remove();
                     }
 
-                    thiz.sourceVideo.before('<canvas id="chroma-key-canvas" width="' + thiz.sourceVideo[0].videoWidth + '" height="' + thiz.sourceVideo[0].videoHeight + '" style="max-width: 100%;"></canvas>');
-                    thiz.displayCanvas = $('#iPED-Overlay iframe')
-                        .contents()
-                        .find('#chroma-key-canvas');
+                    thiz.displayCanvas = document.createElement('canvas');
+                                        $(thiz.displayCanvas)
+                                            .attr('id', 'chroma-key-canvas');
+                                        $(thiz.displayCanvas)
+                                            .attr('width', thiz.sourceVideo[0].videoWidth);
+                                        $(thiz.displayCanvas)
+                                            .attr('height', thiz.sourceVideo[0].videoHeight);
+                                        $(thiz.displayCanvas)
+                                            .attr('style', 'max-width: 100%;');
+                                        thiz.sourceVideo.before(thiz.displayCanvas);
 
-                    var hotfixSource = document.createElement('video');
-                    $.each(thiz.sourceVideo.prop("attributes"), function() {
-                        $(hotfixSource)
-                            .attr(this.name, this.value);
-                    });
-                    hotfixSource.play();
 
-                    thiz.seriouslySource = thiz.seriously.source(thiz.sourceVideo[0]);
+                                        var foobar = document.createElement('video');
+                                        var attributes = thiz.sourceVideo.prop("attributes");
+                                        $.each(attributes, function() {
+                                            $(foobar)
+                                                .attr(this.name, this.value);
+                                        });
+                                        foobar.play();
+
+                    thiz.seriouslySource = thiz.seriously.source(foobar);
                     thiz.seriouslyCrop.source = thiz.seriouslySource;
                     thiz.seriouslyChroma.clipWhite = 1.0;
                     thiz.seriouslyChroma.clipBlack = 0.8;
