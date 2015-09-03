@@ -41,7 +41,7 @@ require(['jsnlog/js/jsnlog.min',
                     'appenders': [consoleAppender],
                     //'level': JL.getOffLevel()
                     'level': JL.getDebugLevel()
-                    //'level': JL.getErrorLevel()
+                        //'level': JL.getErrorLevel()
                 });
 
             /* This is an example log output:
@@ -155,7 +155,7 @@ require(['jsnlog/js/jsnlog.min',
 
                             '<div class="alert alert-success" role="alert"><div class="table-responsive"><table class="logger"><tr><th><u>' + counter + '. Command</u></th><th></th></tr><tr><td><b>Current LocationID: </b>' + data.locationID + '</td><td>' + '<b>Previous LocationID: </b>' + data.previousLocationID + '</td></tr><tr><th>MessageBody:</th><td>' + data.msg_body + '</td></tr><tr><th>Intent:</th><td>' + data.outcome.intent + '</td></tr><tr><th>Confidence:</th><td>' + data.outcome.confidence + '</td></tr></div></div>'
 
-                    );
+                        );
 
                     // Clean old ErrorMessages
                     $('#alert')
@@ -167,7 +167,7 @@ require(['jsnlog/js/jsnlog.min',
 
                             '<div class="alert alert-danger" role="alert"><div class="table-responsive"><table class="logger"><tr><th><u>' + counter + '. Command</u></th><th>' + data.errMsg + '</th></tr><tr><td><b>Current LocationID: </b>' + data.locationID + '</td><td>' + '<b>Previous LocationID: </b>' + data.previousLocationID + '</td></tr><tr><th>MessageBody:</th><td>' + data.msg_body + '</td></tr><tr><th>Intent:</th><td>' + data.outcome.intent + '</td></tr><tr><th>Confidence:</th><td>' + data.outcome.confidence + '</td></tr></div></div>'
 
-                    );
+                        );
 
                     $('#errorMessages')
                         .html(
@@ -178,7 +178,7 @@ require(['jsnlog/js/jsnlog.min',
                     $('#alert')
                         .html(
                             '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>' + data.errMsg + '</strong>'
-                    );
+                        );
                 }
             });
 

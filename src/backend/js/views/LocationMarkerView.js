@@ -84,7 +84,7 @@ define(['backbonejs/js/backbone',
                                     thiz.$el.find('#videoTable' + location.get('id') + '> tbody:last')
                                         .append(
                                             "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
-                                    );
+                                        );
 
                                 },
                                 error: function(model, response, options) {
@@ -117,7 +117,7 @@ define(['backbonejs/js/backbone',
                                     thiz.$el.find('#overlayTable' + location.get('id') + '> tbody:last')
                                         .append(
                                             "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
-                                    );
+                                        );
 
                                 },
                                 error: function(model, response, options) {
@@ -152,7 +152,7 @@ define(['backbonejs/js/backbone',
                                     thiz.$el.find('#relLocationTable' + location.get('id') + '> tbody:last')
                                         .append(
                                             "<tr><td>" + response.name + "</td><td>" + response.description + "</td></tr>"
-                                    );
+                                        );
 
                                 },
                                 error: function(model, response, options) {
