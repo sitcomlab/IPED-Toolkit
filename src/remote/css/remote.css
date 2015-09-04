@@ -9,6 +9,7 @@ html {}
 .mic-link:active:visited {
     text-decoration: none;
 }
+
 .mic-icon {
     border: 4px solid black;
     height: 230px;
@@ -18,6 +19,7 @@ html {}
     -webkit-border-radius: 200px;
     text-decoration: none;
 }
+
 .mic-icon:hover {
     border: 4px solid #428bca;
     height: 230px;
@@ -35,6 +37,7 @@ html {}
 .logger {
     border-collapse: collapse;
 }
+
 .logger td,
 th {
     padding: 3px;

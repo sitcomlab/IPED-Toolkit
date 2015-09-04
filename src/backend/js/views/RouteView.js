@@ -66,12 +66,12 @@ define(['backbonejs/js/backbone',
                     ];
                 }
                 this.polyline = L.polyline(points, {
-                    color: 'blue',
-                    contextmenu: true,
-                    contextmenuWidth: CONTEXTMENU_WIDTH,
-                    contextmenuInheritItems: false,
-                    contextmenuItems: contextMenuItems
-                })
+                        color: 'blue',
+                        contextmenu: true,
+                        contextmenuWidth: CONTEXTMENU_WIDTH,
+                        contextmenuInheritItems: false,
+                        contextmenuItems: contextMenuItems
+                    })
                     .addTo(this.featureGroup);
                 return this;
             }
