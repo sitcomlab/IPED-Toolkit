@@ -124,11 +124,13 @@ define(['threejs/js/three.min',
          * Initializes the Overlay plugin
          */
         OverlayPlugin.prototype.init = function() {
+            var thiz = this;
+
             this.video = $('#iPED-Video');
             this.video.on('loadeddata', this.onResize); // Give browsers time to recalculate dimensions
             $(window)
                 .resize(function() {
-                    this.render();
+                    thiz.render();
                     console.log("Resize event recognized -> rendering initiated");
                 }); // Recalculate dimensions when browser window is resized
             // Create DOM element: <div id="iPED-Overlay"></div>
