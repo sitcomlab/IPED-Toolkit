@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Frontend
  *
  * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
@@ -25,7 +25,7 @@ require(['jsnlog/js/jsnlog.min',
         'backend/models/Video',
         'backend/models/Videos',
 
-        // Additional iPED Toolkit Plugins, e.g., Overlays
+        // Additional IPED Toolkit Plugins, e.g., Overlays
         'frontend/overlayPlugin',
         'frontend/chromaKeyPlugin',
 
@@ -44,11 +44,11 @@ require(['jsnlog/js/jsnlog.min',
                     'appenders': [consoleAppender],
                     //'level': JL.getOffLevel()
                     'level': JL.getDebugLevel()
-                        //'level': JL.getErrorLevel()
+                    //'level': JL.getErrorLevel()
                 });
 
             /* This is an example log output:
-             JL('iPED Toolkit.Frontend').fatal('Something very bad happened!');
+             JL('IPED Toolkit.Frontend').fatal('Something very bad happened!');
              */
         })();
 
@@ -69,7 +69,7 @@ require(['jsnlog/js/jsnlog.min',
         var language = null;
 
         /**
-         * The frontend of the iPED Toolkit.
+         * The frontend of the IPED Toolkit.
          * @constructor
          */
         function Frontend() {
@@ -101,7 +101,7 @@ require(['jsnlog/js/jsnlog.min',
 
                 this.socket = io();
                 micPermission = 1;
-                JL('iPED Toolkit.Frontend setRemoteMicPermission to')
+                JL('IPED Toolkit.Frontend setRemoteMicPermission to')
                     .info(micPermission);
                 this.socket.emit('setRemoteMicPermission', micPermission);
 
@@ -156,11 +156,11 @@ require(['jsnlog/js/jsnlog.min',
             this.socket = io();
 
 
-            JL('iPED Toolkit.Frontend')
+            JL('IPED Toolkit.Frontend')
                 .debug('Web sockets activated');
             this.micPermission = 0;
             this.socket.emit('resetFrontendMicPermission', this.micPermission);
-            JL('iPED Toolkit.Frontend resetFrontendMicPermission to')
+            JL('IPED Toolkit.Frontend resetFrontendMicPermission to')
                 .info(this.micPermission);
 
             /**
@@ -168,7 +168,7 @@ require(['jsnlog/js/jsnlog.min',
              **/
 
             // Set new LocationID for changing a video
-            this.socket.on('setLocationId', function(data) {
+            this.socket.on('[IPED]setLocationId', function(data) {
 
                 if (typeof data != "number") {
                     thiz.setLocationId(data.id);
@@ -178,7 +178,7 @@ require(['jsnlog/js/jsnlog.min',
                     thiz.setLocationId(data);
                 }
 
-                JL('iPED Toolkit.Frontend')
+                JL('IPED Toolkit.Frontend')
                     .debug(data);
 
             });
@@ -191,21 +191,21 @@ require(['jsnlog/js/jsnlog.min',
             //Set MicPermission for Remote Control App
             this.socket.on('getMicPermission', function(data) {
                 socket.emit('setRemoteMicPermission', micPermission);
-                JL('iPED Toolkit.Frontend setRemoteMicPermission to')
+                JL('IPED Toolkit.Frontend setRemoteMicPermission to')
                     .debug(micPermission);
             });
 
             // Set selected language for Remote Control App
             this.socket.on('getSelectedLanguage', function(data) {
                 socket.emit('setSeletedLanguage', language);
-                JL('iPED Toolkit.Frontend setSeletedLanguage to')
+                JL('IPED Toolkit.Frontend setSeletedLanguage to')
                     .debug(language);
             });
 
 
             // Setup Microphone with selected language and its corresponing Wit.Ai instance (CLIENT_ACCESS_TOKEN)
             this.socket.on('setupMic', function(data) {
-                JL('iPED Toolkit.Frontend')
+                JL('IPED Toolkit.Frontend')
                     .debug(data);
 
                 language = data;
@@ -232,18 +232,18 @@ require(['jsnlog/js/jsnlog.min',
 
             // Start or Stop recording with the microphone, depends on the users input in the remote control app
             this.socket.on('listenMic', function(data) {
-                JL('iPED Toolkit.Frontend')
+                JL('IPED Toolkit.Frontend')
                     .debug(data);
 
                 if (data == 1) {
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .debug('activate Microphone and start recording');
 
                     // Play activating sound for user
                     ion.sound.play("mic_start");
 
                     // Turn the volume of the current video down, because of better voice recording
-                    $('#iPED-Video')[0].volume = 0.1;
+                    $('#IPED-Video')[0].volume = 0.1;
 
                     // Start microphone recording with a delay, because of playing the activating sound
                     var delay = setTimeout(function() {
@@ -258,7 +258,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
                 } else if (data === 0) {
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .debug('deactivate Microphone and stop recording');
 
                     // Play deactivating sound for user
@@ -272,7 +272,7 @@ require(['jsnlog/js/jsnlog.min',
                         .getTime();
 
                     // Turn the volume of the current video down, because of better voice recording
-                    $('#iPED-Video')[0].volume = 1.0;
+                    $('#IPED-Video')[0].volume = 1.0;
                 } else {
                     alert("Something went wrong in the Remote Control App!");
                 }
@@ -280,7 +280,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // Inform user, if system failed, e.g. nothing found in Database or if an empty user input occors
             this.socket.on('failed', function(data) {
-                JL('iPED Toolkit.Remote - Voice Command failed')
+                JL('IPED Toolkit.Remote - Voice Command failed')
                     .error(data);
 
                 // Play failure sound for user
@@ -291,14 +291,14 @@ require(['jsnlog/js/jsnlog.min',
 
             // Show/Hide Overlays from Remote or VoiceControl-Command
             this.socket.on('setShowHideOverlays', function(data) {
-                JL('iPED Toolkit.Remote - setShowHideOverlays')
+                JL('IPED Toolkit.Remote - setShowHideOverlays')
                     .debug(data);
 
                 if (!data) {
-                    $('#iPED-Overlay')
+                    $('#IPED-Overlay')
                         .hide();
                 } else {
-                    $('#iPED-Overlay')
+                    $('#IPED-Overlay')
                         .show();
                 }
             });
@@ -310,23 +310,23 @@ require(['jsnlog/js/jsnlog.min',
 
             // SHOW AVATAR
             this.socket.on('showAvatar', function(data) {
-                JL('iPED Toolkit.Remote - showAvatar')
+                JL('IPED Toolkit.Remote - showAvatar')
                     .debug(data);
-                $('#iPED-Avatar')
+                $('#IPED-Avatar')
                     .show();
             });
 
             // HIDE AVATAR
             this.socket.on('hideAvatar', function(data) {
-                JL('iPED Toolkit.Remote - hideAvatar')
+                JL('IPED Toolkit.Remote - hideAvatar')
                     .debug(data);
-                $('#iPED-Avatar')
+                $('#IPED-Avatar')
                     .hide();
             });
 
             // MOVE AVATAR UP
             this.socket.on('moveAvatarUp', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarUp')
+                JL('IPED Toolkit.Remote - moveAvatarUp')
                     .debug(data);
                 // To-Do
 
@@ -334,7 +334,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // MOVE AVATAR DOWN
             this.socket.on('moveAvatarDown', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarDown')
+                JL('IPED Toolkit.Remote - moveAvatarDown')
                     .debug(data);
                 // To-Do
 
@@ -342,7 +342,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // MOVE AVATAR TO THE LEFT
             this.socket.on('moveAvatarLeft', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarLeft')
+                JL('IPED Toolkit.Remote - moveAvatarLeft')
                     .debug(data);
                 // To-Do
 
@@ -350,7 +350,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // MOVE AVATAR TO THR RIGHT
             this.socket.on('moveAvatarRight', function(data) {
-                JL('iPED Toolkit.Remote - moveAvatarRight')
+                JL('IPED Toolkit.Remote - moveAvatarRight')
                     .debug(data);
                 // To-Do
 
@@ -358,7 +358,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // MOVE AVATAR FORWARD
             this.socket.on('scaleAvatarUp', function(data) {
-                JL('iPED Toolkit.Remote - scaleAvatarUp')
+                JL('IPED Toolkit.Remote - scaleAvatarUp')
                     .debug(data);
                 // To-Do
 
@@ -366,7 +366,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // MOVE AVATAR BACKWARD
             this.socket.on('scaleAvatarDown', function(data) {
-                JL('iPED Toolkit.Remote - scaleAvatarDown')
+                JL('IPED Toolkit.Remote - scaleAvatarDown')
                     .debug(data);
                 // To-Do
 
@@ -383,7 +383,7 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
 
             if (!locationId) {
-                JL('iPED Toolkit.Frontend')
+                JL('IPED Toolkit.Frontend')
                     .error('Please sepcify "locationId", e.g., via URL parameter or websocket.');
                 return;
             }
@@ -401,19 +401,19 @@ require(['jsnlog/js/jsnlog.min',
             }
 
 
-            JL('iPED Toolkit.Frontend')
+            JL('IPED Toolkit.Frontend')
                 .info('Set location ID to: ' + locationId);
             this.location = new Location({
                 id: locationId
             });
             this.location.fetch({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .debug(thiz.location);
                     thiz.loadVideo();
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .error(respone);
                 }
             });
@@ -434,31 +434,31 @@ require(['jsnlog/js/jsnlog.min',
             this.videos.fetch({
                 success: function(model, response, options) {
                     // Remove current video
-                    $('#iPED-Video')[0].pause();
-                    $('#iPED-Video')
+                    $('#IPED-Video')[0].pause();
+                    $('#IPED-Video')
                         .empty();
 
                     if (thiz.videos.length === 0) {
-                        JL('iPED Toolkit.Frontend')
+                        JL('IPED Toolkit.Frontend')
                             .info('No video defined for this location');
                         thiz.showMessage('No video defined for this location');
                         return;
                     }
 
                     thiz.video = thiz.videos.at(0);
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .debug('Loading video id ' + thiz.video.get('id') + ' for current location');
 
                     // Fill video tag with the new source
-                    $('#iPED-Video')
+                    $('#IPED-Video')
                         .append('<source id ="video_source_mp4" src="' + thiz.video.get('url') + '.mp4" type="video/mp4" />');
-                    $('#iPED-Video')
+                    $('#IPED-Video')
                         .append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogg" type="video/ogg" />');
-                    $('#iPED-Video')[0].load();
-                    $('#iPED-Video')[0].play();
+                    $('#IPED-Video')[0].load();
+                    $('#IPED-Video')[0].play();
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Frontend')
+                    JL('IPED Toolkit.Frontend')
                         .error(respone);
                 }
             });
