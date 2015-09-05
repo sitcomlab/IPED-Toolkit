@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Overlays
  *
  * (c) 2014 Morin Ostkamp
@@ -44,7 +44,7 @@ define(['threejs/js/three.min',
          * @constructor
          */
         function OverlayPlugin(opts) {
-            JL('iPED Toolkit.OverlayPlugin')
+            JL('IPED Toolkit.OverlayPlugin')
                 .info('OverlayPlugin loaded');
 
             this.parent = opts.parent;
@@ -126,19 +126,19 @@ define(['threejs/js/three.min',
         OverlayPlugin.prototype.init = function() {
             var thiz = this;
 
-            this.video = $('#iPED-Video');
+            this.video = $('#IPED-Video');
             this.video.on('loadeddata', this.onResize); // Give browsers time to recalculate dimensions
             $(window)
                 .resize(function() {
                     thiz.render();
                     console.log("Resize event recognized -> rendering initiated");
                 }); // Recalculate dimensions when browser window is resized
-            // Create DOM element: <div id="iPED-Overlay"></div>
+            // Create DOM element: <div id="IPED-Overlay"></div>
             if (this.jqueryElement) {
                 this.jqueryElement.remove();
             }
-            this.video.after('<div id="iPED-Overlay" style="z-index:2"></div>');
-            this.jqueryElement = $('#iPED-Overlay');
+            this.video.after('<div id="IPED-Overlay" style="z-index:2"></div>');
+            this.jqueryElement = $('#IPED-Overlay');
             this.jqueryElement.css('position', 'absolute');
 
             // Make sure that Three.js uses CORS to load external urls as textures, for example.
@@ -196,7 +196,7 @@ define(['threejs/js/three.min',
          * Hooked to the corresponding frontend method
          */
         OverlayPlugin.prototype.setLocationId = function(locationId) {
-            JL('iPED Toolkit.OverlayPlugin')
+            JL('IPED Toolkit.OverlayPlugin')
                 .info('Set Location ID to: ' + locationId);
             this.init();
             this.location = new Location({
@@ -218,7 +218,7 @@ define(['threejs/js/three.min',
                     thiz.createOverlays();
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.OverlayPlugin')
+                    JL('IPED Toolkit.OverlayPlugin')
                         .error(respone);
                 }
             });
@@ -231,12 +231,12 @@ define(['threejs/js/three.min',
             thiz = this;
 
             if (!thiz.overlays || thiz.overlays.length === 0) {
-                JL('iPED Toolkit.OverlayPlugin')
+                JL('IPED Toolkit.OverlayPlugin')
                     .info('There are no overlays at this location');
             } else {
-                JL('iPED Toolkit.OverlayPlugin')
+                JL('IPED Toolkit.OverlayPlugin')
                     .info('There are ' + thiz.overlays.length + ' overlays at this location');
-                JL('iPED Toolkit.OverlayPlugin')
+                JL('IPED Toolkit.OverlayPlugin')
                     .debug(thiz.overlays);
                 thiz.overlays.forEach(function(overlay) {
                     var object;

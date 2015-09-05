@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * webRTC chroma keying -- Renders green video background (0, 255, 0) transparent
  *
  * (c) 2014 Morin Ostkamp
@@ -14,7 +14,7 @@ define(['underscorejs/js/underscore',
 
     function(Underscore) {
         function ChromaKeyPlugin(opts) {
-            JL('iPED Toolkit.ChromaKeyPlugin')
+            JL('IPED Toolkit.ChromaKeyPlugin')
                 .info('ChromaKeyPlugin loaded');
 
             this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'overlayPlugin'
@@ -64,16 +64,16 @@ define(['underscorejs/js/underscore',
          */
         ChromaKeyPlugin.prototype.enable = function(isEnabled) {
             var _enable = function(thiz) {
-                if ($('#iPED-Overlay iframe')
+                if ($('#IPED-Overlay iframe')
                     .contents()
-                    .find('video')[0] && $('#iPED-Overlay iframe')
+                    .find('video')[0] && $('#IPED-Overlay iframe')
                     .contents()
-                    .find('video')[0].videoWidth !== 0 && $('#iPED-Overlay iframe')
+                    .find('video')[0].videoWidth !== 0 && $('#IPED-Overlay iframe')
                     .contents()
                     .find('video')[0].videoHeight !== 0) {
 
                     if (thiz.sourceVideo == null) {
-                        thiz.sourceVideo = $('#iPED-Overlay iframe')
+                        thiz.sourceVideo = $('#IPED-Overlay iframe')
                             .contents()
                             .find('video');
                         thiz.seriouslySource = thiz.seriously.source(thiz.sourceVideo[0]);
@@ -81,7 +81,7 @@ define(['underscorejs/js/underscore',
 
                     if (thiz.displayCanvas == null) {
                         thiz.sourceVideo.before('<canvas id="chroma-key-canvas" width="' + thiz.sourceVideo[0].videoWidth + '" height="' + thiz.sourceVideo[0].videoHeight + '" style="max-width: 100%;"></canvas>');
-                        thiz.displayCanvas = $('#iPED-Overlay iframe')
+                        thiz.displayCanvas = $('#IPED-Overlay iframe')
                             .contents()
                             .find('#chroma-key-canvas');
                         thiz.seriouslyTarget = thiz.seriously.target(thiz.displayCanvas[0]);
@@ -109,7 +109,7 @@ define(['underscorejs/js/underscore',
             };
 
             this.isEnabled = isEnabled;
-            JL('iPED Toolkit.ChromaKeyPlugin')
+            JL('IPED Toolkit.ChromaKeyPlugin')
                 .info('Chroma Keying is now turned ' + (this.isEnabled ? 'on' : 'off'));
 
             if (this.isEnabled) {

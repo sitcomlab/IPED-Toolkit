@@ -31,7 +31,7 @@
 	*/
 
 	testContext,
-	colorElement,
+	colorCtx,
 	incompatibility,
 	seriousEffects = {},
 	seriousTransforms = {},
@@ -77,6 +77,9 @@
 		aqua: [0, 1, 1, 1],
 		orange: [1, 165 / 255, 0, 1]
 	},
+
+	colorRegex = /^(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*(\d+(\.\d*)?)\s*)?\)/i,
+	hexColorRegex = /^#(([0-9a-fA-F]{3,8}))/,
 
 	vectorFields = ['x', 'y', 'z', 'w'],
 	colorFields = ['r', 'g', 'b', 'a'],
@@ -404,30 +407,29 @@
 		};
 	}
 
-	// like instanceof, but it will work on elements that come from different windows (e.g. iframes)
-	function instanceOfElement(element, proto) {
-		var result;
-		if (!element || typeof element !== 'object') {
-			return false;
-		}
+	/*
+	Like instanceof, but it will work on elements that come from different windows (e.g. iframes)
 
+	We do not use this for constructors defined in this script.
+	*/
+	function isInstance(obj, proto) {
 		if (!proto) {
-			proto = 'Element';
-		} else if (typeof proto !== 'string') {
-			return element instanceof proto;
+			proto = 'HTMLElement';
 		}
 
-		if (element instanceof window[proto]) {
+		if (obj instanceof window[proto]) {
 			return true;
 		}
 
-		if (!element.ownerDocument || !element.ownerDocument.defaultView) {
-			return false;
+		while (obj) {
+			obj = Object.getPrototypeOf(obj);
+			if (obj && obj.constructor.name === proto) {
+				return true;
+			}
 		}
 
-		return element instanceof element.ownerDocument.defaultView[proto];
+		return false;
 	}
-
 
 	//http://www.w3.org/TR/css3-color/#hsl-color
 	function hslToRgb(h, s, l, a, out) {
@@ -1253,7 +1255,7 @@
 				//todo: if too many webglcontextlost events fired in too short a time, abort
 				//todo: consider allowing "manual" control of restoring context
 
-				if (target instanceof WebGLFramebuffer) {
+				if (isInstance(target, 'WebGLFramebuffer')) {
 					Seriously.logger.error('Unable to restore target built on WebGLFramebuffer');
 					return;
 				}
@@ -1538,7 +1540,7 @@
 					value = uniforms[name];
 					shaderUniform = shader.uniforms[name];
 					if (shaderUniform) {
-						if (value instanceof WebGLTexture) {
+						if (isInstance(value, 'WebGLTexture')) {
 							nodeGl.activeTexture(nodeGl.TEXTURE0 + numTextures);
 							nodeGl.bindTexture(nodeGl.TEXTURE_2D, value);
 							shaderUniform.set(numTextures);
@@ -1738,7 +1740,7 @@
 			//todo: figure out formats and types
 			if (dest === undefined) {
 				dest = new Uint8Array(width * height * 4);
-			} else if (!(dest instanceof Uint8Array)) {
+			} else if (!(isInstance(dest, 'Uint8Array'))) {
 				throw new Error('Incompatible array type');
 			}
 
@@ -1903,7 +1905,7 @@
 					//todo: color? date/time?
 				}
 
-				if (instanceOfElement(input, 'HTMLInputElement') || instanceOfElement(input, 'HTMLSelectElement')) {
+				if (isInstance(input, 'HTMLInputElement') || isInstance(input, 'HTMLSelectElement')) {
 					value = input.value;
 
 					if (lookup && lookup.element !== input) {
@@ -3226,7 +3228,7 @@
 			}
 
 			//todo: could probably stand to re-work and re-indent this whole block now that we have plugins
-			if (!plugin && instanceOfElement(source)) {
+			if (!plugin && isInstance(source)) {
 				if (source.tagName === 'CANVAS') {
 					this.width = source.width;
 					this.height = source.height;
@@ -3261,7 +3263,7 @@
 					this.hook = 'image';
 					this.compare = compareSource;
 				}
-			} else if (!plugin && source instanceof WebGLTexture) {
+			} else if (!plugin && isInstance(source, 'WebGLTexture')) {
 				if (gl && !gl.isTexture(source)) {
 					throw new Error('Not a valid WebGL texture.');
 				}
@@ -3735,16 +3737,16 @@
 
 			this.renderToTexture = opts.renderToTexture;
 
-			if (target instanceof WebGLFramebuffer) {
+			if (isInstance(target, 'WebGLFramebuffer')) {
 				frameBuffer = target;
 
-				if (instanceOfElement(opts, 'HTMLCanvasElement')) {
+				if (isInstance(opts, 'HTMLCanvasElement')) {
 					target = opts;
-				} else if (opts instanceof WebGLRenderingContext) {
+				} else if (isInstance(opts, 'WebGLRenderingContext')) {
 					target = opts.canvas;
-				} else if (instanceOfElement(opts.canvas, 'HTMLCanvasElement')) {
+				} else if (isInstance(opts.canvas, 'HTMLCanvasElement')) {
 					target = opts.canvas;
-				} else if (opts.context instanceof WebGLRenderingContext) {
+				} else if (isInstance(opts.context, 'WebGLRenderingContext')) {
 					target = opts.context.canvas;
 				} else {
 					//todo: search all canvases for matching contexts?
@@ -3752,7 +3754,7 @@
 				}
 			}
 
-			if (instanceOfElement(target, 'HTMLCanvasElement')) {
+			if (isInstance(target, 'HTMLCanvasElement')) {
 				width = target.width;
 				height = target.height;
 
@@ -3926,7 +3928,7 @@
 
 		TargetNode.prototype.resize = function () {
 			//if target is a canvas, reset size to canvas size
-			if (instanceOfElement(this.target, 'HTMLCanvasElement')) {
+			if (isInstance(this.target, 'HTMLCanvasElement')) {
 				if (this.width !== this.target.width || this.height !== this.target.height) {
 					this.target.width = this.width;
 					this.target.height = this.height;
@@ -4128,7 +4130,7 @@
 					}
 				}
 
-				if (instanceOfElement(input, 'HTMLInputElement') || instanceOfElement(input, 'HTMLSelectElement')) {
+				if (isInstance(input, 'HTMLInputElement') || isInstance(input, 'HTMLSelectElement')) {
 					value = input.value;
 
 					if (lookup && lookup.element !== input) {
@@ -4707,7 +4709,7 @@
 
 			if (dest === undefined) {
 				dest = new Uint8Array(width * height * 4);
-			} else if (!(dest instanceof Uint8Array)) {
+			} else if (!(isInstance(dest, 'Uint8Array'))) {
 				throw new Error('Incompatible array type');
 			}
 
@@ -4794,7 +4796,7 @@
 		Initialize Seriously object based on options
 		*/
 
-		if (instanceOfElement(options, 'HTMLCanvasElement')) {
+		if (isInstance(options, 'HTMLCanvasElement')) {
 			options = {
 				canvas: options
 			};
@@ -5381,35 +5383,39 @@
 	//todo: validators should not allocate new objects/arrays if input is valid
 	Seriously.inputValidators = {
 		color: function (value, input, defaultValue, oldValue) {
-			var s, a, i, computed, bg;
+			var s,
+				a,
+				match,
+				i;
 
 			a = oldValue || [];
 
 			if (typeof value === 'string') {
 				//todo: support percentages, decimals
-				s = (/^(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*(\d+(\.\d*)?)\s*)?\)/i).exec(value);
-				if (s && s.length) {
-					if (s.length < 3) {
+				match = colorRegex.exec(value);
+				if (match && match.length) {
+					if (match.length < 3) {
 						a[0] = a[1] = a[2] = a[3] = 0;
 						return a;
 					}
 
 					a[3] = 1;
 					for (i = 0; i < 3; i++) {
-						a[i] = parseFloat(s[i+2]) / 255;
+						a[i] = parseFloat(match[i + 2]) / 255;
 					}
-					if (!isNaN(s[6])) {
-						a[3] = parseFloat(s[6]);
+					if (!isNaN(match[6])) {
+						a[3] = parseFloat(match[6]);
 					}
-					if (s[1].toLowerCase() === 'hsl') {
+					if (match[1].toLowerCase() === 'hsl') {
 						return hslToRgb(a[0], a[1], a[2], a[3], a);
 					}
+
 					return a;
 				}
 
-				s = (/^#(([0-9a-fA-F]{3,8}))/).exec(value);
-				if (s && s.length) {
-					s = s[1];
+				match = hexColorRegex.exec(value);
+				if (match && match.length) {
+					s = match[1];
 					if (s.length === 3) {
 						a[0] = parseInt(s[0], 16) / 15;
 						a[1] = parseInt(s[1], 16) / 15;
@@ -5436,25 +5442,21 @@
 					return a;
 				}
 
-				s = colorNames[value.toLowerCase()];
-				if (s) {
+				match = colorNames[value.toLowerCase()];
+				if (match) {
 					for (i = 0; i < 4; i++) {
-						a[i] = s[i];
+						a[i] = match[i];
 					}
 					return a;
 				}
 
-				if (!colorElement) {
-					colorElement = document.createElement('a');
+				if (!colorCtx) {
+					colorCtx = document.createElement('canvas').getContext('2d');
 				}
-				colorElement.style.backgroundColor = '';
-				colorElement.style.backgroundColor = value;
-				computed = window.getComputedStyle(colorElement);
-				bg = computed.getPropertyValue('background-color') ||
-					computed.getPropertyValue('backgroundColor') ||
-					colorElement.style.backgroundColor;
-				if (bg && bg !== value) {
-					return Seriously.inputValidators.color(bg, input, oldValue);
+				colorCtx.fillStyle = value;
+				s = colorCtx.fillStyle;
+				if (s && s !== '#000000') {
+					return Seriously.inputValidators.color(s, input, defaultValue, oldValue);
 				}
 
 				a[0] = a[1] = a[2] = a[3] = 0;
@@ -5750,7 +5752,7 @@
 			me.setDirty();
 		}
 
-		if (instanceOfElement(video, 'HTMLVideoElement')) {
+		if (isInstance(video, 'HTMLVideoElement')) {
 			if (video.readyState) {
 				initializeVideo();
 			} else {
