@@ -37,7 +37,7 @@ require(['jsnlog/js/jsnlog.min',
 
         Location, Locations, Video, Videos,
 
-        OverlayPlugin, ChromaKeyPlugin, voiceControlPlugin, miaPlugin) {
+        OverlayPlugin, ChromaKeyPlugin, VoiceControlPlugin, MiaPlugin) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -65,26 +65,15 @@ require(['jsnlog/js/jsnlog.min',
          * @constructor
          */
         function Frontend() {
-
             this.location = null;
             this.socket = null;
             this.video = new Video;
-            this.myHooks = [];
-            this.myHooks['setLocationId'] = [];
-            this.myHooks['onWindowResize'] = [];
 
             this.activateWebSockets();
             this.setLocationId(getURLParameters('locationId'));
 
             _.bindAll(this, 'onWindowResize');
             window.addEventListener('resize', this.onWindowResize);
-
-            function kv(k, v) {
-                if (toString.call(v) !== "[object String]") {
-                    v = JSON.stringify(v);
-                }
-                return k + "=" + v + "\n";
-            }
         }
 
 
@@ -95,12 +84,13 @@ require(['jsnlog/js/jsnlog.min',
             var thiz = this;
             this.socket = Socketio();
 
+            $(document)
+                .trigger('[Frontend]activateWebSockets', this.socket);
             JL('IPED Toolkit.Frontend')
                 .debug('Web sockets activated');
 
             // Set new LocationID for changing a video
             this.socket.on('[IPED]setLocationId', function(data) {
-
                 if (typeof data != "number") {
                     thiz.setLocationId(data.id);
                 } else {
@@ -109,7 +99,6 @@ require(['jsnlog/js/jsnlog.min',
 
                 JL('IPED Toolkit.Frontend')
                     .debug(data);
-
             });
         };
 
@@ -118,7 +107,6 @@ require(['jsnlog/js/jsnlog.min',
          * @param {Number} locationId - The ID of the requested location
          */
         Frontend.prototype.setLocationId = function(locationId) {
-
             var thiz = this;
 
             if (!locationId) {
@@ -127,18 +115,9 @@ require(['jsnlog/js/jsnlog.min',
                 return;
             }
 
+            // Morin: What's that?!
             $('.messages')
                 .empty();
-
-
-            // Save previous and current LocationID global for Voice Control
-            if (previousLocation === null && currentLocation === null) {
-                currentLocation = locationId;
-            } else {
-                previousLocation = currentLocation;
-                currentLocation = locationId;
-            }
-
 
             JL('IPED Toolkit.Frontend')
                 .info('Set location ID to: ' + locationId);
@@ -157,9 +136,8 @@ require(['jsnlog/js/jsnlog.min',
                 }
             });
 
-            this.myHooks['setLocationId'].forEach(function(hook) {
-                hook(locationId);
-            }, this);
+            $(document)
+                .trigger('[Frontend]setLocationId', locationId);
         };
 
         /**
@@ -195,6 +173,9 @@ require(['jsnlog/js/jsnlog.min',
                         .append('<source id ="video_source_ogv" src="' + thiz.video.get('url') + '.ogg" type="video/ogg" />');
                     $('#IPED-Video')[0].load();
                     $('#IPED-Video')[0].play();
+
+                    $(document)
+                        .trigger('[Frontend]loadVideo', thiz.video);
                 },
                 error: function(model, response, options) {
                     JL('IPED Toolkit.Frontend')
@@ -207,11 +188,13 @@ require(['jsnlog/js/jsnlog.min',
          * Update/refresh views when window resizes
          */
         Frontend.prototype.onWindowResize = function() {
-            this.myHooks['onWindowResize'].forEach(function(hook) {
-                hook($(window)
-                    .width(), $(window)
-                    .height());
-            }, this);
+            $(document)
+                .trigger('[Frontend]onWindowResize', {
+                    width: $(window)
+                        .width(),
+                    height: $(window)
+                        .height()
+                });
         };
 
         /**
@@ -228,7 +211,8 @@ require(['jsnlog/js/jsnlog.min',
             .ready(function() {
                 var frontend = new Frontend();
                 var overlayPlugin = new OverlayPlugin({
-                    parent: frontend
+                    socket: frontend.socket,
+                    location: frontend.location
                 });
                 var chromaKeyPlugin = new ChromaKeyPlugin({
                     parent: overlayPlugin

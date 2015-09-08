@@ -166,5 +166,7 @@ define(['underscorejs/js/underscore'],
             object = this.objects[0];
             object.position.z += 1;
         }
+
+        return MiaPlugin;
     }
 );

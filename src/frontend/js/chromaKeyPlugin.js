@@ -14,6 +14,8 @@ define(['underscorejs/js/underscore',
 
     function(Underscore) {
         function ChromaKeyPlugin(opts) {
+            var thiz = this;
+
             JL('IPED Toolkit.ChromaKeyPlugin')
                 .info('ChromaKeyPlugin loaded');
 
@@ -28,9 +30,21 @@ define(['underscorejs/js/underscore',
             _.bindAll(this, 'onKeyDown');
             window.addEventListener('keydown', this.onKeyDown);
 
-            var backboneEvents = _.extend({}, Backbone.Events);
+            if (this.parent.overlays == null) {
+                $(document)
+                    .on('[OverlayPlugin]fetchOverlays', function(event, overlays) {
+                        thiz.overlaysFetched(overlays);
+                    });
+            } else {
+                this.overlaysFetched(this.parent.overlays);
+            }
+        }
+
+        ChromaKeyPlugin.prototype.overlaysFetched = function(overlays) {
             var thiz = this;
-            backboneEvents.listenTo(this.parent.overlays, 'add', function(overlay) {
+            var backboneEvents = _.extend({}, Backbone.Events);
+
+            backboneEvents.listenTo(overlays, 'add', function(overlay) {
                 if (thiz.seriouslyCrop) {
                     overlay.get('tags')
                         .forEach(function(element, index, array) {

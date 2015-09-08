@@ -20,13 +20,13 @@ define(['jsnlog/js/jsnlog.min',
                 .info('VoiceControlPlugin loaded');
 
             this.parent = opts.parent;
-            this.socket = opts.parent.socket();
+            this.socket = opts.parent.socket;
             this.mic = null;
             this.micPermission = null;
             this.language = null;
 
             // Load files for Voice Control Sounds
-            IonSound.sound({
+            ion.sound({
                 sounds: [{
                     name: 'mic_start'
                 }, {
@@ -39,6 +39,16 @@ define(['jsnlog/js/jsnlog.min',
                 preload: true
             });
         }
+
+        VoiceControlPlugin.prototype.setLocationId = function(locationId) {
+            // Save previous and current LocationID global for Voice Control
+            if (previousLocation === null && currentLocation === null) {
+                currentLocation = locationId;
+            } else {
+                previousLocation = currentLocation;
+                currentLocation = locationId;
+            }
+        };
 
         VoiceControlPlugin.prototype.initialize = function() {
             var thiz = this;
@@ -128,7 +138,7 @@ define(['jsnlog/js/jsnlog.min',
                         .debug('Activate Microphone and start recording');
 
                     // Play activating sound for user
-                    IonSound.sound.play('mic_start');
+                    ion.sound.play('mic_start');
 
                     // Turn the volume of the current video down, because of better voice recording
                     $('#IPED-Video')[0].volume = 0.1;
@@ -142,7 +152,7 @@ define(['jsnlog/js/jsnlog.min',
                         .debug('Deactivate Microphone and stop recording');
 
                     // Play deactivating sound for user
-                    IonSound.sound.play('mic_stop');
+                    ion.sound.play('mic_stop');
 
                     // Stop microphone recording
                     thiz.mic.stop();
@@ -161,7 +171,7 @@ define(['jsnlog/js/jsnlog.min',
                     .error('Voice command failed: ' + data);
 
                 // Play failure sound for user
-                IonSound.sound.play('voice_command_failed');
+                ion.sound.play('voice_command_failed');
             });
         };
 

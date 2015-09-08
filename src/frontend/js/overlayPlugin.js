@@ -44,13 +44,14 @@ define(['threejs/js/three.min',
          * @constructor
          */
         function OverlayPlugin(opts) {
+            var thiz = this;
+
             JL('IPED Toolkit.OverlayPlugin')
                 .info('OverlayPlugin loaded');
 
-            this.parent = opts.parent;
-            this.socket = opts.parent.socket;
-            this.overlays = opts.overlays || null;
+            this.socket = opts.socket;
 
+            this.overlays = null;
             this.jqueryElement = null;
             this.isRunning = true;
             this.video = null;
@@ -58,8 +59,6 @@ define(['threejs/js/three.min',
             this.left = 0;
             this.width = 0;
             this.height = 0;
-            this.myHooks = [];
-            this.myHooks['render'] = [];
             this.location = null;
 
             this.objects = new Array();
@@ -78,22 +77,16 @@ define(['threejs/js/three.min',
 
             this.init();
 
-            // Hooks the Overlay plugin to the frontend's functions
-            // Morin: This could also be done by using Backbone.js's on change listener
-            if (this.parent.myHooks) {
-                if (this.parent.myHooks['setLocationId']) {
-                    this.parent.myHooks['setLocationId'].push(this.setLocationId);
-                }
+            $(document)
+                .on('[Frontend]setLocationId', function(event, locationId) {
+                    thiz.setLocationId(locationId);
+                });
+
+            if (opts.location != null) {
+                this.setLocationId(opts.location.get('id'));
             }
 
             this.enableEventListeners(true);
-
-            if (this.parent.location && this.parent.location.get) {
-                this.setLocationId(this.parent.location.get('id'));
-            }
-            if (this.overlays) {
-                this.createOverlays();
-            }
 
             this.render();
 
@@ -215,25 +208,30 @@ define(['threejs/js/three.min',
          * Hooked to the corresponding frontend method
          */
         OverlayPlugin.prototype.setLocationId = function(locationId) {
+            this.locationId = locationId;
             JL('IPED Toolkit.OverlayPlugin')
-                .info('Set Location ID to: ' + locationId);
+                .info('Set location ID to: ' + this.locationId);
             this.init();
             this.location = new Location({
                 id: locationId
             });
             this.fetchOverlays();
+            $(document)
+                .trigger('[OverlayPlugin]setLocationId', locationId);
         };
 
         /**
          * Fetch overlays
          */
         OverlayPlugin.prototype.fetchOverlays = function() {
-            thiz = this;
+            var thiz = this;
 
             this.overlays = new Overlays();
             this.overlays.url = '/api/locations/' + this.location.get('id') + '/overlays';
             this.overlays.fetch({
                 success: function(model, response, options) {
+                    $(document)
+                        .trigger('[OverlayPlugin]fetchOverlays', thiz.overlays);
                     thiz.createOverlays();
                 },
                 error: function(model, response, options) {
@@ -247,7 +245,7 @@ define(['threejs/js/three.min',
          * Creates an Three.js object for each overlay
          */
         OverlayPlugin.prototype.createOverlays = function() {
-            thiz = this;
+            var thiz = this;
 
             if (!thiz.overlays || thiz.overlays.length === 0) {
                 JL('IPED Toolkit.OverlayPlugin')
@@ -348,6 +346,8 @@ define(['threejs/js/three.min',
                     thiz.controls[n].attach(object);
                     //thiz.scene.add(thiz.controls[n]);
                 });
+                $(document)
+                    .trigger('[OverlayPlugin]createOverlays');
             }
         };
 
@@ -508,9 +508,8 @@ define(['threejs/js/three.min',
                 this.renderer.render(this.scene, this.camera);
             }
 
-            this.myHooks['render'].forEach(function(hook) {
-                hook();
-            }, this);
+            $(document)
+                .trigger('[OverlayPlugin]render');
         };
 
         return OverlayPlugin;
