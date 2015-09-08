@@ -393,8 +393,78 @@ define(['threejs/js/three.min',
                     this.toggleUI();
                     this.render();
                     break;
+                case 37: // LEFT
+		  			this.moveLeft();
+		  			break;
+				case 38: // UP
+				  	this.moveUp();
+				  	break;
+				case 39: // RIGHT
+				  	this.moveRight();
+				  	break;
+				case 40: // DOWN
+				  	this.moveDown();
+				  	break;				 	
+				case 77: // M
+		          	this.scaleUp();
+		          	break;
+		        case 78: // N
+		            this.scaleDown();
+		            break;
             }
         };
+        
+        /**
+         * Updates the MIA avatar
+         */
+
+		overlayPlugin.prototype.moveUp = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.y += 1;			
+		}
+		
+		overlayPlugin.prototype.moveDown = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.y -= 1;
+		}
+		
+		overlayPlugin.prototype.moveLeft = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.x -= 1;
+		}
+		
+		overlayPlugin.prototype.moveRight = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.x += 1;
+		}
+		
+		overlayPlugin.prototype.scaleDown = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.z -= 1;
+		}
+		
+		overlayPlugin.prototype.scaleUp = function(){
+			if (!this.objects[0]){
+				return;
+			}
+			object = this.objects[0];
+			object.position.z += 1;
+		}
 
         /*
          * Toggles the UI

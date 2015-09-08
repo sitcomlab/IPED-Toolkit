@@ -55,81 +55,9 @@ define(['underscorejs/js/underscore',
             switch (event.keyCode) {
                 case 75: // k
                     this.enable(!this.isEnabled);
-                    break;
-                case 37: // left
-		  			moveLeft();
-		  			break;
-				case 38: // up
-				  	moveUp();
-				  	break;
-				case 39: // right
-				  	moveRight();
-				  	break;
-				case 40: // down
-				  	moveDown();
-				  	break;				 	
-				case 187:
-		        case 107: // +,=,num+
-		          	scaleUp();
-		          	break;
-		        case 189:
-		        case 10: // -,_,num-
-		            scaleDown();
-		            break;    
+                    break;    
             }
         };
-        
-        /**
-         * Updates the MIA avatar
-         */
-
-		ChromaKeyPlugin.prototype.moveUp = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.y += 1;			
-		}
-		
-		ChromaKeyPlugin.prototype.moveDown = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.y -= 1;
-		}
-		
-		ChromaKeyPlugin.prototype.moveLeft = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.x -= 1;
-		}
-		
-		ChromaKeyPlugin.prototype.moveRight = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.x += 1;
-		}
-		
-		ChromaKeyPlugin.prototype.scaleDown = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.z += 1;
-		}
-		
-		ChromaKeyPlugin.prototype.scaleUp = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.z += 1;
-		}
 
         /**
          * Enables or disables the Chroma Key plugin, i.e., hides or shows the raw remote video tag
