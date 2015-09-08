@@ -418,7 +418,7 @@ define(['threejs/js/three.min',
          * Updates the MIA avatar
          */
 
-		overlayPlugin.prototype.moveUp = function(){
+		OverlayPlugin.prototype.moveUp = function(){
 			if (!this.objects[0]){
 				return;
 			}
@@ -426,7 +426,7 @@ define(['threejs/js/three.min',
 			object.position.y += 1;			
 		}
 		
-		overlayPlugin.prototype.moveDown = function(){
+		OverlayPlugin.prototype.moveDown = function(){
 			if (!this.objects[0]){
 				return;
 			}
@@ -434,7 +434,7 @@ define(['threejs/js/three.min',
 			object.position.y -= 1;
 		}
 		
-		overlayPlugin.prototype.moveLeft = function(){
+		OverlayPlugin.prototype.moveLeft = function(){
 			if (!this.objects[0]){
 				return;
 			}
@@ -442,7 +442,7 @@ define(['threejs/js/three.min',
 			object.position.x -= 1;
 		}
 		
-		overlayPlugin.prototype.moveRight = function(){
+		OverlayPlugin.prototype.moveRight = function(){
 			if (!this.objects[0]){
 				return;
 			}
@@ -450,7 +450,7 @@ define(['threejs/js/three.min',
 			object.position.x += 1;
 		}
 		
-		overlayPlugin.prototype.scaleDown = function(){
+		OverlayPlugin.prototype.scaleDown = function(){
 			if (!this.objects[0]){
 				return;
 			}
@@ -458,7 +458,7 @@ define(['threejs/js/three.min',
 			object.position.z -= 1;
 		}
 		
-		overlayPlugin.prototype.scaleUp = function(){
+		OverlayPlugin.prototype.scaleUp = function(){
 			if (!this.objects[0]){
 				return;
 			}
