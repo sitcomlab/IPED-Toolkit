@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
@@ -53,7 +53,7 @@ define(['backbonejs/js/backbone',
 
                 this.map.on('contextmenu', function(e) {
                     this.coords = e.latlng;
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Click on map (' + this.coords + ')');
                 });
 
@@ -69,7 +69,7 @@ define(['backbonejs/js/backbone',
                 this.render();
             },
             render: function() {
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Rendering map')
                 this.renderMarkers();
                 this.renderRoutes();
@@ -148,7 +148,7 @@ define(['backbonejs/js/backbone',
                                     routeView.render();
                                 },
                                 error: function(model, response, options) {
-                                    JL('iPED Toolkit.MapView')
+                                    JL('IPED Toolkit.MapView')
                                         .error(respone);
                                 }
                             });

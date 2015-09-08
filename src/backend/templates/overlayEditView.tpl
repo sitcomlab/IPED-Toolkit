@@ -50,7 +50,7 @@
     </div>
   </form>
   <hr />
-  <video id="iPED-Video"> <!--autoplay="autoplay" loop="loop"-->
+  <video id="IPED-Video"> <!--autoplay="autoplay" loop="loop"-->
     <source src="<%= video.get('url') + '.mp4' %>" type="video/mp4">
     <source src="<%= video.get('url') + '.ogg' %>" type="video/ogg">
   </video>

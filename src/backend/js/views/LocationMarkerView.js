@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2015 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel
@@ -57,7 +57,7 @@ define(['backbonejs/js/backbone',
                     return;
                 }
 
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Updating the LocationMarkerView');
                 this.model.forEach(function(location) {
 
@@ -88,7 +88,7 @@ define(['backbonejs/js/backbone',
 
                                 },
                                 error: function(model, response, options) {
-                                    JL('iPED Toolkit.Backend')
+                                    JL('IPED Toolkit.Backend')
                                         .error(response);
                                 }
                             });
@@ -121,7 +121,7 @@ define(['backbonejs/js/backbone',
 
                                 },
                                 error: function(model, response, options) {
-                                    JL('iPED Toolkit.Backend')
+                                    JL('IPED Toolkit.Backend')
                                         .error(response);
                                 }
                             });
@@ -156,7 +156,7 @@ define(['backbonejs/js/backbone',
 
                                 },
                                 error: function(model, response, options) {
-                                    JL('iPED Toolkit.Backend')
+                                    JL('IPED Toolkit.Backend')
                                         .error(response);
                                 }
                             });

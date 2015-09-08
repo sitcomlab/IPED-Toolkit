@@ -48,6 +48,7 @@ define(['threejs/js/three.min',
                 .info('OverlayPlugin loaded');
 
             this.parent = opts.parent;
+            this.socket = opts.parent.socket;
             this.overlays = opts.overlays || null;
 
             this.jqueryElement = null;
@@ -101,6 +102,20 @@ define(['threejs/js/three.min',
                     thiz.toggleUI();
                 }, 1000);
             }
+
+            // Show/Hide Overlays from Remote or VoiceControl-Command
+            this.socket.on('[Remote]setShowHideOverlays', function(data) {
+                JL('IPED Toolkit.Frontend')
+                    .debug('Show/Hide overlays: ' + data);
+
+                if (!data) {
+                    $('#IPED-Overlay')
+                        .hide();
+                } else {
+                    $('#IPED-Overlay')
+                        .show();
+                }
+            });
         }
 
         /**

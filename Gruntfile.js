@@ -5,53 +5,55 @@ module.exports = function(grunt) {
         // means: compile src/bar.html to public/foo.html
         //
         // Frontend
-        'public/frontend/index.html'                      : 'src/frontend/index.html',
-        'public/frontend/remote.html'                     : 'src/frontend/remote.html',
-        'public/frontend/webRTC.html'                     : 'src/frontend/webRTC.html',
-        'public/frontend/js/frontend.js'                  : 'src/frontend/js/frontend.js',
-        'public/frontend/js/overlayPlugin.js'             : 'src/frontend/js/overlayPlugin.js',
-        'public/frontend/js/remote.js'                    : 'src/frontend/js/remote.js',
-        'public/frontend/js/webRTC.js'                    : 'src/frontend/js/webRTC.js',
-        'public/frontend/js/chromaKeyPlugin.js'           : 'src/frontend/js/chromaKeyPlugin.js',
-        'public/frontend/css/frontend.css'                : 'src/frontend/css/frontend.css',
-        'public/frontend/css/microphone.css'              : 'src/frontend/css/microphone.css',
-
-        // Remote
-        'public/remote/index.html'                        : 'src/remote/index.html',
-        'public/remote/js/remote.js'                      : 'src/remote/js/remote.js',
-        'public/remote/js/views/LocationsListView.js'     : 'src/remote/js/views/LocationsListView.js',
-        'public/remote/css/remote.css'                    : 'src/remote/css/remote.css',
-        'public/remote/templates/locationsListView.tpl'   : 'src/remote/templates/locationsListView.tpl',
-
-        // Backend
-        'public/backend/index.html'                       : 'src/backend/index.html',
-        'public/backend/js/backend.js'                    : 'src/backend/js/backend.js',
-        'public/backend/css/backend.css'                  : 'src/backend/css/backend.css',
-
-        'public/backend/templates/locationMarkerView.tpl' : 'src/backend/templates/locationMarkerView.tpl',
-        'public/backend/templates/locationEditView.tpl'   : 'src/backend/templates/locationEditView.tpl',
-        'public/backend/templates/videoEditView.tpl'      : 'src/backend/templates/videoEditView.tpl',
-        'public/backend/templates/overlayEditView.tpl'    : 'src/backend/templates/overlayEditView.tpl',
-        'public/backend/templates/relationshipEditView.tpl': 'src/backend/templates/relationshipEditView.tpl',
-        'public/backend/templates/aboutView.tpl'          : 'src/backend/templates/aboutView.tpl',
-
-        'public/backend/js/models/Location.js'            : 'src/backend/js/models/Location.js',
-        'public/backend/js/models/Locations.js'           : 'src/backend/js/models/Locations.js',
-        'public/backend/js/models/Overlay.js'             : 'src/backend/js/models/Overlay.js',
-        'public/backend/js/models/Overlays.js'            : 'src/backend/js/models/Overlays.js',
-        'public/backend/js/models/Video.js'               : 'src/backend/js/models/Video.js',
-        'public/backend/js/models/Videos.js'              : 'src/backend/js/models/Videos.js',
-        'public/backend/js/models/Relationship.js'        : 'src/backend/js/models/Relationship.js',
-
-        'public/backend/js/views/LocationEditView.js'     : 'src/backend/js/views/LocationEditView.js',
-        'public/backend/js/views/LocationMarkerView.js'   : 'src/backend/js/views/LocationMarkerView.js',
-        'public/backend/js/views/MapView.js'              : 'src/backend/js/views/MapView.js',
-        'public/backend/js/views/MarkerView.js'           : 'src/backend/js/views/MarkerView.js',
-        'public/backend/js/views/VideoEditView.js'        : 'src/backend/js/views/VideoEditView.js',
-        'public/backend/js/views/OverlayEditView.js'      : 'src/backend/js/views/OverlayEditView.js',
-        'public/backend/js/views/RelationshipEditView.js' : 'src/backend/js/views/RelationshipEditView.js',
-        'public/backend/js/views/AboutView.js'            : 'src/backend/js/views/AboutView.js',
-        'public/backend/js/views/RouteView.js'            : 'src/backend/js/views/RouteView.js'
+        'public/frontend/index.html'                        : 'src/frontend/index.html',
+        'public/frontend/remote.html'                       : 'src/frontend/remote.html',
+        'public/frontend/webRTC.html'                       : 'src/frontend/webRTC.html',
+        'public/frontend/js/frontend.js'                    : 'src/frontend/js/frontend.js',
+        'public/frontend/js/overlayPlugin.js'               : 'src/frontend/js/overlayPlugin.js',
+        'public/frontend/js/chromaKeyPlugin.js'             : 'src/frontend/js/chromaKeyPlugin.js',
+        'public/frontend/js/voiceControlPlugin.js'          : 'src/frontend/js/voiceControlPlugin.js',
+        'public/frontend/js/miaPlugin.js'                   : 'src/frontend/js/miaPlugin.js',
+        'public/frontend/js/remote.js'                      : 'src/frontend/js/remote.js',
+        'public/frontend/js/webRTC.js'                      : 'src/frontend/js/webRTC.js',
+        'public/frontend/css/frontend.css'                  : 'src/frontend/css/frontend.css',
+        'public/frontend/css/microphone.css'                : 'src/frontend/css/microphone.css',
+                                                            
+        // Remote                                           
+        'public/remote/index.html'                          : 'src/remote/index.html',
+        'public/remote/js/remote.js'                        : 'src/remote/js/remote.js',
+        'public/remote/js/views/LocationsListView.js'       : 'src/remote/js/views/LocationsListView.js',
+        'public/remote/css/remote.css'                      : 'src/remote/css/remote.css',
+        'public/remote/templates/locationsListView.tpl'     : 'src/remote/templates/locationsListView.tpl',
+                                                            
+        // Backend                                          
+        'public/backend/index.html'                         : 'src/backend/index.html',
+        'public/backend/js/backend.js'                      : 'src/backend/js/backend.js',
+        'public/backend/css/backend.css'                    : 'src/backend/css/backend.css',
+                                                            
+        'public/backend/templates/locationMarkerView.tpl'   : 'src/backend/templates/locationMarkerView.tpl',
+        'public/backend/templates/locationEditView.tpl'     : 'src/backend/templates/locationEditView.tpl',
+        'public/backend/templates/videoEditView.tpl'        : 'src/backend/templates/videoEditView.tpl',
+        'public/backend/templates/overlayEditView.tpl'      : 'src/backend/templates/overlayEditView.tpl',
+        'public/backend/templates/relationshipEditView.tpl' : 'src/backend/templates/relationshipEditView.tpl',
+        'public/backend/templates/aboutView.tpl'            : 'src/backend/templates/aboutView.tpl',
+                                                            
+        'public/backend/js/models/Location.js'              : 'src/backend/js/models/Location.js',
+        'public/backend/js/models/Locations.js'             : 'src/backend/js/models/Locations.js',
+        'public/backend/js/models/Overlay.js'               : 'src/backend/js/models/Overlay.js',
+        'public/backend/js/models/Overlays.js'              : 'src/backend/js/models/Overlays.js',
+        'public/backend/js/models/Video.js'                 : 'src/backend/js/models/Video.js',
+        'public/backend/js/models/Videos.js'                : 'src/backend/js/models/Videos.js',
+        'public/backend/js/models/Relationship.js'          : 'src/backend/js/models/Relationship.js',
+                                                            
+        'public/backend/js/views/LocationEditView.js'       : 'src/backend/js/views/LocationEditView.js',
+        'public/backend/js/views/LocationMarkerView.js'     : 'src/backend/js/views/LocationMarkerView.js',
+        'public/backend/js/views/MapView.js'                : 'src/backend/js/views/MapView.js',
+        'public/backend/js/views/MarkerView.js'             : 'src/backend/js/views/MarkerView.js',
+        'public/backend/js/views/VideoEditView.js'          : 'src/backend/js/views/VideoEditView.js',
+        'public/backend/js/views/OverlayEditView.js'        : 'src/backend/js/views/OverlayEditView.js',
+        'public/backend/js/views/RelationshipEditView.js'   : 'src/backend/js/views/RelationshipEditView.js',
+        'public/backend/js/views/AboutView.js'              : 'src/backend/js/views/AboutView.js',
+        'public/backend/js/views/RouteView.js'              : 'src/backend/js/views/RouteView.js'
     };
 
     copyFiles = [

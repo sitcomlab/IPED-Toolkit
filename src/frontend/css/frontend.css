@@ -1,5 +1,5 @@
 /*!
-* The iPED Toolkit
+* The IPED Toolkit
 * Frontend
 *
 * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
@@ -16,7 +16,7 @@ body {
     <!(endif)-->
 }
 
-#iPED-Video {
+#IPED-Video {
     width: 100%;
     max-width: 100%;
 }

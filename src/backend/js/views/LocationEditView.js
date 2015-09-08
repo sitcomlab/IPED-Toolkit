@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2015 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel
@@ -66,15 +66,15 @@ define(['backbonejs/js/backbone',
                     return;
                 }
 
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Updating the LocationEditView');
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Fetch videos in LocationEditView');
                 this.videos = new Videos();
                 this.videos.fetch({
                     success: function(model, response, options) {
 
-                        /*JL('iPED Toolkit.Backend')
+                        /*JL('IPED Toolkit.Backend')
                             .debug(response);*/
 
                         thiz.$el.find('.videos')
@@ -91,18 +91,18 @@ define(['backbonejs/js/backbone',
                         });
                     },
                     error: function(model, response, options) {
-                        JL('iPED Toolkit.Backend')
+                        JL('IPED Toolkit.Backend')
                             .error(response);
                     }
                 });
 
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Fetch overlays in LocationEditView');
                 this.overlays = new Overlays();
                 this.overlays.fetch({
                     success: function(model, response, options) {
 
-                        /*JL('iPED Toolkit.Backend')
+                        /*JL('IPED Toolkit.Backend')
                             .debug(response);*/
 
                         thiz.$el.find('.overlays')
@@ -117,14 +117,14 @@ define(['backbonejs/js/backbone',
                         });
                     },
                     error: function(model, response, options) {
-                        JL('iPED Toolkit.Backend')
+                        JL('IPED Toolkit.Backend')
                             .error(response);
                     }
                 });
 
 
 
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Fetch relatedLocations in LocationEditView');
 
                 if (thiz.model.get('id') === undefined) {
@@ -138,7 +138,7 @@ define(['backbonejs/js/backbone',
                     this.relatedLocations.fetch({
                         success: function(model, response, options) {
 
-                            /*JL('iPED Toolkit.Backend')
+                            /*JL('IPED Toolkit.Backend')
                                 .debug(response);*/
 
                             if (response.length === 0) {
@@ -166,7 +166,7 @@ define(['backbonejs/js/backbone',
                                                 .append('<tr><td><input type="radio" value="' + relatedLocation.relationship.id + '" name="relationship" class="_relationship"></td><td>' + relatedLocation.get('id') + '</td><td>' + relatedLocation.get('name') + '</td><td>' + relatedLocation.relationship.id + '</td></tr>');
                                         },
                                         error: function(model, response, options) {
-                                            JL('iPED Toolkit.Backend')
+                                            JL('IPED Toolkit.Backend')
                                                 .error(response);
                                         }
                                     });
@@ -176,7 +176,7 @@ define(['backbonejs/js/backbone',
                             }
                         },
                         error: function(model, response, options) {
-                            JL('iPED Toolkit.Backend')
+                            JL('IPED Toolkit.Backend')
                                 .error(response);
                         }
                     });

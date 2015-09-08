@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
@@ -60,12 +60,12 @@ require(['jsnlog/js/jsnlog.min',
                 });
 
             /* This is an example log output:
-             JL('iPED Toolkit.Backend').fatal('Something very bad happened!');
+             JL('IPED Toolkit.Backend').fatal('Something very bad happened!');
              */
         })();
 
         /**
-         * The backend of the iPED Toolkit.
+         * The backend of the IPED Toolkit.
          * @constructor
          */
         function Backend() {
@@ -105,7 +105,7 @@ require(['jsnlog/js/jsnlog.min',
          * Initializes the leaflet map
          */
         Backend.prototype.initMap = function() {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Init map with locations: ' + JSON.stringify(this.locations));
             this.mapView = new MapView({
                 backend: this,
@@ -124,7 +124,7 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.locations.fetch({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Done fetching locations');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
@@ -132,7 +132,7 @@ require(['jsnlog/js/jsnlog.min',
 
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(respone);
                 }
             });
@@ -149,14 +149,14 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.videos.fetch({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Done fetching videos');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
                     }
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(respone);
                 }
             });
@@ -173,14 +173,14 @@ require(['jsnlog/js/jsnlog.min',
             }
             this.overlays.fetch({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Done fetching overlays');
                     if (opts && opts.callback) {
                         opts.callback(opts.params);
                     }
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(respone);
                 }
             });
@@ -192,7 +192,7 @@ require(['jsnlog/js/jsnlog.min',
          */
         Backend.prototype.addLocation = function(opts) {
             if (opts.location instanceof Backbone.Model) {
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Add new location to existing location: ' + JSON.stringify(opts.location));
                 this.mapView.map.closePopup();
                 var newLocation = opts.location.clone();
@@ -207,7 +207,7 @@ require(['jsnlog/js/jsnlog.min',
                     content: locationEditView.el
                 });
             } else {
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Add new location: ' + JSON.stringify(opts));
                 var newLocation = new Location();
                 newLocation.set('lat', opts.latlng.lat);
@@ -229,7 +229,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param location - The location to be edited
          */
         Backend.prototype.editLocation = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Edit location: ' + JSON.stringify(opts.location));
             this.mapView.map.closePopup();
             var locationEditView = new LocationEditView({
@@ -256,14 +256,14 @@ require(['jsnlog/js/jsnlog.min',
             }
 
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to save location: ' + JSON.stringify(opts.location) + ', with new attributes: ' + JSON.stringify(opts.attributes));
 
             var thiz = this;
 
             opts.location.save(opts.attributes, {
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Location saved');
                     opts.dialog._close();
                     thiz.fetchLocations({
@@ -272,7 +272,7 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                     thiz.fetchLocations({
                         //callback: thiz.mapView.render
@@ -286,13 +286,13 @@ require(['jsnlog/js/jsnlog.min',
          * @param location - The location to be deleted
          */
         Backend.prototype.deleteLocation = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to delete location: ' + JSON.stringify(opts.location));
             var thiz = this;
 
             opts.location.destroy({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Location deleted');
                     thiz.mapView.map.closePopup();
                     thiz.fetchLocations({
@@ -300,7 +300,7 @@ require(['jsnlog/js/jsnlog.min',
                     });
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                     thiz.fetchLocations({
                         //callback: thiz.mapView.render
@@ -314,7 +314,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param location - The location to be edited
          */
         Backend.prototype.editRelationship = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Edit relationship: ' + JSON.stringify(opts.relationship));
             var relationshipEditView = new RelationshipEditView({
                 backend: this,
@@ -335,11 +335,11 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.saveRelationship = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to save relationship: ' + JSON.stringify(opts.relationship) + ', with new attributes: ' + JSON.stringify(opts.attributes));
             opts.relationship.save(opts.attributes, {
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Relationship saved');
                     opts.dialog._close();
                     thiz.relationshipEditViews.forEach(function(relationshipEditView) {
@@ -348,7 +348,7 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                 }
             });
@@ -362,7 +362,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.addVideo = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Add new video');
             var newVideo = new Video({
                 name: '',
@@ -389,7 +389,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param video - The video to be edited
          */
         Backend.prototype.editVideo = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Edit video: ' + JSON.stringify(opts.video));
             var videoEditView = new VideoEditView({
                 backend: this,
@@ -410,11 +410,11 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.saveVideo = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to save video: ' + JSON.stringify(opts.video) + ', with new attributes: ' + JSON.stringify(opts.attributes));
             opts.video.save(opts.attributes, {
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Video saved');
                     opts.dialog._close();
                     thiz.locationEditViews.forEach(function(locationEditView) {
@@ -423,7 +423,7 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                 }
             });
@@ -435,20 +435,20 @@ require(['jsnlog/js/jsnlog.min',
          * @param video - The video to be deleted
          */
         Backend.prototype.deleteVideo = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to delete video: ' + JSON.stringify(opts.video));
             var thiz = this;
 
             opts.video.destroy({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Video deleted');
                     thiz.locationEditViews.forEach(function(locationEditView) {
                         locationEditView.update();
                     });
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                 }
             });
@@ -461,7 +461,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.addOverlay = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Add new overlay');
             var newOverlay = new Overlay({
                 name: '',
@@ -503,7 +503,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param overlay - The overlay to be edited
          */
         Backend.prototype.editOverlay = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Edit overlay: ' + JSON.stringify(opts.overlay));
             var overlayEditView = new OverlayEditView({
                 backend: this,
@@ -524,11 +524,11 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.saveOverlay = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to save overlay: ' + JSON.stringify(opts.overlay) + ', with new attributes: ' + JSON.stringify(opts.attributes));
             opts.overlay.save(opts.attributes, {
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Overlay saved');
                     opts.dialog._close();
                     thiz.locationEditViews.forEach(function(locationEditView) {
@@ -537,7 +537,7 @@ require(['jsnlog/js/jsnlog.min',
                 },
                 error: function(model, response, options) {
                     opts.dialog._enableButtons();
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                 }
             });
@@ -548,20 +548,20 @@ require(['jsnlog/js/jsnlog.min',
          * @param overlay - The overlay to be deleted
          */
         Backend.prototype.deleteOverlay = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to delete overlay: ' + JSON.stringify(opts.overlay));
             var thiz = this;
 
             opts.overlay.destroy({
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Overlay deleted');
                     thiz.locationEditViews.forEach(function(locationEditView) {
                         locationEditView.update();
                     });
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                 }
             });
@@ -677,7 +677,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param marker - The corresponding leaflet marker
          */
         Backend.prototype.createRouteFrom = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Route from: ' + JSON.stringify(opts.location));
 
             if (this.createRouteFromMarker) {
@@ -694,7 +694,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param marker - The corresponding leaflet marker
          */
         Backend.prototype.createRouteTo = function(opts) {
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('Route to: ' + JSON.stringify(opts.location));
 
             if (this.createRouteToMarker) {
@@ -716,7 +716,7 @@ require(['jsnlog/js/jsnlog.min',
             // Morin: Important note about Backbone.js, arrays, and events: http://stackoverflow.com/questions/9909799/backbone-js-change-not-firing-on-model-change
             var relatedLocations = _.clone(this.createRouteFromLocation.get('relatedLocations'));
             if (_.indexOf(relatedLocations, this.createRouteToLocation.get('id')) != -1) {
-                JL('iPED Toolkit.Backend')
+                JL('IPED Toolkit.Backend')
                     .debug('Route already exists: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
                 thiz.fetchLocations({
@@ -725,7 +725,7 @@ require(['jsnlog/js/jsnlog.min',
                 return;
             }
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to save route: ' + JSON.stringify(this.createRouteFromLocation) + String.fromCharCode(0x2192) + JSON.stringify(this.createRouteToLocation));
 
             relatedLocations.push(this.createRouteToLocation.get('id'));
@@ -733,14 +733,14 @@ require(['jsnlog/js/jsnlog.min',
                 relatedLocations: relatedLocations
             }, {
                 success: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .debug('Route saved');
                     thiz.fetchLocations({
                         //callback: thiz.mapView.render
                     });
                 },
                 error: function(model, response, options) {
-                    JL('iPED Toolkit.Backend')
+                    JL('IPED Toolkit.Backend')
                         .error(response);
                     thiz.fetchLocations({
                         //callback: thiz.mapView.render
@@ -755,7 +755,7 @@ require(['jsnlog/js/jsnlog.min',
         Backend.prototype.deleteRoute = function(opts) {
             var thiz = this;
 
-            JL('iPED Toolkit.Backend')
+            JL('IPED Toolkit.Backend')
                 .debug('About to delete route: ' + JSON.stringify(opts.fromLocation) + String.fromCharCode(0x2192) + JSON.stringify(opts.toLocation));
 
             // Confirmation before deleting
@@ -779,14 +779,14 @@ require(['jsnlog/js/jsnlog.min',
                                 relatedLocations: relatedLocations
                             }, {
                                 success: function(model, response, options) {
-                                    JL('iPED Toolkit.Backend')
+                                    JL('IPED Toolkit.Backend')
                                         .debug('Route deleted');
                                     thiz.fetchLocations({
                                         //callback: thiz.mapView.render
                                     });
                                 },
                                 error: function(model, response, options) {
-                                    JL('iPED Toolkit.Backend')
+                                    JL('IPED Toolkit.Backend')
                                         .error(response);
                                     thiz.fetchLocations({
                                         //callback: thiz.mapView.render

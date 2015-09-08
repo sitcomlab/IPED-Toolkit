@@ -19,11 +19,11 @@ var util = require('util');
 
 var express = require('express');
 var basicAuth = require('basic-auth');
-var socketio = require('socket.io');
 var bodyParser = require('body-parser');
 var nib = require('nib');
 var browserify = require('browserify');
 
+var Websockets = require('./global/websockets');
 var log = require('./global/log');
 
 
@@ -110,6 +110,41 @@ app.use('/', auth);
 app.use('/', express.static(__dirname + '/public'));
 
 
+/****************************
+ Socket.io
+ ****************************/
+var socketHandler = function(socket) {
+    //log.debug({socket: socket}, 'New connection:');
+    log.info('New connection');
+
+    socket.on('setLocationId', function(data) {
+        log.debug({data: data}, 'Received data:');
+        websockets.emit('[IPED]setLocationId', data);
+    });
+    
+    socket.on('showHideOverlays', function(data) {
+        log.debug({data: data}, 'showHideOverlays:');
+        websockets.emit('[IPED]setShowHideOverlays', data);
+    });
+
+    socket.on('changeOverlayStatus', function(data) {
+        websockets.emit('[IPED]changeShowHideOverlays', data);
+    });
+
+    socket.on('beforeMainLogger', function(data) {
+        websockets.emit('[Logger]', data);
+    });
+
+    voiceControl.listenTo({websockets: websockets,
+                           socket: socket
+    });
+};
+var websockets = new Websockets({httpServer: httpServer,
+                                 httpsServer: httpsServer
+});
+websockets.on('connection', socketHandler);
+
+
  /*********************************************************
   IPED Toolkit API
   *********************************************************/
@@ -125,39 +160,4 @@ var overlays = require('./routes/overlays')(app);
 var VoiceControl = require('./plugins/voiceControl');
 var voiceControl = new VoiceControl();
 var Kinect = require('./plugins/kinect');
-var kinect = new Kinect({wsHTTP: wsHTTP});
- 
-
-/****************************
- Socket.io
- ****************************/
-var socketHandler = function(socket) {
-    //log.debug({socket: socket}, 'New connection:');
-    log.info('New connection');
-
-    socket.on('setLocationId', function(data) {
-        log.debug({data: data}, 'Received data:');
-        wsHTTP.emit('[IPED]setLocationId', data);
-    });
-    
-    socket.on('showHideOverlays', function(data) {
-        log.debug({data: data}, 'showHideOverlays:');
-        wsHTTP.emit('[IPED]setShowHideOverlays', data);
-    });
-
-    socket.on('changeOverlayStatus', function(data) {
-        wsHTTP.emit('[IPED]changeShowHideOverlays', data);
-    });
-
-    socket.on('beforeMainLogger', function(data) {
-        wsHTTP.emit('[Logger]', data);
-    });
-
-    voiceControl.listenTo({wsHTTP: wsHTTP,
-                           socket: socket
-    });
-};
-var wsHTTP = socketio.listen(httpServer);
-wsHTTP.on('connection', socketHandler);
-var wsHTTPS = socketio.listen(httpsServer);
-wsHTTPS.on('connection', socketHandler);
+var kinect = new Kinect({websockets: websockets});

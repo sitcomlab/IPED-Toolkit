@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Remote
  *
  * (c) 2014 (c) 2014 Morin Ostkamp, Tobias Brüggentisch, Nicholas Schiestel
@@ -45,7 +45,7 @@ require(['jsnlog/js/jsnlog.min',
                 });
 
             /* This is an example log output:
-             JL('iPED Toolkit.Remote').fatal('Something very bad happened!');
+             JL('IPED Toolkit.Remote').fatal('Something very bad happened!');
              */
         })();
 
@@ -65,7 +65,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
         /**
-         * The remote of the iPED Toolkit.
+         * The remote of the IPED Toolkit.
          * @constructor
          */
         function Remote() {
@@ -89,7 +89,7 @@ require(['jsnlog/js/jsnlog.min',
 
             this.socket.on('changeShowHideOverlays', function(data) {
                 overlayStatus = data;
-                JL('iPED Toolkit.Remote - showHideOverlays')
+                JL('IPED Toolkit.Remote - showHideOverlays')
                     .debug(data);
             });
 
@@ -97,7 +97,7 @@ require(['jsnlog/js/jsnlog.min',
 
             this.socket.on('setMicPermission', function(data) {
                 micPermission = data;
-                JL('iPED Toolkit.Remote - setMicPermission')
+                JL('IPED Toolkit.Remote - setMicPermission')
                     .debug(data);
 
                 if (micPermission == 1) {
@@ -134,7 +134,7 @@ require(['jsnlog/js/jsnlog.min',
 
             this.socket.on('setRemoteSelectedLanguage', function(data) {
                 language = data;
-                JL('iPED Toolkit.Remote - setRemoteSelectedLanguage')
+                JL('IPED Toolkit.Remote - setRemoteSelectedLanguage')
                     .debug(data);
                 // Select radio button if language was already defined
                 if (language !== null) {
@@ -146,7 +146,7 @@ require(['jsnlog/js/jsnlog.min',
 
 
             this.socket.on('logger', function(data) {
-                JL('iPED Toolkit.Remote - Logger')
+                JL('IPED Toolkit.Remote - Logger')
                     .debug(data);
                 counter = counter + 1;
                 if (data.success) {
@@ -184,7 +184,7 @@ require(['jsnlog/js/jsnlog.min',
 
             // Show/Hide Overalys by voice command
             this.socket.on('changeShowHideOverlays', function(data) {
-                JL('iPED Toolkit.Remote - changeShowHideOverlays')
+                JL('IPED Toolkit.Remote - changeShowHideOverlays')
                     .debug(data);
                 if (data === true) {
                     this.overlayStatus = true;
@@ -216,7 +216,7 @@ require(['jsnlog/js/jsnlog.min',
                     });
                 },
                 error: function(model, repsonse, options) {
-                    JL('iPED Toolkit.Remote')
+                    JL('IPED Toolkit.Remote')
                         .error(repsonse);
                 }
             });
@@ -234,7 +234,7 @@ require(['jsnlog/js/jsnlog.min',
          * @param locationId - The ID of the location to load
          */
         Remote.prototype.setLocationId = function(locationId) {
-            JL('iPED Toolkit.Remote')
+            JL('IPED Toolkit.Remote')
                 .debug('Set location ID to: ' + locationId);
 
             this.socket.emit('setLocationId', locationId);
@@ -248,7 +248,7 @@ require(['jsnlog/js/jsnlog.min',
         Remote.prototype.fetchRelatedLocations = function(locationId) {
             var thiz = this;
 
-            JL('iPED Toolkit.Remote')
+            JL('IPED Toolkit.Remote')
                 .debug('Fetch related locations for ID: ' + locationId);
 
             this.relatedLocations.url = '/api/locations/' + locationId + '/locations';
@@ -261,7 +261,7 @@ require(['jsnlog/js/jsnlog.min',
                     }
                 },
                 error: function(model, repsonse, options) {
-                    JL('iPED Toolkit.Remote')
+                    JL('IPED Toolkit.Remote')
                         .error(repsonse);
                 }
             });
@@ -284,7 +284,7 @@ require(['jsnlog/js/jsnlog.min',
             if (this.micstatus === 0) {
 
                 this.micstatus = 1;
-                JL('iPED Toolkit.Remote')
+                JL('IPED Toolkit.Remote')
                     .debug('Listen: ' + this.micstatus);
                 $('.mic-icon')
                     .css('border-color', 'red');
@@ -304,7 +304,7 @@ require(['jsnlog/js/jsnlog.min',
                 } else {
 
                     this.micstatus = 0;
-                    JL('iPED Toolkit.Remote')
+                    JL('IPED Toolkit.Remote')
                         .debug('Stop listening ' + this.micstatus);
                     $('.mic-icon')
                         .css('border-color', 'black');
@@ -326,7 +326,7 @@ require(['jsnlog/js/jsnlog.min',
         Remote.prototype.askForMicPermission = function() {
             var data = null;
             this.socket.emit('getFrontendMicPermission', function(data) {
-                JL('iPED Toolkit.Remote - getFrontendMicPermission:')
+                JL('IPED Toolkit.Remote - getFrontendMicPermission:')
                     .debug(data);
             });
         };
@@ -337,7 +337,7 @@ require(['jsnlog/js/jsnlog.min',
          */
         Remote.prototype.showHideOverlays = function() {
             this.socket.emit('showHideOverlays', this.overlayStatus);
-            JL('iPED Toolkit.Remote - showHideOverlays:')
+            JL('IPED Toolkit.Remote - showHideOverlays:')
                 .debug(this.overlayStatus);
         };
 
@@ -347,49 +347,49 @@ require(['jsnlog/js/jsnlog.min',
          **/
         Remote.prototype.showAvatar = function() {
             this.socket.emit('show_avatar', null);
-            JL('iPED Toolkit.Remote - show_avatar:')
+            JL('IPED Toolkit.Remote - show_avatar:')
                 .debug();
         };
 
         Remote.prototype.hideAvatar = function() {
             this.socket.emit('hide_avatar', null);
-            JL('iPED Toolkit.Remote - hide_avatar:')
+            JL('IPED Toolkit.Remote - hide_avatar:')
                 .debug();
         };
 
         Remote.prototype.moveUp = function() {
             this.socket.emit('move_up', null);
-            JL('iPED Toolkit.Remote - move_up:')
+            JL('IPED Toolkit.Remote - move_up:')
                 .debug();
         };
 
         Remote.prototype.moveDown = function() {
             this.socket.emit('move_down', null);
-            JL('iPED Toolkit.Remote - move_down:')
+            JL('IPED Toolkit.Remote - move_down:')
                 .debug();
         };
 
         Remote.prototype.moveLeft = function() {
             this.socket.emit('move_left', null);
-            JL('iPED Toolkit.Remote - move_left:')
+            JL('IPED Toolkit.Remote - move_left:')
                 .debug();
         };
 
         Remote.prototype.moveRight = function() {
             this.socket.emit('move_right', null);
-            JL('iPED Toolkit.Remote - move_right:')
+            JL('IPED Toolkit.Remote - move_right:')
                 .debug();
         };
 
         Remote.prototype.scaleUp = function() {
             this.socket.emit('scale_up', null);
-            JL('iPED Toolkit.Remote - scale_up:')
+            JL('IPED Toolkit.Remote - scale_up:')
                 .debug();
         };
 
         Remote.prototype.scaleDown = function() {
             this.socket.emit('scale_down', null);
-            JL('iPED Toolkit.Remote - scale_down:')
+            JL('IPED Toolkit.Remote - scale_down:')
                 .debug();
         };
 
@@ -414,7 +414,7 @@ require(['jsnlog/js/jsnlog.min',
                         } else {
                             var lang = $("input[name='languages']:checked")
                                 .val();
-                            JL('iPED Toolkit.Remote')
+                            JL('IPED Toolkit.Remote')
                                 .debug('Activate microphone using language: ' + lang);
 
                             // setup Microphone and access to Wit.Ai with selected Language in Frontend
@@ -432,7 +432,7 @@ require(['jsnlog/js/jsnlog.min',
                 $('#microphone')
                     .click(function() {
 
-                        JL('iPED Toolkit.Remote')
+                        JL('IPED Toolkit.Remote')
                             .debug("remoteMicPermission: " + micPermission);
 
                         if (micPermission == 1) {

@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Remote
  *
  * (c) 2014 Tobias Brüggentisch, Morin Ostkamp

@@ -8,7 +8,7 @@
     </div>
   </div>
   <hr />
-  <h1>The iPED Toolkit</h1>
+  <h1>The IPED Toolkit</h1>
   <p>
     Version 0.0.2
   </p>

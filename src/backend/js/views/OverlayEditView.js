@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
@@ -72,7 +72,7 @@ define(['backbonejs/js/backbone',
                         });
                     },
                     error: function(model, response, options) {
-                        JL('iPED Toolkit.Backend')
+                        JL('IPED Toolkit.Backend')
                             .error(response);
                     }
                 });

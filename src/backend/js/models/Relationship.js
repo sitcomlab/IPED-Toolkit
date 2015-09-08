@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2015 Tobias Brüggentisch, Morin Ostkamp, Nicholas Schiestel

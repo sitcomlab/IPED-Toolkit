@@ -1,5 +1,5 @@
 /*!
- * The iPED Toolkit
+ * The IPED Toolkit
  * Backend
  *
  * (c) 2014 Tobias Brüggentisch, Morin Ostkamp
@@ -30,7 +30,7 @@ define(['backbonejs/js/backbone',
                     return;
                 }
 
-                JL('iPED Toolkit.RouteView')
+                JL('IPED Toolkit.RouteView')
                     .debug('Draw/Update route: ' + JSON.stringify(this.fromPoint) + ' ' + String.fromCharCode(0x2194) + ' ' + JSON.stringify(this.toPoint));
 
                 var contextMenuItems = [{
