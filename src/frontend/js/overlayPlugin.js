@@ -60,7 +60,8 @@ define(['threejs/js/three.min',
             this.myHooks = [];
             this.myHooks['render'] = [];
             this.location = null;
-
+			
+            this.objects = new Array();
             this.camera = '';
             this.gridhelper = '';
             this.scene = '';
@@ -108,7 +109,8 @@ define(['threejs/js/three.min',
          */
         OverlayPlugin.prototype.stop = function() {
             this.isRunning = false;
-
+			
+			this.objects = null;
             this.camera = null;
             this.gridhelper = null;
             this.scene = null;
@@ -250,6 +252,7 @@ define(['threejs/js/three.min',
 
                             object = new THREE.CSS3DObject(element);
                             thiz.cssScene.add(object);
+                            thiz.objects.push(object);
                             break;
 
 
