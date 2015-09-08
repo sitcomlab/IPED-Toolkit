@@ -61,7 +61,7 @@ define(['threejs/js/three.min',
             this.myHooks = [];
             this.myHooks['render'] = [];
             this.location = null;
-			
+
             this.objects = new Array();
             this.camera = '';
             this.gridhelper = '';
@@ -124,8 +124,8 @@ define(['threejs/js/three.min',
          */
         OverlayPlugin.prototype.stop = function() {
             this.isRunning = false;
-			
-			this.objects = null;
+
+            this.objects = null;
             this.camera = null;
             this.gridhelper = null;
             this.scene = null;
@@ -147,9 +147,11 @@ define(['threejs/js/three.min',
             this.video.on('loadeddata', this.onResize); // Give browsers time to recalculate dimensions
             $(window)
                 .resize(function() {
+                    thiz.onResize();
                     thiz.render();
-                    console.log("Resize event recognized -> rendering initiated");
-                }); // Recalculate dimensions when browser window is resized
+                    JL('IPED Toolkit.OverlayPlugin')
+                        .debug('Re-sizing and re-layouting overlays.');
+                });
             // Create DOM element: <div id="IPED-Overlay"></div>
             if (this.jqueryElement) {
                 this.jqueryElement.remove();
@@ -393,78 +395,8 @@ define(['threejs/js/three.min',
                     this.toggleUI();
                     this.render();
                     break;
-                case 37: // LEFT
-		  			this.moveLeft();
-		  			break;
-				case 38: // UP
-				  	this.moveUp();
-				  	break;
-				case 39: // RIGHT
-				  	this.moveRight();
-				  	break;
-				case 40: // DOWN
-				  	this.moveDown();
-				  	break;				 	
-				case 77: // M
-		          	this.scaleUp();
-		          	break;
-		        case 78: // N
-		            this.scaleDown();
-		            break;
             }
         };
-        
-        /**
-         * Updates the MIA avatar
-         */
-
-		OverlayPlugin.prototype.moveUp = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.y += 1;			
-		}
-		
-		OverlayPlugin.prototype.moveDown = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.y -= 1;
-		}
-		
-		OverlayPlugin.prototype.moveLeft = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.x -= 1;
-		}
-		
-		OverlayPlugin.prototype.moveRight = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.x += 1;
-		}
-		
-		OverlayPlugin.prototype.scaleDown = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.z -= 1;
-		}
-		
-		OverlayPlugin.prototype.scaleUp = function(){
-			if (!this.objects[0]){
-				return;
-			}
-			object = this.objects[0];
-			object.position.z += 1;
-		}
 
         /*
          * Toggles the UI

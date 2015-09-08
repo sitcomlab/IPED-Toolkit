@@ -55,7 +55,7 @@ define(['underscorejs/js/underscore',
             switch (event.keyCode) {
                 case 75: // k
                     this.enable(!this.isEnabled);
-                    break;    
+                    break;
             }
         };
 
