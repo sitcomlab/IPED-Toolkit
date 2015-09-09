@@ -215,13 +215,16 @@ require(['jsnlog/js/jsnlog.min',
                     location: frontend.location
                 });
                 var chromaKeyPlugin = new ChromaKeyPlugin({
-                    parent: overlayPlugin
+                    overlays: frontend.overlays
                 });
+                /*
                 var voiceControlPlugin = new VoiceControlPlugin({
                     parent: frontend
                 });
+                */
                 var miaPlugin = new MiaPlugin({
-                    parent: frontend
+                    socket: frontend.socket,
+                    object3Ds: overlayPlugin.object3Ds
                 });
             });
     }

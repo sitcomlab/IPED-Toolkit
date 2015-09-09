@@ -15,76 +15,102 @@ define(['underscorejs/js/underscore'],
          * @constructor
          */
         function MiaPlugin(opts) {
+            var thiz = this;
+
             JL('IPED Toolkit.MiaPlugin')
                 .info('MiaPlugin loaded');
 
-            this.parent = opts.parent;
-            this.socket = opts.parent.socket;
+            this.MOVE_BY = 10;
+            this.socket = opts.socket;
+            this.avatarObject = null;
+
+            _.bindAll(this, 'onKeyDown');
+
+            $(document)
+                .on('[OverlayPlugin]createOverlay', function(event, object) {
+                    thiz.handleOverlay(object);
+                });
+            if (opts.object3Ds.length > 0) {
+                opts.object3Ds.forEach(function(element, index, array) {
+                    thiz.handleOverlay(element);
+                });
+            }
 
             this.initialize();
         }
 
+        MiaPlugin.prototype.handleOverlay = function(object) {
+            var thiz = this;
+
+            object._overlay.get('tags')
+                .forEach(function(element, index, array) {
+                    if (element.indexOf('isMiaAvatar') != -1) {
+                        thiz.avatarObject = object;
+                    }
+                }, thiz);
+        };
+
         MiaPlugin.prototype.initialize = function() {
             var thiz = this;
+
+            this.enableEventListeners(true);
 
             // SHOW AVATAR
             this.socket.on('[MIA]showAvatar', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
                     .debug('showAvatar: ' + data);
-                $('#IPED-Avatar')
-                    .show();
+                this.avatarObject.visible = true;
             });
 
             // HIDE AVATAR
             this.socket.on('[MIA]hideAvatar', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
                     .debug('hideAvatar: ' + data);
-                $('#IPED-Avatar')
-                    .hide();
+                this.avatarObject.visible = false;
             });
 
             // MOVE AVATAR UP
             this.socket.on('[MIA]moveAvatarUp', function(data) {
                 JL('IPED Toolkit.MiaPugin')
                     .debug('moveAvatarUp: ' + data);
-                // To-Do
+                this.moveUp();
             });
 
             // MOVE AVATAR DOWN
             this.socket.on('[MIA]moveAvatarDown', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
                     .debug('moveAvatarDown: ' + data);
-                // To-Do
+                this.moveDown();
             });
 
             // MOVE AVATAR TO THE LEFT
             this.socket.on('[MIA]moveAvatarLeft', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
                     .debug('moveAvatarLeft: ' + data);
-                // To-Do
+                this.moveLeft();
             });
 
             // MOVE AVATAR TO THR RIGHT
             this.socket.on('[MIA]moveAvatarRight', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
                     .debug('moveAvatarRight: ' + data);
-                // To-Do
+                this.moveRight();
             });
 
             // MOVE AVATAR FORWARD
             // @Morin says: DO NOT SCALE THE AVATAR!!! Use three.js to move it back and forth in the 3D space!
             this.socket.on('[MIA]moveAvatarForward', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
-                    .debug('scaleAvatarUp: ' + data);
-                // To-Do
+                    .debug('moveAvatarForward: ' + data);
+                this.moveForward();
             });
 
             // MOVE AVATAR BACKWARD
             // @Morin says: DO NOT SCALE THE AVATAR!!! Use three.js to move it back and forth in the 3D space!
             this.socket.on('[MIA]moveAvatarBackward', function(data) {
                 JL('IPED Toolkit.MiaPlugin')
-                    .debug('scaleAvatarDown: ' + data);
-                // To-Do
+                    .debug('moveAvatarBackward: ' + data);
+                this.moveBackward();
             });
         };
 
@@ -111,60 +137,54 @@ define(['underscorejs/js/underscore'],
                     this.moveDown();
                     break;
                 case 77: // M
-                    this.scaleUp();
+                    this.moveForward();
                     break;
                 case 78: // N
-                    this.scaleDown();
+                    this.moveBackward();
                     break;
             }
         };
 
         MiaPlugin.prototype.moveUp = function() {
-            if (!this.objects[0]) {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.y += 1;
+            this.avatarObject.position.y += this.MOVE_BY;
         }
 
         MiaPlugin.prototype.moveDown = function() {
-            if (!this.objects[0]) {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.y -= 1;
+            this.avatarObject.position.y -= this.MOVE_BY;
         }
 
         MiaPlugin.prototype.moveLeft = function() {
-            if (!this.objects[0]) {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.x -= 1;
+            this.avatarObject.position.x -= this.MOVE_BY;
         }
 
         MiaPlugin.prototype.moveRight = function() {
-            if (!this.objects[0]) {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.x += 1;
+            this.avatarObject.position.x += this.MOVE_BY;
         }
 
-        MiaPlugin.prototype.scaleDown = function() {
-            if (!this.objects[0]) {
+        MiaPlugin.prototype.moveBackward = function() {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.z -= 1;
+            this.avatarObject.position.z -= this.MOVE_BY;
         }
 
-        MiaPlugin.prototype.scaleUp = function() {
-            if (!this.objects[0]) {
+        MiaPlugin.prototype.moveForward = function() {
+            if (!this.avatarObject) {
                 return;
             }
-            object = this.objects[0];
-            object.position.z += 1;
+            this.avatarObject.position.z += this.MOVE_BY;
         }
 
         return MiaPlugin;

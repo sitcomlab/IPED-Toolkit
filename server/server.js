@@ -159,5 +159,5 @@ var overlays = require('./routes/overlays')(app);
   *********************************************************/
 var VoiceControl = require('./plugins/voiceControl');
 var voiceControl = new VoiceControl();
-var Kinect = require('./plugins/kinect');
-var kinect = new Kinect({websockets: websockets});
+var Mia = require('./plugins/mia');
+var mia = new Mia({websockets: websockets});

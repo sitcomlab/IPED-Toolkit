@@ -442,6 +442,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Joint footRight = skeleton.Joints[JointType.FootRight];
             
 
+            // ############################################################################
+            // Morin: @Nicho, we need that to be configurable via command line arguments! #
+            // ############################################################################
             // SITCOM-Server
             //String destinationServer = "128.176.146.126";
             
@@ -465,7 +468,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Down";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "down");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarDown");
                 }
                 else if (wristRight.Position.Y <= kneeLeft.Position.Y || wristRight.Position.Y <= kneeRight.Position.Y)
                 {
@@ -474,7 +477,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Down";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "down");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarDown");
                 } 
                 else if (elbowLeft.Position.Y <= shoulderCenter.Position.Y && elbowLeft.Position.Y > elbowRight.Position.Y)
                 {
@@ -483,7 +486,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Left";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "left");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarLeft");
                 }
                 else if (elbowRight.Position.Y <= shoulderCenter.Position.Y && elbowRight.Position.Y > elbowLeft.Position.Y)
                 {
@@ -492,7 +495,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Right";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "right");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarRight");
                 }
                 else if (handRight.Position.Y > head.Position.Y)
                 {
@@ -501,7 +504,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Up";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "up");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarUp");
                 }
                 else if (handLeft.Position.Y > head.Position.Y)
                 {
@@ -510,7 +513,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                         String gesture = "Up";
                         Debug.WriteLine(gesture);
                     }
-                    SendUDP(destinationServer, destinationServerPort, "up");
+                    SendUDP(destinationServer, destinationServerPort, "[MIA]moveAvatarUp");
                 } 
             } 
         }

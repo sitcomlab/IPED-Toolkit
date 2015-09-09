@@ -61,7 +61,7 @@ define(['threejs/js/three.min',
             this.height = 0;
             this.location = null;
 
-            this.objects = new Array();
+            this.object3Ds = [];
             this.camera = '';
             this.gridhelper = '';
             this.scene = '';
@@ -118,7 +118,6 @@ define(['threejs/js/three.min',
         OverlayPlugin.prototype.stop = function() {
             this.isRunning = false;
 
-            this.objects = null;
             this.camera = null;
             this.gridhelper = null;
             this.scene = null;
@@ -267,7 +266,6 @@ define(['threejs/js/three.min',
 
                             object = new THREE.CSS3DObject(element);
                             thiz.cssScene.add(object);
-                            thiz.objects.push(object);
                             break;
 
 
@@ -345,6 +343,10 @@ define(['threejs/js/three.min',
                     thiz.controls[n].addEventListener('change', thiz.updateOverlay);
                     thiz.controls[n].attach(object);
                     //thiz.scene.add(thiz.controls[n]);
+
+                    thiz.object3Ds.push(object);
+                    $(document)
+                        .trigger('[OverlayPlugin]createOverlay', object);
                 });
                 $(document)
                     .trigger('[OverlayPlugin]createOverlays');

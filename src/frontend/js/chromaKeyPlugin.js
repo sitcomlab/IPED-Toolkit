@@ -19,7 +19,6 @@ define(['underscorejs/js/underscore',
             JL('IPED Toolkit.ChromaKeyPlugin')
                 .info('ChromaKeyPlugin loaded');
 
-            this.parent = opts.parent; // FIXME: Include type check, e.g., $.typeof(opts.parent) === 'overlayPlugin'
             this.enable(true);
             this.sourceVideo = null;
             this.displayCanvas = null;
@@ -30,13 +29,13 @@ define(['underscorejs/js/underscore',
             _.bindAll(this, 'onKeyDown');
             window.addEventListener('keydown', this.onKeyDown);
 
-            if (this.parent.overlays == null) {
+            if (opts.overlays == null) {
                 $(document)
                     .on('[OverlayPlugin]fetchOverlays', function(event, overlays) {
                         thiz.overlaysFetched(overlays);
                     });
             } else {
-                this.overlaysFetched(this.parent.overlays);
+                this.overlaysFetched(opts.overlays);
             }
         }
 
@@ -46,24 +45,36 @@ define(['underscorejs/js/underscore',
 
             backboneEvents.listenTo(overlays, 'add', function(overlay) {
                 if (thiz.seriouslyCrop) {
-                    overlay.get('tags')
-                        .forEach(function(element, index, array) {
-                            if (element.indexOf('cropTop') != -1) {
-                                thiz.seriouslyCrop.top = element.split('=')[1];
-                            }
-                            if (element.indexOf('cropBottom') != -1) {
-                                thiz.seriouslyCrop.bottom = element.split('=')[1];
-                            }
-                            if (element.indexOf('cropLeft') != -1) {
-                                thiz.seriouslyCrop.left = element.split('=')[1];
-                            }
-                            if (element.indexOf('cropRight') != -1) {
-                                thiz.seriouslyCrop.right = element.split('=')[1];
-                            }
-                        }, thiz);
+                    thiz.handleOverlay(overlay);
                 }
             });
+
+            if (overlays.length > 0) {
+                overlays.forEach(function(element, index, array) {
+                    thiz.handleOverlay(element);
+                });
+            }
         }
+
+        ChromaKeyPlugin.prototype.handleOverlay = function(overlay) {
+            var thiz = this;
+
+            overlay.get('tags')
+                .forEach(function(element, index, array) {
+                    if (element.indexOf('cropTop') != -1) {
+                        thiz.seriouslyCrop.top = element.split('=')[1];
+                    }
+                    if (element.indexOf('cropBottom') != -1) {
+                        thiz.seriouslyCrop.bottom = element.split('=')[1];
+                    }
+                    if (element.indexOf('cropLeft') != -1) {
+                        thiz.seriouslyCrop.left = element.split('=')[1];
+                    }
+                    if (element.indexOf('cropRight') != -1) {
+                        thiz.seriouslyCrop.right = element.split('=')[1];
+                    }
+                }, thiz);
+        };
 
         ChromaKeyPlugin.prototype.onKeyDown = function(event) {
             switch (event.keyCode) {
