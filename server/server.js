@@ -27,7 +27,6 @@ var Websockets = require('./global/websockets');
 var log = require('./global/log');
 
 
-
 /*********************************************************
  Server-Settings
  *********************************************************/
@@ -121,7 +120,7 @@ var socketHandler = function(socket) {
         log.debug({data: data}, 'Received data:');
         websockets.emit('[IPED]setLocationId', data);
     });
-    
+
     socket.on('showHideOverlays', function(data) {
         log.debug({data: data}, 'showHideOverlays:');
         websockets.emit('[IPED]setShowHideOverlays', data);

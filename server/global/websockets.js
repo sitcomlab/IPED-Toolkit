@@ -9,11 +9,11 @@ function Websockets(options) {
 Websockets.prototype.on = function(event, handler) {
     this.wsHTTP.on(event, handler);
     this.wsHTTPS.on(event, handler);
-}
+};
 
 Websockets.prototype.emit = function(event, data) {
     this.wsHTTP.emit(event, data);
     this.wsHTTPS.emit(event, data);
-}
+};
 
 module.exports = Websockets;
