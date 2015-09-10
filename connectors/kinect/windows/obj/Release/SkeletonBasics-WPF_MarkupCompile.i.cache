@@ -4,15 +4,15 @@
 winexe
 C#
 .cs
-C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug\
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\
 Microsoft.Samples.Kinect.SkeletonBasics
 none
 false
-DEBUG;TRACE
+TRACE
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\App.xaml
 11151548125
 
-5-2017746502
+6-1487998459
 13-216429321
 MainWindow.xaml;
 
