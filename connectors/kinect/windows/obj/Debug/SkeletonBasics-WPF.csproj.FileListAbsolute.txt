@@ -48,3 +48,4 @@ C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug\SkeletonBasics-WPF.g.resources
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
 C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Form1.resources

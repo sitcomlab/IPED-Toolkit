@@ -446,10 +446,10 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             // Morin: @Nicho, we need that to be configurable via command line arguments! #
             // ############################################################################
             // SITCOM-Server
-            //String destinationServer = "128.176.146.126";
+            String destinationServer = "128.176.146.126";
             
             // Development-Server
-            String destinationServer = "192.168.178.25";
+            //String destinationServer = "192.168.178.25";
             Int32 destinationServerPort = 33333;
             
             
