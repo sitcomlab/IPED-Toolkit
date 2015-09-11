@@ -1,0 +1,12 @@
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\bin\Release\SkeletonBasics-WPF.exe
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\bin\Release\SkeletonBasics-WPF.pdb
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\MainWindow.baml
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\MainWindow.g.cs
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\App.g.cs
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF_MarkupCompile.cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF.g.resources
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF.exe
+C:\Users\Nicho\Documents\GitHub\IPED-Toolkit\connectors\kinect\windows\obj\Release\SkeletonBasics-WPF.pdb
