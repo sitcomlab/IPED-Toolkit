@@ -29,7 +29,8 @@ require(['jsnlog/js/jsnlog.min',
         'frontend/overlayPlugin',
         'frontend/chromaKeyPlugin',
         'frontend/voiceControlPlugin',
-        'frontend/miaPlugin'
+        'frontend/miaPlugin',
+        'frontend/yashPlugin'
 
     ],
 
@@ -37,7 +38,7 @@ require(['jsnlog/js/jsnlog.min',
 
         Location, Locations, Video, Videos,
 
-        OverlayPlugin, ChromaKeyPlugin, VoiceControlPlugin, MiaPlugin) {
+        OverlayPlugin, ChromaKeyPlugin, VoiceControlPlugin, MiaPlugin, YashPlugin) {
         (function setupJSNLog() {
             var consoleAppender = JL.createConsoleAppender('consoleAppender');
             JL()
@@ -226,6 +227,10 @@ require(['jsnlog/js/jsnlog.min',
                     socket: frontend.socket,
                     object3Ds: overlayPlugin.object3Ds,
                     updateOverlay: overlayPlugin.updateOverlay
+                });
+
+                var yashPlugin = new YashPlugin({
+                    something: 0815
                 });
             });
     }

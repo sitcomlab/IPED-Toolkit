@@ -9,14 +9,17 @@ module.exports = function(grunt) {
         'public/frontend/remote.html'                       : 'src/frontend/remote.html',
         'public/frontend/webRTC.html'                       : 'src/frontend/webRTC.html',
         'public/frontend/js/frontend.js'                    : 'src/frontend/js/frontend.js',
-        'public/frontend/js/overlayPlugin.js'               : 'src/frontend/js/overlayPlugin.js',
-        'public/frontend/js/chromaKeyPlugin.js'             : 'src/frontend/js/chromaKeyPlugin.js',
-        'public/frontend/js/voiceControlPlugin.js'          : 'src/frontend/js/voiceControlPlugin.js',
-        'public/frontend/js/miaPlugin.js'                   : 'src/frontend/js/miaPlugin.js',
         'public/frontend/js/remote.js'                      : 'src/frontend/js/remote.js',
         'public/frontend/js/webRTC.js'                      : 'src/frontend/js/webRTC.js',
         'public/frontend/css/frontend.css'                  : 'src/frontend/css/frontend.css',
         'public/frontend/css/microphone.css'                : 'src/frontend/css/microphone.css',
+        // Frontend plugins
+        'public/frontend/js/overlayPlugin.js'               : 'src/frontend/js/overlayPlugin.js',
+        'public/frontend/js/chromaKeyPlugin.js'             : 'src/frontend/js/chromaKeyPlugin.js',
+        'public/frontend/js/voiceControlPlugin.js'          : 'src/frontend/js/voiceControlPlugin.js',
+        'public/frontend/js/miaPlugin.js'                   : 'src/frontend/js/miaPlugin.js',
+        'public/frontend/js/yashPlugin.js'                  : 'src/frontend/js/yashPlugin.js',
+        
                                                             
         // Remote                                           
         'public/remote/index.html'                          : 'src/remote/index.html',
