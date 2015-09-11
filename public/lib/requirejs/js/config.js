@@ -41,6 +41,16 @@ var requireConfig = {
       deps: ['threejs/js/three.min'],
       exports: 'TransformControls'
     },
+    'physijs/js/physi': {
+      deps: ['threejs/js/three.min'],
+      exports: 'Physijs'
+    },
+    'physijs/js/physijs_worker': {
+      exports: 'Physijs_Worker'
+    },
+    'physijs/js/ammo': {
+      exports: 'Ammojs'
+    },
     'seriouslyjs/js/seriously': {
       exports: 'Seriously'
     },

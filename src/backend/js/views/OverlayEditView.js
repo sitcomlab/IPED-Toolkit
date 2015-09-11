@@ -57,7 +57,6 @@ define(['backbonejs/js/backbone',
                                 .css('width', '100%');
 
                             thiz.overlayPlugin = new OverlayPlugin({
-                                parent: thiz.backend,
                                 overlays: overlays,
                                 showUI: true
                             });

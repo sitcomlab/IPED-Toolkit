@@ -6,14 +6,20 @@
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
-define(['threejs/js/three.min',
+define(['backbonejs/js/backbone',
+        'threejs/js/three.min',
         'threejs/js/Detector',
         'threejs/js/CSS3DRenderer',
         'threejs/js/TransformControls',
-        'underscorejs/js/underscore'
+        'physijs/js/physi',
+        'underscorejs/js/underscore',
+        'socketio/js/socket.io'
     ],
 
-    function(THREE, Detector, CSS3DRenderer, TransformControls, Underscore) {
+    function(Backbone, THREE, Detector, CSS3DRenderer, TransformControls, Physij, Underscore, Socketio) {
+
+        Physijs.scripts.worker = '/lib/physijs/js/physijs_worker.js';
+        Physijs.scripts.ammo = '/lib/physijs/js/ammo.js';
 
         /**
          * The Backbone.js model of a location
@@ -49,9 +55,9 @@ define(['threejs/js/three.min',
             JL('IPED Toolkit.OverlayPlugin')
                 .info('OverlayPlugin loaded');
 
-            this.socket = opts.socket;
+            this.socket = opts.socket ||  Socketio();
+            this.overlays = opts.overlays || null;
 
-            this.overlays = null;
             this.jqueryElement = null;
             this.isRunning = true;
             this.video = null;
@@ -66,7 +72,9 @@ define(['threejs/js/three.min',
             this.gridhelper = '';
             this.scene = '';
             this.cssScene = '';
+            this.collisionScene = '';
             this.renderer = '';
+            this.collisionRenderer = '';
             this.cssRenderer = '';
             this.videos = new Array();
             this.videoTextures = new Array();
@@ -84,6 +92,10 @@ define(['threejs/js/three.min',
 
             if (opts.location != null) {
                 this.setLocationId(opts.location.get('id'));
+            }
+
+            if (this.overlays) {
+                this.createOverlays();
             }
 
             this.enableEventListeners(true);
@@ -122,7 +134,9 @@ define(['threejs/js/three.min',
             this.gridhelper = null;
             this.scene = null;
             this.cssScene = null;
+            this.collisionScene = null;
             this.renderer = null;
+            this.collisionRenderer = null;
             this.cssRenderer = null;
             this.videos = null;
             this.videoTextures = null;
@@ -169,15 +183,26 @@ define(['threejs/js/three.min',
                     antialias: true,
                     alpha: true
                 });
+                this.collisionRenderer = new THREE.WebGLRenderer({
+                    antialias: true,
+                    alpha: true
+                });
             } else {
                 this.renderer = new THREE.CanvasRenderer();
+                this.collisionRenderer = new THREE.CanvasRenderer();
             }
             this.renderer.setSize(this.width, this.height);
+            this.collisionRenderer.setSize(this.width, this.height);
             this.renderer.domElement.style.position = 'absolute';
+            this.collisionRenderer.domElement.style.position = 'absolute';
+            this.jqueryElement.append(this.collisionRenderer.domElement);
             this.jqueryElement.append(this.renderer.domElement);
+
 
             this.cssScene = new THREE.Scene();
             this.scene = new THREE.Scene();
+            this.collisionScene = new Physijs.Scene;
+            this.collisionScene.setGravity(new THREE.Vector3(0, 0, 0));
             this.gridhelper = new THREE.GridHelper(500, 100);
             this.gridhelper.setColors('#00ff00', '#00ff00');
             //this.scene.add(this.gridhelper);
@@ -256,6 +281,8 @@ define(['threejs/js/three.min',
                     .debug(thiz.overlays);
                 thiz.overlays.forEach(function(overlay) {
                     var object;
+                    var collisionObject;
+
                     switch (overlay.get('type')) {
                         case 'html':
                             var element = document.createElement('iframe');
@@ -266,6 +293,7 @@ define(['threejs/js/three.min',
 
                             object = new THREE.CSS3DObject(element);
                             thiz.cssScene.add(object);
+
                             break;
 
 
@@ -298,6 +326,7 @@ define(['threejs/js/three.min',
                             var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
+
                             break;
 
 
@@ -314,6 +343,7 @@ define(['threejs/js/three.min',
                             var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
+
                             break;
 
 
@@ -325,6 +355,7 @@ define(['threejs/js/three.min',
                             var geometry = new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d')));
                             object = new THREE.Mesh(geometry, material);
                             thiz.scene.add(object);
+
                             break;
                     }
 
@@ -339,12 +370,41 @@ define(['threejs/js/three.min',
                     object.scale.y = parseFloat(overlay.get('sy'));
                     object.scale.z = parseFloat(overlay.get('sz'));
 
+                    collisionObject = new Physijs.BoxMesh(
+                        new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d'))),
+                        //new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), 1000 * parseFloat(overlay.get('d'))),
+                        Physijs.createMaterial(
+                            new THREE.MeshBasicMaterial({
+                                color: 0x888888
+                            }),
+                            .8, // high friction
+                            .3 // low restitution
+                        ),
+                        0
+                    );
+                    collisionObject._object = object;
+                    collisionObject.position.x = parseFloat(overlay.get('x'));
+                    collisionObject.position.y = parseFloat(overlay.get('y'));
+                    collisionObject.position.z = parseFloat(overlay.get('z'));
+                    collisionObject.rotation.x = parseFloat(overlay.get('rx'));
+                    collisionObject.rotation.y = parseFloat(overlay.get('ry'));
+                    collisionObject.rotation.z = parseFloat(overlay.get('rz'));
+                    collisionObject.scale.x = parseFloat(overlay.get('sx'));
+                    collisionObject.scale.y = parseFloat(overlay.get('sy'));
+                    collisionObject.scale.z = parseFloat(overlay.get('sz'));
+                    object._collisionObject = collisionObject;
+                    collisionObject.addEventListener('collision', function(other_object, relative_velocity, relative_rotation, contact_normal) {
+                        console.log('######## COLLISION ###########');
+                    });
+                    thiz.collisionScene.add(collisionObject);
+
+
                     var n = thiz.controls.push(new THREE.TransformControls(thiz.camera, thiz.renderer.domElement)) - 1;
                     thiz.controls[n].addEventListener('change', thiz.updateOverlay);
                     thiz.controls[n].attach(object);
                     //thiz.scene.add(thiz.controls[n]);
 
-                    thiz.object3Ds.push(object);
+                    thiz.object3Ds.push(collisionObject);
                     $(document)
                         .trigger('[OverlayPlugin]createOverlay', object);
                 });
@@ -448,6 +508,9 @@ define(['threejs/js/three.min',
             if (this.renderer) {
                 this.renderer.setSize(this.width, this.height);
             }
+            if (this.collisionRenderer) {
+                this.collisionRenderer.setSize(this.width, this.height);
+            }
 
             if (this.render) {
                 this.render();
@@ -459,6 +522,7 @@ define(['threejs/js/three.min',
          */
         OverlayPlugin.prototype.updateOverlay = function(event) {
             var overlay = event.target.object._overlay;
+            var collisionObject = event.target.object._collisionObject;
             var position = event.target.object.position;
             var rotation = event.target.object.rotation;
             var scale = event.target.object.scale;
@@ -466,14 +530,25 @@ define(['threejs/js/three.min',
             overlay.set('x', position.x);
             overlay.set('y', position.y);
             overlay.set('z', position.z);
+            collisionObject.position.x = position.x;
+            collisionObject.position.y = position.y;
+            collisionObject.position.z = position.z;
+            collisionObject.__dirtyPosition = true;
 
             overlay.set('rx', rotation.x);
             overlay.set('ry', rotation.y);
             overlay.set('rz', rotation.z);
+            collisionObject.rotation.x = rotation.x;
+            collisionObject.rotation.y = rotation.y;
+            collisionObject.rotation.z = rotation.z;
+            collisionObject.__dirtyRotation = true;
 
             overlay.set('sx', scale.x);
             overlay.set('sy', scale.y);
             overlay.set('sz', scale.z);
+            collisionObject.scale.x = scale.x;
+            collisionObject.scale.y = scale.y;
+            collisionObject.scale.z = scale.z;
 
             this.render();
         };
@@ -502,6 +577,10 @@ define(['threejs/js/three.min',
                 });
             }
 
+            if (this.collisionScene) {
+                this.collisionScene.simulate();
+            }
+
             if (this.cssRenderer) {
                 this.cssRenderer.render(this.cssScene, this.camera);
             }
@@ -509,6 +588,12 @@ define(['threejs/js/three.min',
             if (this.renderer) {
                 this.renderer.render(this.scene, this.camera);
             }
+
+            /*
+            if (this.collisionRenderer) {
+                this.collisionRenderer.render(this.collisionScene, this.camera);
+            }
+            */
 
             $(document)
                 .trigger('[OverlayPlugin]render');

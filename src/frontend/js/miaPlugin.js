@@ -6,9 +6,15 @@
  * Institute for Geoinformatics (ifgi), University of Münster
  */
 
-define(['underscorejs/js/underscore'],
+define(['underscorejs/js/underscore',
+        //'physijs/js/physi'
+    ],
 
-    function(Underscore) {
+    function(Underscore, Physijs, Physijs_Worker) {
+
+        //Physijs.scripts.worker = '../lib/physijs/js/physijs_worker.js';
+        //Physijs.scripts.ammo = '../lib/physijs/js/ammo.js';
+
 
         /**
          * MIA Plugin constructor
@@ -20,11 +26,12 @@ define(['underscorejs/js/underscore'],
             JL('IPED Toolkit.MiaPlugin')
                 .info('MiaPlugin loaded');
 
-            this.MOVE_BY = 10;
+            this.MOVE_BY = 100;
             this.socket = opts.socket;
             this.avatarObject = null;
+            this.updateOverlay = opts.updateOverlay;
 
-            _.bindAll(this, 'onKeyDown');
+            _.bindAll(this, 'onKeyDown', 'onKeyUp');
 
             $(document)
                 .on('[OverlayPlugin]createOverlay', function(event, object) {
@@ -46,6 +53,14 @@ define(['underscorejs/js/underscore'],
                 .forEach(function(element, index, array) {
                     if (element.indexOf('isMiaAvatar') != -1) {
                         thiz.avatarObject = object;
+                        thiz.avatarObject._collisionObject.mass = 1;
+
+                        $(document)
+                            .on('[OverlayPlugin]render', function(event) {
+                                thiz.avatarObject.position.set(thiz.avatarObject._collisionObject.position.x,
+                                    thiz.avatarObject._collisionObject.position.y,
+                                    thiz.avatarObject._collisionObject.position.z);
+                            });
                     }
                 }, thiz);
         };
@@ -117,9 +132,18 @@ define(['underscorejs/js/underscore'],
         MiaPlugin.prototype.enableEventListeners = function(enabled) {
             if (enabled) {
                 window.addEventListener('keydown', this.onKeyDown);
+                window.addEventListener('keyup', this.onKeyUp);
             } else {
                 window.removeEventListener('keydown', this.onKeyDown);
+                window.removeEventListener('keyup', this.onKeyUp);
             }
+        };
+
+        MiaPlugin.prototype.onKeyUp = function(event) {
+            this.avatarObject._collisionObject.setAngularFactor(new THREE.Vector3(0, 0, 0));
+            this.avatarObject._collisionObject.setAngularVelocity(new THREE.Vector3(0, 0, 0));
+            this.avatarObject._collisionObject.setLinearFactor(new THREE.Vector3(0, 0, 0));
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(0, 0, 0));
         };
 
         MiaPlugin.prototype.onKeyDown = function(event) {
@@ -146,45 +170,27 @@ define(['underscorejs/js/underscore'],
         };
 
         MiaPlugin.prototype.moveUp = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.y += this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(0, this.MOVE_BY, 0));
         }
 
         MiaPlugin.prototype.moveDown = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.y -= this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(0, -this.MOVE_BY, 0));
         }
 
         MiaPlugin.prototype.moveLeft = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.x -= this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(-this.MOVE_BY, 0, 0));
         }
 
         MiaPlugin.prototype.moveRight = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.x += this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(this.MOVE_BY, 0, 0));
         }
 
         MiaPlugin.prototype.moveBackward = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.z -= this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(0, 0, -this.MOVE_BY));
         }
 
         MiaPlugin.prototype.moveForward = function() {
-            if (!this.avatarObject) {
-                return;
-            }
-            this.avatarObject.position.z += this.MOVE_BY;
+            this.avatarObject._collisionObject.setLinearVelocity(new THREE.Vector3(0, 0, this.MOVE_BY))
         }
 
         return MiaPlugin;

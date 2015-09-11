@@ -224,7 +224,8 @@ require(['jsnlog/js/jsnlog.min',
                 */
                 var miaPlugin = new MiaPlugin({
                     socket: frontend.socket,
-                    object3Ds: overlayPlugin.object3Ds
+                    object3Ds: overlayPlugin.object3Ds,
+                    updateOverlay: overlayPlugin.updateOverlay
                 });
             });
     }
