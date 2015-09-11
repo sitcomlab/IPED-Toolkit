@@ -371,7 +371,7 @@ define(['backbonejs/js/backbone',
                     object.scale.z = parseFloat(overlay.get('sz'));
 
                     collisionObject = new Physijs.BoxMesh(
-                        new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), parseFloat(overlay.get('d'))),
+                        new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), 10 * parseFloat(overlay.get('d'))),
                         //new THREE.BoxGeometry(parseFloat(overlay.get('w')), parseFloat(overlay.get('h')), 1000 * parseFloat(overlay.get('d'))),
                         Physijs.createMaterial(
                             new THREE.MeshBasicMaterial({
