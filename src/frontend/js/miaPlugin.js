@@ -43,6 +43,18 @@ define(['underscorejs/js/underscore',
                 });
             }
 
+            $(document)
+                .on('[OverlayPlugin]collision', function(event, object) {
+                    if (thiz.avatarObject._collisionObject.uuid != object.other_object.object2.uuid) {
+                        var otherObject = object.other_object.object2._object.element;
+                        otherObject.src = "https://giv-sitcomlab.uni-muenster.de:8445/mia2.html";
+
+                        setTimeout(function() {
+                            otherObject.src = "https://giv-sitcomlab.uni-muenster.de:8445/mia1.html";
+                        }, 5000);
+                    }
+                });
+
             this.initialize();
         }
 

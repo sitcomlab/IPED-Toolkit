@@ -394,7 +394,13 @@ define(['backbonejs/js/backbone',
                     collisionObject.scale.z = parseFloat(overlay.get('sz'));
                     object._collisionObject = collisionObject;
                     collisionObject.addEventListener('collision', function(other_object, relative_velocity, relative_rotation, contact_normal) {
-                        console.log('######## COLLISION ###########');
+                        $(document)
+                            .trigger('[OverlayPlugin]collision', {
+                                other_object: other_object,
+                                relative_velocity: relative_velocity,
+                                relative_rotation: relative_rotation,
+                                contact_normal: contact_normal
+                            });
                     });
                     thiz.collisionScene.add(collisionObject);
 
