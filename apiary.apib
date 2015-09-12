@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
-# IPED-Toolkit-API (v4.0)
+# IPED-Toolkit-API (v3.2)
 
 # Group Hosts
 * HOST-OFFICIAL-HTTP ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
@@ -86,230 +86,13 @@ e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a f
 It is possible to write a comments to discuss the API-Specification on Apiary. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function and click the 
 **Add comment**-Button on the right side of the box.
 
-# Group Scenarios
 
-## Locations Collection [/api/scenarios]
-### List all Scenarios [GET]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-            [
-                {
-                    "id":800,
-                    "name":"Münster - Innenstadt",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "ULB",
-                        "Krummer Timpen"
-                    ]
-                },
-                {
-                    "id":801,
-                    "name":"Münster - Hauptbhahnhof",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "HBF"
-                    ]
-                }
-            ]
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-
-### Create a Scenario [POST]
-(Status: **in design**, Developer: Nicho)
-
-<u>**Required properties**</u>:
-
-- `name` **String** (can not be empty; example: *"Münster - Hauptbhahnhof"*)
-- `description` **String** (can be empty; example: *"Videos in der Umgebnung des Hauptbhahnhofs"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "HBF", "Bahnhof"]*)
-
-+ Request (application/json)
-
-    + Body
-    
-                {
-                    "name":"Münster - Hauptbhahnhof",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "HBF"
-                    ]
-                }
-
-+ Response 201 (application/json)
-
-            {
-                "id":801,
-                "name":"Münster - Hauptbhahnhof",
-                "description":"",
-                "tags":[
-                    "Münster",
-                    "HBF"
-                ]
-            }
-
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-## Scenario [/api/scenarios/{s_id}]
-A single Scenario object with all its details
-
-+ Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-
-### Retrieve a Scenario [GET]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-        {
-            "id":801,
-            "name":"Münster - Hauptbhahnhof",
-            "description":"",
-            "tags":[
-                "Münster",
-                "HBF"
-            ]
-        }
-
-### Edit a Location [PUT]
-(Status: **implemented**, Developer: Nicho)
-
-<u>**Changeable properties**</u>
-
->**Note**: A minimum of one property is required.
-
-- `name` **String** (can not be empty; example: *"Münster - Hauptbhahnhof 2"*)
-- `description` **String** (can be empty; example: *"Videos in der Umgebung des Hauptbahnhofs"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Münster", "HBF", "Bahnhof"]*)
-
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
-
-- `id` **Integer** (can not be empty; Example: *801*)
-
-+ Request (application/json)
-
-    + Body
-    
-            {
-                "name":"Münster - Hauptbhahnhof",
-                "description":"Videos in der Umgebung des Hauptbahnhofs",
-                "tags":[
-                    "Münster",
-                    "HBF"
-                ]
-            }
-            
-
-+ Response 201 (application/json)
-
-        {
-            "id":801,
-            "name":"Münster - Hauptbhahnhof",
-            "description":"Videos in der Umgebung des Hauptbahnhofs",
-            "tags":[
-                "Münster",
-                "HBF"
-            ]
-        }
-        
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-        
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-### Remove a Scenario [DELETE]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 204
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
 
 # Group Locations
 
-## Locations Collection [/api/scenarios/{s_id}/locations]
-
-+ Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-
+## Locations Collection [/api/locations]
 ### List all Locations [GET]
-(Status: **in design**, Developer: Nicho)
+(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -473,13 +256,12 @@ A single Scenario object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Location [/api/scenarios/{s_id}/locations/{l_id}]
+## Location [/api/locations/{id}]
 A single Location object with all its details
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `4`) ... `id` of a **Location**
-   
+    + id (required, Interger, `4`) ... `id` of a **Location**
+
 ### Retrieve a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
@@ -529,7 +311,8 @@ A single Location object with all its details
         Message: <Errormessage>
 
 ### Edit a Location [PUT]
-(Status: **in design**, Developer: Nicho)
+(Status: **implemented**, Developer: Nicho)
+
 
 <u>**Changeable properties**</u>
 
@@ -620,7 +403,7 @@ A single Location object with all its details
         Message: <Errormessage>
 
 ### Remove a Location [DELETE]
-(Status: **in design**, Developer: Nicho)
+(Status: **implemented**, Developer: Nicho)
 
 + Response 204
 
@@ -639,11 +422,10 @@ A single Location object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/locations]
+## Relations of a Location [/api/locations/{id}/locations]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
+    + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all related Locations of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
@@ -703,7 +485,7 @@ A single Location object with all its details
 ## Videos Collection [/api/videos]
 
 ### List all Videos [GET]
-(Status: **in design**, Developer: Nicho)
+(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -914,12 +696,11 @@ A single Video object with all details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/videos]
+## Relations of a Location [/api/locations/{id}/videos]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
- 
+    + id (required, Interger, `699`) ... `id` of a **Location**
+
 ### Retrieve all Videos of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
@@ -1249,12 +1030,11 @@ A single Overlay object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/overlays]
+## Relations of a Location [/api/locations/{id}/overlays]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
- 
+    + id (required, Interger, `699`) ... `id` of a **Location**
+
 ### Retrieve all Overlays of a Location [GET]
 (Status: **implemented**, Developer: Nicho)
 
