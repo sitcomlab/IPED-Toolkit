@@ -9,30 +9,22 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 * HOST-OFFICIAL-HTTPS ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8444](http://giv-sitcomlab.uni-muenster.de:8444)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
 
-#### Allowed HTTPs requests:
-* `GET` - Get a resource or list of resources
-* `POST` - To create or update resource
-* `PUT` - To create or update resource
-* `DELETE` - To delete resource
+#### Allowed HTTP requests:
 
-#### Description of Server Responses:
+| METHODE | Description |
+|----------|----------|
+| `GET` | Get a resource or list of resources |
+| `POST` | To create or update resource |
+| `PUT` | To create or update resource |
+| `DELETE` | To delete resource |
 
-##### 2XX (Successfull)
-* **200** `OK` - the request was successful (some API calls may return 201 instead).
-* **201** `Created` - the request was successful and a resource was created.
-* **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
+#### Server Responses:
+| CODE | STATUS | Description |
+|----------|----------|----------|
+|`200`| `OK` | the request was successfull |
+|`201`| `CREATED` |  the request was successfull and a resource was created |
+|`500`| `INTERNAL SERVER ERROR` | the request is unavailable |
 
-##### 4XX (Errors) 
-* **400** `Bad Request` - the request could not be understood or was missing required parameters.
-* **401** `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
-* **403** `Forbidden` - access denied.
-* **404** `Not Found` - resource was not found.
-* **405** `Method Not Allowed` - requested method is not supported for resource.
-* **406** `Not Acceptable` - the requested resource is only capable of generating content not acceptable according to the Accept headers sent in the request.
-
-##### 5XX (Server Problems)
-* **500** `Internal Server Error` - the request is unavailable
-* **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
 # Group Browser and Videoformats
 The application runs only in the 2 Browser below. If you upload videos on the server, please make sure that you upload:
@@ -57,29 +49,9 @@ The application will check the browser and will pick the right videoformat autom
 
 >**Note**: only for the API-Specification on Apiary.io
 
-#### API-Status options:
-* **implemented** \[+]: Implementation on official Server is finished and works
-* **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
-* **in progress** \[+]: Design is finished and the functions will be implemented on official Server at the moment
-* **not yet implemented** :  Design is finished, but not yet implemented on official Server, but is planned
-* **in design** :  The Starting point, designing the function in this tool
-
->**Note**: Please write your name, after the following status **\[+]**, so it is possible to see, how works on which part,
-e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
-
 #### API-Example of the blueprint code:
 * for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
 * for API-Syntax check out the **Blueprint-Documenation**: [http://apiblueprint.org](http://apiblueprint.org)
-
-```
-### List all Locations [GET]
-
-(Status: **implemented**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-(...)
-```
 * for a good example of the API-Syntax check out the **GoodData API** ([http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)) with the corresponding Markdownfile *apiary.apib* in the GitHub-Respository ([https://github.com/gooddata/gooddata-api-docs.git](https://github.com/gooddata/gooddata-api-docs.git)).
 
 #### API-Comments:
@@ -87,12 +59,10 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 **Add comment**-Button on the right side of the box.
 
 
-
 # Group Locations
 
 ## Locations Collection [/api/locations]
 ### List all Locations [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -172,18 +142,19 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 
 
 ### Create a Location [POST]
-(Status: **implemented**, Developer: Nicho)
 
-<u>**Required properties**</u>:
+<u>**Required properties:**</u>
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
-- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
+| `tags[]` | <b>String []</b> | yes | | `[]` | `["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
+| `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
+| `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[ ]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[ ]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
 
 + Request (application/json)
