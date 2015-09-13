@@ -5,6 +5,7 @@ HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
 # Group Hosts
 * HOST-OFFICIAL-HTTP ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
+* HOST-OFFICIAL-HTTPS ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8443](http://giv-sitcomlab.uni-muenster.de:8443)
 * HOST-OFFICIAL-HTTP ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
 * HOST-OFFICIAL-HTTPS ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8444](http://giv-sitcomlab.uni-muenster.de:8444)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
@@ -152,9 +153,9 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 | `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
 | `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
 | `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
-| `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
-| `videos[ ]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
-| `overlays[ ]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
+| `relatedLocations[]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
 
 + Request (application/json)
@@ -257,9 +258,9 @@ A single Location object with all its details
 | `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
 | `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
 | `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
-| `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
-| `videos[ ]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
-| `overlays[ ]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
+| `relatedLocations[]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
 <u>**Optional properties**</u> (not neccessary, but acceptable):
 
@@ -875,7 +876,8 @@ A single Overlay object with all its details
         
 # Group Relationship-Weighting
 
-Relationship-weighting was used in the **Voice-Control-System**.
+Relationship-weighting was used in the **Voice-Control-System**. All usable intents (voice-commands) can be found on [http://wit.ai](http://wit.ai).
+For access or questions about the system, please contact a member of the *Situated Computing and Interaction Lab*.
 
 ## Relationship [/api/relationships/{id}]
 
@@ -902,7 +904,7 @@ Relationship-weighting was used in the **Voice-Control-System**.
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
-| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
 
 <u>**Optional properties**</u> (not neccessary, but acceptable):
 
@@ -966,7 +968,7 @@ Relationship-weighting was used in the **Voice-Control-System**.
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
-| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
 
 
 + Request (application/json)
@@ -995,7 +997,7 @@ Relationship-weighting was used in the **Voice-Control-System**.
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
-| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
 
 <u>**Optional properties**</u> (not neccessary, but acceptable):
 
