@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
-# IPED-Toolkit-API (v3.2)
+# IPED-Toolkit-API (v3.3)
 
 # Group Hosts
 * HOST-OFFICIAL-HTTP ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
@@ -406,8 +406,8 @@ A single Location object with all its details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
-| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag"]`|
-| `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Bei Tag"]`|
+| `date` | <b>String</b> | yes | - has to be the form: <br> **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
 | `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
 <u>**ATTENTION**</u>: <br>
@@ -480,8 +480,8 @@ A single Video object with all details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
-| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
-| `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Bei Tag"]` |
+| `date` | <b>String</b> | yes | - has to be the form: <br> **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
 | `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
 <u>**Optional properties**</u> (not neccessary, but acceptable):
@@ -874,6 +874,8 @@ A single Overlay object with all its details
         Message: <Errormessage>
         
 # Group Relationship-Weighting
+
+Relationship-weighting was used in the **Voice-Control-System**.
 
 ## Relationship [/api/relationships/{id}]
 
