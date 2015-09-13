@@ -143,7 +143,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 
 ### Create a Location [POST]
 
-<u>**Required properties:**</u>
+<u>**Required properties**</u>:
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
@@ -248,7 +248,7 @@ A single Location object with all its details
 
 ### Edit a Location [PUT]
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
@@ -261,8 +261,7 @@ A single Location object with all its details
 | `videos[ ]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
 | `overlays[ ]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
-<u>**Optional properties**</u>
->**Note**: The following properties are not neccessary, but acceptable.
+<u>**Optional properties**</u> (not neccessary, but acceptable):
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
@@ -401,7 +400,7 @@ A single Location object with all its details
 
 ### Create a Video [POST]
 
-<u>**Required properties**</u>
+<u>**Required properties**</u>:
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
@@ -411,7 +410,7 @@ A single Location object with all its details
 | `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
 | `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
-<u>**ATTENTION:**</u><br>
+<u>**ATTENTION**</u>: <br>
 - The URL of the video does not contain the datatype at the end:
 - `/media/video/task_03.mp4` is wrong
 - `/media/video/task_03` is correct
@@ -475,7 +474,7 @@ A single Video object with all details
 
 ### Edit a Video [PUT]
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
 | Property | Datatype | Can be empty | Condition | Options | Example |
 |----------|----------|----------|----------|----------|----------|
@@ -485,19 +484,20 @@ A single Video object with all details
 | `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
 | `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
-<u>**ATTENTION:**</u><br>
+<u>**Optional properties**</u> (not neccessary, but acceptable):
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `36` |
+
+<u>**ATTENTION**</u>:<br>
 - The URL of the video does not contain the datatype at the end:
 - `/media/video/task_03.mp4` is wrong
 - `/media/video/task_03` is correct
 - If your videos are located on the same server, please reach them by the shorter URL `/media/video/task_03` instead of the global URL `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03` **to provide CROSS-ORIGIN-issues** in your Browser
 - Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document.
 
-<u>**Optional properties**</u>
->**Note**: The following properties are not neccessary, but acceptable.
 
-| Property | Datatype | Can be empty | Condition | Options | Example |
-|----------|----------|----------|----------|----------|----------|
-| `id` | <b>Integer</b> | no | | | `36` |
 
 
 + Request (application/json)
@@ -573,27 +573,31 @@ A single Video object with all details
         
         [
             {
-                "id": 23,
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
                 "tags": [
-                    "video",
-                    "test"
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "d": 0,
                 "type": "html",
-                "url": "https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "h": 600,
-                "w": 800,
-                "rz": 0,
-                "description": "Video Overlay Test",
-                "name": "Video Overlay",
-                "z": 0,
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
                 "rx": 0,
-                "y": 0,
                 "ry": 0,
-                "x": 100
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
         ]
-
+        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -603,67 +607,80 @@ A single Video object with all details
 
 <u>**Required properties**</u>:
 
-- `name` **String** (can not be empty; example: *"1st Public Display"*)
-- `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
-- `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
-- `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Nachrichten"` |
+| `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage", "WWU", "News"]` |
+| `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
+| `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
+| `w` | <b>Number</b> | no | | | `700` |
+| `h` | <b>Number</b> | no | | | `500` |
+| `x` | <b>Number</b> | no | | | `0` |
+| `y` | <b>Number</b> | no | | | `0` |
+| `z` | <b>Number</b> | no | | | `0` |
+| `d` | <b>Number</b> | no | | | `1` |
+| `rx` | <b>Number</b> | no | | | `0` |
+| `ry` | <b>Number</b> | no | | | `0` |
+| `rz` | <b>Number</b> | no | | | `0` |
+| `sx` | <b>Number</b> | no | | | `1` |
+| `sy` | <b>Number</b> | no | | | `1` |
+| `sz` | <b>Number</b> | no | | | `1` |
 
 + Request (application/json)
 
     + body 
     
-            {   
-                "name":"Video Overlay",
-                "description":"Video Overlay Test",
-                "tags":[
-                    "video",
-                    "test"
+            {
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "w":800,
-                "h":600,
-                "x":100,
-                "y":0,
-                "z":0,
-                "d":0,
-                "rx":0,
-                "ry":0,
-                "rz":0
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
 
 + Response 201 (application/json)
 
-        {   
-            "id":23,
-            "name":"Video Overlay",
-            "description":"Video Overlay Test",
-            "tags":[
-                "video",
-                "test"
-            ],
-            "type":"html",
-            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "w":800,
-            "h":600,
-            "x":100,
-            "y":0,
-            "z":0,
-            "d":0,
-            "rx":0,
-            "ry":0,
-            "rz":0
-        }
+            {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
+                ],
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
+            }
 
 + Response 500 (text/plain)
 
@@ -674,7 +691,7 @@ A single Video object with all details
 A single Overlay object with all its details
 
 + Parameters
-   + id (required, Interger, `23`) ... `id` of an **Overlay**
+   + id (required, Interger, `59`) ... `id` of an **Overlay**
 
 ### Retrieve an Overlay [GET]
 
@@ -683,24 +700,28 @@ A single Overlay object with all its details
     + Body
 
             {
-                "id":23,
-                "name":"Video Overlay",
-                "description":"Video Overlay Test",
-                "tags":[
-                    "video",
-                    "test"
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "w":800,
-                "h":600,
-                "x":100,
-                "y":0,
-                "z":0,
-                "d":0,
-                "rx":0,
-                "ry":0,
-                "rz":0
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
             
 + Response 500 (text/plain)
@@ -710,67 +731,89 @@ A single Overlay object with all its details
 
 ### Edit an Overlay [PUT]
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Nachrichten"` |
+| `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage", "WWU", "News"]` |
+| `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
+| `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
+| `w` | <b>Number</b> | no | | | `700` |
+| `h` | <b>Number</b> | no | | | `500` |
+| `x` | <b>Number</b> | no | | | `0` |
+| `y` | <b>Number</b> | no | | | `0` |
+| `z` | <b>Number</b> | no | | | `0` |
+| `d` | <b>Number</b> | no | | | `1` |
+| `rx` | <b>Number</b> | no | | | `0` |
+| `ry` | <b>Number</b> | no | | | `0` |
+| `rz` | <b>Number</b> | no | | | `0` |
+| `sx` | <b>Number</b> | no | | | `1` |
+| `sy` | <b>Number</b> | no | | | `1` |
+| `sz` | <b>Number</b> | no | | | `1` |
 
-- `name` **String** (can not be empty; example: *"1st Public Display"*)
-- `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
-- `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
-- `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+<u>**Optional properties**</u> (not neccessary, but acceptable):
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
-
-- `id` **Integer** (can not be empty; Example: *23*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `59` |
 
 + Request (application/json)
 
     + body 
     
-            {   
-                "name":"Video Overlay 2",
-                "description":"Video Overlay Test 2",
-                "tags":[
-                    "video",
-                    "test"
+            {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
 
 + Response 201 (application/json)
 
-        {   
-            "id":23,
-            "name":"Video Overlay 2",
-            "description":"Video Overlay Test 2",
-            "tags":[
-                "video",
-                "test"
-            ],
-            "type":"html",
-            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "w":800,
-            "h":600,
-            "x":100,
-            "y":0,
-            "z":0,
-            "d":0,
-            "rx":0,
-            "ry":0,
-            "rz":0
-        }
+        {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
+                ],
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
+            }
         
 + Response 500 (text/plain)
 
@@ -800,24 +843,28 @@ A single Overlay object with all its details
     
             [
                 {
+                    "id": 59,
+                    "name": "Nachrichten",
+                    "description": "Uni Muenster Homepage",
                     "tags": [
-                        "video",
-                        "test"
+                        "Webpage", 
+                        "WWU", 
+                        "News"
                     ],
-                    "rz": 0,
-                    "w": 800,
-                    "d": 0,
-                    "description": "Video Overlay Test",
-                    "name": "Video Overlay",
                     "type": "html",
-                    "z": 0,
-                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/room/main",
-                    "y": 0,
+                    "url": "http://www.uni-muenster.de/de/",
+                    "w": 700,
+                    "h": 575,
+                    "x": 547.6430973457741,
+                    "y": 323.2137010950475,
+                    "z": -228.65846681625413,
+                    "d": 1,
                     "rx": 0,
-                    "h": 600,
-                    "x": 100,
                     "ry": 0,
-                    "id": 721
+                    "rz": 0,
+                    "sx": 1,
+                    "sy": 1,
+                    "sz": 1
                 }
             ]
 
