@@ -149,7 +149,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
-| `tags[]` | <b>String []</b> | yes | | `[]` | `["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Trattoria", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
 | `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
 | `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
 | `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
@@ -198,30 +198,6 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
             "overlays": []
         }
 
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -234,7 +210,6 @@ A single Location object with all its details
     + id (required, Interger, `4`) ... `id` of a **Location**
 
 ### Retrieve a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -266,42 +241,33 @@ A single Location object with all its details
                 ]
             }
             
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!        
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Edit a Location [PUT]
-(Status: **implemented**, Developer: Nicho)
-
 
 <u>**Changeable properties**</u>
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
+| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Trattoria", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
+| `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
+| `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[ ]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[ ]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
-- `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
-- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
-- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+<u>**Optional properties**</u>
+>**Note**: The following properties are not neccessary, but acceptable.
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | not changebale | | `4` |
 
-- `id` **Integer** (can not be empty; Example: *4*)
 
 + Request (application/json)
 
@@ -340,53 +306,14 @@ A single Location object with all its details
                 "overlays": []
         }
         
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Remove a Location [DELETE]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 204
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
@@ -399,7 +326,6 @@ A single Location object with all its details
     + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all related Locations of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -435,16 +361,6 @@ A single Location object with all its details
                 }
             ]
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -456,7 +372,6 @@ A single Location object with all its details
 ## Videos Collection [/api/videos]
 
 ### List all Videos [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -485,15 +400,24 @@ A single Location object with all its details
         Message: <Errormessage>     
 
 ### Create a Video [POST]
-(Status: **implemented**, Developer: Nicho)
 
-<u>**Required properties**</u>:
+<u>**Required properties**</u>
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
-- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
+
+<u>**ATTENTION:**</u><br>
+- The URL of the video does not contain the datatype at the end:
+- `/media/video/task_03.mp4` is wrong
+- `/media/video/task_03` is correct
+- If your videos are located on the same server, please reach them by the shorter URL `/media/video/task_03` instead of the global URL `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03` **to provide CROSS-ORIGIN-issues** in your Browser
+- Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document.
+
 
 + Request (application/json)
 
@@ -503,7 +427,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url": "/media/video/task_03",
                 "tags":[]
             }
 
@@ -514,28 +438,10 @@ A single Location object with all its details
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "url":"/media/video/task_03",
             "tags":[]
         }
         
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-        
-        Error: The value of the property "url" is not a valid URL!
-        
-        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
-        
-        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -548,7 +454,6 @@ A single Video object with all details
    + id (required, Interger, `36`) ... `id` of a **Video**
 
 ### Retrieve a video [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -559,19 +464,9 @@ A single Video object with all details
                 "description":"Frauenstraße bei Tag",
                 "name":"Frauenstraße2",
                 "date":"",
-                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url":"/media/video/task_03",
                 "tags":[]
             }
-            
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -579,22 +474,31 @@ A single Video object with all details
         Message: <Errormessage>
 
 ### Edit a Video [PUT]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Changeable properties**</u>
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
-- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
+<u>**ATTENTION:**</u><br>
+- The URL of the video does not contain the datatype at the end:
+- `/media/video/task_03.mp4` is wrong
+- `/media/video/task_03` is correct
+- If your videos are located on the same server, please reach them by the shorter URL `/media/video/task_03` instead of the global URL `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03` **to provide CROSS-ORIGIN-issues** in your Browser
+- Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document.
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
+<u>**Optional properties**</u>
+>**Note**: The following properties are not neccessary, but acceptable.
 
-- `id` **Integer** (can not be empty; Example: *36*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `36` |
+
 
 + Request (application/json)
 
@@ -612,56 +516,19 @@ A single Video object with all details
             "description":"Frauenstraße bei Nacht",
             "name":"Frauenstraße 2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "url":"/media/video/task_03",
             "tags":[]
         }
         
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-        
-        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
-        
-        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Remove a Video [DELETE]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 204
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -673,7 +540,6 @@ A single Video object with all details
     + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all Videos of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -688,20 +554,10 @@ A single Video object with all details
                     "description": "Schlossplatz bei Tag",
                     "name": "Schlossplatz",
                     "date": "No date available",
-                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/media/video/task_01",
+                    "url": "/media/video/task_01",
                     "id": 711
                 }
             ]
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
@@ -712,7 +568,6 @@ A single Video object with all details
 
 ## Overlays Collection [/api/overlays]
 ### List all Overlays [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
         
@@ -745,7 +600,6 @@ A single Video object with all details
         Message: <Errormessage>
 
 ### Create an Overlay [POST]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Required properties**</u>:
 
@@ -763,7 +617,6 @@ A single Video object with all details
 - `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
 - `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
 - `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
-
 
 + Request (application/json)
 
@@ -812,24 +665,6 @@ A single Video object with all details
             "rz":0
         }
 
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -842,7 +677,6 @@ A single Overlay object with all its details
    + id (required, Interger, `23`) ... `id` of an **Overlay**
 
 ### Retrieve an Overlay [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -869,23 +703,12 @@ A single Overlay object with all its details
                 "rz":0
             }
             
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>            
 
 ### Edit an Overlay [PUT]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Changeable properties**</u>
 
@@ -949,32 +772,6 @@ A single Overlay object with all its details
             "rz":0
         }
         
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -982,20 +779,9 @@ A single Overlay object with all its details
 
 
 ### Remove an Overlay [DELETE]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 204
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -1007,7 +793,6 @@ A single Overlay object with all its details
     + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all Overlays of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -1036,17 +821,11 @@ A single Overlay object with all its details
                 }
             ]
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
+        
+# Group Relationships
+
+- To-Do -
