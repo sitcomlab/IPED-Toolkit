@@ -534,7 +534,7 @@ A single Video object with all details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/videos]
+## Videos of a Location [/api/locations/{id}/videos]
 
 + Parameters
     + id (required, Interger, `699`) ... `id` of a **Location**
@@ -611,7 +611,7 @@ A single Video object with all details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Nachrichten"` |
 | `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
-| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage", "WWU", "News"]` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage",` <br> `"WWU",` <br> `"News"]` |
 | `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
 | `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
 | `w` | <b>Number</b> | no | | | `700` |
@@ -737,7 +737,7 @@ A single Overlay object with all its details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Nachrichten"` |
 | `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
-| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage", "WWU", "News"]` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage",` <br> `"WWU",` <br> `"News"]` |
 | `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
 | `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
 | `w` | <b>Number</b> | no | | | `700` |
@@ -830,7 +830,7 @@ A single Overlay object with all its details
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/locations/{id}/overlays]
+## Overlays of a Location [/api/locations/{id}/overlays]
 
 + Parameters
     + id (required, Interger, `699`) ... `id` of a **Location**
@@ -940,7 +940,7 @@ Relationship-weighting was used in the **Voice-Control-System**.
         Error: Internal Server Error
         Message: <Errormessage> 
 
-## Relationship weighting between 2 Locations [/api/locations/{id_start}/locations/{id_end}]
+## Weighting between 2 Locations [/api/locations/{id_start}/locations/{id_end}]
 
 + Parameters
     + id_start (required, Interger, `18`) ... `id` of a **Location**
