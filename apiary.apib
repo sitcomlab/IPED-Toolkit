@@ -149,7 +149,7 @@ It is possible to write a comments to discuss the API-Specification on Apiary. L
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
-| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Trattoria", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
 | `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
 | `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
 | `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
@@ -254,7 +254,7 @@ A single Location object with all its details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
-| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Trattoria", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `tags[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
 | `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
 | `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
 | `relatedLocations[ ]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
@@ -381,7 +381,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                "url": "/media/video/task_02",
                 "tags": []
             },
             {
@@ -389,7 +389,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url": "/media/video/task_03",
                 "tags": []
             }
         ]
@@ -407,7 +407,7 @@ A single Location object with all its details
 |----------|----------|----------|----------|----------|----------|
 | `name` | <b>String</b> | no | | | `"Frauenstraße"` |
 | `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
-| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag", <br> "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster", "Frauenstraße", "Bei Tag"]`|
 | `date` | <b>String</b> | yes | - has to be the form: **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
 | `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
