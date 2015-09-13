@@ -875,4 +875,141 @@ A single Overlay object with all its details
         
 # Group Relationships
 
-- To-Do -
+## Relationship [/api/relationships/{id}]
+
++ Parameters
+    + id (required, Interger, `19`) ... `id` of a **Relationship**
+
+### Get a Relationship [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Edit a Relationship [PUT]
+
+<u>**Changeable properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+
+<u>**Optional properties**</u> (not neccessary, but acceptable):
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `18` |
+
++ Body
+    
+        {
+            "intents": []
+        }
+
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Delete a Relationship [DELETE]
+
++ Response 204 (application/json)
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+## Relationship weighting between 2 Locations [/api/locations/{id_start}/locations/{id_end}]
+
++ Parameters
+    + id_start (required, Interger, `18`) ... `id` of a **Location**
+    + id_end (required, Interger, `23`) ... `id` of a **Location**
+
+### Get a Relationship [GET]
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Create a Relationship [POST]
+
+<u>**Required properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+
++ Body
+    
+        {
+            "intents": []
+        }
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+        
+### Edit a Relationship [PUT]
+
+<u>**Changeable properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[ ]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `[]` |
+
+<u>**Optional properties**</u> (not neccessary, but acceptable):
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `18` |
+
++ Body
+    
+        {
+            "id": 19,
+            "intents": []
+        }
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
