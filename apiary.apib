@@ -1,38 +1,31 @@
 FORMAT: 1A
 HOST: http://giv-sitcomlab.uni-muenster.de:8080
 
-# IPED-Toolkit-API (v4.0)
+# IPED-Toolkit-API (v3.3)
 
 # Group Hosts
 * HOST-OFFICIAL-HTTP ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8080](http://giv-sitcomlab.uni-muenster.de:8080)
+* HOST-OFFICIAL-HTTPS ( **MASTER** ): [http://giv-sitcomlab.uni-muenster.de:8443](http://giv-sitcomlab.uni-muenster.de:8443)
 * HOST-OFFICIAL-HTTP ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8081](http://giv-sitcomlab.uni-muenster.de:8081)
 * HOST-OFFICIAL-HTTPS ( **DEVELOP** ): [http://giv-sitcomlab.uni-muenster.de:8444](http://giv-sitcomlab.uni-muenster.de:8444)
 * HOST-LOCAL ( DEVELOP ): [http://localhost:8080](http://localhost:8080)
 
-#### Allowed HTTPs requests:
-* `GET` - Get a resource or list of resources
-* `POST` - To create or update resource
-* `PUT` - To create or update resource
-* `DELETE` - To delete resource
+#### Allowed HTTP requests:
 
-#### Description of Server Responses:
+| METHODE | Description |
+|----------|----------|
+| `GET` | Get a resource or list of resources |
+| `POST` | To create or update resource |
+| `PUT` | To create or update resource |
+| `DELETE` | To delete resource |
 
-##### 2XX (Successfull)
-* **200** `OK` - the request was successful (some API calls may return 201 instead).
-* **201** `Created` - the request was successful and a resource was created.
-* **204** `No Content` - the request was successful but there is no representation to return (i.e. the response is empty).
+#### Server Responses:
+| CODE | STATUS | Description |
+|----------|----------|----------|
+|`200`| `OK` | the request was successfull |
+|`201`| `CREATED` |  the request was successfull and a resource was created |
+|`500`| `INTERNAL SERVER ERROR` | the request is unavailable |
 
-##### 4XX (Errors) 
-* **400** `Bad Request` - the request could not be understood or was missing required parameters.
-* **401** `Unauthorized` - authentication failed or user doesn't have permissions for requested operation.
-* **403** `Forbidden` - access denied.
-* **404** `Not Found` - resource was not found.
-* **405** `Method Not Allowed` - requested method is not supported for resource.
-* **406** `Not Acceptable` - the requested resource is only capable of generating content not acceptable according to the Accept headers sent in the request.
-
-##### 5XX (Server Problems)
-* **500** `Internal Server Error` - the request is unavailable
-* **503** `Service Unavailable` - service is temporary unavailable (e.g. scheduled Platform Maintenance). Try again later.
 
 # Group Browser and Videoformats
 The application runs only in the 2 Browser below. If you upload videos on the server, please make sure that you upload:
@@ -57,259 +50,20 @@ The application will check the browser and will pick the right videoformat autom
 
 >**Note**: only for the API-Specification on Apiary.io
 
-#### API-Status options:
-* **implemented** \[+]: Implementation on official Server is finished and works
-* **problems** \[+]:  Implementation on official Server finished, but there are some problems, please wrote a comment at the API-function in this tool
-* **in progress** \[+]: Design is finished and the functions will be implemented on official Server at the moment
-* **not yet implemented** :  Design is finished, but not yet implemented on official Server, but is planned
-* **in design** :  The Starting point, designing the function in this tool
-
->**Note**: Please write your name, after the following status **\[+]**, so it is possible to see, how works on which part,
-e.g. `(Status: **implemented**, Developer: Nicho)`. If you want to implement a function of an other developer please contact him first, befor you overwrite his name.
-
 #### API-Example of the blueprint code:
 * for API-Syntax check out the **Apiary-Tutorial**: [http://apiary.io/blueprint](http://apiary.io/blueprint)
 * for API-Syntax check out the **Blueprint-Documenation**: [http://apiblueprint.org](http://apiblueprint.org)
-
-```
-### List all Locations [GET]
-
-(Status: **implemented**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-(...)
-```
 * for a good example of the API-Syntax check out the **GoodData API** ([http://docs.gooddata.apiary.io](http://docs.gooddata.apiary.io)) with the corresponding Markdownfile *apiary.apib* in the GitHub-Respository ([https://github.com/gooddata/gooddata-api-docs.git](https://github.com/gooddata/gooddata-api-docs.git)).
 
 #### API-Comments:
 It is possible to write a comments to discuss the API-Specification on Apiary. Leave the EDITOR-MODE and go to DOCUMENTATION. Scroll down to the corresponding function and click the 
 **Add comment**-Button on the right side of the box.
 
-# Group Scenarios
-
-## Locations Collection [/api/scenarios]
-### List all Scenarios [GET]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-            [
-                {
-                    "id":800,
-                    "name":"Münster - Innenstadt",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "ULB",
-                        "Krummer Timpen"
-                    ]
-                },
-                {
-                    "id":801,
-                    "name":"Münster - Hauptbhahnhof",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "HBF"
-                    ]
-                }
-            ]
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-
-### Create a Scenario [POST]
-(Status: **in design**, Developer: Nicho)
-
-<u>**Required properties**</u>:
-
-- `name` **String** (can not be empty; example: *"Münster - Hauptbhahnhof"*)
-- `description` **String** (can be empty; example: *"Videos in der Umgebnung des Hauptbhahnhofs"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "HBF", "Bahnhof"]*)
-
-+ Request (application/json)
-
-    + Body
-    
-                {
-                    "name":"Münster - Hauptbhahnhof",
-                    "description":"",
-                    "tags":[
-                        "Münster",
-                        "HBF"
-                    ]
-                }
-
-+ Response 201 (application/json)
-
-            {
-                "id":801,
-                "name":"Münster - Hauptbhahnhof",
-                "description":"",
-                "tags":[
-                    "Münster",
-                    "HBF"
-                ]
-            }
-
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-## Scenario [/api/scenarios/{s_id}]
-A single Scenario object with all its details
-
-+ Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-
-### Retrieve a Scenario [GET]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 200 (application/json)
-
-        {
-            "id":801,
-            "name":"Münster - Hauptbhahnhof",
-            "description":"",
-            "tags":[
-                "Münster",
-                "HBF"
-            ]
-        }
-
-### Edit a Location [PUT]
-(Status: **implemented**, Developer: Nicho)
-
-<u>**Changeable properties**</u>
-
->**Note**: A minimum of one property is required.
-
-- `name` **String** (can not be empty; example: *"Münster - Hauptbhahnhof 2"*)
-- `description` **String** (can be empty; example: *"Videos in der Umgebung des Hauptbahnhofs"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Münster", "HBF", "Bahnhof"]*)
-
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
-
-- `id` **Integer** (can not be empty; Example: *801*)
-
-+ Request (application/json)
-
-    + Body
-    
-            {
-                "name":"Münster - Hauptbhahnhof",
-                "description":"Videos in der Umgebung des Hauptbahnhofs",
-                "tags":[
-                    "Münster",
-                    "HBF"
-                ]
-            }
-            
-
-+ Response 201 (application/json)
-
-        {
-            "id":801,
-            "name":"Münster - Hauptbhahnhof",
-            "description":"Videos in der Umgebung des Hauptbahnhofs",
-            "tags":[
-                "Münster",
-                "HBF"
-            ]
-        }
-        
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-        
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
-
-### Remove a Scenario [DELETE]
-(Status: **in design**, Developer: Nicho)
-
-+ Response 204
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
-+ Response 500 (text/plain)
-
-        Error: Internal Server Error
-        Message: <Errormessage>
 
 # Group Locations
 
-## Locations Collection [/api/scenarios/{s_id}/locations]
-
-+ Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-
+## Locations Collection [/api/locations]
 ### List all Locations [GET]
-(Status: **in design**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -389,18 +143,19 @@ A single Scenario object with all its details
 
 
 ### Create a Location [POST]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Required properties**</u>:
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""*; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
-- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
+| `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
+| `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
+| `relatedLocations[]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
 
 + Request (application/json)
@@ -444,44 +199,18 @@ A single Scenario object with all its details
             "overlays": []
         }
 
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Location [/api/scenarios/{s_id}/locations/{l_id}]
+## Location [/api/locations/{id}]
 A single Location object with all its details
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `4`) ... `id` of a **Location**
-   
+    + id (required, Interger, `4`) ... `id` of a **Location**
+
 ### Retrieve a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -513,41 +242,32 @@ A single Location object with all its details
                 ]
             }
             
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!        
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Edit a Location [PUT]
-(Status: **in design**, Developer: Nicho)
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Gegenüber der Trattoria"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Trattoria",` <br> `"Kulturcafé"` <br> `"Fürstin-von-Gallitzin-Wohnheim"]` |
+| `lon` | <b>Number</b> | no | | *""* | `7.6189278` |
+| `lat` | <b>Number [ ]</b> | no | | | `51.9634288` |
+| `relatedLocations[]` | <b>Integer [ ]</b> | no | valid Location-IDs | `[]` | `[1,6,9,4,5]` |
+| `videos[]` | <b>Integer [ ]</b> | no | valid video-IDs | `[]` | `[3]` |
+| `overlays[]` | <b>Integer [ ]</b> | no | valid overlay-IDs | `[]` | `[2,7,8]` |
 
-- `name` **String** (can not be empty; example: *"Frauenstraße 2"*)
-- `description` **String** (can be empty; example: *"Gegenüber der Trattoria"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Münster", "Frauenstraße", "Trattoria", "Kulturcafé", "Fürstin-von-Gallitzin-Wohnheim"]*)
-- `lon` **Float/Number** (can not be empty; example: *7.6189278*)
-- `lat` **Float/Number** (can not be empty; example: *51.9634288*)
-- `relatedLocations` **Integer[ ]** (can be empty or have to contain valid Location-IDs; example: *[ ]* or *[1,6,9,4,5]*)
-- `videos` **Integer[ ]** (can be empty or have to contain valid video-IDs; example: *[ ]* or *[3]*)
-- `overlays` **Integer[ ]** (can be empty or have to contain valid overlay-IDs; example: *[ ]* or *[2,7,8]*)
+<u>**Optional properties**</u> (not neccessary, but acceptable):
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | not changebale | | `4` |
 
-- `id` **Integer** (can not be empty; Example: *4*)
 
 + Request (application/json)
 
@@ -586,67 +306,26 @@ A single Location object with all its details
                 "overlays": []
         }
         
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" has to be an integer!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-        
-        Error: The ID <propertyValue> in the "<propertyName>"-Array belongs to a "<differentObject>"!
-        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Remove a Location [DELETE]
-(Status: **in design**, Developer: Nicho)
 
 + Response 204
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/locations]
+## Relations of a Location [/api/locations/{id}/locations]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
+    + id (required, Interger, `699`) ... `id` of a **Location**
 
 ### Retrieve all related Locations of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -682,16 +361,6 @@ A single Location object with all its details
                 }
             ]
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -703,7 +372,6 @@ A single Location object with all its details
 ## Videos Collection [/api/videos]
 
 ### List all Videos [GET]
-(Status: **in design**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -713,7 +381,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_02",
+                "url": "/media/video/task_02",
                 "tags": []
             },
             {
@@ -721,7 +389,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url": "/media/video/task_03",
                 "tags": []
             }
         ]
@@ -732,15 +400,24 @@ A single Location object with all its details
         Message: <Errormessage>     
 
 ### Create a Video [POST]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Required properties**</u>:
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
-- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Bei Tag"]`|
+| `date` | <b>String</b> | yes | - has to be the form: <br> **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
+
+<u>**ATTENTION**</u>: <br>
+- The URL of the video does not contain the datatype at the end:
+- `/media/video/task_03.mp4` is wrong
+- `/media/video/task_03` is correct
+- If your videos are located on the same server, please reach them by the shorter URL `/media/video/task_03` instead of the global URL `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03` **to provide CROSS-ORIGIN-issues** in your Browser
+- Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document.
+
 
 + Request (application/json)
 
@@ -750,7 +427,7 @@ A single Location object with all its details
                 "description": "Frauenstraße bei Tag",
                 "name": "Frauenstraße2",
                 "date": "",
-                "url": "http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url": "/media/video/task_03",
                 "tags":[]
             }
 
@@ -761,28 +438,10 @@ A single Location object with all its details
             "description":"Frauenstraße bei Tag",
             "name":"Frauenstraße2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "url":"/media/video/task_03",
             "tags":[]
         }
         
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-        
-        Error: The value of the property "url" is not a valid URL!
-        
-        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
-        
-        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
-
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -795,7 +454,6 @@ A single Video object with all details
    + id (required, Interger, `36`) ... `id` of a **Video**
 
 ### Retrieve a video [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
@@ -806,19 +464,9 @@ A single Video object with all details
                 "description":"Frauenstraße bei Tag",
                 "name":"Frauenstraße2",
                 "date":"",
-                "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+                "url":"/media/video/task_03",
                 "tags":[]
             }
-            
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -826,22 +474,32 @@ A single Video object with all details
         Message: <Errormessage>
 
 ### Edit a Video [PUT]
-(Status: **implemented**, Developer: Nicho)
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Frauenstraße"` |
+| `description` | <b>String</b> | yes | | "" | `"Frauenstraße bei Tag"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be "" | `[]` | `["Münster",` <br> `"Frauenstraße",` <br> `"Bei Tag"]` |
+| `date` | <b>String</b> | yes | - has to be the form: <br> **YYYY-MM-DD** / **YYYY-MM-DD HH:mm** <br> - **Y**=Year <br> - **M**=Month <br> - **D**=Day <br> - **H**=Hour <br> - **m**=Minute | *""* | `"2014-06-22"` \ `"2014-06-22 08:03"` |
+| `url` | <b>String</b> | no | - valid URL <br> - URL has to be without datatype at the end | | `/media/video/task_03` |
 
-- `name` **String** (can not be empty; example: *"Frauenstraße"*)
-- `description` **String** (can be empty; example: *"Frauenstraße bei Tag"*)
-- `date` **Date** (can be empty or has to be the form **YYYY-MM-DD** or **YYYY-MM-DD HH:mm** [with **Y**=Year, **M**=Month, **D**=Day, **H**=Hour, **m**=Minute]; examples: *"2014-06-22"* or *"2014-06-22 08:03"*)
-- `url` **String** (**ATTENTION: Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document**; can not be empty and url has to be available and doesn't contain a dataformat; example: *"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03"*)
-- `tags[]` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["Schlossplatz", "Event: Send", "at night"]*)
+<u>**Optional properties**</u> (not neccessary, but acceptable):
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `36` |
 
-- `id` **Integer** (can not be empty; Example: *36*)
+<u>**ATTENTION**</u>:<br>
+- The URL of the video does not contain the datatype at the end:
+- `/media/video/task_03.mp4` is wrong
+- `/media/video/task_03` is correct
+- If your videos are located on the same server, please reach them by the shorter URL `/media/video/task_03` instead of the global URL `http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03` **to provide CROSS-ORIGIN-issues** in your Browser
+- Please have a look on the [Browser and Videoformats](#browser-and-videoformats) on the top of this document.
+
+
+
 
 + Request (application/json)
 
@@ -859,69 +517,30 @@ A single Video object with all details
             "description":"Frauenstraße bei Nacht",
             "name":"Frauenstraße 2",
             "date":"",
-            "url":"http://giv-sitcomlab.uni-muenster.de:8080/media/video/task_03",
+            "url":"/media/video/task_03",
             "tags":[]
         }
         
-+ Response 400 (text/plain)
-        
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-        
-        Error: The value of the property "url" contains a videoformat! Please submit only the filename!
-        
-        Error: The value of the property "date" is not a valid DATE! Please submit a date in the form "YYYY-MM-DD" OR "YYYY-MM-DD HH:mm" (Y=YEAR, M=Month, D=Day, H=Hour, m=Minute), for example: "2014-05-01 08:04")!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Remove a Video [DELETE]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 204
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/videos]
+## Videos of a Location [/api/locations/{id}/videos]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
- 
+    + id (required, Interger, `699`) ... `id` of a **Location**
+
 ### Retrieve all Videos of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -936,20 +555,10 @@ A single Video object with all details
                     "description": "Schlossplatz bei Tag",
                     "name": "Schlossplatz",
                     "date": "No date available",
-                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/media/video/task_01",
+                    "url": "/media/video/task_01",
                     "id": 711
                 }
             ]
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
@@ -960,124 +569,120 @@ A single Video object with all details
 
 ## Overlays Collection [/api/overlays]
 ### List all Overlays [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
         
         [
             {
-                "id": 23,
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
                 "tags": [
-                    "video",
-                    "test"
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "d": 0,
                 "type": "html",
-                "url": "https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "h": 600,
-                "w": 800,
-                "rz": 0,
-                "description": "Video Overlay Test",
-                "name": "Video Overlay",
-                "z": 0,
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
                 "rx": 0,
-                "y": 0,
                 "ry": 0,
-                "x": 100
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
         ]
-
+        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
 ### Create an Overlay [POST]
-(Status: **implemented**, Developer: Nicho)
 
 <u>**Required properties**</u>:
 
-- `name` **String** (can not be empty; example: *"1st Public Display"*)
-- `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
-- `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
-- `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
-
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Nachrichten"` |
+| `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage",` <br> `"WWU",` <br> `"News"]` |
+| `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
+| `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
+| `w` | <b>Number</b> | no | | | `700` |
+| `h` | <b>Number</b> | no | | | `500` |
+| `x` | <b>Number</b> | no | | | `0` |
+| `y` | <b>Number</b> | no | | | `0` |
+| `z` | <b>Number</b> | no | | | `0` |
+| `d` | <b>Number</b> | no | | | `1` |
+| `rx` | <b>Number</b> | no | | | `0` |
+| `ry` | <b>Number</b> | no | | | `0` |
+| `rz` | <b>Number</b> | no | | | `0` |
+| `sx` | <b>Number</b> | no | | | `1` |
+| `sy` | <b>Number</b> | no | | | `1` |
+| `sz` | <b>Number</b> | no | | | `1` |
 
 + Request (application/json)
 
     + body 
     
-            {   
-                "name":"Video Overlay",
-                "description":"Video Overlay Test",
-                "tags":[
-                    "video",
-                    "test"
+            {
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "w":800,
-                "h":600,
-                "x":100,
-                "y":0,
-                "z":0,
-                "d":0,
-                "rx":0,
-                "ry":0,
-                "rz":0
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
 
 + Response 201 (application/json)
 
-        {   
-            "id":23,
-            "name":"Video Overlay",
-            "description":"Video Overlay Test",
-            "tags":[
-                "video",
-                "test"
-            ],
-            "type":"html",
-            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "w":800,
-            "h":600,
-            "x":100,
-            "y":0,
-            "z":0,
-            "d":0,
-            "rx":0,
-            "ry":0,
-            "rz":0
-        }
+            {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
+                ],
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
+            }
 
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" was not found, but has to be defined!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-        
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -1087,45 +692,38 @@ A single Video object with all details
 A single Overlay object with all its details
 
 + Parameters
-   + id (required, Interger, `23`) ... `id` of an **Overlay**
+   + id (required, Interger, `59`) ... `id` of an **Overlay**
 
 ### Retrieve an Overlay [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200 (application/json)
 
     + Body
 
             {
-                "id":23,
-                "name":"Video Overlay",
-                "description":"Video Overlay Test",
-                "tags":[
-                    "video",
-                    "test"
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-                "w":800,
-                "h":600,
-                "x":100,
-                "y":0,
-                "z":0,
-                "d":0,
-                "rx":0,
-                "ry":0,
-                "rz":0
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
-            
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
             
 + Response 500 (text/plain)
 
@@ -1133,96 +731,91 @@ A single Overlay object with all its details
         Message: <Errormessage>            
 
 ### Edit an Overlay [PUT]
-(Status: **implemented**, Developer: Nicho)
 
-<u>**Changeable properties**</u>
+<u>**Changeable properties**</u>:
 
->**Note**: A minimum of one property is required.
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `name` | <b>String</b> | no | | | `"Nachrichten"` |
+| `description` | <b>String</b> | yes | | *""* | `"Uni Muenster Homepage"` |
+| `tags[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* | `[]` | `["Webpage",` <br> `"WWU",` <br> `"News"]` |
+| `type` | <b>String</b> | no | | - *"html"* <br> - *"image"* <br> - *"video"* | `"html"` |
+| `url` | <b>String</b> | no | - valid URL <br> | | `http://www.uni-muenster.de/de/` |
+| `w` | <b>Number</b> | no | | | `700` |
+| `h` | <b>Number</b> | no | | | `500` |
+| `x` | <b>Number</b> | no | | | `0` |
+| `y` | <b>Number</b> | no | | | `0` |
+| `z` | <b>Number</b> | no | | | `0` |
+| `d` | <b>Number</b> | no | | | `1` |
+| `rx` | <b>Number</b> | no | | | `0` |
+| `ry` | <b>Number</b> | no | | | `0` |
+| `rz` | <b>Number</b> | no | | | `0` |
+| `sx` | <b>Number</b> | no | | | `1` |
+| `sy` | <b>Number</b> | no | | | `1` |
+| `sz` | <b>Number</b> | no | | | `1` |
 
-- `name` **String** (can not be empty; example: *"1st Public Display"*)
-- `description` **String** (can be empty; example: *"Public Display zum Anzeigen von ortsbezogenen Daten"*)
-- `tags` **String[ ]** (can be empty, but can not have empty elemtens like *""* and elements have to be unique; example: *["video", "test", "Public Display"]*)
-- `type` **String** (can not be empty and has to be one of these options: *"html"*, *"image"*, *"video"*)
-- `url` **String** (can not be empty and url has to be available; example: *"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"*)
-- `w` **Float/Number** (can not be empty and has to be a float; expample: *800*; default: *0*)
-- `h` **Float/Number** (can not be empty and has to be a float; expample: *600*; default: *0*)
-- `x` **Float/Number** (can not be empty and has to be a float; expample: *100*; default: *0*)
-- `y` **Float/Number** (can not be empty and has to be a float; expample: *10.1*; default: *0*)
-- `z` **Float/Number** (can not be empty and has to be a float; expample: *20.2*; default: *0*)
-- `d` **Float/Number** (can not be empty and has to be a float; expample: *30.3*; default: *0*)
-- `rx` **Float/Number** (can not be empty and has to be a float; expample: *40.4*; default: *0*)
-- `ry` **Float/Number** (can not be empty and has to be a float; expample: *50.5*; default: *0*)
-- `rz` **Float/Number** (can not be empty and has to be a float; expample: *60.6*; default: *0*)
+<u>**Optional properties**</u> (not neccessary, but acceptable):
 
-<u>**Optional property**</u>
->**Note**: This property is not neccessary, but acceptable.
-
-- `id` **Integer** (can not be empty; Example: *23*)
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `59` |
 
 + Request (application/json)
 
     + body 
     
-            {   
-                "name":"Video Overlay 2",
-                "description":"Video Overlay Test 2",
-                "tags":[
-                    "video",
-                    "test"
+            {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
                 ],
-                "type":"html",
-                "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/"
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
             }
 
 + Response 201 (application/json)
 
-        {   
-            "id":23,
-            "name":"Video Overlay 2",
-            "description":"Video Overlay Test 2",
-            "tags":[
-                "video",
-                "test"
-            ],
-            "type":"html",
-            "url":"https://giv-sitcomlab.uni-muenster.de:8443/room/main/",
-            "w":800,
-            "h":600,
-            "x":100,
-            "y":0,
-            "z":0,
-            "d":0,
-            "rx":0,
-            "ry":0,
-            "rz":0
-        }
+        {
+                "id": 59,
+                "name": "Nachrichten",
+                "description": "Uni Muenster Homepage",
+                "tags": [
+                    "Webpage", 
+                    "WWU", 
+                    "News"
+                ],
+                "type": "html",
+                "url": "http://www.uni-muenster.de/de/",
+                "w": 700,
+                "h": 575,
+                "x": 547.6430973457741,
+                "y": 323.2137010950475,
+                "z": -228.65846681625413,
+                "d": 1,
+                "rx": 0,
+                "ry": 0,
+                "rz": 0,
+                "sx": 1,
+                "sy": 1,
+                "sz": 1
+            }
         
-+ Response 400 (text/plain)
-
-        Error: No data submitted!
-
-        Error: The property "<propertyName>" is needless and not allowed!
-
-        Error: The value of the property "<propertyName>" can not be emtpy!
-
-        Error: The value of the property "<propertyName>" has to be a float/number!
-
-        Error: The value of the property "<propertyName>" is incorrect! Only the values ["<value1>","<value2>","<value3>"] are allowed!
-
-        Error: The element values of the array "<propertyName>" are not unique!
-
-        Error: The value of the property "url" is not a valid URL!
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
@@ -1230,33 +823,20 @@ A single Overlay object with all its details
 
 
 ### Remove an Overlay [DELETE]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 204
 
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
-            
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
 
-## Relations of a Location [/api/scenarios/{s_id}/locations/{l_id}/overlays]
+## Overlays of a Location [/api/locations/{id}/overlays]
 
 + Parameters
-    + s_id (required, Interger, `801`) ... `id` of a **Scenario**
-    + l_id (required, Interger, `699`) ... `id` of a **Location**
- 
+    + id (required, Interger, `699`) ... `id` of a **Location**
+
 ### Retrieve all Overlays of a Location [GET]
-(Status: **implemented**, Developer: Nicho)
 
 + Response 200
 
@@ -1264,38 +844,185 @@ A single Overlay object with all its details
     
             [
                 {
+                    "id": 59,
+                    "name": "Nachrichten",
+                    "description": "Uni Muenster Homepage",
                     "tags": [
-                        "video",
-                        "test"
+                        "Webpage", 
+                        "WWU", 
+                        "News"
                     ],
-                    "rz": 0,
-                    "w": 800,
-                    "d": 0,
-                    "description": "Video Overlay Test",
-                    "name": "Video Overlay",
                     "type": "html",
-                    "z": 0,
-                    "url": "https://giv-sitcomlab.uni-muenster.de:8444/room/main",
-                    "y": 0,
+                    "url": "http://www.uni-muenster.de/de/",
+                    "w": 700,
+                    "h": 575,
+                    "x": 547.6430973457741,
+                    "y": 323.2137010950475,
+                    "z": -228.65846681625413,
+                    "d": 1,
                     "rx": 0,
-                    "h": 600,
-                    "x": 100,
                     "ry": 0,
-                    "id": 721
+                    "rz": 0,
+                    "sx": 1,
+                    "sy": 1,
+                    "sz": 1
                 }
             ]
-
-+ Response 404 (text/plain)
-
-        Error: The submitted "<Object>"-ID could not be found!
-        
-+ Response 406 (text/plain)
-
-        Error: No valid request! The submitted ID is not an integer!
-        
-        Error: No valid request! The submitted "<Object>"-ID belongs to a "<differentObject>"!
 
 + Response 500 (text/plain)
 
         Error: Internal Server Error
         Message: <Errormessage>
+        
+# Group Relationship-Weighting
+
+Relationship-weighting was used in the **Voice-Control-System**. All usable intents (voice-commands) can be found on [http://wit.ai](http://wit.ai).
+For access or questions about the system, please contact a member of the *Situated Computing and Interaction Lab*.
+
+## Relationship [/api/relationships/{id}]
+
++ Parameters
+    + id (required, Interger, `19`) ... `id` of a **Relationship**
+
+### Get a Relationship [GET]
+
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Edit a Relationship [PUT]
+
+<u>**Changeable properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
+
+<u>**Optional properties**</u> (not neccessary, but acceptable):
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `18` |
+
+
++ Request (application/json)
+
+    + Body
+        
+            {
+                "intents": []
+            }
+
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Delete a Relationship [DELETE]
+
++ Response 204 (application/json)
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+## Weighting between 2 Locations [/api/locations/{id_start}/locations/{id_end}]
+
++ Parameters
+    + id_start (required, Interger, `18`) ... `id` of a **Location**
+    + id_end (required, Interger, `23`) ... `id` of a **Location**
+
+### Get a Relationship [GET]
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+
+### Create a Relationship [POST]
+
+<u>**Required properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
+
+
++ Request (application/json)
+
+    + Body
+        
+            {
+                "intents": []
+            }
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
+        
+### Edit a Relationship [PUT]
+
+<u>**Changeable properties**</u>:
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `intents[]` | <b>String [ ]</b> | yes | - unique items <br> - item can not be *""* <br> - Intent-Schema hosted on [http://wit.ai](http://wit.ai) | `[]` | `["b_go_left",` <br> `"b_go_right",` <br> `"b_go_ahead",` <br> `"b_go_behind"]` |
+
+<u>**Optional properties**</u> (not neccessary, but acceptable):
+
+| Property | Datatype | Can be empty | Condition | Options | Example |
+|----------|----------|----------|----------|----------|----------|
+| `id` | <b>Integer</b> | no | | | `18` |
+
+
++ Request (application/json)
+
+    + Body
+        
+            {
+                "id": 19,
+                "intents": []
+            }
+    
++ Response 200 (application/json)
+
+        {
+            "id": 19,
+            "intents": []
+        }
+  
++ Response 500 (text/plain)
+
+        Error: Internal Server Error
+        Message: <Errormessage> 
