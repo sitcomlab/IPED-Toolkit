@@ -35,6 +35,8 @@ log.info('IPED Toolkit Server %s', VERSION);
 
 var HTTP_PORT = 8080;
 var HTTPS_PORT = 8443;
+var HTTP_USERNAME = "";
+var HTTP_PASSWORD = "";
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function(val, index, array) {
@@ -43,6 +45,12 @@ process.argv.forEach(function(val, index, array) {
     }
     if (val.indexOf('https=') != -1) {
         HTTPS_PORT = val.split('=')[1];
+    }
+    if (val.indexOf('username=') != -1) {
+        HTTP_USERNAME = val.split('=')[1];
+    }
+    if (val.indexOf('password=') != -1) {
+        HTTP_PASSWORD = val.split('=')[1];
     }
 });
 
@@ -82,12 +90,16 @@ httpServer.listen(HTTP_PORT, function() {
 });
 
 var auth = function(req, res, next) {
-    var user = basicAuth(req);
-    if (user && user.name == "sitcomlab" && user.pass == "sitcomlab") {
-        return next();
+    if (HTTP_USERNAME != "" && HTTP_PASSWORD != "") {
+        var user = basicAuth(req);
+        if(user && user.name == HTTP_USERNAME && user.pass == HTTP_PASSWORD)
+            return next();
+        else{
+            res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+            return res.send(401);
+        }
     } else {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.send(401);
+        return next();
     }
 };
 
