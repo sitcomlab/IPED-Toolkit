@@ -70,6 +70,8 @@ var log = require('./global/log');
 var VERSION = '0.0.2';
 var HTTP_PORT = 8080;
 var HTTPS_PORT = 8443;
+var HTTP_USERNAME = "sitcomlab";
+var HTTP_PASSWORD = "sitcomlab";
 
 // Pass console parameters (e.g., server port passed by Jenkins)
 process.argv.forEach(function(val, index, array) {
@@ -78,6 +80,12 @@ process.argv.forEach(function(val, index, array) {
     }
     if (val.indexOf('https=') != -1) {
         HTTPS_PORT = val.split('=')[1];
+    }
+    if (val.indexOf('username=') != -1) {
+        HTTP_USERNAME = val.split('=')[1];
+    }
+    if (val.indexOf('password=') != -1) {
+        HTTP_PASSWORD = val.split('=')[1];
     }
 });
 
@@ -126,9 +134,10 @@ httpServer.listen(HTTP_PORT, function() {
 /****************************
  Server-Authentication
  ****************************/
+// Pass console parameters (e.g., server port passed by Jenkins)
  var auth = function(req, res, next){
      var user = basicAuth(req);
-     if(user && user.name == "sitcomlab" && user.pass == "sitcomlab")
+     if(user && user.name == HTTP_USERNAME && user.pass == HTTP_PASSWORD)
          return next();
      else{
          res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
