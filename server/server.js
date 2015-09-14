@@ -144,6 +144,8 @@ httpServer.listen(HTTP_PORT, function() {
              res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
              return res.send(401);
          }
+     } else {
+         return next();
      }
  };
 
