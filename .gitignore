@@ -7,5 +7,7 @@ public/backend
 public/doc
 public/frontend
 public/remote
-public/media      
+public/media
+public/media/video
+public/media/image
 server/public
