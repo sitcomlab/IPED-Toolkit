@@ -47,7 +47,6 @@
  So please write your name to your implemented function, e.g. "(Developer: Nicho)"
 *********************************************************************************************/
 
-'use strict';
 
 var os = require('os');
 var fs = require('fs');
@@ -136,7 +135,7 @@ httpServer.listen(HTTP_PORT, function() {
  ****************************/
 // Pass console parameters (e.g., server port passed by Jenkins)
  var auth = function(req, res, next){
-     if (HTTP_USERNAME != "" && HTTP_PASSWORD != "") {
+     if (HTTP_USERNAME !== "" && HTTP_PASSWORD !== "") {
          var user = basicAuth(req);
          if(user && user.name == HTTP_USERNAME && user.pass == HTTP_PASSWORD)
              return next();
